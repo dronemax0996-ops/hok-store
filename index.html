@@ -85,12 +85,18 @@
             height: 75px;
             margin: 0 auto 10px auto;
             border-radius: 14px;
-            background: rgba(56, 189, 248, 0.1);
+            overflow: hidden;
             border: 2px solid var(--border-color);
+            background: rgba(255, 255, 255, 0.05);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 38px;
+        }
+
+        .game-icon-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .game-name {
@@ -232,22 +238,30 @@
         <div class="grid-container">
             <!-- 1. Honor of Kings -->
             <div class="game-card-home" onclick="openGame('hok')">
-                <div class="game-icon-box">👑</div>
+                <div class="game-icon-box">
+                    <img src="https://i.ibb.co/5gRdRdM2/hok.jpg" alt="Honor of Kings" onerror="this.src='https://i.ibb.co/5gRdRdM2/hok.png'">
+                </div>
                 <div class="game-name">Honor of Kings</div>
             </div>
             <!-- 2. Mobile Legends -->
             <div class="game-card-home" onclick="openGame('mlbb')">
-                <div class="game-icon-box">⚔️</div>
+                <div class="game-icon-box">
+                    <img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Mobile Legends" onerror="this.src='https://i.ibb.co/Xf3dg16D/mlbb.png'">
+                </div>
                 <div class="game-name">Mobile Legends</div>
             </div>
             <!-- 3. PUBG Mobile -->
             <div class="game-card-home" onclick="openGame('pubg')">
-                <div class="game-icon-box">🎯</div>
+                <div class="game-icon-box">
+                    <img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="PUBG Mobile" onerror="this.src='https://i.ibb.co/zVJv5yCR/pubg.png'">
+                </div>
                 <div class="game-name">PUBG Mobile</div>
             </div>
             <!-- 4. Arena Breakout -->
             <div class="game-card-home" onclick="openGame('ab')">
-                <div class="game-icon-box">🛡️</div>
+                <div class="game-icon-box">
+                    <img src="https://i.ibb.co/xKrJ21XB/arena.jpg" alt="Arena Breakout" onerror="this.src='https://i.ibb.co/xKrJ21XB/arena.png'">
+                </div>
                 <div class="game-name">Arena Breakout</div>
             </div>
         </div>
