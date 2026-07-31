@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ئاپتوماتىك پۇل قاچىلاش مۇلازىمىتى</title>
+    <title>كىنوخانى - سىنلار مەركىزى</title>
     <style>
         :root {
-            --bg-color: #0b1120;
-            --card-bg: #131c31;
-            --accent-green: #22c55e;
-            --accent-blue: #38bdf8;
-            --text-color: #f8fafc;
-            --sub-text: #94a3b8;
-            --border-color: #1e293b;
+            --bg-color: #0f0f0f;
+            --card-bg: #1f1f1f;
+            --accent-red: #ff0000;
+            --text-color: #ffffff;
+            --sub-text: #aaa;
+            --border-color: #303030;
         }
 
         * {
@@ -41,7 +40,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 15px;
-            background: #0f172a;
+            background: #212121;
             border-bottom: 1px solid var(--border-color);
             position: sticky;
             top: 0;
@@ -57,7 +56,7 @@
         .logo-circle {
             width: 32px;
             height: 32px;
-            background: var(--accent-green);
+            background: var(--accent-red);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -67,132 +66,139 @@
             font-size: 14px;
         }
 
-        .balance-badge {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(34, 197, 94, 0.15);
-            border: 1px solid var(--accent-green);
-            padding: 5px 12px;
-            border-radius: 20px;
-        }
-
-        .balance-badge span {
-            color: var(--accent-green);
-            font-size: 13px;
+        .logo-text {
             font-weight: bold;
-        }
-
-        .add-btn {
-            background: var(--accent-green);
-            color: #fff;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        /* Banner Style */
-        .banner {
-            margin: 15px;
-            background: linear-gradient(135deg, #052e16, #064e3b);
-            border: 1px solid #047857;
-            border-radius: 16px;
-            padding: 18px;
-            text-align: center;
-        }
-
-        .banner h2 {
-            color: #4ade80;
             font-size: 15px;
-            margin-bottom: 5px;
-        }
-
-        .banner p {
-            color: #d1d5db;
-            font-size: 12px;
+            color: #fff;
         }
 
         /* Search Box */
         .search-box {
-            padding: 0 15px;
-            margin-bottom: 15px;
+            padding: 12px 15px;
         }
 
         .search-input {
             width: 100%;
-            padding: 12px 15px;
+            padding: 10px 15px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
+            border-radius: 20px;
             color: #fff;
             font-size: 13px;
             outline: none;
         }
 
         .search-input:focus {
-            border-color: var(--accent-green);
+            border-color: #3ea6ff;
         }
 
-        /* Categories Grid */
-        .section-title {
+        /* Video List Grid */
+        .video-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
             padding: 0 15px;
-            margin-bottom: 10px;
-            font-size: 15px;
-            font-weight: bold;
-            color: #e2e8f0;
         }
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            padding: 0 15px;
-            margin-bottom: 20px;
-        }
-
-        .category-card {
-            background-color: var(--card-bg);
+        .video-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
             border: 1px solid var(--border-color);
-            border-radius: 14px;
-            padding: 10px;
-            text-align: center;
             cursor: pointer;
             transition: 0.2s;
         }
 
-        .category-card:hover {
-            border-color: var(--accent-green);
-            transform: translateY(-2px);
+        .video-card:hover {
+            border-color: #555;
         }
 
-        .card-icon-box {
+        .thumbnail-box {
             width: 100%;
-            height: 75px;
-            border-radius: 10px;
-            overflow: hidden;
-            background: rgba(255, 255, 255, 0.05);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            height: 200px;
+            background: #000;
+            position: relative;
         }
 
-        .card-icon-box img {
+        .thumbnail-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .card-name {
-            font-size: 12px;
+        .video-info {
+            padding: 12px;
+        }
+
+        .video-title {
+            font-size: 14px;
             font-weight: bold;
             color: var(--text-color);
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .video-meta {
+            font-size: 12px;
+            color: var(--sub-text);
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Player View */
+        .view {
+            display: none;
+        }
+        .view.active {
+            display: block;
+        }
+
+        .player-section {
+            padding: 15px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #3ea6ff;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .player-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .player-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .current-video-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .current-video-desc {
+            font-size: 13px;
+            color: var(--sub-text);
+            line-height: 1.5;
+            background: var(--card-bg);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
         }
 
         /* Bottom Navigation Bar */
@@ -201,7 +207,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: #0f172a;
+            background: #212121;
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
@@ -222,109 +228,11 @@
         }
 
         .nav-item.active {
-            color: var(--accent-green);
+            color: #fff;
         }
 
         .nav-item span:first-child {
             font-size: 18px;
-        }
-
-        /* Views management */
-        .view {
-            display: none;
-        }
-        .view.active {
-            display: block;
-        }
-
-        .game-detail-section {
-            padding: 15px;
-        }
-        
-        .back-btn {
-            background: none;
-            border: none;
-            color: var(--accent-green);
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        /* Price List Grid Styles */
-        .price-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .price-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .price-card:hover, .price-card.selected {
-            border-color: var(--accent-green);
-            background: rgba(34, 197, 94, 0.1);
-        }
-
-        .price-card .item-name {
-            font-size: 12px;
-            color: var(--sub-text);
-            margin-bottom: 4px;
-        }
-
-        .price-card .item-price {
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--accent-green);
-        }
-
-        .category-header {
-            font-size: 13px;
-            color: var(--accent-blue);
-            margin: 12px 0 8px 0;
-            font-weight: bold;
-        }
-
-        .order-box {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 15px;
-        }
-
-        .order-box h4 {
-            font-size: 13px;
-            color: var(--sub-text);
-            margin-bottom: 8px;
-        }
-
-        .form-group {
-            margin-bottom: 10px;
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--accent-green);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 5px;
         }
     </style>
 </head>
@@ -335,80 +243,78 @@
     <!-- Top Navbar -->
     <div class="navbar">
         <div class="logo-area">
-            <div class="logo-circle">S</div>
-            <span style="font-weight: bold; font-size: 13px;">ئاپتوماتىك پۇل قاچىلاش مۇلازىمىتى</span>
-        </div>
-        <div class="balance-badge">
-            <a href="#" class="add-btn">+</a>
-            <span id="user-balance">809.91 ل.س</span>
+            <div class="logo-circle">▶</div>
+            <span class="logo-text">كىنوخانى</span>
         </div>
     </div>
 
     <!-- === باش بەت (Home View) === -->
     <div id="home-view" class="view active">
-        <!-- Banner -->
-        <div class="banner">
-            <h2>ياردەم مۇلازىمىتى تەييار !!</h2>
-            <p>بارلىق سوئاللىرىڭىزغا كۈندۈز-تۈنى جاۋاب بېرىمىز</p>
-        </div>
-
         <!-- Search -->
         <div class="search-box">
-            <input type="text" class="search-input" placeholder="ئىزدەش...">
+            <input type="text" class="search-input" placeholder="كىنو ئىزدەش...">
         </div>
 
-        <div class="section-title">ئاساسلىق بۆلەكلەر</div>
+        <!-- Video List (كىنو تىزىملىكى - بۇ يەرگە ئۆزىڭىز كىنو قوشالايسىز) -->
+        <div class="video-grid">
+            
+            <!-- كىنو 1 -->
+            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/9bZkp7q19f0', 'يېڭى چىققان تەۋسىيە كىنو 1', 'بۇ كىنوخانىدىكى تۇنجى كىنو بولۇپ، ئالاھىدە مەزمۇنلار بىلەن تەمىنلەيدۇ.')">
+                <div class="thumbnail-box">
+                    <img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="Movie 1">
+                </div>
+                <div class="video-info">
+                    <div class="video-title">يېڭى چىققان تەۋسىيە كىنو 1</div>
+                    <div class="video-meta">
+                        <span>1.2مىڭ كۆرۈلدى</span>
+                        <span>•</span>
+                        <span>2 كۈن ئ ilgiri</span>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Categories Grid -->
-        <div class="grid-container">
-            <!-- 1. PUBG Mobile -->
-            <div class="category-card" onclick="openGame('pubg', 'PUBG Mobile')">
-                <div class="card-icon-box">
-                    <img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="PUBG Mobile">
+            <!-- كىنو 2 -->
+            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/LXb3EKWsInQ', 'قىزىقەرلىك ھەرىكەتلىك كىنو 2', 'بۇ كىنو ئويۇن ۋە ھەرىكەت سەھنىلىرىگە تولغان بولۇپ، كۆرۈشكە ئەرزىيدۇ.')">
+                <div class="thumbnail-box">
+                    <img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Movie 2">
                 </div>
-                <div class="card-name">PUBG Mobile</div>
-            </div>
-            <!-- 2. Mobile Legends -->
-            <div class="category-card" onclick="openGame('mlbb', 'Mobile Legends')">
-                <div class="card-icon-box">
-                    <img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Mobile Legends">
+                <div class="video-info">
+                    <div class="video-title">قىزىقەرلىك ھەرىكەتلىك كىنو 2</div>
+                    <div class="video-meta">
+                        <span>3.5مىڭ كۆرۈلدى</span>
+                        <span>•</span>
+                        <span>1 ھەپتە ئىلگىرى</span>
+                    </div>
                 </div>
-                <div class="card-name">Mobile Legends</div>
             </div>
-            <!-- 3. Honor of Kings -->
-            <div class="category-card" onclick="openGame('hok', 'Honor of Kings')">
-                <div class="card-icon-box">
-                    <img src="https://i.ibb.co/5gRdRdM2/hok.jpg" alt="Honor of Kings">
+
+            <!-- كىنو 3 -->
+            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/5qap5aO4i9A', 'تەۋەككۈلچىلىك دراما كىنوسى 3', 'مەزكۇر دراما كىنوسىدا قىزىق ۋە تەسىرلىك ۋەقەلەر بايان قىلىنىدۇ.')">
+                <div class="thumbnail-box">
+                    <img src="https://i.ibb.co/5gRdRdM2/hok.jpg" alt="Movie 3">
                 </div>
-                <div class="card-name">Honor of Kings</div>
-            </div>
-            <!-- 4. Cards -->
-            <div class="category-card" onclick="alert('تىزلا ئېچىلىدۇ!')">
-                <div class="card-icon-box" style="font-size: 24px;">💳</div>
-                <div class="card-name">پراكتىك كارتا بۆلىكى</div>
-            </div>
-            <!-- 5. Balance -->
-            <div class="category-card" onclick="alert('تىزلا ئېچىلىدۇ!')">
-                <div class="card-icon-box" style="font-size: 24px;">💎</div>
-                <div class="card-name">قالدۇق بۆلىكى</div>
-            </div>
-            <!-- 6. Arena Breakout -->
-            <div class="category-card" onclick="openGame('ab', 'Arena Breakout')">
-                <div class="card-icon-box">
-                    <img src="https://i.ibb.co/xKrJ21XB/arena.jpg" alt="Arena Breakout">
+                <div class="video-info">
+                    <div class="video-title">تەۋەككۈلچىلىك دراما كىنوسى 3</div>
+                    <div class="video-meta">
+                        <span>800 كۆرۈلدى</span>
+                        <span>•</span>
+                        <span>3 كۈن ئىلگىرى</span>
+                    </div>
                 </div>
-                <div class="card-name">Arena Breakout</div>
             </div>
+
         </div>
     </div>
 
-    <!-- === ئويۇن تەپسىلات ۋە باھا جەدۋىلى بېتى === -->
-    <div id="game-view" class="view">
-        <div class="game-detail-section">
+    <!-- === كىنو كۆرۈش بېتى (Player View) === -->
+    <div id="player-view" class="view">
+        <div class="player-section">
             <button class="back-btn" onclick="goHome()">← ئارقىغا قايتىش</button>
-            <div id="game-content-box" style="background: var(--card-bg); padding: 15px; border-radius: 14px; border: 1px solid var(--border-color);">
-                <!-- динамиك جەدۋەل بۇ يەرگە چىقىدۇ -->
+            <div class="player-container">
+                <iframe id="movie-player" src="" allowfullscreen></iframe>
             </div>
+            <div id="movie-title" class="current-video-title">كىنو تېمىسى</div>
+            <div id="movie-desc" class="current-video-desc">كىنو توغرىسدىكى قىسقىچە بايان بۇ يەردە كۆرسىتىلىدۇ.</div>
         </div>
     </div>
 
@@ -418,20 +324,16 @@
             <span>🏠</span>
             باش بەت
         </a>
-        <a class="nav-item" onclick="alert('پۇل قاچىلاش سەھىپىسى')">
-            <span>💳</span>
-            پۇل قاچىلاش
+        <a class="nav-item" onclick="alert('تىزلا ئېچىلىدۇ!')">
+            <span>🔥</span>
+            قىزىق
         </a>
-        <a class="nav-item" onclick="alert('تارىخچە بۆلىكى')">
-            <span>🔄</span>
-            تارىخ
+        <a class="nav-item" onclick="alert('تىزلا ئېچىلىدۇ!')">
+            <span>📚</span>
+            تىزىملىك
         </a>
-        <a class="nav-item" onclick="alert('سەۋەت بۆلىكى')">
-            <span>🛒</span>
-            سەۋەت
-        </a>
-        <a class="nav-item" onclick="alert('ھېسابات تەڭشىكى')">
-            <span>🛡️</span>
+        <a class="nav-item" onclick="alert('تىزلا ئېچىلىدۇ!')">
+            <span>👤</span>
             ھېسابات
         </a>
     </div>
@@ -439,152 +341,23 @@
 </div>
 
 <script>
-    let selectedGameName = "";
-    let selectedItemName = "";
-    let selectedItemPrice = "";
-
-    function openGame(gameKey, gameTitle) {
-        selectedGameName = gameTitle;
-        selectedItemName = "";
-        selectedItemPrice = "";
-
+    function playMovie(videoUrl, title, description) {
         document.getElementById('home-view').classList.remove('active');
-        document.getElementById('game-view').classList.add('active');
+        document.getElementById('player-view').classList.add('active');
         
-        const box = document.getElementById('game-content-box');
+        document.getElementById('movie-player').src = videoUrl;
+        document.getElementById('movie-title').innerText = title;
+        document.getElementById('movie-desc').innerText = description;
         
-        if(gameKey === 'pubg') {
-            box.innerHTML = `
-                <h3 style="color:var(--accent-green); margin-bottom:12px;">🎯 PUBG Mobile باھا جەدۋىلى</h3>
-                <div class="category-header"> UC سېتىۋېلىش</div>
-                <div class="price-grid">
-                    <div class="price-card" onclick="selectItem(this, '60 UC', '$ 0.95')"><div class="item-name">60 UC</div><div class="item-price">$ 0.95</div></div>
-                    <div class="price-card" onclick="selectItem(this, '325 UC', '$ 4.7')"><div class="item-name">325 UC</div><div class="item-price">$ 4.7</div></div>
-                    <div class="price-card" onclick="selectItem(this, '660 UC', '$ 9.4')"><div class="item-name">660 UC</div><div class="item-price">$ 9.4</div></div>
-                    <div class="price-card" onclick="selectItem(this, '1800 UC', '$ 24.5')"><div class="item-name">1800 UC</div><div class="item-price">$ 24.5</div></div>
-                    <div class="price-card" onclick="selectItem(this, '3850 UC', '$ 47')"><div class="item-name">3850 UC</div><div class="item-price">$ 47</div></div>
-                    <div class="price-card" onclick="selectItem(this, '8100 UC', '$ 91.5')"><div class="item-name">8100 UC</div><div class="item-price">$ 91.5</div></div>
-                </div>
-                <div class="order-box">
-                    <h4>🛒 زاكاز بېرىش ئۇچۇرى</h4>
-                    <div class="form-group"><input type="text" id="player-id" class="search-input" placeholder="Player ID (UID) نى يېزىڭ"></div>
-                    <button class="btn-submit" onclick="submitOrder()">زاكازنى بېجىرىش</button>
-                </div>`;
-        } else if(gameKey === 'mlbb') {
-            box.innerHTML = `
-                <h3 style="color:var(--accent-green); margin-bottom:12px;">⚔️ Mobile Legends باھا جەدۋىلى</h3>
-                <div class="category-header">💎 ئالماس ۋە پاسلار</div>
-                <div class="price-grid">
-                    <div class="price-card" onclick="selectItem(this, '78+8 Diamonds', '$ 1.3')"><div class="item-name">78 + 8 Diamonds</div><div class="item-price">$ 1.3</div></div>
-                    <div class="price-card" onclick="selectItem(this, '156+16 Diamonds', '$ 2.6')"><div class="item-name">156 + 16 Diamonds</div><div class="item-price">$ 2.6</div></div>
-                    <div class="price-card" onclick="selectItem(this, '234+23 Diamonds', '$ 3.8')"><div class="item-name">234 + 23 Diamonds</div><div class="item-price">$ 3.8</div></div>
-                    <div class="price-card" onclick="selectItem(this, '625+81 Diamonds', '$ 10.5')"><div class="item-name">625 + 81 Diamonds</div><div class="item-price">$ 10.5</div></div>
-                    <div class="price-card" onclick="selectItem(this, '1860+335 Diamonds', '$ 30.5')"><div class="item-name">1860 + 335 Diamonds</div><div class="item-price">$ 30.5</div></div>
-                    <div class="price-card" onclick="selectItem(this, '3099+589 Diamonds', '$ 51')"><div class="item-name">3099 + 589 Diamonds</div><div class="item-price">$ 51</div></div>
-                    <div class="price-card" onclick="selectItem(this, '4649+883 Diamonds', '$ 77')"><div class="item-name">4649 + 883 Diamonds</div><div class="item-price">$ 77</div></div>
-                    <div class="price-card" onclick="selectItem(this, '7740+1548 Diamonds', '$ 127')"><div class="item-name">7740 + 1548 Diamonds</div><div class="item-price">$ 127</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Weekly Diamond Pass', '$ 1.8')"><div class="item-name">Weekly Diamond Pass</div><div class="item-price">$ 1.8</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Weekly Elite Bundle', '$ 0.9')"><div class="item-name">Weekly Elite Bundle</div><div class="item-price">$ 0.9</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Monthly Elite Bundle', '$ 4.5')"><div class="item-name">Monthly Elite Bundle</div><div class="item-price">$ 4.5</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Twilight Pass', '$ 8.8')"><div class="item-name">Twilight Pass</div><div class="item-price">$ 8.8</div></div>
-                </div>
-                <div class="order-box">
-                    <h4>🛒 زاكاز بېرىش ئۇچۇرى</h4>
-                    <div class="form-group"><input type="text" id="player-id" class="search-input" placeholder="Player ID & Zone ID يېزىڭ (مەسىلەن: 123456 (1234))"></div>
-                    <button class="btn-submit" onclick="submitOrder()">زاكازنى بېجىرىش</button>
-                </div>`;
-        } else if(gameKey === 'hok') {
-            box.innerHTML = `
-                <h3 style="color:var(--accent-green); margin-bottom:12px;">👑 Honor of Kings باھا جەدۋىلى</h3>
-                <div class="category-header">🪙 Token ۋە پاسلار</div>
-                <div class="price-grid">
-                    <div class="price-card" onclick="selectItem(this, '16 Tokens', '$ 0.2')"><div class="item-name">16 Tokens</div><div class="item-price">$ 0.2</div></div>
-                    <div class="price-card" onclick="selectItem(this, '80 Tokens', '$ 0.95')"><div class="item-name">80 Tokens</div><div class="item-price">$ 0.95</div></div>
-                    <div class="price-card" onclick="selectItem(this, '240 Tokens', '$ 2.8')"><div class="item-name">240 Tokens</div><div class="item-price">$ 2.8</div></div>
-                    <div class="price-card" onclick="selectItem(this, '400 Tokens', '$ 4.6')"><div class="item-name">400 Tokens</div><div class="item-price">$ 4.6</div></div>
-                    <div class="price-card" onclick="selectItem(this, '560 Tokens', '$ 6.5')"><div class="item-name">560 Tokens</div><div class="item-price">$ 6.5</div></div>
-                    <div class="price-card" onclick="selectItem(this, '830 Tokens', '$ 9.2')"><div class="item-name">830 Tokens</div><div class="item-price">$ 9.2</div></div>
-                    <div class="price-card" onclick="selectItem(this, '1245 Tokens', '$ 13.8')"><div class="item-name">1245 Tokens</div><div class="item-price">$ 13.8</div></div>
-                    <div class="price-card" onclick="selectItem(this, '2580 Tokens', '$ 27.5')"><div class="item-name">2580 Tokens</div><div class="item-price">$ 27.5</div></div>
-                    <div class="price-card" onclick="selectItem(this, '4180 Tokens', '$ 45.70')"><div class="item-name">4180 Tokens</div><div class="item-price">$ 45.70</div></div>
-                    <div class="price-card" onclick="selectItem(this, '8360 Tokens', '$ 91.5')"><div class="item-name">8360 Tokens</div><div class="item-price">$ 91.5</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Weekly Card Plus', '$ 3.5')"><div class="item-name">Weekly Card Plus</div><div class="item-price">$ 3.5</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Weekly Card Honor', '$ 1.5')"><div class="item-name">Weekly Card Honor</div><div class="item-price">$ 1.5</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Double Token Lucky Bag', '$ 0.3')"><div class="item-name">Double Token Lucky Bag</div><div class="item-price">$ 0.3</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Honor Point Value Pack', '$ 0.3')"><div class="item-name">Honor Point Value Pack</div><div class="item-price">$ 0.3</div></div>
-                </div>
-                <div class="order-box">
-                    <h4>🛒 زاكاز بېرىش ئۇچۇرى</h4>
-                    <div class="form-group"><input type="text" id="player-id" class="search-input" placeholder="Player ID (UID) نى يېزىڭ"></div>
-                    <button class="btn-submit" onclick="submitOrder()">زاكازنى بېجىرىش</button>
-                </div>`;
-        } else if(gameKey === 'ab') {
-            box.innerHTML = `
-                <h3 style="color:var(--accent-green); margin-bottom:12px;">🛡️ Arena Breakout باھا جەدۋىلى</h3>
-                <div class="category-header">🎁 Bonds ۋە پاسلار</div>
-                <div class="price-grid">
-                    <div class="price-card" onclick="selectItem(this, '66 Bonds', '$ 0.9')"><div class="item-name">66 Bonds</div><div class="item-price">$ 0.9</div></div>
-                    <div class="price-card" onclick="selectItem(this, '335 Bonds', '$ 4.5')"><div class="item-name">335 Bonds</div><div class="item-price">$ 4.5</div></div>
-                    <div class="price-card" onclick="selectItem(this, '675 Bonds', '$ 8.5')"><div class="item-name">675 Bonds</div><div class="item-price">$ 8.5</div></div>
-                    <div class="price-card" onclick="selectItem(this, '1690 Bonds', '$ 21')"><div class="item-name">1690 Bonds</div><div class="item-price">$ 21</div></div>
-                    <div class="price-card" onclick="selectItem(this, '3400 Bonds', '$ 41.5')"><div class="item-name">3400 Bonds</div><div class="item-price">$ 41.5</div></div>
-                    <div class="price-card" onclick="selectItem(this, '6820 Bonds', '$ 83')"><div class="item-name">6820 Bonds</div><div class="item-price">$ 83</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Beginner Select', '$ 0.99')"><div class="item-name">Beginner Select</div><div class="item-price">$ 0.99</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Bulletproof Case (30d)', '$ 2.99')"><div class="item-name">Bulletproof Case (30d)</div><div class="item-price">$ 2.99</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Bulletproof Privileges', '$ 2.55')"><div class="item-name">Bulletproof Privileges</div><div class="item-price">$ 2.55</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Composite Case Privileges', '$ 7.5')"><div class="item-name">Composite Case Privileges</div><div class="item-price">$ 7.5</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Composition Case (30d)', '$ 7.1')"><div class="item-name">Composition Case (30d)</div><div class="item-price">$ 7.1</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Monthly Advanced Pass', '$ 0.99')"><div class="item-name">Monthly Advanced Pass</div><div class="item-price">$ 0.99</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Monthly Premium Pass', '$ 3.99')"><div class="item-name">Monthly Premium Pass</div><div class="item-price">$ 3.99</div></div>
-                    <div class="price-card" onclick="selectItem(this, 'Quarterly Premium Bundle', '$ 11.99')"><div class="item-name">Quarterly Premium Bundle</div><div class="item-price">$ 11.99</div></div>
-                </div>
-                <div class="order-box">
-                    <h4>🛒 زاكاز بېرىش ئۇچۇرى</h4>
-                    <div class="form-group"><input type="text" id="player-id" class="search-input" placeholder="Player ID (UID) نى يېزىڭ"></div>
-                    <button class="btn-submit" onclick="submitOrder()">زاكازنى بېجىرىش</button>
-                </div>`;
-        }
         window.scrollTo(0,0);
     }
 
-    function selectItem(element, itemName, itemPrice) {
-        document.querySelectorAll('.price-card').forEach(card => card.classList.remove('selected'));
-        element.classList.add('selected');
-        selectedItemName = itemName;
-        selectedItemPrice = itemPrice;
-    }
-
-    function submitOrder() {
-        const playerId = document.getElementById('player-id').value.trim();
-        
-        if(!selectedItemName) {
-            alert('ئالدى بىلەن باھا جەدۋىلىدىن بىرەر تۈرنى تاللاڭ!');
-            return;
-        }
-        if(!playerId) {
-            alert('ئويۇن ID (UID) نى كىرگۈزۈڭ!');
-            return;
-        }
-
-        // بۇ يەردە سىزنىڭ تېلېگرام نومۇرىڭىز ياكى ئادرېسىڭىز ئارقىلىق بىۋاسىتە ئۇچۇر يوللىنىدۇ
-        // (ئۆزىڭىزنىڭ Telegram ئىسمىڭىزنى ياكى تېلېگرام بوت ئادرېسىڭىزنى بۇ يەرگە قويالايسىز)
-        const myTelegramUsername = "SIZNING_TELEGRAM_USERNAME"; // بۇ يەرگە ئۆزىڭىزنىڭ تېلېگرام نومۇرىڭىز ياكى ئابونىن نامىڭىزنى يېزىڭ
-        
-        const message = `✨ يېڭى زاكاز!\n\n🎮 ئويۇن: ${selectedGameName}\n📦 تۈرى: ${selectedItemName}\n💰 باھاسى: ${selectedItemPrice}\n🆔 Player ID: ${playerId}`;
-        
-        // WhatsApp ئارقىلىق سىزگە ئەۋەتىش تاللانمىسى (ئەگەر WhatsApp قا كەلسۇن دېسىڭىز):
-        // const url = `https://wa.me/90xxxxxxxxxx?text=${encodeURIComponent(message)}`;
-        
-        // خېرىدار باجنى بېجىرىپ بولغاندىن كېيىن سىز بىلەن ئالاقىلىشىدىغان ئېنىق ئۇچۇر كۆزنىكى:
-        alert('زاكاز تەييار بولدى! سىز تاللىغان ئۇچۇرلار بىلەن بىرگە دۇكان خادىمى بىلەن ئالاقىləşسىز.');
-        
-        // مەخسۇس تېلېگرام ياكى باشقا ئالاقە يولىغا ئۆتكۈزۈش:
-        console.log(message);
-    }
-
     function goHome() {
-        document.getElementById('game-view').classList.remove('active');
+        document.getElementById('player-view').classList.remove('active');
         document.getElementById('home-view').classList.add('active');
+        
+        // سىن قويۇشنى توختىتىش ئۈچۈن iframe نىڭ src نى قۇرۇق قىلىمىز
+        document.getElementById('movie-player').src = '';
         window.scrollTo(0,0);
     }
 </script>
