@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Recharge Store</title>
+    <title>Othman Store - Game Recharge</title>
     <style>
         :root {
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --accent-color: #38bdf8;
+            --bg-color: #0b1120;
+            --card-bg: #131c31;
+            --accent-green: #22c55e;
+            --accent-blue: #38bdf8;
             --text-color: #f8fafc;
             --sub-text: #94a3b8;
-            --border-color: #334155;
-            --success-color: #22c55e;
+            --border-color: #1e293b;
         }
 
         * {
@@ -25,7 +25,7 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            padding: 15px;
+            padding-bottom: 70px;
             display: flex;
             justify-content: center;
         }
@@ -35,22 +35,202 @@
             max-width: 480px;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 25px;
+        /* Top Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: #0f172a;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        header h1 {
-            color: var(--accent-color);
-            font-size: 22px;
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-circle {
+            width: 38px;
+            height: 38px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #fff;
+            font-size: 18px;
+        }
+
+        .balance-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid var(--accent-green);
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        .balance-badge span {
+            color: var(--accent-green);
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .add-btn {
+            background: var(--accent-green);
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        /* Banner Slider Style */
+        .banner {
+            margin: 15px;
+            background: linear-gradient(135deg, #052e16, #064e3b);
+            border: 1px solid #047857;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .banner h2 {
+            color: #4ade80;
+            font-size: 16px;
             margin-bottom: 5px;
         }
 
-        header p {
-            color: var(--sub-text);
-            font-size: 13px;
+        .banner p {
+            color: #d1d5db;
+            font-size: 12px;
         }
 
+        /* Search Box */
+        .search-box {
+            padding: 0 15px;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-green);
+        }
+
+        /* Categories Grid */
+        .section-title {
+            padding: 0 15px;
+            margin-bottom: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #e2e8f0;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 0 15px;
+            margin-bottom: 20px;
+        }
+
+        .category-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .category-card:hover {
+            border-color: var(--accent-green);
+            transform: translateY(-2px);
+        }
+
+        .card-icon-box {
+            width: 100%;
+            height: 75px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-icon-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .card-name {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #0f172a;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            text-align: center;
+            color: var(--sub-text);
+            text-decoration: none;
+            font-size: 11px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-item.active {
+            color: var(--accent-green);
+        }
+
+        .nav-item span {
+            font-size: 18px;
+        }
+
+        /* Views management */
         .view {
             display: none;
         }
@@ -58,349 +238,153 @@
             display: block;
         }
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+        .game-detail-section {
+            padding: 15px;
         }
-
-        .game-card-home {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 15px 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s, border-color 0.2s;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-        }
-
-        .game-card-home:hover {
-            border-color: var(--accent-color);
-            transform: translateY(-3px);
-        }
-
-        .game-icon-box {
-            width: 75px;
-            height: 75px;
-            margin: 0 auto 10px auto;
-            border-radius: 14px;
-            overflow: hidden;
-            border: 2px solid var(--border-color);
-            background: rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .game-icon-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .game-name {
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--text-color);
-        }
-
+        
         .back-btn {
             background: none;
             border: none;
-            color: var(--accent-color);
+            color: var(--accent-green);
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .game-section {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 18px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-        }
-
-        .game-title {
-            font-size: 17px;
-            font-weight: bold;
-            color: var(--accent-color);
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 10px;
-        }
-
-        .price-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .price-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.03);
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-size: 14px;
-        }
-
-        .price-item span:last-child {
-            color: var(--success-color);
-            font-weight: bold;
-        }
-
-        .category-header {
-            font-size: 13px;
-            color: var(--sub-text);
-            margin-top: 10px;
-            margin-bottom: 5px;
-            padding-bottom: 3px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .order-box {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 12px;
-        }
-
-        .order-box h4 {
-            font-size: 13px;
-            color: var(--sub-text);
-            margin-bottom: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 10px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 13px;
-            outline: none;
-        }
-
-        .form-control:focus {
-            border-color: var(--accent-color);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 11px;
-            background-color: var(--accent-color);
-            color: #0f172a;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 5px;
-        }
-
-        .info-note {
-            font-size: 12px;
-            color: var(--sub-text);
-            margin-bottom: 10px;
-            line-height: 1.4;
+            margin-bottom: 12px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1>🎮 Game Recharge Store 💎</h1>
-        <p>ئاپتوماتىك ئويۇنلارغا پۇل قاچىلاش دۇكىنى</p>
-        <div style="font-size: 12px; color: #22c55e; margin-top: 5px;">
-            👤 ShamCash ھېسابات ئىسمى: <strong>N. Muhsin</strong>
-        </div>
-    </header>
 
-    <!-- باش بەت -->
+    <!-- Top Navbar -->
+    <div class="navbar">
+        <div class="logo-area">
+            <div class="logo-circle">S</div>
+            <span style="font-weight: bold; font-size: 15px;">OTHMAN STORE</span>
+        </div>
+        <div class="balance-badge">
+            <a href="#" class="add-btn">+</a>
+            <span id="user-balance">809.91 ل.س</span>
+        </div>
+    </div>
+
+    <!-- === باش بەت (Home View) === -->
     <div id="home-view" class="view active">
+        <!-- Banner -->
+        <div class="banner">
+            <h2>يتوفر الدعم !!</h2>
+            <p>على مدار اليوم للرد على جميع الاستفسارات</p>
+        </div>
+
+        <!-- Search -->
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="بحث (ئىزدەش)...">
+        </div>
+
+        <div class="section-title">الأقسام الرئيسية (بۆلەكلەر)</div>
+
+        <!-- Categories Grid -->
         <div class="grid-container">
             <!-- 1. Honor of Kings -->
-            <div class="game-card-home" onclick="openGame('hok')">
-                <div class="game-icon-box">
-                    <img src="https://i.ibb.co/5gRdRdM2/hok.jpg" alt="Honor of Kings" onerror="this.src='https://i.ibb.co/5gRdRdM2/hok.png'">
+            <div class="category-card" onclick="openGame('hok')">
+                <div class="card-icon-box">
+                    <img src="https://i.ibb.co/5gRdRdM2/hok.jpg" alt="Honor of Kings">
                 </div>
-                <div class="game-name">Honor of Kings</div>
+                <div class="card-name">Honor of Kings</div>
             </div>
             <!-- 2. Mobile Legends -->
-            <div class="game-card-home" onclick="openGame('mlbb')">
-                <div class="game-icon-box">
-                    <img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Mobile Legends" onerror="this.src='https://i.ibb.co/Xf3dg16D/mlbb.png'">
+            <div class="category-card" onclick="openGame('mlbb')">
+                <div class="card-icon-box">
+                    <img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Mobile Legends">
                 </div>
-                <div class="game-name">Mobile Legends</div>
+                <div class="card-name">Mobile Legends</div>
             </div>
             <!-- 3. PUBG Mobile -->
-            <div class="game-card-home" onclick="openGame('pubg')">
-                <div class="game-icon-box">
-                    <img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="PUBG Mobile" onerror="this.src='https://i.ibb.co/zVJv5yCR/pubg.png'">
+            <div class="category-card" onclick="openGame('pubg')">
+                <div class="card-icon-box">
+                    <img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="PUBG Mobile">
                 </div>
-                <div class="game-name">PUBG Mobile</div>
+                <div class="card-name">PUBG Mobile</div>
             </div>
             <!-- 4. Arena Breakout -->
-            <div class="game-card-home" onclick="openGame('ab')">
-                <div class="game-icon-box">
-                    <img src="https://i.ibb.co/xKrJ21XB/arena.jpg" alt="Arena Breakout" onerror="this.src='https://i.ibb.co/xKrJ21XB/arena.png'">
+            <div class="category-card" onclick="openGame('ab')">
+                <div class="card-icon-box">
+                    <img src="https://i.ibb.co/xKrJ21XB/arena.jpg" alt="Arena Breakout">
                 </div>
-                <div class="game-name">Arena Breakout</div>
+                <div class="card-name">Arena Breakout</div>
+            </div>
+            <!-- Extra Category 5 -->
+            <div class="category-card" onclick="alert('تىزلا ئېچىلىدۇ!')">
+                <div class="card-icon-box" style="font-size: 24px;">💎</div>
+                <div class="card-name">قسم الارصدة</div>
+            </div>
+            <!-- Extra Category 6 -->
+            <div class="category-card" onclick="alert('تىزلا ئېچىلىدۇ!')">
+                <div class="card-icon-box" style="font-size: 24px;">💳</div>
+                <div class="card-name">قسم البطاقات</div>
             </div>
         </div>
     </div>
 
-    <!-- 1. Honor of Kings بېتى -->
-    <div id="hok-view" class="view">
-        <button class="back-btn" onclick="goHome()">← ئارقىغا قايتىش</button>
-        <div class="game-section">
-            <div class="game-title">👑 Honor of Kings</div>
-            <div class="price-list">
-                <div class="price-item"><span>16 Token</span> <span>$0.2</span></div>
-                <div class="price-item"><span>80 Token</span> <span>$0.95</span></div>
-                <div class="price-item"><span>240 Token</span> <span>$2.8</span></div>
-                <div class="price-item"><span>400 Token</span> <span>$4.6</span></div>
-                <div class="price-item"><span>560 Token</span> <span>$6.5</span></div>
-                <div class="price-item"><span>830 Token</span> <span>$9.2</span></div>
-                <div class="price-item"><span>1245 Token</span> <span>$13.8</span></div>
-                <div class="price-item"><span>2580 Token</span> <span>$27.5</span></div>
-                <div class="price-item"><span>4180 Token</span> <span>$45.70</span></div>
-                <div class="price-item"><span>8360 Token</span> <span>$91.5</span></div>
-                <div class="category-header">✨ ئالاھىدە تەڭلەر:</div>
-                <div class="price-item"><span>Double Token Lucky Bag</span> <span>$0.3</span></div>
-                <div class="price-item"><span>Honor Point Value Pack</span> <span>$0.3</span></div>
-                <div class="price-item"><span>Weekly Card Plus</span> <span>$3.5</span></div>
-                <div class="price-item"><span>Weekly Card Honor</span> <span>$1.5</span></div>
-            </div>
-            <div class="order-box">
-                <h4>🛒 زاكاز بېرىش</h4>
-                <div class="info-note">ShamCash ئارقىلىق پۇل ئۆتكۈزۈپ ئۇچۇرنى تولدۇرۇڭ</div>
-                <div class="form-group"><input type="text" class="form-control" placeholder="Player ID (UID) نى يېزىڭ"></div>
-                <div class="form-group"><input type="text" class="form-control" placeholder="پۇل ئۆتكۈزۈش ئىسپات كودى (Ref ID)"></div>
-                <button class="btn" onclick="orderMsg('Honor of Kings')">زاكاز ئەۋەتىش</button>
+    <!-- === ئويۇن تەپسىلات ۋە قاچىلاش بېتى === -->
+    <div id="game-view" class="view">
+        <div class="game-detail-section">
+            <button class="back-btn" onclick="goHome()">← ئارقىغا قايتىش</button>
+            <div id="game-content-box" style="background: var(--card-bg); padding: 15px; border-radius: 14px; border: 1px solid var(--border-color);">
+                <!-- динамик ئويۇن ئۇچۇرلىرى بۇ يەرگە چىقىدۇ -->
             </div>
         </div>
     </div>
 
-    <!-- 2. Mobile Legends بېتى -->
-    <div id="mlbb-view" class="view">
-        <button class="back-btn" onclick="goHome()">← ئارقىغا قايتىش</button>
-        <div class="game-section">
-            <div class="game-title">⚔️ Mobile Legends Bang Bang</div>
-            <div class="price-list">
-                <div class="price-item"><span>78 + 8 Diamonds</span> <span>$1.3</span></div>
-                <div class="price-item"><span>156 + 16 Diamonds</span> <span>$2.6</span></div>
-                <div class="price-item"><span>234 + 23 Diamonds</span> <span>$3.8</span></div>
-                <div class="price-item"><span>625 + 81 Diamonds</span> <span>$10.5</span></div>
-                <div class="price-item"><span>1860 + 335 Diamonds</span> <span>$30.5</span></div>
-                <div class="price-item"><span>3099 + 589 Diamonds</span> <span>$51.0</span></div>
-                <div class="price-item"><span>4649 + 883 Diamonds</span> <span>$77.0</span></div>
-                <div class="price-item"><span>7740 + 1548 Diamonds</span> <span>$127.0</span></div>
-                <div class="category-header">✨ ئالاھىدە تەڭلەر:</div>
-                <div class="price-item"><span>Weekly Diamond Pass</span> <span>$1.8</span></div>
-                <div class="price-item"><span>Weekly Elite Bundle ML</span> <span>$0.9</span></div>
-                <div class="price-item"><span>Monthly Elite Bundle ML</span> <span>$4.5</span></div>
-                <div class="price-item"><span>Mobile Legends Twilight Pass</span> <span>$8.8</span></div>
-            </div>
-            <div class="order-box">
-                <h4>🛒 زاكاز بېرىش</h4>
-                <div class="info-note">ShamCash ئارقىلىق پۇل ئۆتكۈزۈپ ئۇچۇرنى تولدۇرۇڭ</div>
-                <div class="form-group"><input type="text" class="form-control" placeholder="Player ID & Zone ID يېزىڭ"></div>
-                <div class="form-group"><input type="text" class="form-control" placeholder="پۇل ئۆتكۈزۈش ئىسپات كودى (Ref ID)"></div>
-                <button class="btn" onclick="orderMsg('Mobile Legends')">زاكاز ئەۋەتىش</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. PUBG Mobile بېتى -->
-    <div id="pubg-view" class="view">
-        <button class="back-btn" onclick="goHome()">← ئارقىغا قايتىش</button>
-        <div class="game-section">
-            <div class="game-title">🎯 PUBG Mobile</div>
-            <div class="price-list">
-                <div class="price-item"><span>60 UC</span> <span>$0.95</span></div>
-                <div class="price-item"><span>325 UC</span> <span>$4.7</span></div>
-                <div class="price-item"><span>660 UC</span> <span>$9.4</span></div>
-                <div class="price-item"><span>1800 UC</span> <span>$24.5</span></div>
-                <div class="price-item"><span>3850 UC</span> <span>$47.0</span></div>
-                <div class="price-item"><span>8100 UC</span> <span>$91.5</span></div>
-            </div>
-            <div class="order-box">
-                <h4>🛒 زاكاز بېرىش</h4>
-                <div class="info-note">ShamCash ئارقىلىق پۇل ئۆتكۈزۈپ ئۇچۇرنى تولدۇرۇڭ</div>
-                <div class="form-group"><input type="text" class="form-control" placeholder="Player ID (UID) نى يېزىڭ"></div>
-                <div class="form-group"><input type="text" class="form-control" placeholder="پۇل ئۆتكۈزۈش ئىسپات كودى (Ref ID)"></div>
-                <button class="btn" onclick="orderMsg('PUBG Mobile')">زاكاز ئەۋەتىش</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. Arena Breakout بېتى -->
-    <div id="ab-view" class="view">
-        <button class="back-btn" onclick="goHome()">← ئارقىغا قايتىش</button>
-        <div class="game-section">
-            <div class="game-title">🛡️ Arena Breakout</div>
-            <div class="price-list">
-                <div class="price-item"><span>66 Bonds</span> <span>$0.9</span></div>
-                <div class="price-item"><span>335 Bonds</span> <span>$4.5</span></div>
-                <div class="price-item"><span>675 Bonds</span> <span>$8.5</span></div>
-                <div class="price-item"><span>1690 Bonds</span> <span>$21.0</span></div>
-                <div class="price-item"><span>3400 Bonds</span> <span>$41.5</span></div>
-                <div class="price-item"><span>6820 Bonds</span> <span>$83.0</span></div>
-                <div class="category-header">✨ باشقا تەڭلەر:</div>
-                <div class="price-item"><span>Beginner Select</span> <span>$0.99</span></div>
-                <div class="price-item"><span>Bulletproof Case (30d)</span> <span>$2.99</span></div>
-                <div class="price-item"><span>Bulletproof Case Privileges</span> <span>$2.55</span></div>
-                <div class="price-item"><span>Composite Case Privileges</span> <span>$7.5</span></div>
-                <div class="price-item"><span>Composition Case (30d)</span> <span>$7.1</span></div>
-                <div class="price-item"><span>Monthly Advanced Pass</span> <span>$0.99</span></div>
-                <div class="price-item"><span>Monthly Premium Pass</span> <span>$3.99</span></div>
-                <div class="price-item"><span>Quarterly Premium Pass Bundle</span> <span>$11.99</span></div>
-            </div>
-            <div class="order-box">
-                <h4>🛒 زاكاز بېرىش</h4>
-                <div class="info-note">ShamCash ئارقىلىق پۇل ئۆتكۈزۈپ ئۇچۇرنى تولدۇرۇڭ</div>
-                <div class="form-group"><input type="text" class="form-control" placeholder="Player ID (UID) نى يېزىڭ"></div>
-                <div class="form-group"><input type="text" class="form-control" placeholder="پۇل ئۆتكۈزۈش ئىسپات كودى (Ref ID)"></div>
-                <button class="btn" onclick="orderMsg('Arena Breakout')">زاكاز ئەۋەتىش</button>
-            </div>
-        </div>
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <a href="#" class="nav-item active" onclick="goHome()">
+            <span>🏠</span>
+            باش بەت
+        </a>
+        <a href="#" class="nav-item" onclick="alert('پۇل قاچىلاش بەتچىسى')">
+            <span>💳</span>
+            پۇل قاچىلاش
+        </a>
+        <a href="#" class="nav-item" onclick="alert('تارىخچە')">
+            <span>🔄</span>
+            تارىخ
+        </a>
+        <a href="#" class="nav-item" onclick="alert('سەۋەت')">
+            <span>🛒</span>
+            سەۋەت
+        </a>
+        <a href="#" class="nav-item" onclick="alert('مەخپىيەتلىك / تەڭشەك')">
+            <span>🛡️</span>
+            ھېسابات
+        </a>
     </div>
 
 </div>
 
 <script>
     function openGame(gameKey) {
-        document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-        document.getElementById(gameKey + '-view').classList.add('active');
-        window.scrollTo(0, 0);
+        document.getElementById('home-view').classList.remove('active');
+        document.getElementById('game-view').classList.add('active');
+        
+        const box = document.getElementById('game-content-box');
+        if(gameKey === 'hok') {
+            box.innerHTML = `<h3>👑 Honor of Kings</h3><p style="color:var(--sub-text); margin: 10px 0; font-size:13px;">UID نى كىرگۈزۈپ تاللانما تاللاڭ</p><input type="text" class="search-input" placeholder="Player ID (UID)" style="margin-bottom:10px;"><button class="add-btn" style="width:100%; height:40px; border-radius:8px; border:none; background:var(--accent-green); color:#fff; font-weight:bold;">زاكاز قىلىش</button>`;
+        } else if(gameKey === 'mlbb') {
+            box.innerHTML = `<h3>⚔️ Mobile Legends Bang Bang</h3><p style="color:var(--sub-text); margin: 10px 0; font-size:13px;">ID & Zone نى كىرگۈزۈڭ</p><input type="text" class="search-input" placeholder="ID & Zone ID" style="margin-bottom:10px;"><button class="add-btn" style="width:100%; height:40px; border-radius:8px; border:none; background:var(--accent-green); color:#fff; font-weight:bold;">زاكاز قىلىش</button>`;
+        } else if(gameKey === 'pubg') {
+            box.innerHTML = `<h3>🎯 PUBG Mobile</h3><p style="color:var(--sub-text); margin: 10px 0; font-size:13px;">UID نى كىرگۈزۈڭ</p><input type="text" class="search-input" placeholder="Player ID (UID)" style="margin-bottom:10px;"><button class="add-btn" style="width:100%; height:40px; border-radius:8px; border:none; background:var(--accent-green); color:#fff; font-weight:bold;">زاكاز قىلىش</button>`;
+        } else if(gameKey === 'ab') {
+            box.innerHTML = `<h3>🛡️ Arena Breakout</h3><p style="color:var(--sub-text); margin: 10px 0; font-size:13px;">UID نى كىرگۈزۈڭ</p><input type="text" class="search-input" placeholder="Player ID (UID)" style="margin-bottom:10px;"><button class="add-btn" style="width:100%; height:40px; border-radius:8px; border:none; background:var(--accent-green); color:#fff; font-weight:bold;">زاكاز قىلىش</button>`;
+        }
+        window.scrollTo(0,0);
     }
 
     function goHome() {
-        document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+        document.getElementById('game-view').classList.remove('active');
         document.getElementById('home-view').classList.add('active');
-        window.scrollTo(0, 0);
-    }
-
-    function orderMsg(gameName) {
-        alert(gameName + ' دان زاكاز قوبۇل قىلىندى! ئۇچۇرلىرىڭىز تەكشۈرۈلۈۋاتىدۇ.');
+        window.scrollTo(0,0);
     }
 </script>
 
