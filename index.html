@@ -51,12 +51,71 @@
             font-size: 13px;
         }
 
+        /* Views management */
+        .view {
+            display: none;
+        }
+        .view.active {
+            display: block;
+        }
+
+        /* Home Grid Style (رەسىمدىكىگە ئوخشاش گرىد ئۇسلۇبى) */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .game-card-home {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 15px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-card-home:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-3px);
+        }
+
+        .game-icon-img {
+            width: 75px;
+            height: 75px;
+            border-radius: 14px;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border: 2px solid var(--border-color);
+        }
+
+        .game-name {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        /* Sub Page Style */
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
         .game-section {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 18px;
-            margin-bottom: 20px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         }
 
@@ -167,116 +226,166 @@
         </div>
     </header>
 
-    <!-- 1. Honor of Kings -->
-    <div class="game-section">
-        <div class="game-title">👑 Honor of Kings</div>
-        <div class="price-list">
-            <div class="price-item"><span>16 Token</span> <span>$0.2</span></div>
-            <div class="price-item"><span>80 Token</span> <span>$0.95</span></div>
-            <div class="price-item"><span>240 Token</span> <span>$2.8</span></div>
-            <div class="price-item"><span>400 Token</span> <span>$4.6</span></div>
-            <div class="price-item"><span>560 Token</span> <span>$6.5</span></div>
-            <div class="price-item"><span>830 Token</span> <span>$9.2</span></div>
-            <div class="price-item"><span>1245 Token</span> <span>$13.8</span></div>
-            <div class="price-item"><span>2580 Token</span> <span>$27.5</span></div>
-            <div class="price-item"><span>4180 Token</span> <span>$45.70</span></div>
-            <div class="price-item"><span>8360 Token</span> <span>$91.5</span></div>
-            <div class="category-header">✨ ئالاھىدە تەڭلەر:</div>
-            <div class="price-item"><span>Double Token Lucky Bag</span> <span>$0.3</span></div>
-            <div class="price-item"><span>Honor Point Value Pack</span> <span>$0.3</span></div>
-            <div class="price-item"><span>Weekly Card Plus</span> <span>$3.5</span></div>
-            <div class="price-item"><span>Weekly Card Honor</span> <span>$1.5</span></div>
-        </div>
-        <div class="order-box">
-            <h4>🛒 زاكاز بېرىش</h4>
-            <div class="info-note">ShamCash ئارقىلىق پۇل ئۆتكۈزۈپ ئۇچۇرنى تولدۇرۇڭ</div>
-            <div class="form-group"><input type="text" class="form-control" placeholder="Player ID (UID) نى يېزىڭ"></div>
-            <div class="form-group"><input type="text" class="form-control" placeholder="پۇل ئۆتكۈزۈش ئىسپات كودى (Ref ID)"></div>
-            <button class="btn" onclick="orderMsg('Honor of Kings')">زاكاز ئەۋەتىش</button>
+    <!-- 🌟 باش بەت (سەھىپە كارتىلىرى ۋە سىز يوللىغان رەسىملەر) -->
+    <div id="home-view" class="view active">
+        <div class="grid-container">
+            <!-- 1. Honor of Kings -->
+            <div class="game-card-home" onclick="openGame('hok')">
+                <img src="https://i.ibb.co/31338.jpg" alt="Honor of Kings" class="game-icon-img" onerror="this.src='https://via.placeholder.com/75'">
+                <div class="game-name">Honor of Kings</div>
+            </div>
+            <!-- 2. Mobile Legends -->
+            <div class="game-card-home" onclick="openGame('mlbb')">
+                <img src="https://i.ibb.co/31321.jpg" alt="Mobile Legends" class="game-icon-img" onerror="this.src='https://via.placeholder.com/75'">
+                <div class="game-name">Mobile Legends</div>
+            </div>
+            <!-- 3. PUBG Mobile -->
+            <div class="game-card-home" onclick="openGame('pubg')">
+                <img src="https://i.ibb.co/31339.jpg" alt="PUBG Mobile" class="game-icon-img" onerror="this.src='https://via.placeholder.com/75'">
+                <div class="game-name">PUBG Mobile</div>
+            </div>
+            <!-- 4. Arena Breakout -->
+            <div class="game-card-home" onclick="openGame('ab')">
+                <img src="https://i.ibb.co/31340.jpg" alt="Arena Breakout" class="game-icon-img" onerror="this.src='https://via.placeholder.com/75'">
+                <div class="game-name">Arena Breakout</div>
+            </div>
         </div>
     </div>
 
-    <!-- 2. Mobile Legends -->
-    <div class="game-section">
-        <div class="game-title">⚔️ Mobile Legends Bang Bang</div>
-        <div class="price-list">
-            <div class="price-item"><span>78 + 8 Diamonds</span> <span>$1.3</span></div>
-            <div class="price-item"><span>156 + 16 Diamonds</span> <span>$2.6</span></div>
-            <div class="price-item"><span>234 + 23 Diamonds</span> <span>$3.8</span></div>
-            <div class="price-item"><span>625 + 81 Diamonds</span> <span>$10.5</span></div>
-            <div class="price-item"><span>1860 + 335 Diamonds</span> <span>$30.5</span></div>
-            <div class="price-item"><span>3099 + 589 Diamonds</span> <span>$51.0</span></div>
-            <div class="price-item"><span>4649 + 883 Diamonds</span> <span>$77.0</span></div>
-            <div class="price-item"><span>7740 + 1548 Diamonds</span> <span>$127.0</span></div>
-            <div class="category-header">✨ ئالاھىدە تەڭلەر:</div>
-            <div class="price-item"><span>Weekly Diamond Pass</span> <span>$1.8</span></div>
-            <div class="price-item"><span>Weekly Elite Bundle ML</span> <span>$0.9</span></div>
-            <div class="price-item"><span>Monthly Elite Bundle ML</span> <span>$4.5</span></div>
-            <div class="price-item"><span>Mobile Legends Twilight Pass</span> <span>$8.8</span></div>
-        </div>
-        <div class="order-box">
-            <h4>🛒 زاكاز بېرىش</h4>
-            <div class="info-note">ShamCash ئارقىلىق پۇل ئۆتكۈزۈپ ئۇچۇرنى تولدۇرۇڭ</div>
-            <div class="form-group"><input type="text" class="form-control" placeholder="Player ID & Zone ID يېزىڭ"></div>
-            <div class="form-group"><input type="text" class="form-control" placeholder="پۇل ئۆتكۈزۈش ئىسپات كودى (Ref ID)"></div>
-            <button class="btn" onclick="orderMsg('Mobile Legends')">زاكاز ئەۋەتىش</button>
-        </div>
-    </div>
-
-    <!-- 3. PUBG Mobile -->
-    <div class="game-section">
-        <div class="game-title">🎯 PUBG Mobile</div>
-        <div class="price-list">
-            <div class="price-item"><span>60 UC</span> <span>$0.95</span></div>
-            <div class="price-item"><span>325 UC</span> <span>$4.7</span></div>
-            <div class="price-item"><span>660 UC</span> <span>$9.4</span></div>
-            <div class="price-item"><span>1800 UC</span> <span>$24.5</span></div>
-            <div class="price-item"><span>3850 UC</span> <span>$47.0</span></div>
-            <div class="price-item"><span>8100 UC</span> <span>$91.5</span></div>
-        </div>
-        <div class="order-box">
-            <h4>🛒 زاكاز بېرىش</h4>
-            <div class="info-note">ShamCash ئارقىلىق پۇل ئۆتكۈزۈپ ئۇچۇرنى تولدۇرۇڭ</div>
-            <div class="form-group"><input type="text" class="form-control" placeholder="Player ID (UID) نى يېزىڭ"></div>
-            <div class="form-group"><input type="text" class="form-control" placeholder="پۇل ئۆتكۈزۈش ئىسپات كودى (Ref ID)"></div>
-            <button class="btn" onclick="orderMsg('PUBG Mobile')">زاكاز ئەۋەتىش</button>
+    <!-- 1. Honor of Kings بېتى -->
+    <div id="hok-view" class="view">
+        <button class="back-btn" onclick="goHome()">← ئارقىغا قايتىش</button>
+        <div class="game-section">
+            <div class="game-title">👑 Honor of Kings</div>
+            <div class="price-list">
+                <div class="price-item"><span>16 Token</span> <span>$0.2</span></div>
+                <div class="price-item"><span>80 Token</span> <span>$0.95</span></div>
+                <div class="price-item"><span>240 Token</span> <span>$2.8</span></div>
+                <div class="price-item"><span>400 Token</span> <span>$4.6</span></div>
+                <div class="price-item"><span>560 Token</span> <span>$6.5</span></div>
+                <div class="price-item"><span>830 Token</span> <span>$9.2</span></div>
+                <div class="price-item"><span>1245 Token</span> <span>$13.8</span></div>
+                <div class="price-item"><span>2580 Token</span> <span>$27.5</span></div>
+                <div class="price-item"><span>4180 Token</span> <span>$45.70</span></div>
+                <div class="price-item"><span>8360 Token</span> <span>$91.5</span></div>
+                <div class="category-header">✨ ئالاھىدە تەڭلەر:</div>
+                <div class="price-item"><span>Double Token Lucky Bag</span> <span>$0.3</span></div>
+                <div class="price-item"><span>Honor Point Value Pack</span> <span>$0.3</span></div>
+                <div class="price-item"><span>Weekly Card Plus</span> <span>$3.5</span></div>
+                <div class="price-item"><span>Weekly Card Honor</span> <span>$1.5</span></div>
+            </div>
+            <div class="order-box">
+                <h4>🛒 زاكاز بېرىش</h4>
+                <div class="info-note">ShamCash ئارقىلىق پۇل ئۆتكۈزۈپ ئۇچۇرنى تولدۇرۇڭ</div>
+                <div class="form-group"><input type="text" class="form-control" placeholder="Player ID (UID) نى يېزىڭ"></div>
+                <div class="form-group"><input type="text" class="form-control" placeholder="پۇل ئۆتكۈزۈش ئىسپات كودى (Ref ID)"></div>
+                <button class="btn" onclick="orderMsg('Honor of Kings')">زاكاز ئەۋەتىش</button>
+            </div>
         </div>
     </div>
 
-    <!-- 4. Arena Breakout -->
-    <div class="game-section">
-        <div class="game-title">🛡️ Arena Breakout</div>
-        <div class="price-list">
-            <div class="price-item"><span>66 Bonds</span> <span>$0.9</span></div>
-            <div class="price-item"><span>335 Bonds</span> <span>$4.5</span></div>
-            <div class="price-item"><span>675 Bonds</span> <span>$8.5</span></div>
-            <div class="price-item"><span>1690 Bonds</span> <span>$21.0</span></div>
-            <div class="price-item"><span>3400 Bonds</span> <span>$41.5</span></div>
-            <div class="price-item"><span>6820 Bonds</span> <span>$83.0</span></div>
-            <div class="category-header">✨ باشقا تەڭلەر:</div>
-            <div class="price-item"><span>Beginner Select</span> <span>$0.99</span></div>
-            <div class="price-item"><span>Bulletproof Case (30d)</span> <span>$2.99</span></div>
-            <div class="price-item"><span>Bulletproof Case Privileges</span> <span>$2.55</span></div>
-            <div class="price-item"><span>Composite Case Privileges</span> <span>$7.5</span></div>
-            <div class="price-item"><span>Composition Case (30d)</span> <span>$7.1</span></div>
-            <div class="price-item"><span>Monthly Advanced Pass</span> <span>$0.99</span></div>
-            <div class="price-item"><span>Monthly Premium Pass</span> <span>$3.99</span></div>
-            <div class="price-item"><span>Quarterly Premium Pass Bundle</span> <span>$11.99</span></div>
+    <!-- 2. Mobile Legends بېتى -->
+    <div id="mlbb-view" class="view">
+        <button class="back-btn" onclick="goHome()">← ئارقىغا قايتىش</button>
+        <div class="game-section">
+            <div class="game-title">⚔️ Mobile Legends Bang Bang</div>
+            <div class="price-list">
+                <div class="price-item"><span>78 + 8 Diamonds</span> <span>$1.3</span></div>
+                <div class="price-item"><span>156 + 16 Diamonds</span> <span>$2.6</span></div>
+                <div class="price-item"><span>234 + 23 Diamonds</span> <span>$3.8</span></div>
+                <div class="price-item"><span>625 + 81 Diamonds</span> <span>$10.5</span></div>
+                <div class="price-item"><span>1860 + 335 Diamonds</span> <span>$30.5</span></div>
+                <div class="price-item"><span>3099 + 589 Diamonds</span> <span>$51.0</span></div>
+                <div class="price-item"><span>4649 + 883 Diamonds</span> <span>$77.0</span></div>
+                <div class="price-item"><span>7740 + 1548 Diamonds</span> <span>$127.0</span></div>
+                <div class="category-header">✨ ئالاھىدە تەڭلەر:</div>
+                <div class="price-item"><span>Weekly Diamond Pass</span> <span>$1.8</span></div>
+                <div class="price-item"><span>Weekly Elite Bundle ML</span> <span>$0.9</span></div>
+                <div class="price-item"><span>Monthly Elite Bundle ML</span> <span>$4.5</span></div>
+                <div class="price-item"><span>Mobile Legends Twilight Pass</span> <span>$8.8</span></div>
+            </div>
+            <div class="order-box">
+                <h4>🛒 زاكاز بېرىش</h4>
+                <div class="info-note">ShamCash ئارقىلىق پۇل ئۆتكۈزۈپ ئۇچۇرنى تولدۇرۇڭ</div>
+                <div class="form-group"><input type="text" class="form-control" placeholder="Player ID & Zone ID يېزىڭ"></div>
+                <div class="form-group"><input type="text" class="form-control" placeholder="پۇل ئۆتكۈزۈش ئىسپات كودى (Ref ID)"></div>
+                <button class="btn" onclick="orderMsg('Mobile Legends')">زاكاز ئەۋەتىش</button>
+            </div>
         </div>
-        <div class="order-box">
-            <h4>🛒 زاكاز بېرىش</h4>
-            <div class="info-note">ShamCash ئارقىلىق پۇل ئۆتكۈزۈپ ئۇچۇرنى تولدۇرۇڭ</div>
-            <div class="form-group"><input type="text" class="form-control" placeholder="Player ID (UID) نى يېزىڭ"></div>
-            <div class="form-group"><input type="text" class="form-control" placeholder="پۇل ئۆتكۈزۈش ئىسپات كودى (Ref ID)"></div>
-            <button class="btn" onclick="orderMsg('Arena Breakout')">زاكاز ئەۋەتىش</button>
+    </div>
+
+    <!-- 3. PUBG Mobile بېتى -->
+    <div id="pubg-view" class="view">
+        <button class="back-btn" onclick="goHome()">← ئارقىغا قايتىش</button>
+        <div class="game-section">
+            <div class="game-title">🎯 PUBG Mobile</div>
+            <div class="price-list">
+                <div class="price-item"><span>60 UC</span> <span>$0.95</span></div>
+                <div class="price-item"><span>325 UC</span> <span>$4.7</span></div>
+                <div class="price-item"><span>660 UC</span> <span>$9.4</span></div>
+                <div class="price-item"><span>1800 UC</span> <span>$24.5</span></div>
+                <div class="price-item"><span>3850 UC</span> <span>$47.0</span></div>
+                <div class="price-item"><span>8100 UC</span> <span>$91.5</span></div>
+            </div>
+            <div class="order-box">
+                <h4>🛒 زاكاز بېرىش</h4>
+                <div class="info-note">ShamCash ئارقىلىق پۇل ئۆتكۈزۈپ ئۇچۇرنى تولدۇرۇڭ</div>
+                <div class="form-group"><input type="text" class="form-control" placeholder="Player ID (UID) نى يېزىڭ"></div>
+                <div class="form-group"><input type="text" class="form-control" placeholder="پۇل ئۆتكۈزۈش ئىسپات كودى (Ref ID)"></div>
+                <button class="btn" onclick="orderMsg('PUBG Mobile')">زاكاز ئەۋەتىش</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Arena Breakout بېتى -->
+    <div id="ab-view" class="view">
+        <button class="back-btn" onclick="goHome()">← ئارقىغا قايتىش</button>
+        <div class="game-section">
+            <div class="game-title">🛡️ Arena Breakout</div>
+            <div class="price-list">
+                <div class="price-item"><span>66 Bonds</span> <span>$0.9</span></div>
+                <div class="price-item"><span>335 Bonds</span> <span>$4.5</span></div>
+                <div class="price-item"><span>675 Bonds</span> <span>$8.5</span></div>
+                <div class="price-item"><span>1690 Bonds</span> <span>$21.0</span></div>
+                <div class="price-item"><span>3400 Bonds</span> <span>$41.5</span></div>
+                <div class="price-item"><span>6820 Bonds</span> <span>$83.0</span></div>
+                <div class="category-header">✨ باشقا تەڭلەر:</div>
+                <div class="price-item"><span>Beginner Select</span> <span>$0.99</span></div>
+                <div class="price-item"><span>Bulletproof Case (30d)</span> <span>$2.99</span></div>
+                <div class="price-item"><span>Bulletproof Case Privileges</span> <span>$2.55</span></div>
+                <div class="price-item"><span>Composite Case Privileges</span> <span>$7.5</span></div>
+                <div class="price-item"><span>Composition Case (30d)</span> <span>$7.1</span></div>
+                <div class="price-item"><span>Monthly Advanced Pass</span> <span>$0.99</span></div>
+                <div class="price-item"><span>Monthly Premium Pass</span> <span>$3.99</span></div>
+                <div class="price-item"><span>Quarterly Premium Pass Bundle</span> <span>$11.99</span></div>
+            </div>
+            <div class="order-box">
+                <h4>🛒 زاكاز بېرىش</h4>
+                <div class="info-note">ShamCash ئارقىلىق پۇل ئۆتكۈزۈپ ئۇچۇرنى تولدۇرۇڭ</div>
+                <div class="form-group"><input type="text" class="form-control" placeholder="Player ID (UID) نى يېزىڭ"></div>
+                <div class="form-group"><input type="text" class="form-control" placeholder="پۇل ئۆتكۈزۈش ئىسپات كودى (Ref ID)"></div>
+                <button class="btn" onclick="orderMsg('Arena Breakout')">زاكاز ئەۋەتىش</button>
+            </div>
         </div>
     </div>
 
 </div>
 
 <script>
+    function openGame(gameKey) {
+        document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+        document.getElementById(gameKey + '-view').classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    function goHome() {
+        document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+        document.getElementById('home-view').classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
     function orderMsg(gameName) {
-        alert(gameName دان زاكاز قوبۇل قىلىندى! ئۇچۇرلىرىڭىز تەكشۈرۈلۈۋاتىدۇ.');
+        alert(gameName + ' دان زاكاز قوبۇل قىلىندى! ئۇچۇرلىرىڭىز تەكشۈرۈلۈۋاتىدۇ.');
     }
 </script>
 
