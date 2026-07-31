@@ -177,6 +177,327 @@
             margin-top: 10px;
             margin-bottom: 5px;
             padding-bottom: 3px;
+            border-bottom: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>🎮 Game Recharge Store 💎</h1>
+        <p>ئاپتوماتىك ئويۇنلارغا پۇل قاچىلاش دۇكىنى</p>
+    </header>
+
+    <!-- ئويۇن تاللاش كۇنۇپكىلىرى -->
+    <div class="game-tabs">
+        <button class="tab-btn active" onclick="switchGame('hok')">Honor of Kings</button>
+        <button class="tab-btn" onclick="switchGame('mlbb')">Mobile Legends</button>
+        <button class="tab-btn" onclick="switchGame('pubg')">PUBG Mobile</button>
+        <button class="tab-btn" onclick="switchGame('ab')">Arena Breakout</button>
+    </div>
+
+    <!-- باھالار جەدۋىلى -->
+    <div class="card">
+        <div class="card-title">📊 باھا جەدۋىلى</div>
+
+        <!-- 1. Honor of Kings -->
+        <div id="hok" class="price-list active">
+            <div class="price-item"><span>16 Token</span> <span>$0.2</span></div>
+            <div class="price-item"><span>80 Token</span> <span>$0.95</span></div>
+            <div class="price-item"><span>240 Token</span> <span>$2.8</span></div>
+            <div class="price-item"><span>400 Token</span> <span>$4.6</span></div>
+            <div class="price-item"><span>560 Token</span> <span>$6.5</span></div>
+            <div class="price-item"><span>830 Token</span> <span>$9.2</span></div>
+            <div class="price-item"><span>1245 Token</span> <span>$13.8</span></div>
+            <div class="price-item"><span>2580 Token</span> <span>$27.5</span></div>
+            <div class="price-item"><span>4180 Token</span> <span>$45.70</span></div>
+            <div class="price-item"><span>8360 Token</span> <span>$91.5</span></div>
+            <div class="category-header">✨ ئالاھىدە تەڭلەر:</div>
+            <div class="price-item"><span>Double Token Lucky Bag</span> <span>$0.3</span></div>
+            <div class="price-item"><span>Honor Point Value Pack</span> <span>$0.3</span></div>
+            <div class="price-item"><span>Weekly Card Plus</span> <span>$3.5</span></div>
+            <div class="price-item"><span>Weekly Card Honor</span> <span>$1.5</span></div>
+        </div>
+
+        <!-- 2. Mobile Legends -->
+        <div id="mlbb" class="price-list">
+            <div class="price-item"><span>78 + 8 Diamonds</span> <span>$1.3</span></div>
+            <div class="price-item"><span>156 + 16 Diamonds</span> <span>$2.6</span></div>
+            <div class="price-item"><span>234 + 23 Diamonds</span> <span>$3.8</span></div>
+            <div class="price-item"><span>625 + 81 Diamonds</span> <span>$10.5</span></div>
+            <div class="price-item"><span>1860 + 335 Diamonds</span> <span>$30.5</span></div>
+            <div class="price-item"><span>3099 + 589 Diamonds</span> <span>$51.0</span></div>
+            <div class="price-item"><span>4649 + 883 Diamonds</span> <span>$77.0</span></div>
+            <div class="price-item"><span>7740 + 1548 Diamonds</span> <span>$127.0</span></div>
+            <div class="category-header">✨ ئالاھىدە تەڭلەر:</div>
+            <div class="price-item"><span>Weekly Diamond Pass</span> <span>$1.8</span></div>
+            <div class="price-item"><span>Weekly Elite Bundle ML</span> <span>$0.9</span></div>
+            <div class="price-item"><span>Monthly Elite Bundle ML</span> <span>$4.5</span></div>
+            <div class="price-item"><span>Mobile Legends Twilight Pass</span> <span>$8.8</span></div>
+        </div>
+
+        <!-- 3. PUBG Mobile -->
+        <div id="pubg" class="price-list">
+            <div class="price-item"><span>60 UC</span> <span>$0.95</span></div>
+            <div class="price-item"><span>325 UC</span> <span>$4.7</span></div>
+            <div class="price-item"><span>660 UC</span> <span>$9.4</span></div>
+            <div class="price-item"><span>1800 UC</span> <span>$24.5</span></div>
+            <div class="price-item"><span>3850 UC</span> <span>$47.0</span></div>
+            <div class="price-item"><span>8100 UC</span> <span>$91.5</span></div>
+        </div>
+
+        <!-- 4. Arena Breakout -->
+        <div id="ab" class="price-list">
+            <div class="price-item"><span>66 Bonds</span> <span>$0.9</span></div>
+            <div class="price-item"><span>335 Bonds</span> <span>$4.5</span></div>
+            <div class="price-item"><span>675 Bonds</span> <span>$8.5</span></div>
+            <div class="price-item"><span>1690 Bonds</span> <span>$21.0</span></div>
+            <div class="price-item"><span>3400 Bonds</span> <span>$41.5</span></div>
+            <div class="price-item"><span>6820 Bonds</span> <span>$83.0</span></div>
+            <div class="category-header">✨ باشقا تەڭلەر:</div>
+            <div class="price-item"><span>Beginner Select</span> <span>$0.99</span></div>
+            <div class="price-item"><span>Bulletproof Case (30d)</span> <span>$2.99</span></div>
+            <div class="price-item"><span>Bulletproof Case Privileges</span> <span>$2.55</span></div>
+            <div class="price-item"><span>Composite Case Privileges</span> <span>$7.5</span></div>
+            <div class="price-item"><span>Composition Case (30d)</span> <span>$7.1</span></div>
+            <div class="price-item"><span>Monthly Advanced Pass</span> <span>$0.99</span></div>
+            <div class="price-item"><span>Monthly Premium Pass</span> <span>$3.99</span></div>
+            <div class="price-item"><span>Quarterly Premium Pass Bundle</span> <span>$11.99</span></div>
+        </div>
+    </div>
+
+    <!-- زاكاز قىسمى -->
+    <div class="card">
+        <div class="card-title">🛒 زاكاز بېرىش</div>
+        
+        <div class="info-box">
+            ShamCash ئارقىلىق پول ئۆتۈپ، ئۇچۇرلارنى تولدۇرۇڭ:<br>
+            <strong>👤 ھېسابات ئىسمى: N. Muhsin</strong>
+        </div>
+
+        <form onsubmit="sendOrder(event)">
+            <!-- Gmail كاتىكى قوشۇلدى -->
+            <div class="form-group">
+                <label>✉️ ئېلخەت ئادرېسى (Gmail):</label>
+                <input type="email" id="email" class="form-control" placeholder="example@gmail.com" required>
+            </div>
+
+            <div class="form-group">
+                <label>🎮 Player ID (UID):</label>
+                <input type="text" id="uid" class="form-control" placeholder="Player ID نى يېزىڭ" required>
+            </div>
+
+            <div class="form-group">
+                <label>🧾 ئۆتكۈزۈش نۇسخا كودى (Ref ID):</label>
+                <input type="text" id="refid" class="form-control" placeholder="پۇل ئۆتكۈزۈش ئىسپات كودى" required>
+            </div>
+
+            <button type="submit" class="btn">زاكازنى ئاپتوماتىك ئەۋەتىش</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function switchGame(gameId) {
+        document.querySelectorAll('.price-list').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+        document.getElementById(gameId).classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    function sendOrder(e) {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const uid = document.getElementById('uid').value;
+        const refid = document.getElementById('refid').value;
+        
+        alert('زاكاز تاپشۇرۇۋېلىندى!\nGmail: ' + email + '\nUID: ' + uid + '\nRef ID: ' + refid);
+    }
+</script>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="ug" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Recharge Store</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #38bdf8;
+            --text-color: #f8fafc;
+            --sub-text: #94a3b8;
+            --border-color: #334155;
+            --active-tab: #0284c7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        header h1 {
+            color: var(--accent-color);
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: var(--sub-text);
+            font-size: 13px;
+        }
+
+        /* Tabs Style */
+        .game-tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            background-color: var(--active-tab);
+            border-color: var(--accent-color);
+            color: #fff;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-title {
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+            color: var(--accent-color);
+        }
+
+        .price-list {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .price-list.active {
+            display: flex;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .price-item span:last-child {
+            color: #22c55e;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+            color: var(--sub-text);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 11px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+        }
+
+        .info-box {
+            background: rgba(56, 189, 248, 0.1);
+            border-right: 4px solid var(--accent-color);
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: var(--sub-text);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--accent-color);
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .category-header {
+            font-size: 13px;
+            color: var(--sub-text);
+            margin-top: 10px;
+            margin-bottom: 5px;
+            padding-bottom: 3px;
             border-bottom: 1px stroke var(--border-color);
         }
     </style>
