@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ug" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Honor of Kings Store</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            text-align: center;
+            padding: 15px;
+            margin: 0;
+        }
+        h2 { color: #0088cc; margin-bottom: 5px; }
+        p { color: #aaaaaa; font-size: 14px; }
+        .card {
+            background-color: #1e1e1e;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .price-list {
+            text-align: right;
+            line-height: 1.8;
+            font-size: 15px;
+        }
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background-color: #2a2a2a;
+            color: #fff;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 90%;
+            padding: 14px;
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover { background-color: #006699; }
+    </style>
+</head>
+<body>
+
+    <h2>💎 Honor of Kings Store 💎</h2>
+    <p>ئاپتوماتىك Token قاچىلاش دۇكىنى</p>
+
+    <div class="card">
+        <h3>📊 Token باھالىرى</h3>
+        <div class="price-list">
+            ▪️ 16 Token ➡️ $0.2<br>
+            ▪️ 80 Token ➡️ $0.95<br>
+            ▪️ 240 Token ➡️ $2.8<br>
+            ▪️ 400 Token ➡️ $4.6<br>
+            ▪️ 560 Token ➡️ $6.5<br>
+            ▪️ 830 Token ➡️ $9.2<br>
+            ▪️ 1245 Token ➡️ $13.8<br>
+            ▪️ 2580 Token ➡️ $27.5<br>
+            ▪️ 4180 Token ➡️ $45.7<br>
+            ▪️ 8360 Token ➡️ $91.5
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>🛒 زاكاز بېرىش</h3>
+        <p>ShamCash ئارقىلىق پۇل ئەۋەتىپ، ئۇچۇرلارنى تولدۇرۇڭ:</p>
+        <p><b>👤 ھېسابات ئىسمى:</b> N. Muhsin</p>
+        
+        <input type="text" id="player_id" placeholder="🎮 Player ID (UID) نى يېزىڭ">
+        <input type="text" id="proof_code" placeholder="🧾 پۇل تۆلەش ئىسپات كودى (Ref ID)">
+        <button onclick="sendOrder()">زاكازنى ئەۋەتىش</button>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        function sendOrder() {
+            const playerId = document.getElementById('player_id').value;
+            const proofCode = document.getElementById('proof_code').value;
+
+            if (!playerId || !proofCode) {
+                alert('ئىلتىماس: بارلىق ئورۇنلارنى تولدۇرۇڭ!');
+                return;
+            }
+
+            const orderData = {
+                player_id: playerId,
+                proof_code: proofCode
+            };
+
+            tg.sendData(JSON.stringify(orderData));
+            tg.close();
+        }
+    </script>
+</body>
+</html>
