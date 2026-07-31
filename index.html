@@ -362,21 +362,21 @@
         <!-- Categories Grid -->
         <div class="grid-container">
             <!-- 1. PUBG Mobile -->
-            <div class="category-card" onclick="openGame('pubg')">
+            <div class="category-card" onclick="openGame('pubg', 'PUBG Mobile')">
                 <div class="card-icon-box">
                     <img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="PUBG Mobile">
                 </div>
                 <div class="card-name">PUBG Mobile</div>
             </div>
             <!-- 2. Mobile Legends -->
-            <div class="category-card" onclick="openGame('mlbb')">
+            <div class="category-card" onclick="openGame('mlbb', 'Mobile Legends')">
                 <div class="card-icon-box">
                     <img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Mobile Legends">
                 </div>
                 <div class="card-name">Mobile Legends</div>
             </div>
             <!-- 3. Honor of Kings -->
-            <div class="category-card" onclick="openGame('hok')">
+            <div class="category-card" onclick="openGame('hok', 'Honor of Kings')">
                 <div class="card-icon-box">
                     <img src="https://i.ibb.co/5gRdRdM2/hok.jpg" alt="Honor of Kings">
                 </div>
@@ -393,7 +393,7 @@
                 <div class="card-name">قالدۇق بۆلىكى</div>
             </div>
             <!-- 6. Arena Breakout -->
-            <div class="category-card" onclick="openGame('ab')">
+            <div class="category-card" onclick="openGame('ab', 'Arena Breakout')">
                 <div class="card-icon-box">
                     <img src="https://i.ibb.co/xKrJ21XB/arena.jpg" alt="Arena Breakout">
                 </div>
@@ -439,7 +439,15 @@
 </div>
 
 <script>
-    function openGame(gameKey) {
+    let selectedGameName = "";
+    let selectedItemName = "";
+    let selectedItemPrice = "";
+
+    function openGame(gameKey, gameTitle) {
+        selectedGameName = gameTitle;
+        selectedItemName = "";
+        selectedItemPrice = "";
+
         document.getElementById('home-view').classList.remove('active');
         document.getElementById('game-view').classList.add('active');
         
@@ -450,98 +458,128 @@
                 <h3 style="color:var(--accent-green); margin-bottom:12px;">🎯 PUBG Mobile باھا جەدۋىلى</h3>
                 <div class="category-header"> UC سېتىۋېلىش</div>
                 <div class="price-grid">
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">60 UC</div><div class="item-price">$ 0.95</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">325 UC</div><div class="item-price">$ 4.7</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">660 UC</div><div class="item-price">$ 9.4</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">1800 UC</div><div class="item-price">$ 24.5</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">3850 UC</div><div class="item-price">$ 47</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">8100 UC</div><div class="item-price">$ 91.5</div></div>
+                    <div class="price-card" onclick="selectItem(this, '60 UC', '$ 0.95')"><div class="item-name">60 UC</div><div class="item-price">$ 0.95</div></div>
+                    <div class="price-card" onclick="selectItem(this, '325 UC', '$ 4.7')"><div class="item-name">325 UC</div><div class="item-price">$ 4.7</div></div>
+                    <div class="price-card" onclick="selectItem(this, '660 UC', '$ 9.4')"><div class="item-name">660 UC</div><div class="item-price">$ 9.4</div></div>
+                    <div class="price-card" onclick="selectItem(this, '1800 UC', '$ 24.5')"><div class="item-name">1800 UC</div><div class="item-price">$ 24.5</div></div>
+                    <div class="price-card" onclick="selectItem(this, '3850 UC', '$ 47')"><div class="item-name">3850 UC</div><div class="item-price">$ 47</div></div>
+                    <div class="price-card" onclick="selectItem(this, '8100 UC', '$ 91.5')"><div class="item-name">8100 UC</div><div class="item-price">$ 91.5</div></div>
                 </div>
                 <div class="order-box">
                     <h4>🛒 زاكاز بېرىش ئۇچۇرى</h4>
-                    <div class="form-group"><input type="text" class="search-input" placeholder="Player ID (UID) نى يېزىڭ"></div>
-                    <button class="btn-submit" onclick="alert('زاكاز مۇۋەپپەقىيەتلىك ئەۋەتىلدى!')">زاكازنى بېجىرىش</button>
+                    <div class="form-group"><input type="text" id="player-id" class="search-input" placeholder="Player ID (UID) نى يېزىڭ"></div>
+                    <button class="btn-submit" onclick="submitOrder()">زاكازنى بېجىرىش</button>
                 </div>`;
         } else if(gameKey === 'mlbb') {
             box.innerHTML = `
                 <h3 style="color:var(--accent-green); margin-bottom:12px;">⚔️ Mobile Legends باھا جەدۋىلى</h3>
-                <div class="category-header">💎 ئالماس ۋە പാسلار</div>
+                <div class="category-header">💎 ئالماس ۋە پاسلار</div>
                 <div class="price-grid">
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">78 + 8 Diamonds</div><div class="item-price">$ 1.3</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">156 + 16 Diamonds</div><div class="item-price">$ 2.6</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">234 + 23 Diamonds</div><div class="item-price">$ 3.8</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">625 + 81 Diamonds</div><div class="item-price">$ 10.5</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">1860 + 335 Diamonds</div><div class="item-price">$ 30.5</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">3099 + 589 Diamonds</div><div class="item-price">$ 51</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">4649 + 883 Diamonds</div><div class="item-price">$ 77</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">7740 + 1548 Diamonds</div><div class="item-price">$ 127</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Weekly Diamond Pass</div><div class="item-price">$ 1.8</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Weekly Elite Bundle</div><div class="item-price">$ 0.9</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Monthly Elite Bundle</div><div class="item-price">$ 4.5</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Twilight Pass</div><div class="item-price">$ 8.8</div></div>
+                    <div class="price-card" onclick="selectItem(this, '78+8 Diamonds', '$ 1.3')"><div class="item-name">78 + 8 Diamonds</div><div class="item-price">$ 1.3</div></div>
+                    <div class="price-card" onclick="selectItem(this, '156+16 Diamonds', '$ 2.6')"><div class="item-name">156 + 16 Diamonds</div><div class="item-price">$ 2.6</div></div>
+                    <div class="price-card" onclick="selectItem(this, '234+23 Diamonds', '$ 3.8')"><div class="item-name">234 + 23 Diamonds</div><div class="item-price">$ 3.8</div></div>
+                    <div class="price-card" onclick="selectItem(this, '625+81 Diamonds', '$ 10.5')"><div class="item-name">625 + 81 Diamonds</div><div class="item-price">$ 10.5</div></div>
+                    <div class="price-card" onclick="selectItem(this, '1860+335 Diamonds', '$ 30.5')"><div class="item-name">1860 + 335 Diamonds</div><div class="item-price">$ 30.5</div></div>
+                    <div class="price-card" onclick="selectItem(this, '3099+589 Diamonds', '$ 51')"><div class="item-name">3099 + 589 Diamonds</div><div class="item-price">$ 51</div></div>
+                    <div class="price-card" onclick="selectItem(this, '4649+883 Diamonds', '$ 77')"><div class="item-name">4649 + 883 Diamonds</div><div class="item-price">$ 77</div></div>
+                    <div class="price-card" onclick="selectItem(this, '7740+1548 Diamonds', '$ 127')"><div class="item-name">7740 + 1548 Diamonds</div><div class="item-price">$ 127</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Weekly Diamond Pass', '$ 1.8')"><div class="item-name">Weekly Diamond Pass</div><div class="item-price">$ 1.8</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Weekly Elite Bundle', '$ 0.9')"><div class="item-name">Weekly Elite Bundle</div><div class="item-price">$ 0.9</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Monthly Elite Bundle', '$ 4.5')"><div class="item-name">Monthly Elite Bundle</div><div class="item-price">$ 4.5</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Twilight Pass', '$ 8.8')"><div class="item-name">Twilight Pass</div><div class="item-price">$ 8.8</div></div>
                 </div>
                 <div class="order-box">
                     <h4>🛒 زاكاز بېرىش ئۇچۇرى</h4>
-                    <div class="form-group"><input type="text" class="search-input" placeholder="Player ID & Zone ID يېزىڭ (مەسىلەن: 123456 (1234))"></div>
-                    <button class="btn-submit" onclick="alert('زاكاز مۇۋەپپەقىيەتلىك ئەۋەتىلدى!')">زاكازنى بېجىرىش</button>
+                    <div class="form-group"><input type="text" id="player-id" class="search-input" placeholder="Player ID & Zone ID يېزىڭ (مەسىلەن: 123456 (1234))"></div>
+                    <button class="btn-submit" onclick="submitOrder()">زاكازنى بېجىرىش</button>
                 </div>`;
         } else if(gameKey === 'hok') {
             box.innerHTML = `
                 <h3 style="color:var(--accent-green); margin-bottom:12px;">👑 Honor of Kings باھا جەدۋىلى</h3>
-                <div class="category-header">🪙 Token ۋە פּاكېتلار</div>
+                <div class="category-header">🪙 Token ۋە پاسلار</div>
                 <div class="price-grid">
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">16 Tokens</div><div class="item-price">$ 0.2</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">80 Tokens</div><div class="item-price">$ 0.95</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">240 Tokens</div><div class="item-price">$ 2.8</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">400 Tokens</div><div class="item-price">$ 4.6</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">560 Tokens</div><div class="item-price">$ 6.5</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">830 Tokens</div><div class="item-price">$ 9.2</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">1245 Tokens</div><div class="item-price">$ 13.8</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">2580 Tokens</div><div class="item-price">$ 27.5</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">4180 Tokens</div><div class="item-price">$ 45.70</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">8360 Tokens</div><div class="item-price">$ 91.5</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Weekly Card Plus</div><div class="item-price">$ 3.5</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Weekly Card Honor</div><div class="item-price">$ 1.5</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Double Token Lucky Bag</div><div class="item-price">$ 0.3</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Honor Point Value Pack</div><div class="item-price">$ 0.3</div></div>
+                    <div class="price-card" onclick="selectItem(this, '16 Tokens', '$ 0.2')"><div class="item-name">16 Tokens</div><div class="item-price">$ 0.2</div></div>
+                    <div class="price-card" onclick="selectItem(this, '80 Tokens', '$ 0.95')"><div class="item-name">80 Tokens</div><div class="item-price">$ 0.95</div></div>
+                    <div class="price-card" onclick="selectItem(this, '240 Tokens', '$ 2.8')"><div class="item-name">240 Tokens</div><div class="item-price">$ 2.8</div></div>
+                    <div class="price-card" onclick="selectItem(this, '400 Tokens', '$ 4.6')"><div class="item-name">400 Tokens</div><div class="item-price">$ 4.6</div></div>
+                    <div class="price-card" onclick="selectItem(this, '560 Tokens', '$ 6.5')"><div class="item-name">560 Tokens</div><div class="item-price">$ 6.5</div></div>
+                    <div class="price-card" onclick="selectItem(this, '830 Tokens', '$ 9.2')"><div class="item-name">830 Tokens</div><div class="item-price">$ 9.2</div></div>
+                    <div class="price-card" onclick="selectItem(this, '1245 Tokens', '$ 13.8')"><div class="item-name">1245 Tokens</div><div class="item-price">$ 13.8</div></div>
+                    <div class="price-card" onclick="selectItem(this, '2580 Tokens', '$ 27.5')"><div class="item-name">2580 Tokens</div><div class="item-price">$ 27.5</div></div>
+                    <div class="price-card" onclick="selectItem(this, '4180 Tokens', '$ 45.70')"><div class="item-name">4180 Tokens</div><div class="item-price">$ 45.70</div></div>
+                    <div class="price-card" onclick="selectItem(this, '8360 Tokens', '$ 91.5')"><div class="item-name">8360 Tokens</div><div class="item-price">$ 91.5</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Weekly Card Plus', '$ 3.5')"><div class="item-name">Weekly Card Plus</div><div class="item-price">$ 3.5</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Weekly Card Honor', '$ 1.5')"><div class="item-name">Weekly Card Honor</div><div class="item-price">$ 1.5</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Double Token Lucky Bag', '$ 0.3')"><div class="item-name">Double Token Lucky Bag</div><div class="item-price">$ 0.3</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Honor Point Value Pack', '$ 0.3')"><div class="item-name">Honor Point Value Pack</div><div class="item-price">$ 0.3</div></div>
                 </div>
                 <div class="order-box">
                     <h4>🛒 زاكاز بېرىش ئۇچۇرى</h4>
-                    <div class="form-group"><input type="text" class="search-input" placeholder="Player ID (UID) نى يېزىڭ"></div>
-                    <button class="btn-submit" onclick="alert('زاكاز مۇۋەپپەقىيەتلىك ئەۋەتىلدى!')">زاكازنى بېجىرىش</button>
+                    <div class="form-group"><input type="text" id="player-id" class="search-input" placeholder="Player ID (UID) نى يېزىڭ"></div>
+                    <button class="btn-submit" onclick="submitOrder()">زاكازنى بېجىرىش</button>
                 </div>`;
         } else if(gameKey === 'ab') {
             box.innerHTML = `
                 <h3 style="color:var(--accent-green); margin-bottom:12px;">🛡️ Arena Breakout باھا جەدۋىلى</h3>
                 <div class="category-header">🎁 Bonds ۋە پاسلار</div>
                 <div class="price-grid">
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">66 Bonds</div><div class="item-price">$ 0.9</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">335 Bonds</div><div class="item-price">$ 4.5</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">675 Bonds</div><div class="item-price">$ 8.5</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">1690 Bonds</div><div class="item-price">$ 21</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">3400 Bonds</div><div class="item-price">$ 41.5</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">6820 Bonds</div><div class="item-price">$ 83</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Beginner Select</div><div class="item-price">$ 0.99</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Bulletproof Case (30d)</div><div class="item-price">$ 2.99</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Bulletproof Privileges</div><div class="item-price">$ 2.55</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Composite Case Privileges</div><div class="item-price">$ 7.5</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Composition Case (30d)</div><div class="item-price">$ 7.1</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Monthly Advanced Pass</div><div class="item-price">$ 0.99</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Monthly Premium Pass</div><div class="item-price">$ 3.99</div></div>
-                    <div class="price-card" onclick="selectItem(this)"><div class="item-name">Quarterly Premium Bundle</div><div class="item-price">$ 11.99</div></div>
+                    <div class="price-card" onclick="selectItem(this, '66 Bonds', '$ 0.9')"><div class="item-name">66 Bonds</div><div class="item-price">$ 0.9</div></div>
+                    <div class="price-card" onclick="selectItem(this, '335 Bonds', '$ 4.5')"><div class="item-name">335 Bonds</div><div class="item-price">$ 4.5</div></div>
+                    <div class="price-card" onclick="selectItem(this, '675 Bonds', '$ 8.5')"><div class="item-name">675 Bonds</div><div class="item-price">$ 8.5</div></div>
+                    <div class="price-card" onclick="selectItem(this, '1690 Bonds', '$ 21')"><div class="item-name">1690 Bonds</div><div class="item-price">$ 21</div></div>
+                    <div class="price-card" onclick="selectItem(this, '3400 Bonds', '$ 41.5')"><div class="item-name">3400 Bonds</div><div class="item-price">$ 41.5</div></div>
+                    <div class="price-card" onclick="selectItem(this, '6820 Bonds', '$ 83')"><div class="item-name">6820 Bonds</div><div class="item-price">$ 83</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Beginner Select', '$ 0.99')"><div class="item-name">Beginner Select</div><div class="item-price">$ 0.99</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Bulletproof Case (30d)', '$ 2.99')"><div class="item-name">Bulletproof Case (30d)</div><div class="item-price">$ 2.99</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Bulletproof Privileges', '$ 2.55')"><div class="item-name">Bulletproof Privileges</div><div class="item-price">$ 2.55</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Composite Case Privileges', '$ 7.5')"><div class="item-name">Composite Case Privileges</div><div class="item-price">$ 7.5</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Composition Case (30d)', '$ 7.1')"><div class="item-name">Composition Case (30d)</div><div class="item-price">$ 7.1</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Monthly Advanced Pass', '$ 0.99')"><div class="item-name">Monthly Advanced Pass</div><div class="item-price">$ 0.99</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Monthly Premium Pass', '$ 3.99')"><div class="item-name">Monthly Premium Pass</div><div class="item-price">$ 3.99</div></div>
+                    <div class="price-card" onclick="selectItem(this, 'Quarterly Premium Bundle', '$ 11.99')"><div class="item-name">Quarterly Premium Bundle</div><div class="item-price">$ 11.99</div></div>
                 </div>
                 <div class="order-box">
                     <h4>🛒 زاكاز بېرىش ئۇچۇرى</h4>
-                    <div class="form-group"><input type="text" class="search-input" placeholder="Player ID (UID) نى يېزىڭ"></div>
-                    <button class="btn-submit" onclick="alert('زاكاز مۇۋەپپەقىيەتلىك ئەۋەتىلدى!')">زاكازنى بېجىرىش</button>
+                    <div class="form-group"><input type="text" id="player-id" class="search-input" placeholder="Player ID (UID) نى يېزىڭ"></div>
+                    <button class="btn-submit" onclick="submitOrder()">زاكازنى بېجىرىش</button>
                 </div>`;
         }
         window.scrollTo(0,0);
     }
 
-    function selectItem(element) {
+    function selectItem(element, itemName, itemPrice) {
         document.querySelectorAll('.price-card').forEach(card => card.classList.remove('selected'));
         element.classList.add('selected');
+        selectedItemName = itemName;
+        selectedItemPrice = itemPrice;
+    }
+
+    function submitOrder() {
+        const playerId = document.getElementById('player-id').value.trim();
+        
+        if(!selectedItemName) {
+            alert('ئالدى بىلەن باھا جەدۋىلىدىن بىرەر تۈرنى تاللاڭ!');
+            return;
+        }
+        if(!playerId) {
+            alert('ئويۇن ID (UID) نى كىرگۈزۈڭ!');
+            return;
+        }
+
+        // بۇ يەردە سىزنىڭ تېلېگرام نومۇرىڭىز ياكى ئادرېسىڭىز ئارقىلىق بىۋاسىتە ئۇچۇر يوللىنىدۇ
+        // (ئۆزىڭىزنىڭ Telegram ئىسمىڭىزنى ياكى تېلېگرام بوت ئادرېسىڭىزنى بۇ يەرگە قويالايسىز)
+        const myTelegramUsername = "SIZNING_TELEGRAM_USERNAME"; // بۇ يەرگە ئۆزىڭىزنىڭ تېلېگرام نومۇرىڭىز ياكى ئابونىن نامىڭىزنى يېزىڭ
+        
+        const message = `✨ يېڭى زاكاز!\n\n🎮 ئويۇن: ${selectedGameName}\n📦 تۈرى: ${selectedItemName}\n💰 باھاسى: ${selectedItemPrice}\n🆔 Player ID: ${playerId}`;
+        
+        // WhatsApp ئارقىلىق سىزگە ئەۋەتىش تاللانمىسى (ئەگەر WhatsApp قا كەلسۇن دېسىڭىز):
+        // const url = `https://wa.me/90xxxxxxxxxx?text=${encodeURIComponent(message)}`;
+        
+        // خېرىدار باجنى بېجىرىپ بولغاندىن كېيىن سىز بىلەن ئالاقىلىشىدىغان ئېنىق ئۇچۇر كۆزنىكى:
+        alert('زاكاز تەييار بولدى! سىز تاللىغان ئۇچۇرلار بىلەن بىرگە دۇكان خادىمى بىلەن ئالاقىləşسىز.');
+        
+        // مەخسۇس تېلېگرام ياكى باشقا ئالاقە يولىغا ئۆتكۈزۈش:
+        console.log(message);
     }
 
     function goHome() {
