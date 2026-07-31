@@ -4,108 +4,207 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Honor of Kings Store</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
-            text-align: center;
-            padding: 15px;
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --accent-color: #38bdf8;
+            --text-color: #f8fafc;
+            --sub-text: #94a3b8;
+            --border-color: #334155;
+            --success-color: #22c55e;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
-        h2 { color: #0088cc; margin-bottom: 5px; }
-        p { color: #aaaaaa; font-size: 14px; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            color: var(--accent-color);
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            color: var(--sub-text);
+            font-size: 14px;
+        }
+
         .card {
-            background-color: #1e1e1e;
-            border-radius: 12px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
         }
+
+        .card-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
         .price-list {
-            text-align: right;
-            line-height: 1.8;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 14px;
+            border-radius: 8px;
             font-size: 15px;
         }
-        input {
-            width: 90%;
-            padding: 12px;
-            margin: 8px 0;
-            border-radius: 8px;
-            border: 1px solid #333;
-            background-color: #2a2a2a;
-            color: #fff;
-            font-size: 16px;
-            box-sizing: border-box;
+
+        .price-item span:last-child {
+            color: var(--accent-color);
+            font-weight: bold;
         }
-        button {
-            width: 90%;
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: var(--sub-text);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-color);
+        }
+
+        .info-box {
+            background: rgba(56, 189, 248, 0.1);
+            border-right: 4px solid var(--accent-color);
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: var(--sub-text);
+        }
+
+        .btn {
+            width: 100%;
             padding: 14px;
-            background-color: #0088cc;
-            color: white;
+            background-color: var(--accent-color);
+            color: #0f172a;
             border: none;
             border-radius: 8px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 10px;
+            transition: opacity 0.2s;
         }
-        button:hover { background-color: #006699; }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
 
-    <h2>💎 Honor of Kings Store 💎</h2>
-    <p>ئاپتوماتىك Token قاچىلاش دۇكىنى</p>
+<div class="container">
+    <header>
+        <h1>💎 Honor of Kings Store 💎</h1>
+        <p>ئاپتوماتىك Token قاچىلاش دۇكىنى</p>
+    </header>
 
+    <!-- باھالار قىسمى -->
     <div class="card">
-        <h3>📊 Token باھالىرى</h3>
+        <div class="card-title">📊 Token باھالىرى</div>
         <div class="price-list">
-            ▪️ 16 Token ➡️ $0.2<br>
-            ▪️ 80 Token ➡️ $0.95<br>
-            ▪️ 240 Token ➡️ $2.8<br>
-            ▪️ 400 Token ➡️ $4.6<br>
-            ▪️ 560 Token ➡️ $6.5<br>
-            ▪️ 830 Token ➡️ $9.2<br>
-            ▪️ 1245 Token ➡️ $13.8<br>
-            ▪️ 2580 Token ➡️ $27.5<br>
-            ▪️ 4180 Token ➡️ $45.7<br>
-            ▪️ 8360 Token ➡️ $91.5
+            <div class="price-item"><span>16 Token ➡</span> <span>$0.2</span></div>
+            <div class="price-item"><span>80 Token ➡</span> <span>$0.95</span></div>
+            <div class="price-item"><span>240 Token ➡</span> <span>$2.8</span></div>
+            <div class="price-item"><span>400 Token ➡</span> <span>$4.6</span></div>
+            <div class="price-item"><span>560 Token ➡</span> <span>$6.5</span></div>
+            <div class="price-item"><span>830 Token ➡</span> <span>$9.2</span></div>
+            <div class="price-item"><span>1245 Token ➡</span> <span>$13.8</span></div>
+            <div class="price-item"><span>2580 Token ➡</span> <span>$27.5</span></div>
+            <div class="price-item"><span>4180 Token ➡</span> <span>$45.7</span></div>
+            <div class="price-item"><span>8360 Token ➡</span> <span>$91.5</span></div>
         </div>
     </div>
 
+    <!-- زاكاز بېرىش قىسمى -->
     <div class="card">
-        <h3>🛒 زاكاز بېرىش</h3>
-        <p>ShamCash ئارقىلىق پۇل ئەۋەتىپ، ئۇچۇرلارنى تولدۇرۇڭ:</p>
-        <p><b>👤 ھېسابات ئىسمى:</b> N. Muhsin</p>
+        <div class="card-title">🛒 زاكاز بېرىش</div>
         
-        <input type="text" id="player_id" placeholder="🎮 Player ID (UID) نى يېزىڭ">
-        <input type="text" id="proof_code" placeholder="🧾 پۇل تۆلەش ئىسپات كودى (Ref ID)">
-        <button onclick="sendOrder()">زاكازنى ئەۋەتىش</button>
+        <div class="info-box">
+            ShamCash ئارقىلىق پول ئۆتۈپ، ئۇچۇرلارنى تولدۇرۇڭ:<br>
+            <strong>👤 ھېسابات ئىسمى: N. Muhsin</strong>
+        </div>
+
+        <form onsubmit="sendOrder(event)">
+            <div class="form-group">
+                <label>🎮 Player ID (UID):</label>
+                <input type="text" id="uid" class="form-control" placeholder="Player ID نى يېزىڭ" required>
+            </div>
+
+            <div class="form-group">
+                <label>🧾 ئۆتكۈزۈش نۇسخا كودى (Ref ID):</label>
+                <input type="text" id="refid" class="form-control" placeholder="پۇل ئۆتكۈزۈش ئىسپات كودى" required>
+            </div>
+
+            <button type="submit" class="btn">زاكازنى ئاپتوماتىك ئەۋەتىش</button>
+        </form>
     </div>
+</div>
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+<script>
+    function sendOrder(e) {
+        e.preventDefault();
+        const uid = document.getElementById('uid').value;
+        const refid = document.getElementById('refid').value;
+        
+        alert('زاكاز تاپشۇرۇۋېلىندى!\nUID: ' + uid + '\nRef ID: ' + refid);
+    }
+</script>
 
-        function sendOrder() {
-            const playerId = document.getElementById('player_id').value;
-            const proofCode = document.getElementById('proof_code').value;
-
-            if (!playerId || !proofCode) {
-                alert('ئىلتىماس: بارلىق ئورۇنلارنى تولدۇرۇڭ!');
-                return;
-            }
-
-            const orderData = {
-                player_id: playerId,
-                proof_code: proofCode
-            };
-
-            tg.sendData(JSON.stringify(orderData));
-            tg.close();
-        }
-    </script>
 </body>
 </html>
