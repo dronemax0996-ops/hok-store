@@ -51,7 +51,6 @@
             font-size: 13px;
         }
 
-        /* Views management */
         .view {
             display: none;
         }
@@ -59,7 +58,6 @@
             display: block;
         }
 
-        /* Home Grid Style (رەسىمدىكىگە ئوخشاش گرىد ئۇسلۇبى) */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -82,13 +80,17 @@
             transform: translateY(-3px);
         }
 
-        .game-icon-img {
+        .game-icon-box {
             width: 75px;
             height: 75px;
+            margin: 0 auto 10px auto;
             border-radius: 14px;
-            object-fit: cover;
-            margin-bottom: 10px;
+            background: rgba(56, 189, 248, 0.1);
             border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
         }
 
         .game-name {
@@ -97,7 +99,6 @@
             color: var(--text-color);
         }
 
-        /* Sub Page Style */
         .back-btn {
             background: none;
             border: none;
@@ -226,27 +227,27 @@
         </div>
     </header>
 
-    <!-- 🌟 باش بەت (سەھىپە كارتىلىرى ۋە سىز يوللىغان رەسىملەر) -->
+    <!-- باش بەت -->
     <div id="home-view" class="view active">
         <div class="grid-container">
             <!-- 1. Honor of Kings -->
             <div class="game-card-home" onclick="openGame('hok')">
-                <img src="https://i.ibb.co/31338.jpg" alt="Honor of Kings" class="game-icon-img" onerror="this.src='https://via.placeholder.com/75'">
+                <div class="game-icon-box">👑</div>
                 <div class="game-name">Honor of Kings</div>
             </div>
             <!-- 2. Mobile Legends -->
             <div class="game-card-home" onclick="openGame('mlbb')">
-                <img src="https://i.ibb.co/31321.jpg" alt="Mobile Legends" class="game-icon-img" onerror="this.src='https://via.placeholder.com/75'">
+                <div class="game-icon-box">⚔️</div>
                 <div class="game-name">Mobile Legends</div>
             </div>
             <!-- 3. PUBG Mobile -->
             <div class="game-card-home" onclick="openGame('pubg')">
-                <img src="https://i.ibb.co/31339.jpg" alt="PUBG Mobile" class="game-icon-img" onerror="this.src='https://via.placeholder.com/75'">
+                <div class="game-icon-box">🎯</div>
                 <div class="game-name">PUBG Mobile</div>
             </div>
             <!-- 4. Arena Breakout -->
             <div class="game-card-home" onclick="openGame('ab')">
-                <img src="https://i.ibb.co/31340.jpg" alt="Arena Breakout" class="game-icon-img" onerror="this.src='https://via.placeholder.com/75'">
+                <div class="game-icon-box">🛡️</div>
                 <div class="game-name">Arena Breakout</div>
             </div>
         </div>
