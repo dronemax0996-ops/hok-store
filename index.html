@@ -116,6 +116,31 @@
             border-radius: 2px;
         }
 
+        /* Video List Grid */
+        .video-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 15px;
+        }
+
+        .video-item {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+        }
+
+        .video-item iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            pointer-events: none;
+        }
+
         .empty-notice {
             text-align: center;
             color: var(--sub-text);
@@ -286,7 +311,7 @@
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="main-container">
 
     <!-- === Header & Categories Navbar === -->
     <div class="header-section">
@@ -303,11 +328,11 @@
         </div>
 
         <!-- Horizontal Tabs -->
-        <div class="categories-scroll">
-            <div class="cat-item active" onclick="switchCategory('tavsiya', this)">تەۋسىيە</div>
-            <div class="cat-item" onclick="switchCategory('kino', this)">كىنو</div>
-            <div class="cat-item" onclick="switchCategory('kartun', this)">كارتون</div>
-            <div class="cat-item" onclick="switchCategory('qisqa-film', this)">قىسقا فىلىم</div>
+        <div class="categories-scroll" id="categories-scroll">
+            <div class="cat-item active" onclick="switchCategory('tavsiya', 0)">تەۋسىيە</div>
+            <div class="cat-item" onclick="switchCategory('kino', 1)">كىنو</div>
+            <div class="cat-item" onclick="switchCategory('kartun', 2)">كارتون</div>
+            <div class="cat-item" onclick="switchCategory('qisqa-film', 3)">قىسقا فىلىم</div>
         </div>
     </div>
 
@@ -316,22 +341,26 @@
         
         <!-- تەۋسىيە بۆلىكى -->
         <div id="cat-tavsiya" class="category-content">
-            <div class="empty-notice">تەۋسىيە بۆلىكىدە تېخى سىن يوق. يېڭى سىن قوشۇڭ!</div>
+            <div class="empty-notice">تەۋسىيە بۆلىكىدە تېخى سىن يوق.</div>
         </div>
 
-        <!-- كىنو بۆلىكى (پۈتۈنلەي تازىلاندى) -->
+        <!-- كىنو بۆلىكى (بىۋاسىتە سىن قويۇلدى) -->
         <div id="cat-kino" class="category-content" style="display: none;">
-            <div class="empty-notice">كىنو بۆلىكىدە تېخى سىن يوق. يېڭى سىن قوشۇڭ!</div>
+            <div class="video-grid">
+                <div class="video-item" onclick="playMovie('https://www.youtube.com/embed/FmsN-NPL7tU', 'يېڭى كىنو فىلىمى', 'بۇ فىلىم كۆزنەك كىنوخانىسىغا بىۋاسىتە يوللاندى.')">
+                    <iframe src="https://www.youtube.com/embed/FmsN-NPL7tU"></iframe>
+                </div>
+            </div>
         </div>
 
         <!-- كارتون بۆلىكى -->
         <div id="cat-kartun" class="category-content" style="display: none;">
-            <div class="empty-notice">كارتون بۆلىكىدە تېخى سىن يوق. يېڭى سىن قوشۇڭ!</div>
+            <div class="empty-notice">كارتون بۆلىكىدە تېخى سىن يوق.</div>
         </div>
 
         <!-- قىسقا فىلىم بۆلىكى -->
         <div id="cat-qisqa-film" class="category-content" style="display: none;">
-            <div class="empty-notice">قىسقا فىلىم بۆلىكىدە تېخى سىن يوق. يېڭى سىن قوشۇڭ!</div>
+            <div class="empty-notice">قىسقا فىلىم بۆلىكىدە تېخى سىن يوق.</div>
         </div>
 
     </div>
@@ -399,6 +428,8 @@
 
 <script>
     const CURRENT_PASSWORD = "0996"; 
+    const categories = ['tavsiya', 'kino', 'kartun', 'qisqa-film'];
+    let currentCatIndex = 0;
 
     function switchBottomTab(viewId, event) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -420,12 +451,48 @@
         document.getElementById(viewId).classList.add('active');
     }
 
-    function switchCategory(catId, element) {
+    function switchCategory(catId, index) {
+        currentCatIndex = index;
         document.querySelectorAll('.category-content').forEach(c => c.style.display = 'none');
         document.getElementById('cat-' + catId).style.display = 'block';
 
-        document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
-        element.classList.add('active');
+        let catItems = document.querySelectorAll('.cat-item');
+        catItems.forEach(i => i.classList.remove('active'));
+        catItems[index].classList.add('active');
+
+        catItems[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+    }
+
+    // Touch / Swipe Support for Categories
+    let touchStartX = 0;
+    let touchEndX = 0;
+    const mainContainer = document.getElementById('main-container');
+
+    mainContainer.addEventListener('touchstart', e => {
+        touchStartX = e.changedTouches[0].screenX;
+    }, false);
+
+    mainContainer.addEventListener('touchend', e => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, false);
+
+    function handleSwipe() {
+        if (!document.getElementById('home-view').classList.contains('active')) return;
+
+        let swipeThreshold = 50;
+        if (touchEndX < touchStartX - swipeThreshold) {
+            if (currentCatIndex < categories.length - 1) {
+                currentCatIndex++;
+                switchCategory(categories[currentCatIndex], currentCatIndex);
+            }
+        }
+        if (touchEndX > touchStartX + swipeThreshold) {
+            if (currentCatIndex > 0) {
+                currentCatIndex--;
+                switchCategory(categories[currentCatIndex], currentCatIndex);
+            }
+        }
     }
 
     function playMovie(videoUrl, title, description) {
