@@ -124,45 +124,15 @@
             padding: 15px;
         }
 
-        .video-card {
+        .empty-notice {
+            text-align: center;
+            color: var(--sub-text);
+            font-size: 13px;
+            padding: 40px 20px;
             background: var(--card-bg);
             border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .thumbnail-box {
-            width: 100%;
-            height: 200px;
-            background: #000;
-            position: relative;
-        }
-
-        .thumbnail-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .video-info {
-            padding: 12px;
-        }
-
-        .video-title {
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--text-color);
-            margin-bottom: 6px;
-            line-height: 1.4;
-        }
-
-        .video-meta {
-            font-size: 12px;
-            color: var(--sub-text);
-            display: flex;
-            gap: 10px;
+            border: 1px dashed var(--border-color);
+            margin: 15px;
         }
 
         /* Views management */
@@ -352,56 +322,24 @@
     <!-- === 1. باش بەت (Home / Category Views) === -->
     <div id="home-view" class="view active">
         
-        <!-- تەۋسىيە بۆلىكى (يېڭى سىن قوشۇلدى) -->
+        <!-- تەۋسىيە بۆلىكى -->
         <div id="cat-tavsiya" class="category-content">
-            <div class="video-grid">
-                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/PiUjJqvy2Gg', 'يېڭى تەۋسىيە سىن', 'بۇ كۆزنەك كىنوخانىسىنىڭ تەۋسىيە بۆلىكىگە يېڭىدىن قوشۇلغان سىن بولۇپ، بىۋاسىتە ۋە راۋان قويۇلىدۇ.')">
-                    <div class="thumbnail-box"><img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="Video"></div>
-                    <div class="video-info">
-                        <div class="video-title">يېڭى تەۋسىيە سىن</div>
-                        <div class="video-meta"><span>2.1مىڭ كۆرۈلدى</span><span>•</span><span>يېڭى</span></div>
-                    </div>
-                </div>
-            </div>
+            <div class="empty-notice">تەۋسىيە بۆلىكىدە تېخى سىن يوق. يېڭى سىن قوشۇڭ!</div>
         </div>
 
         <!-- كىنو بۆلىكى -->
         <div id="cat-kino" class="category-content" style="display: none;">
-            <div class="video-grid">
-                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/LXb3EKWsInQ', 'يېڭى كىنو - ھەرىكەتلىك سىن', 'بۇ كىنو ئويۇن ۋە ھەرىكەت سەھنىلىرىگە تولغان بولۇپ، كۆرۈشكە ئەرزىيدۇ.')">
-                    <div class="thumbnail-box"><img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Kino"></div>
-                    <div class="video-info">
-                        <div class="video-title">يېڭى كىنو - ھەرىكەتلىك سىن</div>
-                        <div class="video-meta"><span>3.5مىڭ كۆرۈلدى</span></div>
-                    </div>
-                </div>
-            </div>
+            <div class="empty-notice">كىنو بۆلىكىدە تېخى سىن يوق. يېڭى سىن قوشۇڭ!</div>
         </div>
 
         <!-- كارتون بۆلىكى -->
         <div id="cat-kartun" class="category-content" style="display: none;">
-            <div class="video-grid">
-                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/5qap5aO4i9A', 'كارتون فىلىم مەزمۇنى', 'بالىلار ۋە چوڭلار ياقتۇرۇپ كۆرىدىغان كارتون مەزمۇنلىرى.')">
-                    <div class="thumbnail-box"><img src="https://i.ibb.co/5gRdRdM2/hok.jpg" alt="Carton"></div>
-                    <div class="video-info">
-                        <div class="video-title">كارتون فىلىم مەزمۇنى</div>
-                        <div class="video-meta"><span>5مىڭ كۆرۈلدى</span></div>
-                    </div>
-                </div>
-            </div>
+            <div class="empty-notice">كارتون بۆلىكىدە تېخى سىن يوق. يېڭى سىن قوشۇڭ!</div>
         </div>
 
         <!-- قىسقا فىلىم بۆلىكى -->
         <div id="cat-qisqa-film" class="category-content" style="display: none;">
-            <div class="video-grid">
-                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/9bZkp7q19f0', 'يېڭى قىسقا فىلىم', 'بۇ فىلىم ھېچقانداق ئەزا بولۇش تەلەپ قىلىنمايلا بىۋاسىتە راۋان قويۇلىدۇ.')">
-                    <div class="thumbnail-box"><img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="Short Film"></div>
-                    <div class="video-info">
-                        <div class="video-title">يېڭى قىسقا فىلىم</div>
-                        <div class="video-meta"><span>950 كۆرۈلدى</span></div>
-                    </div>
-                </div>
-            </div>
+            <div class="empty-notice">قىسقا فىلىم بۆلىكىدە تېخى سىن يوق. يېڭى سىن قوشۇڭ!</div>
         </div>
 
     </div>
