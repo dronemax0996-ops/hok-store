@@ -131,30 +131,23 @@
             border: 1px solid var(--border-color);
             cursor: pointer;
             transition: 0.2s;
+            padding: 15px;
         }
 
-        .thumbnail-box {
-            width: 100%;
-            height: 200px;
-            background: #000;
-            position: relative;
-        }
-
-        .thumbnail-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .video-card:hover {
+            border-color: var(--accent-red);
         }
 
         .video-info {
-            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
         .video-title {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: bold;
             color: var(--text-color);
-            margin-bottom: 6px;
             line-height: 1.4;
         }
 
@@ -368,11 +361,10 @@
             <div class="empty-notice">تەۋسىيە بۆلىكىدە تېخى سىن يوق. يېڭى سىن قوشۇڭ!</div>
         </div>
 
-        <!-- كىنو بۆلىكى (يېڭى سىن قوشۇلدى) -->
+        <!-- كىنو بۆلىكى (رەسىمسىز، پەقەت تېما ۋە ئۇچۇر) -->
         <div id="cat-kino" class="category-content" style="display: none;">
             <div class="video-grid">
                 <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/FmsN-NPL7tU', 'يېڭى كىنو', 'بۇ كۆزنەك كىنوخانىسىنىڭ كىنو بۆلىكىگە يېڭىدىن قوشۇلغان سىن بولۇپ، بىۋاسىتە ۋە راۋان قويۇلىدۇ.')">
-                    <div class="thumbnail-box"><img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Kino"></div>
                     <div class="video-info">
                         <div class="video-title">يېڭى كىنو</div>
                         <div class="video-meta"><span>1مىڭ كۆرۈلدى</span><span>•</span><span>يېڭى</span></div>
