@@ -139,7 +139,7 @@
             gap: 10px;
         }
 
-        /* Player View */
+        /* Views management */
         .view {
             display: none;
         }
@@ -147,6 +147,7 @@
             display: block;
         }
 
+        /* Player View */
         .player-section {
             padding: 15px;
         }
@@ -193,6 +194,70 @@
             padding: 12px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
+        }
+
+        /* Account & List Pages Styling */
+        .page-container {
+            padding: 20px;
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .form-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--sub-text);
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            background: #0f0f0f;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #3ea6ff;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-red);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .empty-text {
+            color: var(--sub-text);
+            font-size: 13px;
+            text-align: center;
+            margin-top: 30px;
         }
 
         /* Bottom Navigation Bar */
@@ -242,17 +307,13 @@
         </div>
     </div>
 
-    <!-- === باش بەت (Home View) === -->
+    <!-- === 1. باش بەت (Home View) === -->
     <div id="home-view" class="view active">
-        <!-- Search -->
         <div class="search-box">
             <input type="text" class="search-input" placeholder="سىن ئىزدەش...">
         </div>
 
-        <!-- Video List -->
         <div class="video-grid">
-            
-            <!-- سىن 1 -->
             <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/9bZkp7q19f0', 'يېڭى چىققان تەۋسىيە سىن 1', 'بۇ كۆزنەك سۇپىسىدىكى تۇنجى سىن بولۇپ، ئالاھىدە مەزمۇنلار بىلەن تەمىنلەيدۇ.')">
                 <div class="thumbnail-box">
                     <img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="Video 1">
@@ -267,7 +328,6 @@
                 </div>
             </div>
 
-            <!-- سىن 2 -->
             <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/LXb3EKWsInQ', 'قىزىقەرلىك ھەرىكەتلىك سىن 2', 'بۇ سىن ئويۇن ۋە ھەرىكەت سەھنىلىرىگە تولغان بولۇپ، كۆرۈشكە ئەرزىيدۇ.')">
                 <div class="thumbnail-box">
                     <img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Video 2">
@@ -281,29 +341,13 @@
                     </div>
                 </div>
             </div>
-
-            <!-- سىن 3 -->
-            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/5qap5aO4i9A', 'تەۋەككۈلچىلىك دراما سىن 3', 'مەزكۇر سىندا قىزىق ۋە تەسىرلىك ۋەقەلەر بايان قىلىنىدۇ.')">
-                <div class="thumbnail-box">
-                    <img src="https://i.ibb.co/5gRdRdM2/hok.jpg" alt="Video 3">
-                </div>
-                <div class="video-info">
-                    <div class="video-title">تەۋەككۈلچىلىك دراما سىن 3</div>
-                    <div class="video-meta">
-                        <span>800 كۆرۈلدى</span>
-                        <span>•</span>
-                        <span>3 كۈن ئىلگىرى</span>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 
-    <!-- === سىن كۆرۈش بېتى (Player View) === -->
+    <!-- === 2. سىن كۆرۈش بېتى (Player View) === -->
     <div id="player-view" class="view">
         <div class="player-section">
-            <button class="back-btn" onclick="goHome()">← ئارقىغا قايتىش</button>
+            <button class="back-btn" onclick="switchView('home-view')">← ئارقىغا قايتىش</button>
             <div class="player-container">
                 <iframe id="movie-player" src="" allowfullscreen></iframe>
             </div>
@@ -312,21 +356,78 @@
         </div>
     </div>
 
+    <!-- === 3. قىزىق سەھىپىسى (Hot View) === -->
+    <div id="hot-view" class="view">
+        <div class="page-container">
+            <div class="page-title">🔥 ئەڭ قىزىق سىنلار</div>
+            <div class="video-grid">
+                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/5qap5aO4i9A', 'قىزىق تەۋەككۈلچىلىك سىن', 'بۇ ناھايىتى ئالقىشقا ئېرىشكەن قىزىق سىنلارنىڭ بىرى.')">
+                    <div class="thumbnail-box"><img src="https://i.ibb.co/5gRdRdM2/hok.jpg" alt="Hot"></div>
+                    <div class="video-info">
+                        <div class="video-title">قىزىق تەۋەككۈلچىلىك سىن</div>
+                        <div class="video-meta"><span>10مىڭ كۆرۈلدى</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === 4. تىزىملىك (Lists View: كۆرگەنلىرىم ۋە ياقتۇرغانلىرىم) === -->
+    <div id="list-view" class="view">
+        <div class="page-container">
+            <div class="page-title">📚 تىزىملىكلىرىم</div>
+            
+            <div style="margin-bottom: 25px;">
+                <h3 style="font-size: 15px; color: #3ea6ff; margin-bottom: 10px;">👁️ كۆرگەنلىرىم</h3>
+                <div class="form-box">
+                    <div class="empty-text">تېخى ھېچقانداق سىن كورمىدىڭىز.</div>
+                </div>
+            </div>
+
+            <div>
+                <h3 style="font-size: 15px; color: var(--accent-red); margin-bottom: 10px;">❤️ ياقتۇرغانلىرىم</h3>
+                <div class="form-box">
+                    <div class="empty-text">ياقتۇرغان سىنلىرىڭىز تېخى يوق.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === 5. ھېسابات (Account View: ئېلخەت ئارقىلىق كىرىش) === -->
+    <div id="account-view" class="view">
+        <div class="page-container">
+            <div class="page-title">👤 ھېساباتقا كىرىش</div>
+            <div class="form-box">
+                <form onsubmit="event.preventDefault(); alert('ھېسابات ئۇچۇرى مۇۋەپپەقىيەتلىك ئەۋەتىلدى!');">
+                    <div class="form-group">
+                        <label>ئېلخەت ئادرېسى (Email / Gmail)</label>
+                        <input type="email" class="form-input" placeholder="example@gmail.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>پارول</label>
+                        <input type="password" class="form-input" placeholder="پارولىڭىزنى كىرگۈزۈڭ" required>
+                    </div>
+                    <button type="submit" class="btn-submit">كىرىش / تىزىملىتىش</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Bottom Navigation Bar -->
     <div class="bottom-nav">
-        <a class="nav-item active" onclick="goHome()">
+        <a class="nav-item active" id="nav-home" onclick="switchView('home-view', event)">
             <span>🏠</span>
             باش بەت
         </a>
-        <a class="nav-item" onclick="alert('تىزلا ئېچىلىدۇ!')">
+        <a class="nav-item" id="nav-hot" onclick="switchView('hot-view', event)">
             <span>🔥</span>
             قىزىق
         </a>
-        <a class="nav-item" onclick="alert('تىزلا ئېچىلىدۇ!')">
+        <a class="nav-item" id="nav-list" onclick="switchView('list-view', event)">
             <span>📚</span>
             تىزىملىك
         </a>
-        <a class="nav-item" onclick="alert('تىزلا ئېچىلىدۇ!')">
+        <a class="nav-item" id="nav-account" onclick="switchView('account-view', event)">
             <span>👤</span>
             ھېسابات
         </a>
@@ -335,23 +436,26 @@
 </div>
 
 <script>
+    function switchView(viewId, event) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+
+        if (event) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        if(viewId !== 'player-view') {
+            document.getElementById('movie-player').src = '';
+        }
+        window.scrollTo(0, 0);
+    }
+
     function playMovie(videoUrl, title, description) {
-        document.getElementById('home-view').classList.remove('active');
-        document.getElementById('player-view').classList.add('active');
-        
+        switchView('player-view');
         document.getElementById('movie-player').src = videoUrl;
         document.getElementById('movie-title').innerText = title;
         document.getElementById('movie-desc').innerText = description;
-        
-        window.scrollTo(0,0);
-    }
-
-    function goHome() {
-        document.getElementById('player-view').classList.remove('active');
-        document.getElementById('home-view').classList.add('active');
-        
-        document.getElementById('movie-player').src = '';
-        window.scrollTo(0,0);
     }
 </script>
 
