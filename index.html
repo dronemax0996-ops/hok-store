@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>كۆزنەك - سىنلار مەركىزى</title>
+    <title>كۆزنەك كىنوخانىسى - سىنلار مەركىزى</title>
     <style>
         :root {
             --bg-color: #ffffff;
@@ -32,35 +32,6 @@
         .container {
             width: 100%;
             max-width: 480px;
-        }
-
-        /* Splash Screen (باشلىنىش ئېكرانى) */
-        #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #ffffff;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            transition: opacity 0.5s ease;
-        }
-
-        .splash-img {
-            width: 150px;
-            height: 150px;
-            object-fit: contain;
-            margin-bottom: 20px;
-        }
-
-        .splash-text {
-            font-size: 16px;
-            color: #666;
-            font-weight: bold;
         }
 
         /* Top Header & Categories Navbar */
@@ -353,12 +324,6 @@
 </head>
 <body>
 
-    <!-- 2 سېكۇنت كۆرسىتىلىدىغان باشلىنىش ئېكرانى (Splash Screen) -->
-    <div id="splash-screen">
-        <img src="https://i.ibb.co/B5s2cp4F/31596.jpg" alt="Loading..." class="splash-img">
-        <div class="splash-text">يۈكلىنىۋاتىدۇ...</div>
-    </div>
-
 <div class="container">
 
     <!-- === Header & Categories Navbar === -->
@@ -366,7 +331,7 @@
         <div class="top-navbar">
             <div class="logo-area">
                 <img src="https://i.ibb.co/20B4Kg78/31445.jpg" alt="Logo" class="logo-img">
-                <span class="logo-text">كۆزنەك</span>
+                <span class="logo-text">كۆزنەك كىنوخانىسى</span>
             </div>
             <div class="header-icons">
                 <span>🔍</span>
@@ -390,7 +355,7 @@
         <!-- تەۋسىيە بۆلىكى -->
         <div id="cat-tavsiya" class="category-content">
             <div class="video-grid">
-                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/9bZkp7q19f0', 'تەۋسىيە كىنو 1', 'بۇ كۆزنەك سۇپىسىدىكى تۇنجى تەۋسىيە كىنو بولۇپ، ئالاھىدە مەزمۇنلار بىلەن تەمىنلەيدۇ.')">
+                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/9bZkp7q19f0', 'تەۋسىيە كىنو 1', 'بۇ كۆزنەك كىنوخانىسىدىكى تۇنجى تەۋسىيە كىنو بولۇپ، ئالاھىدە مەزمۇنلار بىلەن تەمىنلەيدۇ.')">
                     <div class="thumbnail-box"><img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="Video"></div>
                     <div class="video-info">
                         <div class="video-title">تەۋسىيە كىنو 1</div>
@@ -490,7 +455,7 @@
             <span>🏠</span>
             باش بەت
         </a>
-        <a class="nav-item" id="nav-list" onclick="switchBottomTab('nav-list', event)">
+        <a class="nav-item" id="nav-list" onclick="switchBottomTab('list-view', event)">
             <span>📜</span>
             تىزىملىك
         </a>
@@ -504,17 +469,6 @@
 
 <script>
     const CURRENT_PASSWORD = "0996"; 
-
-    // 2 سېكۇنتتىن كېيىن يۈكلىنىش ئېكرانىنى يوقىتىش
-    window.addEventListener('DOMContentLoaded', () => {
-        setTimeout(() => {
-            const splash = document.getElementById('splash-screen');
-            splash.style.opacity = '0';
-            setTimeout(() => {
-                splash.style.display = 'none';
-            }, 500);
-        }, 2000);
-    });
 
     function switchBottomTab(viewId, event) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
