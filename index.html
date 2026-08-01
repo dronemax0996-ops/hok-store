@@ -116,48 +116,6 @@
             border-radius: 2px;
         }
 
-        /* Video List Grid */
-        .video-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            padding: 15px;
-        }
-
-        .video-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            cursor: pointer;
-            transition: 0.2s;
-            padding: 15px;
-        }
-
-        .video-card:hover {
-            border-color: var(--accent-red);
-        }
-
-        .video-info {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .video-title {
-            font-size: 15px;
-            font-weight: bold;
-            color: var(--text-color);
-            line-height: 1.4;
-        }
-
-        .video-meta {
-            font-size: 12px;
-            color: var(--sub-text);
-            display: flex;
-            gap: 10px;
-        }
-
         .empty-notice {
             text-align: center;
             color: var(--sub-text);
@@ -361,16 +319,9 @@
             <div class="empty-notice">تەۋسىيە بۆلىكىدە تېخى سىن يوق. يېڭى سىن قوشۇڭ!</div>
         </div>
 
-        <!-- كىنو بۆلىكى (رەسىمسىز، پەقەت تېما ۋە ئۇچۇر) -->
+        <!-- كىنو بۆلىكى (پۈتۈنلەي تازىلاندى) -->
         <div id="cat-kino" class="category-content" style="display: none;">
-            <div class="video-grid">
-                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/FmsN-NPL7tU', 'يېڭى كىنو', 'بۇ كۆزنەك كىنوخانىسىنىڭ كىنو بۆلىكىگە يېڭىدىن قوشۇلغان سىن بولۇپ، بىۋاسىتە ۋە راۋان قويۇلىدۇ.')">
-                    <div class="video-info">
-                        <div class="video-title">يېڭى كىنو</div>
-                        <div class="video-meta"><span>1مىڭ كۆرۈلدى</span><span>•</span><span>يېڭى</span></div>
-                    </div>
-                </div>
-            </div>
+            <div class="empty-notice">كىنو بۆلىكىدە تېخى سىن يوق. يېڭى سىن قوشۇڭ!</div>
         </div>
 
         <!-- كارتون بۆلىكى -->
