@@ -196,7 +196,7 @@
             border: 1px solid var(--border-color);
         }
 
-        /* Account & List Pages Styling */
+        /* Account & Admin Pages Styling */
         .page-container {
             padding: 20px;
         }
@@ -213,6 +213,7 @@
             border: 1px solid var(--border-color);
             padding: 20px;
             border-radius: 12px;
+            margin-bottom: 20px;
         }
 
         .form-group {
@@ -253,11 +254,8 @@
             cursor: pointer;
         }
 
-        .empty-text {
-            color: var(--sub-text);
-            font-size: 13px;
-            text-align: center;
-            margin-top: 30px;
+        .btn-submit:hover {
+            opacity: 0.9;
         }
 
         .info-text {
@@ -265,6 +263,23 @@
             color: var(--sub-text);
             line-height: 1.6;
             margin-bottom: 15px;
+        }
+
+        .status-box {
+            background: #111;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            margin-top: 15px;
+        }
+
+        .member-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #222;
+            font-size: 13px;
         }
 
         /* Bottom Navigation Bar */
@@ -321,7 +336,7 @@
         </div>
 
         <div class="video-grid">
-            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/9bZkp7q19f0', 'يېڭى چىققان تەۋسىيە سىن 1', 'بۇ كۆزنەك سۇپىسىدىكى تۇنجى سىن بولۇپ، ئالاھىدە مەزمۇنلار بىلەن تەمىنلەيدۇ.')">
+            <div class="video-card" onclick="checkAccessAndPlay('https://www.youtube.com/embed/9bZkp7q19f0', 'يېڭى چىققان تەۋسىيە سىن 1', 'بۇ كۆزنەك سۇپىسىدىكى تۇنجى سىن بولۇپ، ئالاھىدە مەزمۇنلار بىلەن تەمىنلەيدۇ.')">
                 <div class="thumbnail-box">
                     <img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="Video 1">
                 </div>
@@ -335,7 +350,7 @@
                 </div>
             </div>
 
-            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/LXb3EKWsInQ', 'قىزىقەرلىك ھەرىكەتلىك سىن 2', 'بۇ سىن ئويۇن ۋە ھەرىكەت سەھنىلىرىگە تولغان بولۇپ، كۆرۈشكە ئەرزىيدۇ.')">
+            <div class="video-card" onclick="checkAccessAndPlay('https://www.youtube.com/embed/LXb3EKWsInQ', 'قىزىقەرلىك ھەرىكەتلىك سىن 2', 'بۇ سىن ئويۇن ۋە ھەرىكەت سەھنىلىرىگە تولغان بولۇپ، كۆرۈشكە ئەرزىيدۇ.')">
                 <div class="thumbnail-box">
                     <img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Video 2">
                 </div>
@@ -368,7 +383,7 @@
         <div class="page-container">
             <div class="page-title">🔥 ئەڭ قىزىق سىنلار</div>
             <div class="video-grid">
-                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/5qap5aO4i9A', 'قىزىق تەۋەككۈلچىلىك سىن', 'بۇ ناھايىتى ئالقىشقا ئېرىشكەن قىزىق سىنلارنىڭ بىرى.')">
+                <div class="video-card" onclick="checkAccessAndPlay('https://www.youtube.com/embed/5qap5aO4i9A', 'قىزىق تەۋەككۈلچىلىك سىن', 'بۇ ناھايىتى ئالقىشقا ئېرىشكەن قىزىق سىنلارنىڭ بىرى.')">
                     <div class="thumbnail-box"><img src="https://i.ibb.co/5gRdRdM2/hok.jpg" alt="Hot"></div>
                     <div class="video-info">
                         <div class="video-title">قىزىق تەۋەككۈلچىلىك سىن</div>
@@ -379,43 +394,78 @@
         </div>
     </div>
 
-    <!-- === 4. تىزىملىك (Lists View: كۆرگەنلىرىم ۋە ياقتۇرغانلىرىم) === -->
+    <!-- === 4. تىزىملىك (Lists View) === -->
     <div id="list-view" class="view">
         <div class="page-container">
             <div class="page-title">📚 تىزىملىكلىرىم</div>
-            
             <div style="margin-bottom: 25px;">
                 <h3 style="font-size: 15px; color: #3ea6ff; margin-bottom: 10px;">👁️ كۆرگەنلىرىم</h3>
-                <div class="form-box">
-                    <div class="empty-text">تېخى ھېچقانداق سىن كورمىدىڭىز.</div>
-                </div>
+                <div class="form-box"><div class="info-text" style="text-align:center; margin:0;">تېخى ھېچقانداق سىن كورمىدىڭىز.</div></div>
             </div>
-
             <div>
                 <h3 style="font-size: 15px; color: var(--accent-red); margin-bottom: 10px;">❤️ ياقتۇرغانلىرىم</h3>
-                <div class="form-box">
-                    <div class="empty-text">ياقتۇرغان سىنلىرىڭىز تېخى يوق.</div>
-                </div>
+                <div class="form-box"><div class="info-text" style="text-align:center; margin:0;">ياقتۇرغان سىنلىرىڭىز تېخى يوق.</div></div>
             </div>
         </div>
     </div>
 
-    <!-- === 5. ھېسابات (Account View: ئايلىق ئەزالىق ئۇلانمىسى) === -->
+    <!-- === 5. ھېسابات ۋە ئەزالىق (Account / Admin View) === -->
     <div id="account-view" class="view">
         <div class="page-container">
-            <div class="page-title">👤 ئايلىق ئەزالىق ھېساباتى</div>
-            <div class="form-box">
-                <div class="info-text">
-                    «كۆزنەك» سۇپىسىنىڭ بارلىق كىنولىرىنى كۆرۈش ئۈچۈن ئايلىق ئەزا بولۇشىڭىز كېرەك. پۇل تۆلىگەندىن كېيىن سىزگە بىر ئايلىق مەخسۇس تېلېگرامما/كىرىش ئۇلانمىسى ئەۋەتىپ بېرىلىدۇ. شۇ ئۇلانما ئارقىلىق كىرىپ بىر ئاي داۋامىدالەپ ئىشلىتەلەйсىز.
-                </div>
-                <form onsubmit="event.preventDefault(); alert('ئۇلانما تекشۈرۈلدى! ئەزالىقىڭىز ئاكتىپ.');">
+            
+            <!-- ئەگەر كىرگەن بولساۋ ياكى باشقۇرغۇچى بولسا -->
+            <div id="user-status-box" class="form-box">
+                <div class="page-title" style="font-size: 16px;">👤 ئەزالىق ئەھۋالىڭىز</div>
+                <div id="membership-info" class="info-text">سىز تېخى ئەزا بولمىدىڭىز ياكى كىرىش كودى كىرگۈزمىدىڭىز.</div>
+                <form onsubmit="activateSubscription(event)">
                     <div class="form-group">
-                        <label>بېرىلگەن مەخسۇس كىرىش ئۇلانمىسى (Link)</label>
-                        <input type="text" class="form-input" placeholder="https://t.me/... ياكى ئۇلانما كىرگۈزۈڭ" required>
+                        <label>ئەزالىق كىرىش كودىڭىز (Link Token)</label>
+                        <input type="text" id="token-input" class="form-input" placeholder="مەسلەن: koznek2026..." required>
                     </div>
-                    <button type="submit" class="btn-submit">ئۇلانما ئارقىلىق كىرىش</button>
+                    <button type="submit" class="btn-submit">ئەزالىقنى تەكشۈرۈش</button>
                 </form>
             </div>
+
+            <!-- باشقۇرغۇچى قىسمى (Admin Panel - ئۆزىڭىز كىرىدىغان جاي) -->
+            <div class="form-box" style="border-color: #3ea6ff;">
+                <div class="page-title" style="font-size: 16px; color: #3ea6ff;">⚙️ بېكەت باشقۇرغۇچى (Admin)</div>
+                <div id="admin-login-section">
+                    <form onsubmit="adminLogin(event)">
+                        <div class="form-group">
+                            <label>باشقۇرغۇچى ئېلخەت / ئاتى</label>
+                            <input type="text" id="admin-user" class="form-input" placeholder="Admin" required>
+                        </div>
+                        <div class="form-group">
+                            <label>مەخسۇس شىفىر (پارول)</label>
+                            <input type="password" id="admin-pass" class="form-input" placeholder="پارول" required>
+                        </div>
+                        <button type="submit" class="btn-submit" style="background: #3ea6ff;">باشقۇرۇشقا كىرىش</button>
+                    </form>
+                </div>
+
+                <div id="admin-panel-section" style="display: none;">
+                    <div class="info-text" style="color: #4CAF50; font-weight: bold;">✔ سىز باشقۇرغۇچى ھالىتىدەدۇرسىز!</div>
+                    <form onsubmit="addNewMember(event)">
+                        <div class="form-group">
+                            <label>ئەزانىڭ ئىسمى ياكى تېلېفون نومۇرى</label>
+                            <input type="text" id="new-member-name" class="form-input" placeholder="مەسلەن: ئابلاجان" required>
+                        </div>
+                        <div class="form-group">
+                            <label>بېرىلىدىغان مەخسۇس كود (Token)</label>
+                            <input type="text" id="new-member-token" class="form-input" placeholder="مەسلەن: ahmad30" required>
+                        </div>
+                        <button type="submit" class="btn-submit" style="background: #4CAF50;">يېڭى ئەزا قوشۇش (30 كۈن)</button>
+                    </form>
+
+                    <div class="status-box">
+                        <div style="font-weight: bold; margin-bottom: 10px; font-size: 13px;">تزىمغا ئېلىنغان ئەزالار:</div>
+                        <div id="members-list-container">
+                            <!-- ئەزالار بۇ يەردە كۆرسىتىلىدۇ -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -442,6 +492,21 @@
 </div>
 
 <script>
+    // باشقۇرغۇچى ئۇچۇرلىرى (ئۆزىڭىز خالىغانچە ئۆزگەرتەلەيسىز)
+    const ADMIN_USER = "admin";
+    const ADMIN_PASS = "12345";
+
+    // سانلىق مەلۇماتلارنى ساقلاش (Local Storage ئارقىلىق)
+    function getMembers() {
+        let members = localStorage.getItem('koznek_members');
+        return members ? JSON.parse(members) : {};
+    }
+
+    function saveMembers(members) {
+        localStorage.setItem('koznek_members', JSON.stringify(members));
+    }
+
+    // كۆرۈش بۆلەكلىرىنى ئالماشتۇرۇش
     function switchView(viewId, event) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
@@ -457,11 +522,158 @@
         window.scrollTo(0, 0);
     }
 
+    // كىنونى كۆرۈشتىن بۇرۇن ئەزالىق ۋاقتىنى تەكشۈرۈش
+    function checkAccessAndPlay(videoUrl, title, description) {
+        let activeToken = localStorage.getItem('koznek_active_token');
+        let members = getMembers();
+
+        if (activeToken && members[activeToken]) {
+            let expiryDate = new Date(members[activeToken].expiry);
+            let now = new Date();
+
+            if (now < expiryDate) {
+                // ۋاقتى توشمىغان، كىنونى قويىدۇ
+                playMovie(videoUrl, title, description);
+                return;
+            }
+        }
+        
+        // ئەزالىقى يوق ياكى ۋاقتى توشقان بولسا
+        alert('ئەزالىق ۋاقتىڭىز توشقان ياكى تېخى ئەزا بولمىدىڭىز! ھېسابات سەھىپىسىگە كىرىپ كودىڭىزنى كىرگۈزۈڭ.');
+        switchView('account-view');
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById('nav-account').classList.add('active');
+    }
+
     function playMovie(videoUrl, title, description) {
         switchView('player-view');
         document.getElementById('movie-player').src = videoUrl;
         document.getElementById('movie-title').innerText = title;
         document.getElementById('movie-desc').innerText = description;
+    }
+
+    // ئەزانىڭ كود كىرگۈزۈپ كىرىشى
+    function activateSubscription(event) {
+        event.preventDefault();
+        let token = document.getElementById('token-input').value.trim();
+        let members = getMembers();
+
+        if (members[token]) {
+            let expiryDate = new Date(members[token].expiry);
+            let now = new Date();
+
+            if (now < expiryDate) {
+                localStorage.setItem('koznek_active_token', token);
+                alert('مۇۋەپپەقىيەتلىك كىردىڭىز! ئەزالىقىڭىز ئاكتىپ.');
+                checkUserStatus();
+                switchView('home-view');
+            } else {
+                alert('بۇ كودنىڭ ۋاقتى توشۇپ كەتكەن!');
+            }
+        } else {
+            alert('خاتائلاشكىن كود! بۇنداق كود تېپىلمىدى.');
+        }
+    }
+
+    // ھېسابات سەھىپىسىدە ئەھۋالنى كۆرسىتىش
+    function checkUserStatus() {
+        let activeToken = localStorage.getItem('koznek_active_token');
+        let members = getMembers();
+        let infoDiv = document.getElementById('membership-info');
+
+        if (activeToken && members[activeToken]) {
+            let expiryDate = new Date(members[activeToken].expiry);
+            let now = new Date();
+
+            if (now < expiryDate) {
+                let daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+                infoDiv.innerHTML = `<b style="color:#4CAF50;">✔ ئەزالىقىڭىز ئاكتىپ!</b><br>إسم: ${members[activeToken].name}<br>قالمىغان ۋاقتى: ${daysLeft} كۈن قالدى (${members[activeToken].expiry} غىچە)`;
+            } else {
+                infoDiv.innerHTML = `<b style="color:var(--accent-red);">❌ ئەزالىق ۋاقتىڭىز توشتى!</b>`;
+            }
+        }
+    }
+
+    // باشقۇرغۇچى (Admin) كىرىشى
+    function adminLogin(event) {
+        event.preventDefault();
+        let user = document.getElementById('admin-user').value.trim();
+        let pass = document.getElementById('admin-pass').value.trim();
+
+        if (user === ADMIN_USER && pass === ADMIN_PASS) {
+            document.getElementById('admin-login-section').style.display = 'none';
+            document.getElementById('admin-panel-section').style.display = 'block';
+            renderMembersList();
+        } else {
+            alert('باشقۇرغۇچى ئاتى ياكى شىفىرى خاتا!');
+        }
+    }
+
+    // يېڭى ئەزا قوشۇش (30 كۈنلۈك)
+    function addNewMember(event) {
+        event.preventDefault();
+        let name = document.getElementById('new-member-name').value.trim();
+        let token = document.getElementById('new-member-token').value.trim();
+
+        let members = getMembers();
+
+        // 30 كۈن كېيىنكى ۋاقىتنى ھېسابلاش
+        let expiry = new Date();
+        expiry.setDate(expiry.getDate() + 30);
+        let expiryStr = expiry.toISOString().split('T')[0];
+
+        members[token] = {
+            name: name,
+            expiry: expiryStr
+        };
+
+        saveMembers(members);
+        alert('يېڭى ئەزا مۇۋەپپەقىيەتلىك قوشۇلدى! (30 كۈن)');
+        document.getElementById('new-member-name').value = '';
+        document.getElementById('new-member-token').value = '';
+        renderMembersList();
+    }
+
+    // ئەزالار تىزىملىكىنى كۆرسىتىش ۋە ئۆچۈرۈش
+    function renderMembersList() {
+        let members = getMembers();
+        let container = document.getElementById('members-list-container');
+        container.innerHTML = '';
+
+        let keys = Object.keys(members);
+        if (keys.length === 0) {
+            container.innerHTML = '<div style="color:var(--sub-text); font-size:12px;">تېخى ئەزا قوشۇلمىدى.</div>';
+            return;
+        }
+
+        keys.forEach(token => {
+            let m = members[token];
+            let item = document.createElement('div');
+            item.className = 'member-item';
+            item.innerHTML = `
+                <div>
+                    <b>${m.name}</b> <span style="color:#aaa; font-size:11px;">(${token})</span><br>
+                    <span style="color:#4CAF50; font-size:11px;">ۋاقتى: ${m.expiry}</span>
+                </div>
+                <button onclick="removeMember('${token}')" style="background:var(--accent-red); color:#fff; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">چىقىرىۋېتىش</button>
+            `;
+            container.appendChild(item);
+        });
+    }
+
+    // ئەزانى ئۆچۈرۈش / چېكىندۈرۈش
+    function removeMember(token) {
+        if (confirm('بۇ ئەزانى چىقىرىۋېتەمسىز؟')) {
+            let members = getMembers();
+            delete members[token];
+            saveMembers(members);
+            renderMembersList();
+        }
+    }
+
+    // بەت ئېچىلغاندا تەكشۈرۈش
+    window.onload = function() {
+        checkUserStatus();
     }
 </script>
 
