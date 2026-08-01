@@ -1,78 +1,469 @@
-ئېچىش
-تىزىملىتىش
+<!DOCTYPE html>
+<html lang="ug" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كۆزنەك - سىنلار مەركىزى</title>
+    <style>
+        :root {
+            --bg-color: #0f0f0f;
+            --card-bg: #1f1f1f;
+            --accent-red: #ff0000;
+            --text-color: #ffffff;
+            --sub-text: #aaa;
+            --border-color: #303030;
+        }
 
-كىرىش
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
 
-ئىزدەش
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 70px;
+            display: flex;
+            justify-content: center;
+        }
 
-نامەلۇم ئىشلەتكۈچى
-HTML، CSS ۋە JavaScript ئارقىلىق كىنو تور بېكىتى قۇرۇش API دىن سانلىق مەلۇماتلارنى ئېلىش
-ئەلبېتېلموللا
-ئەلبېتېلموللا
+        .container {
+            width: 100%;
+            max-width: 480px;
+        }
 
-ئەگىشىڭ
-8 مىنۇتلۇق ئوقۇش
-·
-2023-يىلى 8-ئاينىڭ 2-كۈنى
+        /* Top Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: #212121;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-ئاڭلاڭ
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
+        .logo-img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
 
-ئورتاقلىشىش
+        .logo-text {
+            font-weight: bold;
+            font-size: 16px;
+            color: #fff;
+        }
 
-كىرىش سۆز:
-بۇ دەرسلىكتە، بىز سىزگە HTML، CSS ۋە JavaScript ئارقىلىق كىنو تور بېكىتى قۇرۇش جەريانىنى چۈشەندۈرۈپ بېرىمىز. تور بېكەت TMDB API دىن ئېلىنغان كىنولارنىڭ تىزىملىكىنى كۆرسىتىپ بېرىدۇ ۋە ئىشلەتكۈچىلەرنىڭ مەلۇم كىنولارنى ئىزدەشىگە يول قويىدۇ. بىز كىنو ئېلانلىرى، ناملىرى، قويۇلۇش ۋاقتى ۋە قىسقىچە ئومۇمىي بايانلىرى بىلەن كۆرۈنۈش جەھەتتىن جەلپ قىلارلىق ئىشلەتكۈچى ئارايۈزىنى يارىتىمىز. باشلايلى!
+        /* Search Box */
+        .search-box {
+            padding: 12px 15px;
+        }
 
-رەسىمنى تولۇق چوڭلۇقتا كۆرۈش ئۈچۈن Enter كۇنۇپكىسىنى بېسىڭ ياكى چېكىڭ
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
 
-مېنىڭ كودۇمنىڭ نەتىجىسى مۇنداق
-1. ئالدىنقى شەرتلەر:
-باشلاشتىن بۇرۇن، HTML، CSS ۋە JavaScript نى ئاساسىي جەھەتتىن بىلىدىغانلىقىڭىزغا كاپالەتلىك قىلىڭ. بۇنىڭدىن باشقا، كىنو سانلىق مەلۇماتلىرىنى ئېلىش ئۈچۈن TMDB (كىنو سانلىق مەلۇمات ئامبىرى) دىن API ئاچقۇچى لازىم بولىدۇ. API ئاچقۇچىڭىزنى TMDB تور بېتىدىن ( https://www.themoviedb.org/ ) ئالسىڭىز بولىدۇ.
+        .search-input:focus {
+            border-color: #3ea6ff;
+        }
 
-2. HTML قۇرۇلمىسىنى تەڭشەش:
-ئالدى بىلەن، يېڭى HTML ھۆججىتى قۇرۇپ، كىنو تور بېتىمىزنىڭ ئاساسىي قۇرۇلمىسىنى تەڭشەيمىز. بىز باشلىق، ئىزدەش بالدىقى، ھازىر قويۇلۇۋاتقان ۋە ئەڭ يۇقىرى باھالانغان كىنولارنىڭ كۇنۇپكىلىرى ۋە كىنو كارتىلىرىنى كۆرسىتىدىغان نەتىجە ساندۇقىنى قوشىمىز.
+        /* Video List Grid */
+        .video-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 0 15px;
+        }
 
-<!DOCTYPE html > 
-< html > 
-< head > 
- < title > كىنو تور بېكىتى </ title > 
- < link  rel = "stylesheet"  href = "style.css" > 
-</ head > 
-< body > 
- < h1 > ھانى فىلىملىرى </ h1 > 
- < br > < br > 
- < div  class = "input-container" > 
- < input  type = "text"  id = "searchInput"  placeholder = "فىلىم ئىزدەڭ…" > 
- < button  id = "searchButton" > ئىزدەش </ button > 
- </ div > 
- < br > < br > 
- < div  class = "wrapper" > 
- < button  id = "nowPlayingButton"  class = "button1" > ھازىر قويۇلۇۋاتىدۇ </ button > 
- < button  id = "topRatedButton"  class = "button1" > ئەڭ يۇقىرى باھالانغان </ button > 
- </ div > < 
- div class  = " results" > </ div > 
- < hr > 
- < footer > 
- < div  id = "copyRight"
- > بارلىق ھوقۇقلار قوغدىلىدۇ </ div > < div id = "lastFooter" > < ul > < li > < a href = "" > بىز ھەققىدە </ a > </ li > < li > < a href = "" > بىز بىلەن ئالاقىلىشىڭ </ a > </i=170>> < a href = "" > بىز بىلەن ئالاقىلىشىڭ </ a > </i=170>> < a href = "" > بىز بىلەن ئالاقىلىشىڭ </ a > </
- 
-  
- 
- 
-  
- 
- 
-  
- li > 
- < li > 
- < a  href = "" > شەرتلەر </ a > 
- </ li > 
- < li > 
- < a  href = "" > ئىجازەتنامە </ a > 
- </ li > 
- </ ul > 
- </ div > 
- </ footer > 
- < script  src = "script.js" > </ script > 
-</ body > 
-</ html >
+        .video-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .video-card:hover {
+            border-color: #555;
+        }
+
+        .thumbnail-box {
+            width: 100%;
+            height: 200px;
+            background: #000;
+            position: relative;
+        }
+
+        .thumbnail-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            padding: 12px;
+        }
+
+        .video-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .video-meta {
+            font-size: 12px;
+            color: var(--sub-text);
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Views management */
+        .view {
+            display: none;
+        }
+        .view.active {
+            display: block;
+        }
+
+        /* Player View */
+        .player-section {
+            padding: 15px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #3ea6ff;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .player-container {
+            width: 100%;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .player-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .current-video-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .current-video-desc {
+            font-size: 13px;
+            color: var(--sub-text);
+            line-height: 1.5;
+            background: var(--card-bg);
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Account & List Pages Styling */
+        .page-container {
+            padding: 20px;
+        }
+
+        .page-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .form-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            color: var(--sub-text);
+            margin-bottom: 6px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            background: #0f0f0f;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: #3ea6ff;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent-red);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .empty-text {
+            color: var(--sub-text);
+            font-size: 13px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .info-text {
+            font-size: 13px;
+            color: var(--sub-text);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        /* Bottom Navigation Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #212121;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 1000;
+        }
+
+        .nav-item {
+            text-align: center;
+            color: var(--sub-text);
+            text-decoration: none;
+            font-size: 11px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .nav-item.active {
+            color: #fff;
+        }
+
+        .nav-item span:first-child {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Top Navbar -->
+    <div class="navbar">
+        <div class="logo-area">
+            <img src="https://i.ibb.co/20B4Kg78/31445.jpg" alt="كۆزنەك Logo" class="logo-img">
+            <span class="logo-text">كۆزنەك</span>
+        </div>
+    </div>
+
+    <!-- === 1. باش بەت (Home View) === -->
+    <div id="home-view" class="view active">
+        <div class="search-box">
+            <input type="text" class="search-input" placeholder="سىن ئىزدەش...">
+        </div>
+
+        <div class="video-grid">
+            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/9bZkp7q19f0', 'يېڭى چىققان تەۋسىيە سىن 1', 'بۇ كۆزنەك سۇپىسىدىكى تۇنجى سىن بولۇپ، ئالاھىدە مەزمۇنلار بىلەن تەمىنلەيدۇ.')">
+                <div class="thumbnail-box">
+                    <img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="Video 1">
+                </div>
+                <div class="video-info">
+                    <div class="video-title">يېڭى چىققان تەۋسىيە سىن 1</div>
+                    <div class="video-meta">
+                        <span>1.2مىڭ كۆرۈلدى</span>
+                        <span>•</span>
+                        <span>2 كۈن ئىلگىرى</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/LXb3EKWsInQ', 'قىزىقەرلىك ھەرىكەتلىك سىن 2', 'بۇ سىن ئويۇن ۋە ھەرىكەت سەھنىلىرىگە تولغان بولۇپ، كۆرۈشكە ئەرزىيدۇ.')">
+                <div class="thumbnail-box">
+                    <img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Video 2">
+                </div>
+                <div class="video-info">
+                    <div class="video-title">قىزىقەرلىك ھەرىكەتلىك سىن 2</div>
+                    <div class="video-meta">
+                        <span>3.5مىڭ كۆرۈلدى</span>
+                        <span>•</span>
+                        <span>1 ھەپتە ئىلگىرى</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === 2. سىن كۆرۈش بېتى (Player View) === -->
+    <div id="player-view" class="view">
+        <div class="player-section">
+            <button class="back-btn" onclick="switchView('home-view')">← ئارقىغا قايتىش</button>
+            <div class="player-container">
+                <iframe id="movie-player" src="" allowfullscreen></iframe>
+            </div>
+            <div id="movie-title" class="current-video-title">سىن تېمىسى</div>
+            <div id="movie-desc" class="current-video-desc">سىن توغرىسدىكى قىسقىچە بايان بۇ يەردە كۆرسىتىلىدۇ.</div>
+        </div>
+    </div>
+
+    <!-- === 3. قىزىق سەھىپىسى (Hot View) === -->
+    <div id="hot-view" class="view">
+        <div class="page-container">
+            <div class="page-title">🔥 ئەڭ قىزىق سىنلار</div>
+            <div class="video-grid">
+                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/5qap5aO4i9A', 'قىزىق تەۋەككۈلچىلىك سىن', 'بۇ ناھايىتى ئالقىشقا ئېرىشكەن قىزىق سىنلارنىڭ بىرى.')">
+                    <div class="thumbnail-box"><img src="https://i.ibb.co/5gRdRdM2/hok.jpg" alt="Hot"></div>
+                    <div class="video-info">
+                        <div class="video-title">قىزىق تەۋەككۈلچىلىك سىن</div>
+                        <div class="video-meta"><span>10مىڭ كۆرۈلدى</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === 4. تىزىملىك (Lists View: كۆرگەنلىرىم ۋە ياقتۇرغانلىرىم) === -->
+    <div id="list-view" class="view">
+        <div class="page-container">
+            <div class="page-title">📚 تىزىملىكلىرىم</div>
+            
+            <div style="margin-bottom: 25px;">
+                <h3 style="font-size: 15px; color: #3ea6ff; margin-bottom: 10px;">👁️ كۆرگەنلىرىم</h3>
+                <div class="form-box">
+                    <div class="empty-text">تېخى ھېچقانداق سىن كورمىدىڭىز.</div>
+                </div>
+            </div>
+
+            <div>
+                <h3 style="font-size: 15px; color: var(--accent-red); margin-bottom: 10px;">❤️ ياقتۇرغانلىرىم</h3>
+                <div class="form-box">
+                    <div class="empty-text">ياقتۇرغان سىنلىرىڭىز تېخى يوق.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- === 5. ھېسابات (Account View: ئايلىق ئەزالىق ئۇلانمىسى) === -->
+    <div id="account-view" class="view">
+        <div class="page-container">
+            <div class="page-title">👤 ئايلىق ئەزالىق ھېساباتى</div>
+            <div class="form-box">
+                <div class="info-text">
+                    «كۆزنەك» سۇپىسىنىڭ بارلىق كىنولىرىنى كۆرۈش ئۈچۈن ئايلىق ئەزا بولۇشىڭىز كېرەك. پۇل تۆلىگەندىن كېيىن سىزگە بىر ئايلىق مەخسۇس تېلېگرامما/كىرىش ئۇلانمىسى ئەۋەتىپ بېرىلىدۇ. شۇ ئۇلانما ئارقىلىق كىرىپ بىر ئاي داۋامىدالەپ ئىشلىتەلەйсىز.
+                </div>
+                <form onsubmit="event.preventDefault(); alert('ئۇلانما تекشۈرۈلدى! ئەزالىقىڭىز ئاكتىپ.');">
+                    <div class="form-group">
+                        <label>بېرىلگەن مەخسۇس كىرىش ئۇلانمىسى (Link)</label>
+                        <input type="text" class="form-input" placeholder="https://t.me/... ياكى ئۇلانما كىرگۈزۈڭ" required>
+                    </div>
+                    <button type="submit" class="btn-submit">ئۇلانما ئارقىلىق كىرىش</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <a class="nav-item active" id="nav-home" onclick="switchView('home-view', event)">
+            <span>🏠</span>
+            باش بەت
+        </a>
+        <a class="nav-item" id="nav-hot" onclick="switchView('hot-view', event)">
+            <span>🔥</span>
+            قىزىق
+        </a>
+        <a class="nav-item" id="nav-list" onclick="switchView('list-view', event)">
+            <span>📚</span>
+            تىزىملىك
+        </a>
+        <a class="nav-item" id="nav-account" onclick="switchView('account-view', event)">
+            <span>👤</span>
+            ھېسابات
+        </a>
+    </div>
+
+</div>
+
+<script>
+    function switchView(viewId, event) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+
+        if (event) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
+
+        if(viewId !== 'player-view') {
+            document.getElementById('movie-player').src = '';
+        }
+        window.scrollTo(0, 0);
+    }
+
+    function playMovie(videoUrl, title, description) {
+        switchView('player-view');
+        document.getElementById('movie-player').src = videoUrl;
+        document.getElementById('movie-title').innerText = title;
+        document.getElementById('movie-desc').innerText = description;
+    }
+</script>
+
+</body>
+</html>
