@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>كىنوخانى - سىنلار مەركىزى</title>
+    <title>كۆزنەك - سىنلار مەركىزى</title>
     <style>
         :root {
             --bg-color: #0f0f0f;
@@ -53,22 +53,16 @@
             gap: 8px;
         }
 
-        .logo-circle {
-            width: 32px;
-            height: 32px;
-            background: var(--accent-red);
+        .logo-img {
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #fff;
-            font-size: 14px;
+            object-fit: cover;
         }
 
         .logo-text {
             font-weight: bold;
-            font-size: 15px;
+            font-size: 16px;
             color: #fff;
         }
 
@@ -243,8 +237,8 @@
     <!-- Top Navbar -->
     <div class="navbar">
         <div class="logo-area">
-            <div class="logo-circle">▶</div>
-            <span class="logo-text">كىنوخانى</span>
+            <img src="https://i.ibb.co/20B4Kg78/31445.jpg" alt="كۆزنەك Logo" class="logo-img">
+            <span class="logo-text">كۆزنەك</span>
         </div>
     </div>
 
@@ -252,34 +246,34 @@
     <div id="home-view" class="view active">
         <!-- Search -->
         <div class="search-box">
-            <input type="text" class="search-input" placeholder="كىنو ئىزدەش...">
+            <input type="text" class="search-input" placeholder="سىن ئىزدەش...">
         </div>
 
-        <!-- Video List (كىنو تىزىملىكى - بۇ يەرگە ئۆزىڭىز كىنو قوشالايسىز) -->
+        <!-- Video List -->
         <div class="video-grid">
             
-            <!-- كىنو 1 -->
-            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/9bZkp7q19f0', 'يېڭى چىققان تەۋسىيە كىنو 1', 'بۇ كىنوخانىدىكى تۇنجى كىنو بولۇپ، ئالاھىدە مەزمۇنلار بىلەن تەمىنلەيدۇ.')">
+            <!-- سىن 1 -->
+            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/9bZkp7q19f0', 'يېڭى چىققان تەۋسىيە سىن 1', 'بۇ كۆزنەك سۇپىسىدىكى تۇنجى سىن بولۇپ، ئالاھىدە مەزمۇنلار بىلەن تەمىنلەيدۇ.')">
                 <div class="thumbnail-box">
-                    <img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="Movie 1">
+                    <img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="Video 1">
                 </div>
                 <div class="video-info">
-                    <div class="video-title">يېڭى چىققان تەۋسىيە كىنو 1</div>
+                    <div class="video-title">يېڭى چىققان تەۋسىيە سىن 1</div>
                     <div class="video-meta">
                         <span>1.2مىڭ كۆرۈلدى</span>
                         <span>•</span>
-                        <span>2 كۈن ئ ilgiri</span>
+                        <span>2 كۈن ئىلگىرى</span>
                     </div>
                 </div>
             </div>
 
-            <!-- كىنو 2 -->
-            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/LXb3EKWsInQ', 'قىزىقەرلىك ھەرىكەتلىك كىنو 2', 'بۇ كىنو ئويۇن ۋە ھەرىكەت سەھنىلىرىگە تولغان بولۇپ، كۆرۈشكە ئەرزىيدۇ.')">
+            <!-- سىن 2 -->
+            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/LXb3EKWsInQ', 'قىزىقەرلىك ھەرىكەتلىك سىن 2', 'بۇ سىن ئويۇن ۋە ھەرىكەت سەھنىلىرىگە تولغان بولۇپ، كۆرۈشكە ئەرزىيدۇ.')">
                 <div class="thumbnail-box">
-                    <img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Movie 2">
+                    <img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Video 2">
                 </div>
                 <div class="video-info">
-                    <div class="video-title">قىزىقەرلىك ھەرىكەتلىك كىنو 2</div>
+                    <div class="video-title">قىزىقەرلىك ھەرىكەتلىك سىن 2</div>
                     <div class="video-meta">
                         <span>3.5مىڭ كۆرۈلدى</span>
                         <span>•</span>
@@ -288,13 +282,13 @@
                 </div>
             </div>
 
-            <!-- كىنو 3 -->
-            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/5qap5aO4i9A', 'تەۋەككۈلچىلىك دراما كىنوسى 3', 'مەزكۇر دراما كىنوسىدا قىزىق ۋە تەسىرلىك ۋەقەلەر بايان قىلىنىدۇ.')">
+            <!-- سىن 3 -->
+            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/5qap5aO4i9A', 'تەۋەككۈلچىلىك دراما سىن 3', 'مەزكۇر سىندا قىزىق ۋە تەسىرلىك ۋەقەلەر بايان قىلىنىدۇ.')">
                 <div class="thumbnail-box">
-                    <img src="https://i.ibb.co/5gRdRdM2/hok.jpg" alt="Movie 3">
+                    <img src="https://i.ibb.co/5gRdRdM2/hok.jpg" alt="Video 3">
                 </div>
                 <div class="video-info">
-                    <div class="video-title">تەۋەككۈلچىلىك دراما كىنوسى 3</div>
+                    <div class="video-title">تەۋەككۈلچىلىك دراما سىن 3</div>
                     <div class="video-meta">
                         <span>800 كۆرۈلدى</span>
                         <span>•</span>
@@ -306,15 +300,15 @@
         </div>
     </div>
 
-    <!-- === كىنو كۆرۈش بېتى (Player View) === -->
+    <!-- === سىن كۆرۈش بېتى (Player View) === -->
     <div id="player-view" class="view">
         <div class="player-section">
             <button class="back-btn" onclick="goHome()">← ئارقىغا قايتىش</button>
             <div class="player-container">
                 <iframe id="movie-player" src="" allowfullscreen></iframe>
             </div>
-            <div id="movie-title" class="current-video-title">كىنو تېمىسى</div>
-            <div id="movie-desc" class="current-video-desc">كىنو توغرىسدىكى قىسقىچە بايان بۇ يەردە كۆرسىتىلىدۇ.</div>
+            <div id="movie-title" class="current-video-title">سىن تېمىسى</div>
+            <div id="movie-desc" class="current-video-desc">سىن توغرىسدىكى قىسقىچە بايان بۇ يەردە كۆرسىتىلىدۇ.</div>
         </div>
     </div>
 
@@ -356,7 +350,6 @@
         document.getElementById('player-view').classList.remove('active');
         document.getElementById('home-view').classList.add('active');
         
-        // سىن قويۇشنى توختىتىش ئۈچۈن iframe نىڭ src نى قۇرۇق قىلىمىز
         document.getElementById('movie-player').src = '';
         window.scrollTo(0,0);
     }
