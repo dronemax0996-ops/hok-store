@@ -124,6 +124,47 @@
             padding: 15px;
         }
 
+        .video-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .thumbnail-box {
+            width: 100%;
+            height: 200px;
+            background: #000;
+            position: relative;
+        }
+
+        .thumbnail-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-info {
+            padding: 12px;
+        }
+
+        .video-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-color);
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .video-meta {
+            font-size: 12px;
+            color: var(--sub-text);
+            display: flex;
+            gap: 10px;
+        }
+
         .empty-notice {
             text-align: center;
             color: var(--sub-text);
@@ -327,9 +368,17 @@
             <div class="empty-notice">تەۋسىيە بۆلىكىدە تېخى سىن يوق. يېڭى سىن قوشۇڭ!</div>
         </div>
 
-        <!-- كىنو بۆلىكى -->
+        <!-- كىنو بۆلىكى (يېڭى سىن قوشۇلدى) -->
         <div id="cat-kino" class="category-content" style="display: none;">
-            <div class="empty-notice">كىنو بۆلىكىدە تېخى سىن يوق. يېڭى سىن قوشۇڭ!</div>
+            <div class="video-grid">
+                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/FmsN-NPL7tU', 'يېڭى كىنو', 'بۇ كۆزنەك كىنوخانىسىنىڭ كىنو بۆلىكىگە يېڭىدىن قوشۇلغان سىن بولۇپ، بىۋاسىتە ۋە راۋان قويۇلىدۇ.')">
+                    <div class="thumbnail-box"><img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Kino"></div>
+                    <div class="video-info">
+                        <div class="video-title">يېڭى كىنو</div>
+                        <div class="video-meta"><span>1مىڭ كۆرۈلدى</span><span>•</span><span>يېڭى</span></div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- كارتون بۆلىكى -->
