@@ -260,6 +260,13 @@
             margin-top: 30px;
         }
 
+        .info-text {
+            font-size: 13px;
+            color: var(--sub-text);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
         /* Bottom Navigation Bar */
         .bottom-nav {
             position: fixed;
@@ -393,21 +400,20 @@
         </div>
     </div>
 
-    <!-- === 5. ھېسابات (Account View: ئېلخەت ئارقىلىق كىرىش) === -->
+    <!-- === 5. ھېسابات (Account View: ئايلىق ئەزالىق ئۇلانمىسى) === -->
     <div id="account-view" class="view">
         <div class="page-container">
-            <div class="page-title">👤 ھېساباتقا كىرىش</div>
+            <div class="page-title">👤 ئايلىق ئەزالىق ھېساباتى</div>
             <div class="form-box">
-                <form onsubmit="event.preventDefault(); alert('ھېسابات ئۇچۇرى مۇۋەپپەقىيەتلىك ئەۋەتىلدى!');">
+                <div class="info-text">
+                    «كۆزنەك» سۇپىسىنىڭ بارلىق كىنولىرىنى كۆرۈش ئۈچۈن ئايلىق ئەزا بولۇشىڭىز كېرەك. پۇل تۆلىگەندىن كېيىن سىزگە بىر ئايلىق مەخسۇس تېلېگرامما/كىرىش ئۇلانمىسى ئەۋەتىپ بېرىلىدۇ. شۇ ئۇلانما ئارقىلىق كىرىپ بىر ئاي داۋامىدالەپ ئىشلىتەلەйсىز.
+                </div>
+                <form onsubmit="event.preventDefault(); alert('ئۇلانما تекشۈرۈلدى! ئەزالىقىڭىز ئاكتىپ.');">
                     <div class="form-group">
-                        <label>ئېلخەت ئادرېسى (Email / Gmail)</label>
-                        <input type="email" class="form-input" placeholder="example@gmail.com" required>
+                        <label>بېرىلگەن مەخسۇس كىرىش ئۇلانمىسى (Link)</label>
+                        <input type="text" class="form-input" placeholder="https://t.me/... ياكى ئۇلانما كىرگۈزۈڭ" required>
                     </div>
-                    <div class="form-group">
-                        <label>پارول</label>
-                        <input type="password" class="form-input" placeholder="پارولىڭىزنى كىرگۈزۈڭ" required>
-                    </div>
-                    <button type="submit" class="btn-submit">كىرىش / تىزىملىتىش</button>
+                    <button type="submit" class="btn-submit">ئۇلانما ئارقىلىق كىرىش</button>
                 </form>
             </div>
         </div>
