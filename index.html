@@ -6,12 +6,12 @@
     <title>كۆزنەك - سىنلار مەركىزى</title>
     <style>
         :root {
-            --bg-color: #0f0f0f;
-            --card-bg: #1f1f1f;
-            --accent-red: #ff0000;
-            --text-color: #ffffff;
-            --sub-text: #aaa;
-            --border-color: #303030;
+            --bg-color: #ffffff;
+            --card-bg: #f9f9f9;
+            --accent-red: #ff3b30;
+            --text-color: #222222;
+            --sub-text: #888888;
+            --border-color: #eeeeee;
         }
 
         * {
@@ -34,56 +34,86 @@
             max-width: 480px;
         }
 
-        /* Top Navbar */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 15px;
-            background: #212121;
-            border-bottom: 1px solid var(--border-color);
+        /* Top Header & Categories Navbar */
+        .header-section {
+            background: #fff;
             position: sticky;
             top: 0;
             z-index: 100;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
         }
 
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .logo-img {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            object-fit: cover;
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
         }
 
         .logo-text {
+            color: var(--accent-red);
             font-weight: bold;
-            font-size: 16px;
-            color: #fff;
+            font-size: 15px;
         }
 
-        /* Search Box */
-        .search-box {
-            padding: 12px 15px;
+        .header-icons {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 18px;
+            color: #444;
+            cursor: pointer;
         }
 
-        .search-input {
-            width: 100%;
-            padding: 10px 15px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            color: #fff;
-            font-size: 13px;
-            outline: none;
+        /* Horizontal Categories Scroll */
+        .categories-scroll {
+            display: flex;
+            gap: 20px;
+            padding: 0 15px 10px 15px;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none;
         }
 
-        .search-input:focus {
-            border-color: #3ea6ff;
+        .categories-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .cat-item {
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            position: relative;
+            padding-bottom: 4px;
+        }
+
+        .cat-item.active {
+            color: var(--accent-red);
+            font-weight: bold;
+        }
+
+        .cat-item.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 3px;
+            background: var(--accent-red);
+            border-radius: 2px;
         }
 
         /* Video List Grid */
@@ -91,7 +121,7 @@
             display: flex;
             flex-direction: column;
             gap: 15px;
-            padding: 0 15px;
+            padding: 15px;
         }
 
         .video-card {
@@ -101,10 +131,6 @@
             border: 1px solid var(--border-color);
             cursor: pointer;
             transition: 0.2s;
-        }
-
-        .video-card:hover {
-            border-color: #555;
         }
 
         .thumbnail-box {
@@ -155,7 +181,7 @@
         .back-btn {
             background: none;
             border: none;
-            color: #3ea6ff;
+            color: var(--accent-red);
             font-size: 14px;
             font-weight: bold;
             cursor: pointer;
@@ -205,7 +231,7 @@
             font-size: 18px;
             font-weight: bold;
             margin-bottom: 15px;
-            color: #fff;
+            color: var(--text-color);
         }
 
         .form-box {
@@ -230,16 +256,16 @@
         .form-input {
             width: 100%;
             padding: 12px;
-            background: #0f0f0f;
+            background: #fff;
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            color: #fff;
+            color: #222;
             font-size: 13px;
             outline: none;
         }
 
         .form-input:focus {
-            border-color: #3ea6ff;
+            border-color: var(--accent-red);
         }
 
         .btn-submit {
@@ -267,11 +293,11 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: #212121;
+            background: #fff;
             border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
+            padding: 8px 0;
             z-index: 1000;
         }
 
@@ -283,16 +309,16 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 2px;
             cursor: pointer;
         }
 
         .nav-item.active {
-            color: #fff;
+            color: var(--accent-red);
         }
 
         .nav-item span:first-child {
-            font-size: 18px;
+            font-size: 20px;
         }
     </style>
 </head>
@@ -300,49 +326,84 @@
 
 <div class="container">
 
-    <!-- Top Navbar -->
-    <div class="navbar">
-        <div class="logo-area">
-            <img src="https://i.ibb.co/20B4Kg78/31445.jpg" alt="كۆزنەك Logo" class="logo-img">
-            <span class="logo-text">كۆزنەك</span>
+    <!-- === Header & Categories Navbar === -->
+    <div class="header-section">
+        <div class="top-navbar">
+            <div class="logo-area">
+                <img src="https://i.ibb.co/20B4Kg78/31445.jpg" alt="Logo" class="logo-img">
+                <span class="logo-text">كۆزنەك</span>
+            </div>
+            <div class="header-icons">
+                <span>🔍</span>
+                <span>🕒</span>
+                <span>☰</span>
+            </div>
+        </div>
+
+        <!-- Horizontal Tabs -->
+        <div class="categories-scroll">
+            <div class="cat-item active" onclick="switchCategory('tavsiya', this)">تەۋسىيە</div>
+            <div class="cat-item" onclick="switchCategory('kino', this)">كىنو</div>
+            <div class="cat-item" onclick="switchCategory('televiziye', this)">تېلېۋىزىيە تىياتىرى</div>
+            <div class="cat-item" onclick="switchCategory('dogme', this)">دوگمە</div>
         </div>
     </div>
 
-    <!-- === 1. باش بەت (Home View) === -->
+    <!-- === 1. باش بەت (Home / Category Views) === -->
     <div id="home-view" class="view active">
-        <div class="search-box">
-            <input type="text" class="search-input" placeholder="سىن ئىزدەش...">
-        </div>
-
-        <div class="video-grid">
-            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/9bZkp7q19f0', 'يېڭى چىققان تەۋسىيە سىن 1', 'بۇ كۆزنەك سۇپىسىدىكى تۇنجى سىن بولۇپ، ئالاھىدە مەزمۇنلار بىلەن تەمىنلەيدۇ.')">
-                <div class="thumbnail-box">
-                    <img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="Video 1">
-                </div>
-                <div class="video-info">
-                    <div class="video-title">يېڭى چىققان تەۋسىيە سىن 1</div>
-                    <div class="video-meta">
-                        <span>1.2مىڭ كۆرۈلدى</span>
-                        <span>•</span>
-                        <span>2 كۈن ئىلگىرى</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/LXb3EKWsInQ', 'قىزىقەرلىك ھەرىكەتلىك سىن 2', 'بۇ سىن ئويۇن ۋە ھەرىكەت سەھنىلىرىگە تولغان بولۇپ، كۆرۈشكە ئەرزىيدۇ.')">
-                <div class="thumbnail-box">
-                    <img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Video 2">
-                </div>
-                <div class="video-info">
-                    <div class="video-title">قىزىقەرلىك ھەرىكەتلىك سىن 2</div>
-                    <div class="video-meta">
-                        <span>3.5مىڭ كۆرۈلدى</span>
-                        <span>•</span>
-                        <span>1 ھەپتە ئىلگىرى</span>
+        
+        <!-- تەۋسىيە بۆلىكى -->
+        <div id="cat-tavsiya" class="category-content">
+            <div class="video-grid">
+                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/9bZkp7q19f0', 'تەۋسىيە كىنو 1', 'بۇ كۆزنەك سۇپىسىدىكى تۇنجى تەۋسىيە كىنو بولۇپ، ئالاھىدە مەزمۇنلار بىلەن تەمىنلەيدۇ.')">
+                    <div class="thumbnail-box"><img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="Video"></div>
+                    <div class="video-info">
+                        <div class="video-title">تەۋسىيە كىنو 1</div>
+                        <div class="video-meta"><span>1.2مىڭ كۆرۈلدى</span><span>•</span><span>2 كۈن ئىلگىرى</span></div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- كىنو بۆلىكى -->
+        <div id="cat-kino" class="category-content" style="display: none;">
+            <div class="video-grid">
+                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/LXb3EKWsInQ', 'يېڭى كىنو - ھەرىكەتلىك سىن', 'بۇ كىنو ئويۇن ۋە ھەرىكەت سەھنىلىرىگە تولغان بولۇپ، كۆرۈشكە ئەرزىيدۇ.')">
+                    <div class="thumbnail-box"><img src="https://i.ibb.co/Xf3dg16D/mlbb.jpg" alt="Kino"></div>
+                    <div class="video-info">
+                        <div class="video-title">يېڭى كىنو - ھەرىكەتلىك سىن</div>
+                        <div class="video-meta"><span>3.5مىڭ كۆرۈلدى</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- تېلېۋىزىيە تىياتىرى بۆلىكى -->
+        <div id="cat-televiziye" class="category-content" style="display: none;">
+            <div class="video-grid">
+                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/5qap5aO4i9A', 'تېلېۋىزىيە تىياتىرى 1-قىسىم', 'قىزىقەرلىك تېلېۋىزىيە تىياتىرى مەزمۇنى.')">
+                    <div class="thumbnail-box"><img src="https://i.ibb.co/5gRdRdM2/hok.jpg" alt="Drama"></div>
+                    <div class="video-info">
+                        <div class="video-title">تېلېۋىزىيە تىياتىرى 1-قىسىم</div>
+                        <div class="video-meta"><span>5مىڭ كۆرۈلدى</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- دوگمە بۆلىكى -->
+        <div id="cat-dogme" class="category-content" style="display: none;">
+            <div class="video-grid">
+                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/9bZkp7q19f0', 'دوگمە مەزمۇنى', 'مەخسۇس دوگمە سىنلىرى.')">
+                    <div class="thumbnail-box"><img src="https://i.ibb.co/zVJv5yCR/pubg.jpg" alt="Dogme"></div>
+                    <div class="video-info">
+                        <div class="video-title">دوگمە مەزمۇنى</div>
+                        <div class="video-meta"><span>800 كۆرۈلدى</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- === 2. سىن كۆرۈش بېتى (Player View) === -->
@@ -357,44 +418,21 @@
         </div>
     </div>
 
-    <!-- === 3. قىزىق سەھىپىسى (Hot View) === -->
-    <div id="hot-view" class="view">
-        <div class="page-container">
-            <div class="page-title">🔥 ئەڭ قىزىق سىنلار</div>
-            <div class="video-grid">
-                <div class="video-card" onclick="playMovie('https://www.youtube.com/embed/5qap5aO4i9A', 'قىزىق تەۋەككۈلچىلىك سىن', 'بۇ ناھايىتى ئالقىشقا ئېرىشكەن قىزىق سىنلارنىڭ بىرى.')">
-                    <div class="thumbnail-box"><img src="https://i.ibb.co/5gRdRdM2/hok.jpg" alt="Hot"></div>
-                    <div class="video-info">
-                        <div class="video-title">قىزىق تەۋەككۈلچىلىك سىن</div>
-                        <div class="video-meta"><span>10مىڭ كۆرۈلدى</span></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- === 4. تىزىملىك (Lists View) === -->
+    <!-- === 3. تىزىملىك (Lists View) === -->
     <div id="list-view" class="view">
         <div class="page-container">
             <div class="page-title">📚 تىزىملىكلىرىم</div>
-            <div style="margin-bottom: 25px;">
-                <h3 style="font-size: 15px; color: #3ea6ff; margin-bottom: 10px;">👁️ كۆرگەنلىرىم</h3>
-                <div class="form-box"><div class="info-text" style="text-align:center; margin:0;">تېخى ھېچقانداق سىن كورمىدىڭىز.</div></div>
-            </div>
-            <div>
-                <h3 style="font-size: 15px; color: var(--accent-red); margin-bottom: 10px;">❤️ ياقتۇرغانلىرىم</h3>
-                <div class="form-box"><div class="info-text" style="text-align:center; margin:0;">ياقتۇرغان سىنلىرىڭىز تېخى يوق.</div></div>
-            </div>
+            <div class="form-box"><div class="info-text" style="text-align:center; margin:0;">تېخى ھېچقانداق سىن كورمىدىڭىز.</div></div>
         </div>
     </div>
 
-    <!-- === 5. ھېسابات (Account / Password View) === -->
+    <!-- === 4. ھېسابات (Account View) === -->
     <div id="account-view" class="view">
         <div class="page-container">
-            <div class="page-title">👤 تور بەت مەخپىي نومۇرى</div>
+            <div class="page-title">👤 مەخپىي نومۇر ئارقىلىق كىرىش</div>
             <div class="form-box">
                 <div id="access-msg" class="info-text">
-                    تور بېتىدىكى بارلىق سىنلارنى كۆرۈش ئۈچۈن ئايلىق مەخپىي نومۇرنى كىرگۈزۈڭ.
+                    بارلىق كىنو-سىنلارنى كۆرۈش ئۈچۈن مەخپىي نومۇرنى كىرگۈزۈڭ (نومۇر: 0996).
                 </div>
                 <form id="password-form" onsubmit="checkSitePassword(event)">
                     <div class="form-group">
@@ -404,7 +442,7 @@
                     <button type="submit" class="btn-submit">تەھقىقلەش</button>
                 </form>
                 <div id="unlocked-box" style="display: none; text-align: center;">
-                    <div style="color: #4CAF50; font-weight: bold; margin-bottom: 15px;">✔ تور بەت ئاكتىپ شۇ ھالەتتە ئىشلىتىۋاتىسىز!</div>
+                    <div style="color: #4CAF50; font-weight: bold; margin-bottom: 15px;">✔ تور بەت ئاكتىپ ھالەتتە!</div>
                     <button onclick="logoutSite()" class="btn-submit" style="background: var(--accent-red);">چىقىش (Lock)</button>
                 </div>
             </div>
@@ -413,34 +451,26 @@
 
     <!-- Bottom Navigation Bar -->
     <div class="bottom-nav">
-        <a class="nav-item active" id="nav-home" onclick="switchView('home-view', event)">
+        <a class="nav-item active" id="nav-home" onclick="switchBottomTab('home-view', event)">
             <span>🏠</span>
             باش بەت
         </a>
-        <a class="nav-item" id="nav-hot" onclick="switchView('hot-view', event)">
-            <span>🔥</span>
-            قىزىق
-        </a>
-        <a class="nav-item" id="nav-list" onclick="switchView('list-view', event)">
-            <span>📚</span>
+        <a class="nav-item" id="nav-list" onclick="switchBottomTab('list-view', event)">
+            <span>📜</span>
             تىزىملىك
         </a>
-        <a class="nav-item" id="nav-account" onclick="switchView('account-view', event)">
+        <a class="nav-item" id="nav-account" onclick="switchBottomTab('account-view', event)">
             <span>👤</span>
-            ھېسابات
+            مەن
         </a>
     </div>
 
 </div>
 
 <script>
-    // ==========================================
-    // بۇ يەردىكى نومۇرنى ئۆزىڭىز خالىغان ۋاقىتتا ئۆزگەرتەلەيسىز!
-    // ==========================================
-    const CURRENT_PASSWORD = "koznek2026"; 
-    // ==========================================
+    const CURRENT_PASSWORD = "0996"; 
 
-    function switchView(viewId, event) {
+    function switchBottomTab(viewId, event) {
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
 
@@ -455,6 +485,19 @@
         window.scrollTo(0, 0);
     }
 
+    function switchView(viewId) {
+        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
+    }
+
+    function switchCategory(catId, element) {
+        document.querySelectorAll('.category-content').forEach(c => c.style.display = 'none');
+        document.getElementById('cat-' + catId).style.display = 'block';
+
+        document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
+        element.classList.add('active');
+    }
+
     function playMovie(videoUrl, title, description) {
         let isUnlocked = localStorage.getItem('koznek_unlocked');
         if (isUnlocked === 'true') {
@@ -463,8 +506,8 @@
             document.getElementById('movie-title').innerText = title;
             document.getElementById('movie-desc').innerText = description;
         } else {
-            alert('ئەۋەتلەنگەن سىنلارنى كۆرۈش ئۈچۈن ئالدى بىلەن «ھېسابات» بۆلىكىدىن مەخپىي نومۇرنى كىرگۈزۈڭ!');
-            switchView('account-view');
+            alert('سىنلارنى كۆرۈش ئۈچۈن ئالدى بىلەن «مەن» بۆلىكىدىن مەخپىي نومۇرنى (0996) كىرگۈزۈڭ!');
+            switchBottomTab('account-view');
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById('nav-account').classList.add('active');
         }
@@ -476,9 +519,9 @@
 
         if (inputPass === CURRENT_PASSWORD) {
             localStorage.setItem('koznek_unlocked', 'true');
-            alert('مەخپىي نومۇر توغرا! تور بەت ئاكتىپلاندى.');
+            alert('مەخپىي نومۇر توغرا! كىنو-سىنلار ئاكتىپلاندى.');
             updateAccountUI();
-            switchView('home-view');
+            switchBottomTab('home-view');
         } else {
             alert('مەخپىي نومۇر خاتا!');
         }
@@ -511,3 +554,4 @@
 
 </body>
 </html>
+ 
