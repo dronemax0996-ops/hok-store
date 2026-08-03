@@ -1,321 +1,793 @@
 <!DOCTYPE html>
-<html lang="ug" dir="rtl">
+<html lang="ug">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ئاپتۇماتىك تور دۇكىنى</title>
+    <title>كۆزنەك كىنوخانىسى</title>
+    <!-- PWA Manifest -->
+    <link rel="manifest" href='data:application/json;charset=utf-8,{"name":"كۆزنەك كىنوخانىسى","short_name":"كۆزنەك","start_url":"./","display":"standalone","background_color":"#141414","theme_color":"#E50914","icons":[{"src":"https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=192&q=80","sizes":"192x192","type":"image/jpeg"}]}'>
+    <!-- Firebase SDK (كۆپ ئابونت ۋە تور بازىسى ئۈچۈن) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         body {
-            background-color: #f0f2f5;
-            color: #333;
+            background-color: #141414;
+            color: #ffffff;
             padding-bottom: 70px;
         }
-        /* يۇقىرىقى قىسىم (Header) */
-        .header {
-            background-color: #00b074;
-            color: white;
-            padding: 12px 15px;
+        .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 15px 20px;
+            background-color: rgba(20, 20, 20, 0.95);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid #222;
         }
-        .header .title {
-            font-size: 16px;
+        .logo {
+            color: #E50914;
+            font-size: 20px;
             font-weight: bold;
+        }
+        .search-btn {
+            font-size: 18px;
+            color: #fff;
+            background: none;
+            border: none;
             cursor: pointer;
         }
-        /* پۇل سوممىسى كۆرسىتىش رامكىسى ( (+) 2,375.35 $ ) */
-        .balance-box {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .balance-box .plus-btn {
-            background-color: #1976d2;
-            color: white;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-            font-weight: bold;
-        }
-        /* ئىزدەش قىسمى */
-        .search-container {
-            padding: 15px;
-            background-color: white;
-            text-align: right;
-        }
-        .search-box {
+        
+        /* ئىزدەش كۆزنىكى */
+        .search-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            padding: 10px 15px;
-            border-radius: 20px;
-            border: 1px solid #ddd;
-            background-color: #f7f7f7;
-            text-align: right;
-            outline: none;
-            font-size: 14px;
+            height: 100%;
+            background-color: #141414;
+            z-index: 3000;
+            padding: 20px;
+            overflow-y: auto;
         }
-        .section-title {
-            padding: 15px 15px 5px 15px;
-            font-size: 18px;
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 16px;
+            background-color: #222;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .close-search {
+            background: none;
+            border: none;
+            color: #E50914;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 15px;
             font-weight: bold;
-            color: #333;
         }
-        /* مەھسۇلات ۋە ئويۇن تور كاتەكچىسى (Grid) */
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            padding: 10px;
-        }
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 10px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        .search-results {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            cursor: pointer;
+            gap: 10px;
         }
-        .card-img-wrapper {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 1/1;
-            background: linear-gradient(135deg, #00b074 0%, #006633 100%);
-            border-radius: 10px;
-            overflow: hidden;
+        .search-item {
             display: flex;
+            background: #1f1f1f;
+            border-radius: 6px;
+            overflow: hidden;
+            cursor: pointer;
             align-items: center;
-            justify-content: center;
-            border: 2px solid #00b074;
         }
-        .card img {
-            width: 75%;
-            height: 75%;
-            border-radius: 50%;
+        .search-item img {
+            width: 90px;
+            height: 60px;
             object-fit: cover;
-            border: 3px solid #00b074;
         }
-        .card .item-name {
-            font-size: 11px;
-            color: #00b074;
-            margin-top: 8px;
-            font-weight: bold;
-            word-break: break-word;
-        }
-        .card .item-price {
-            font-size: 12px;
-            color: #333;
-            margin-top: 4px;
+        .search-item-title {
+            padding: 10px;
+            font-size: 14px;
             font-weight: bold;
         }
-        /* بەتلەرنى ئالماشتۇرۇش */
-        .page {
+
+        .tab-content {
             display: none;
         }
-        .page.active {
+        .tab-content.active-tab {
             display: block;
         }
-        /* تۆۋەنقى مىنيۇ (Footer Menu) */
-        .footer-menu {
+
+        .hero-section {
+            position: relative;
+            width: 100%;
+            height: 280px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), #141414), url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80') no-repeat center center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            text-align: center;
+        }
+        .hero-title {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+        .hero-btn {
+            background-color: #E50914;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(229, 9, 20, 0.4);
+        }
+
+        /* كاتېگورىيە تاللاش بالدىقى */
+        .category-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 15px 15px 0 15px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .cat-chip {
+            background-color: #222;
+            color: #aaa;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+        .cat-chip.active {
+            background-color: #E50914;
+            color: white;
+            font-weight: bold;
+        }
+
+        .category-container {
+            margin-top: 15px;
+            padding: 0 15px;
+        }
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            color: #e5e5e5;
+            border-left: 3px solid #E50914;
+            padding-left: 8px;
+        }
+        
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding-bottom: 10px;
+        }
+        .movie-card {
+            background-color: #1f1f1f;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .movie-poster {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background-color: #333;
+            cursor: pointer;
+        }
+        .movie-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 8px;
+        }
+        .movie-name {
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            width: 110px;
+        }
+        .fav-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            color: #aaa;
+        }
+        .fav-btn.liked {
+            color: #E50914;
+        }
+
+        .video-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            z-index: 2000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        .video-container {
+            width: 100%;
+            max-width: 600px;
+            aspect-ratio: 16/9;
+            background-color: #000;
+        }
+        .video-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .close-btn {
+            background-color: #E50914;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            margin-top: 15px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .page-box {
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+        .form-input, .form-select {
+            width: 100%;
+            padding: 10px;
+            background-color: #1f1f1f;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .action-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #E50914;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .vip-card {
+            background: linear-gradient(135deg, #2b2b2b, #111);
+            border: 1px solid #E50914;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: right;
+        }
+        .vip-badge {
+            background-color: #E50914;
+            color: white;
+            padding: 3px 8px;
+            font-size: 11px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: white;
+            background-color: #181818;
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid #ddd;
+            padding: 8px 0;
+            border-top: 1px solid #282828;
+            z-index: 1000;
         }
-        .footer-item {
-            text-align: center;
-            font-size: 20px;
-            color: #666;
-            text-decoration: none;
+        .nav-item {
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
             cursor: pointer;
         }
-        .footer-item.active {
-            color: #00b074;
+        .nav-item.active {
+            color: #E50914;
+            font-weight: bold;
+        }
+        .nav-item span:first-child {
+            font-size: 15px;
         }
     </style>
 </head>
 <body>
 
-    <!-- يۇقىرىقى باش قىسمى -->
-    <div class="header">
-        <div class="title" id="back-btn" onclick="showPage('home-page')" style="display:none;">← ئارقىغا</div>
-        <div class="title" id="main-title">ئاپتۇماتىك تور دۇكىنى</div>
-        <div class="balance-box">
-            <span>2,375.35 $</span>
-            <div class="plus-btn">+</div>
+    <div class="navbar">
+        <div class="logo">كۆزنەك كىنوخانىسى</div>
+        <button class="search-btn" onclick="openSearch()">🔍</button>
+    </div>
+
+    <!-- 1-بەرت: باش بەت -->
+    <div id="homeTab" class="tab-content active-tab">
+        <div class="hero-section">
+            <div class="hero-title">جەڭگىۋار 2026</div>
+            <p style="font-size: 13px; color: #ccc;">يېڭى قويۇلغان ھەرىكەتلىك كىنو</p>
+            <button class="hero-btn" onclick="openPlayer('https://www.youtube.com/embed/dQw4w9WgXcQ')">▶ كۆرۈش</button>
+        </div>
+
+        <!-- تۈر كاتېگورىيەلىرى -->
+        <div class="category-tabs">
+            <button class="cat-chip active" onclick="filterCategory('all', this)">بارلىقى</button>
+            <button class="cat-chip" onclick="filterCategory('action', this)">ھەرىكەتلىك</button>
+            <button class="cat-chip" onclick="filterCategory('comedy', this)">كومېدىيە</button>
+            <button class="cat-chip" onclick="filterCategory('sci-fi', this)">فانتاستىك</button>
+            <button class="cat-chip" onclick="filterCategory('horror', this)">قورقۇنچلۇق</button>
+        </div>
+
+        <div class="category-container">
+            <div class="section-title" id="currentCatTitle">بارلىق كىنولار</div>
+            <div class="movie-grid" id="movieList"></div>
         </div>
     </div>
 
-    <!-- 1. باش بەت (ئويۇن تاللاش بەتى) -->
-    <div id="home-page" class="page active">
-        <div class="search-container">
-            <input type="text" class="search-box" placeholder="ئويۇن ئىزدەش...">
+    <!-- 2-بەرت: ياقتۇرغانلار -->
+    <div id="favTab" class="tab-content">
+        <div class="category-container" style="margin-top: 15px;">
+            <div class="section-title">❤️ ياقتۇرغان كىنولىرىم</div>
+            <div class="movie-grid" id="favList"></div>
         </div>
-        <div class="section-title">بارلىق ئويۇنلار</div>
-        <div class="grid-container">
-            <div class="card" onclick="showPage('hok-page')">
-                <div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg" alt="HoK"></div>
-                <div class="item-name">Honor of Kings</div>
+    </div>
+
+    <!-- 3-بەرت: كىنو قاچىلاش ۋە قولدا VIP ئاكتىپلاش (باشقۇرغۇچى ئۈچۈن) -->
+    <div id="uploadTab" class="tab-content">
+        <div class="page-box">
+            <div class="section-title">🎬 يېڭى كىنو قاچىلاش</div>
+            <div class="form-group" style="margin-top: 15px;">
+                <label>كىنو نامى</label>
+                <input type="text" id="newMovieTitle" class="form-input" placeholder="مەسىلەن: ئاخىرقى جەڭ">
             </div>
-            <div class="card" onclick="showPage('arena-page')">
-                <div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg" alt="Arena"></div>
-                <div class="item-name">Arena Breakout</div>
+            <div class="form-group">
+                <label>تۈرى (Category)</label>
+                <select id="newMovieCat" class="form-select">
+                    <option value="action">ھەرىكەتلىك</option>
+                    <option value="comedy">كومېدىيە</option>
+                    <option value="sci-fi">فانتاستىك</option>
+                    <option value="horror">قورقۇنچلۇق</option>
+                </select>
             </div>
-            <div class="card" onclick="showPage('pubg-page')">
-                <div class="card-img-wrapper"><img src="https://i.ibb.co/39hkL0vQ/31857.jpg" alt="PUBG"></div>
-                <div class="item-name">PUBG Mobile</div>
+            <div class="form-group">
+                <label>رەسىم ئۇلانمىسى (Image URL)</label>
+                <input type="text" id="newMovieImg" class="form-input" placeholder="رەسىم ئادرېسى...">
             </div>
-            <div class="card" onclick="showPage('mlbb-global-page')">
-                <div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg" alt="MLBB Global"></div>
-                <div class="item-name">MLBB (گىلوبال)</div>
+            <div class="form-group">
+                <label>ۋىدېئو مەنبەسى (YouTube Embed URL)</label>
+                <input type="text" id="newMovieUrl" class="form-input" placeholder="https://www.youtube.com/embed/...">
             </div>
-            <div class="card" onclick="showPage('mlbb-tr-page')">
-                <div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg" alt="MLBB TR"></div>
-                <div class="item-name">MLBB (تۈركىيە)</div>
+            <button class="action-btn" onclick="addNewMovie()">تورغا كىنو يوللاش</button>
+
+            <!-- قولدا VIP ئاكتىپلاش بۆلىكى -->
+            <div style="margin-top: 40px; border-top: 1px solid #333; padding-top: 20px;">
+                <div class="section-title" style="border-left-color: #2ed573;">🛠️ ئابونتقا قولدا VIP بېرىش</div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>ئابونت ئىسمى (Username)</label>
+                    <input type="text" id="targetUser" class="form-input" placeholder="ئابونت ئىسمىنى يېزىڭ...">
+                </div>
+                <div class="form-group">
+                    <label>مۆھلىتى</label>
+                    <select id="vipDuration" class="form-select">
+                        <option value="30">30 كۈن (ئايلىق)</option>
+                        <option value="365">365 كۈن (يىللىق)</option>
+                    </select>
+                </div>
+                <button class="action-btn" style="background-color: #2ed573;" onclick="manualActivateVip()">VIP نى قولدا ئاكتىپلاش</button>
             </div>
         </div>
     </div>
 
-    <!-- 2. Honor of Kings بەتى -->
-    <div id="hok-page" class="page">
-        <div class="section-title">Honor of Kings</div>
-        <div class="grid-container">
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">16 Token</div><div class="item-price">$ 0.2</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">80 Token</div><div class="item-price">$ 0.95</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">240 Token</div><div class="item-price">$ 2.8</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">400 Token</div><div class="item-price">$ 4.6</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">560 Token</div><div class="item-price">$ 6.5</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">830 Token</div><div class="item-price">$ 9.2</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">1245 Token</div><div class="item-price">$ 13.8</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">2580 Token</div><div class="item-price">$ 27.5</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">4180 Token</div><div class="item-price">$ 45.70</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">8360 Token</div><div class="item-price">$ 91.5</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">Double Token Lucky Bag</div><div class="item-price">$ 0.3</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">Honor Point Value Pack</div><div class="item-price">$ 0.3</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">Weekly Card Plus</div><div class="item-price">$ 3.5</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">Weekly Card Honor</div><div class="item-price">$ 1.5</div></div>
+    <!-- 4-بەرت: ھېسابات ۋە پۇل تۆلەش ئۇچۇرى -->
+    <div id="accountTab" class="tab-content">
+        <div class="page-box" style="text-align: center;">
+            <div style="font-size: 50px; margin-top: 10px;">👤</div>
+            <h3 id="accountTitle" style="margin-top: 10px;">ھېساباتقا كىرىش</h3>
+            
+            <div id="loginForm" style="margin-top: 20px; text-align: right;">
+                <div class="form-group">
+                    <label>ئابونت ئىسمى (Username)</label>
+                    <input type="text" id="loginUser" class="form-input" placeholder="ئىسمىڭىزنى كىرگۈزۈڭ">
+                </div>
+                <button class="action-btn" onclick="handleLogin()">تۆۋەندىكىلەر بىلەن كىرىش</button>
+            </div>
+
+            <div id="userProfileView" style="display: none; margin-top: 15px; text-align: right;">
+                <div style="background: #1f1f1f; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span id="displayUsername" style="font-size: 16px; font-weight: bold; color: #E50914;"></span>
+                        <span id="vipBadge" class="vip-badge" style="background:#555;">ئادەتتىكى ئەزا</span>
+                    </div>
+                    <div id="vipStatusText" style="font-size: 12px; color: #aaa; margin-top: 8px;">ئەزالىق ۋاقتى يوق</div>
+                </div>
+
+                <!-- پۇل تۆلەش ۋە تەكشۈرۈش ئۇچۇرى -->
+                <div class="vip-card">
+                    <div style="font-weight: bold; font-size: 15px; margin-bottom: 5px; color: #ff4757;">💳 VIP سېتىۋېلىش (قولدا تەكشۈرۈش)</div>
+                    <p style="font-size: 12px; color: #ccc; line-height: 1.5; margin-bottom: 10px;">
+                        1. ShamCash ئارقىلىق پۇل تۆلەڭ.<br>
+                        2. تۆلىگەنلىك چېكىڭىزنى (скриншот) تېلېگرامما ئارقىلىق ئەۋەتىڭ.<br>
+                        3. ئىسمىڭىزنى ئېيتقىنىڭىزدە باشقۇرغۇچى دەرھال ئاكتىپلاپ بېرىدۇ!
+                    </p>
+                    <div style="font-size: 13px; color: #2ed573; font-weight: bold; background: #111; padding: 8px; border-radius: 4px; text-align: center;">
+                        تېلېگرامما ئالاقە: @SizningUser
+                    </div>
+                </div>
+
+                <button class="action-btn" style="background-color: #333; margin-top: 15px;" onclick="handleLogout()">چېكىنىش (Log out)</button>
+            </div>
         </div>
     </div>
 
-    <!-- 3. Arena Breakout بەتى -->
-    <div id="arena-page" class="page">
-        <div class="section-title">Arena Breakout</div>
-        <div class="grid-container">
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bonds 66</div><div class="item-price">$ 0.9</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bonds 335</div><div class="item-price">$ 4.5</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bonds 675</div><div class="item-price">$ 8.5</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bonds 1690</div><div class="item-price">$ 21</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bonds 3400</div><div class="item-price">$ 41.5</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bonds 6820</div><div class="item-price">$ 83</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Beginner Select</div><div class="item-price">$ 0.99</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bulletproof Case (30d)</div><div class="item-price">$ 2.99</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bulletproof Case Privileges</div><div class="item-price">$ 2.55</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Composite Case Privileges</div><div class="item-price">$ 7.5</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Composition Case (30d)</div><div class="item-price">$ 7.1</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Monthly Advanced Battle Pass</div><div class="item-price">$ 0.99</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Monthly Premium Battle Pass</div><div class="item-price">$ 3.99</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Quarterly Premium Battle Pass</div><div class="item-price">$ 11.99</div></div>
+    <!-- 5-بەرت: تەڭشەك -->
+    <div id="settingsTab" class="tab-content">
+        <div class="page-box">
+            <div class="section-title">⚙️ ئەپ تەڭشەكلىرى</div>
+            <div style="background: #1f1f1f; padding: 15px; border-radius: 8px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <span>تۈنۈك (قاراڭغۇ) ھالەت</span>
+                <input type="checkbox" checked disabled style="width: 20px; height: 20px;">
+            </div>
         </div>
     </div>
 
-    <!-- 4. PUBG Mobile بەتى -->
-    <div id="pubg-page" class="page">
-        <div class="section-title">PUBG Mobile</div>
-        <div class="grid-container">
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/39hkL0vQ/31857.jpg"></div><div class="item-name">60 UC</div><div class="item-price">$ 0.95</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/39hkL0vQ/31857.jpg"></div><div class="item-name">325 UC</div><div class="item-price">$ 4.7</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/39hkL0vQ/31857.jpg"></div><div class="item-name">660 UC</div><div class="item-price">$ 9.4</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/39hkL0vQ/31857.jpg"></div><div class="item-name">1800 UC</div><div class="item-price">$ 24.5</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/39hkL0vQ/31857.jpg"></div><div class="item-name">3850 UC</div><div class="item-price">$ 47</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/39hkL0vQ/31857.jpg"></div><div class="item-name">8100 UC</div><div class="item-price">$ 91.5</div></div>
-        </div>
+    <!-- ئىزدەش كۆزنىكى -->
+    <div class="search-modal" id="searchModal">
+        <button class="close-search" onclick="closeSearch()">← قايتىش</button>
+        <input type="text" id="searchInput" class="search-input" placeholder="كىنو نامىنى كىرگۈزۈڭ..." oninput="filterMovies()">
+        <div class="search-results" id="searchResults"></div>
     </div>
 
-    <!-- 5. MLBB گىلوبال نۇسخىسى بەتى -->
-    <div id="mlbb-global-page" class="page">
-        <div class="section-title">Mobile Legends (گىلوبال نۇسخىسى)</div>
-        <div class="grid-container">
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">78 + 8 Diamonds</div><div class="item-price">$ 1.3</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">156 + 16 Diamonds</div><div class="item-price">$ 2.6</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">234 + 23 Diamonds</div><div class="item-price">$ 3.8</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">625 + 81 Diamonds</div><div class="item-price">$ 10.5</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">1860 + 335 Diamonds</div><div class="item-price">$ 30.5</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">3099 + 589 Diamonds</div><div class="item-price">$ 51</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">4649 + 883 Diamonds</div><div class="item-price">$ 77</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">7740 + 1548 Diamonds</div><div class="item-price">$ 127</div></div>
+    <!-- كىنو قويۇش كۆزنىكى -->
+    <div class="video-modal" id="videoModal">
+        <div class="video-container">
+            <iframe id="youtubePlayer" src="" allowfullscreen></iframe>
         </div>
+        <button class="close-btn" onclick="closePlayer()">تاقاش</button>
     </div>
 
-    <!-- 6. MLBB تۈركىيە نۇسخىسى بەتى -->
-    <div id="mlbb-tr-page" class="page">
-        <div class="section-title">Mobile Legends (تۈركىيە نۇسخىسى)</div>
-        <div class="grid-container">
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Diamonds 88</div><div class="item-price">$ 1.5</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Diamonds 133</div><div class="item-price">$ 2.3</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Diamonds 221</div><div class="item-price">$ 3.8</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Diamonds 494</div><div class="item-price">$ 8</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Diamonds 1041</div><div class="item-price">$ 16</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Diamonds 2645</div><div class="item-price">$ 40</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Limited-Time Value Pack</div><div class="item-price">$ 0.3</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Monthly Elite Pack TR</div><div class="item-price">$ 5</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Twilight Pass TR</div><div class="item-price">$ 9</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Weekly Elite Pack</div><div class="item-price">$ 1.2</div></div>
-            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Weekly Pass TR</div><div class="item-price">$ 1.9</div></div>
-        </div>
-    </div>
-
-    <!-- تۆۋەنقى كۆچمە تېلېفون مىنيۇسى -->
-    <div class="footer-menu">
-        <a class="footer-item" onclick="showPage('home-page')">🏠</a>
-        <a class="footer-item">🛒</a>
-        <a class="footer-item">💱</a>
-        <a class="footer-item">👛</a>
-        <a class="footer-item">🛡️</a>
+    <!-- تۆۋەنקי تىزىملىك -->
+    <div class="bottom-nav">
+        <button class="nav-item active" onclick="switchTab('homeTab', this)">
+            <span>🏠</span>
+            <span>باش بەت</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('favTab', this)">
+            <span>❤️</span>
+            <span>ياقتۇرغان</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('uploadTab', this)">
+            <span>➕</span>
+            <span>قاچىلاش</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('accountTab', this)">
+            <span>👤</span>
+            <span>ھېسابات</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('settingsTab', this)">
+            <span>⚙️</span>
+            <span>تەڭشەك</span>
+        </button>
     </div>
 
     <script>
-        function showPage(pageId) {
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(p => p.classList.remove('active'));
-            
-            document.getElementById(pageId).classList.add('active');
-            
-            const backBtn = document.getElementById('back-btn');
-            const mainTitle = document.getElementById('main-title');
-            
-            if(pageId === 'home-page') {
-                backBtn.style.display = 'none';
-                mainTitle.style.display = 'block';
-            } else {
-                backBtn.style.display = 'block';
-                mainTitle.style.display = 'none';
-            }
-            window.scrollTo(0, 0);
-        }
-    </script>
+        // Firebase تەڭشىكى (بارلىق ئابونتلار ۋە تور كىنولىرى ئۈچۈن ئورتاق база)
+        const firebaseConfig = {
+            databaseURL: "https://koznek-cinema-default-rtdb.firebaseio.com/"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
 
+        let movies = [];
+        let currentCategory = 'all';
+        let currentUser = JSON.parse(localStorage.getItem('koznek_current_user')) || null;
+        let favorites = JSON.parse(localStorage.getItem('koznek_favs')) || [];
+
+        const modal = document.getElementById('videoModal');
+        const player = document.getElementById('youtubePlayer');
+        const searchModal = document.getElementById('searchModal');
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+
+        // تور بازىسىدىن كىنولارنى ئاپتوماتىك ئوقۇش (كۆپ ئابونت ئۈچۈن)
+        db.ref('movies').on('value', (snapshot) => {
+            const data = snapshot.val();
+            movies = [];
+            if (data) {
+                Object.keys(data).forEach(key => {
+                    movies.push({ id: key, ...data[key] });
+                });
+                movies.reverse(); // ئەڭ يېڭىسى ئۈستتە چىقىدۇ
+            }
+            renderMovies();
+        });
+
+        function renderMovies() {
+            const movieList = document.getElementById('movieList');
+            const favList = document.getElementById('favList');
+            
+            movieList.innerHTML = '';
+            favList.innerHTML = '';
+            let hasFav = false;
+
+            movies.forEach((movie) => {
+                // كاتېگورىيە بويىچە سۈزۈش
+                if (currentCategory !== 'all' && movie.cat !== currentCategory) return;
+
+                const isLiked = favorites.includes(movie.id);
+                const cardHtml = `
+                    <div class="movie-card">
+                        <img src="${movie.img}" class="movie-poster" onclick="openPlayer('${movie.url}')">
+                        <div class="movie-footer">
+                            <div class="movie-name">${movie.title}</div>
+                            <button class="fav-btn ${isLiked ? 'liked' : ''}" onclick="toggleFav('${movie.id}')">❤️</button>
+                        </div>
+                    </div>
+                `;
+                movieList.innerHTML += cardHtml;
+
+                if (isLiked) {
+                    hasFav = true;
+                    favList.innerHTML += cardHtml;
+                }
+            });
+
+            if (movieList.innerHTML === '') {
+                movieList.innerHTML = '<div style="color: #777; grid-column: span 2; text-align: center; margin-top: 30px;">بۇ تۈردە كىنو يوق</div>';
+            }
+
+            if (!hasFav) {
+                favList.innerHTML = '<div style="color: #777; grid-column: span 2; text-align: center; margin-top: 30px;">ياقتۇرغان كىنولىرىڭىز يوق</div>';
+            }
+        }
+
+        function filterCategory(cat, btnElement) {
+            currentCategory = cat;
+            document.querySelectorAll('.cat-chip').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            const titles = { 'all': 'بارلىق كىنولار', 'action': 'ھەرىكەتلىك كىنولار', 'comedy': 'كومېدىيە كىنولىرى', 'sci-fi': 'فانتاستىك كىنولөр', 'horror': 'قورقۇنچلۇق كىنولөр' };
+            document.getElementById('currentCatTitle').innerText = titles[cat];
+            renderMovies();
+        }
+
+        function openPlayer(url) {
+            // ئەگەر VIP نى تەكشۈرمەكچى بولسىڭىز بۇ يەرگە قوشسىڭىز بولىدۇ
+            player.src = url;
+            modal.style.display = 'flex';
+        }
+
+        function closePlayer() {
+            player.src = '';
+            modal.style.display = 'none';
+        }
+
+        function openSearch() {
+            searchModal.style.display = 'block';
+            searchInput.focus();
+            filterMovies();
+        }
+
+        function closeSearch() {
+            searchModal.style.display = 'none';
+            searchInput.value = '';
+            searchResults.innerHTML = '';
+        }
+
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
+            document.getElementById(tabId).classList.add('active-tab');
+
+            document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleFav(id) {
+            if (favorites.includes(id)) {
+                favorites = favorites.filter(favId => favId !== id);
+            } else {
+                favorites.push(id);
+            }
+            localStorage.setItem('koznek_favs', JSON.stringify(favorites));
+            renderMovies();
+        }
+
+        // كىنو قاچىلاش (تور بازىسىغا يوللاش - بارلىق ئابونتلار كۆرەلەيدۇ)
+        function addNewMovie() {
+            const title = document.getElementById('newMovieTitle').value.trim();
+            const cat = document.getElementById('newMovieCat').value;
+            const img = document.getElementById('newMovieImg').value.trim();
+            const url = document.getElementById('newMovieUrl').value.trim();
+
+            if (!title || !url) {
+                alert('كىنو نامى ۋە ۋىدېئو ئۇلانمىسىنى چوقۇم تولدۇرۇڭ!');
+                return;
+            }
+
+            const posterImg = img ? img : 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80';
+
+            db.ref('movies').push({
+                title: title,
+                cat: cat,
+                img: posterImg,
+                url: url
+            });
+
+            alert('كىنو טור بازىسىغا مۇۋەپپەقىيەتلىك يوللاندى!');
+            document.getElementById('newMovieTitle').value = '';
+            document.getElementById('newMovieImg').value = '';
+            document.getElementById('newMovieUrl').value = '';
+            switchTab('homeTab', document.querySelector('.nav-item'));
+        }
+
+        // سىزنىڭ قولدا VIP ئاكتىپلىشىڭىز
+        function manualActivateVip() {
+            const targetUser = document.getElementById('targetUser').value.trim();
+            const days = parseInt(document.getElementById('vipDuration').value);
+
+            if (!targetUser) {
+                alert('ئابونت ئىسمىنى كىرگۈزۈڭ!');
+                return;
+            }
+
+            let expireTime = new Date().getTime() + (days * 24 * 60 * 60 * 1000);
+            db.ref('users/' + targetUser).update({ vipExpire: expireTime }, (error) => {
+                if (error) {
+                    alert('خاتالىق كۆرۈلدى!');
+                } else {
+                    alert(`${targetUser} نىڭ VIP مۇھلىتى مۇۋەپپەقىيەتلىك ${days} كۈنگە uzatıldı!`);
+                    document.getElementById('targetUser').value = '';
+                }
+            });
+        }
+
+        function filterMovies() {
+            const query = searchInput.value.toLowerCase().trim();
+            searchResults.innerHTML = '';
+
+            let found = false;
+            movies.forEach(movie => {
+                if (movie.title.toLowerCase().includes(query)) {
+                    found = true;
+                    const item = document.createElement('div');
+                    item.className = 'search-item';
+                    item.innerHTML = `
+                        <img src="${movie.img}">
+                        <div class="search-item-title">${movie.title}</div>
+                    `;
+                    item.onclick = () => {
+                        closeSearch();
+                        openPlayer(movie.url);
+                    };
+                    searchResults.appendChild(item);
+                }
+            });
+
+            if (!found && query !== '') {
+                searchResults.innerHTML = '<div style="color: #777; text-align: center; margin-top: 30px;">ھېچقانداق كىنو تېپىلمىدى</div>';
+            }
+        }
+
+        function handleLogin() {
+            const username = document.getElementById('loginUser').value.trim();
+            if (!username) {
+                alert('ئابون ئىسمىنى كىرگۈزۈڭ!');
+                return;
+            }
+
+            currentUser = { name: username };
+            localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+
+            // تور بازىسىدىن ئابونتنىڭ VIP ھالىتىنى تەكشۈرۈش
+            db.ref('users/' + username).on('value', (snapshot) => {
+                const userData = snapshot.val();
+                if (userData && userData.vipExpire) {
+                    currentUser.vipExpire = userData.vipExpire;
+                } else {
+                    currentUser.vipExpire = 0;
+                }
+                updateAccountUI();
+            });
+
+            alert('مۇۋەپپەقىيەتلىك كىردىڭىز!');
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('koznek_current_user');
+            currentUser = null;
+            updateAccountUI();
+            alert('ھېساباتتىن چېكىندىڭىز.');
+        }
+
+        function updateAccountUI() {
+            const loginForm = document.getElementById('loginForm');
+            const userProfileView = document.getElementById('userProfileView');
+            const displayUsername = document.getElementById('displayUsername');
+            const accountTitle = document.getElementById('accountTitle');
+            const vipBadge = document.getElementById('vipBadge');
+            const vipStatusText = document.getElementById('vipStatusText');
+
+            if (currentUser) {
+                loginForm.style.display = 'none';
+                userProfileView.style.display = 'block';
+                displayUsername.innerText = currentUser.name;
+                accountTitle.innerText = 'شەخسىي ھېسابات';
+
+                let now = new Date().getTime();
+                if (currentUser.vipExpire && currentUser.vipExpire > now) {
+                    let expireDate = new Date(currentUser.vipExpire).toLocaleDateString();
+                    vipBadge.innerText = '⭐ VIP ئەزا';
+                    vipBadge.style.background = '#ffa502';
+                    vipStatusText.innerText = `ئەزالىق ۋاقتى قالدى: ${expireDate} غىچە`;
+                } else {
+                    vipBadge.innerText = 'ئادەتتىكى ئەزا';
+                    vipBadge.style.background = '#555';
+                    vipStatusText.innerText = 'ئەزالىق ۋاقتى يوق (پۇل تۆلەپ VIP بولۇڭ)';
+                }
+            } else {
+                loginForm.style.display = 'block';
+                userProfileView.style.display = 'none';
+                accountTitle.innerText = 'ھېساباتقا كىرىش';
+            }
+        }
+
+        // ئەگەر ئاللىқаچان كىرگەن بولسا ئۇچۇرنى يېڭىلاش
+        if (currentUser) {
+            db.ref('users/' + currentUser.name).on('value', (snapshot) => {
+                const userData = snapshot.val();
+                if (userData && userData.vipExpire) {
+                    currentUser.vipExpire = userData.vipExpire;
+                }
+                updateAccountUI();
+            });
+        }
+
+        updateAccountUI();
+    </script>
 </body>
 </html>
