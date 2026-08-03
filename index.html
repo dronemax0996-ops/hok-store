@@ -335,15 +335,6 @@
             cursor: pointer;
             margin-top: 10px;
         }
-        
-        .admin-panel {
-            background: var(--card-bg);
-            border: 1px solid var(--accent-color);
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 20px;
-            text-align: right;
-        }
 
         .user-list-item {
             background: var(--card-bg);
@@ -370,13 +361,27 @@
             font-size: 12px;
             color: var(--text-secondary);
         }
+        .user-action-btns {
+            display: flex;
+            gap: 6px;
+        }
+        .grant-btn {
+            background-color: #2ed573;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
         .revoke-btn {
             background-color: #ff4757;
             color: white;
             border: none;
-            padding: 6px 12px;
+            padding: 6px 10px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             cursor: pointer;
         }
@@ -552,23 +557,6 @@
                     <div id="vipStatusText" style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">ئەزالىق ۋاقتى يوق</div>
                 </div>
 
-                <!-- سىز ئۈچۈنلا چىقىدىغان ئەزا ئاكتىپلاش تاختىسى -->
-                <div class="admin-panel" id="adminVipPanel" style="display: none;">
-                    <div style="font-weight: bold; font-size: 15px; margin-bottom: 10px; color: #ff4757;">⚙️ ئابونت ئەزالىقى ئېچىپ بېرىش (Admin)</div>
-                    <div class="form-group">
-                        <label>ئابونت ئىسمىنى كىرگۈزۈڭ</label>
-                        <input type="text" id="targetUserForVip" class="form-input" placeholder="ئابونت ئاتى..." autocomplete="off">
-                    </div>
-                    <div class="form-group">
-                        <label>ئەزالىق مۇددىتى</label>
-                        <select id="vipDuration" class="form-select">
-                            <option value="30">1 ئاي (30 كۈن)</option>
-                            <option value="365">1 يىل (365 كۈن)</option>
-                        </select>
-                    </div>
-                    <button type="button" class="action-btn" onclick="grantVipToUser()">ئەزالىقنى ئاكتىپلاش</button>
-                </div>
-
                 <button type="button" class="action-btn" style="background-color: #333; margin-top: 15px;" onclick="handleLogout()">چېكىنىش (Log out)</button>
             </div>
         </div>
@@ -650,6 +638,9 @@
     </div>
 
     <script>
+        const ADMIN_USERNAME = "nasrulla";
+        const ADMIN_MASTER_PASS = "nasrulla123";
+
         let movies = JSON.parse(localStorage.getItem('koznek_movies')) || [
             { id: '1', title: 'ئاخىرقى جەڭ', cat: 'movie', access: 'free', img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=300&q=80', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
             { id: '2', title: 'قاتقۇلۇق كۈلكە سېرىيالى', cat: 'series', access: 'vip', img: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' }
@@ -659,7 +650,7 @@
         let currentUser = JSON.parse(localStorage.getItem('koznek_current_user')) || null;
         let favorites = JSON.parse(localStorage.getItem('koznek_koznek_favs') || localStorage.getItem('koznek_favs')) || [];
 
-        if (currentUser && currentUser.name.toLowerCase() !== 'nasrulla') {
+        if (currentUser && currentUser.name.toLowerCase() !== ADMIN_USERNAME) {
             let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
             for (let k in usersDb) {
                 if (k.trim().toLowerCase() === currentUser.name.toLowerCase()) {
@@ -687,7 +678,7 @@
         updateAccountUI();
 
         function checkAdminPermissions() {
-            const isAdmin = currentUser && currentUser.name.toLowerCase() === 'nasrulla';
+            const isAdmin = currentUser && currentUser.name.toLowerCase() === ADMIN_USERNAME;
             const uploadTabContent = document.getElementById('uploadPageContent');
             const navUploadBtn = document.getElementById('navUploadBtn');
             const uploadMenuSettingItem = document.getElementById('uploadMenuSettingItem');
@@ -702,7 +693,7 @@
                 let userCount = 0;
 
                 for (let username in usersDb) {
-                    if (username.toLowerCase() === 'nasrulla') continue;
+                    if (username.toLowerCase() === ADMIN_USERNAME) continue;
                     userCount++;
                     let vExpire = usersDb[username].vipExpire || 0;
                     let isVipActive = vExpire > now;
@@ -721,7 +712,10 @@
                                 <span class="user-name-txt">👤 ${username}</span>
                                 <span class="user-status-txt">${statusDesc}</span>
                             </div>
-                            ${isVipActive ? `<button class="revoke-btn" onclick="revokeVip('${username}')">ۋاقتىنى توشقۇزۇش</button>` : '<span style="font-size:12px; color:var(--text-secondary);">ئادەتتىكى</span>'}
+                            <div class="user-action-btns">
+                                <button class="grant-btn" onclick="quickGrantVip('${username}')">+ 1 ئاي</button>
+                                ${isVipActive ? `<button class="revoke-btn" onclick="revokeVip('${username}')">توشقۇزۇش</button>` : ''}
+                            </div>
                         </div>
                     `;
                 }
@@ -763,25 +757,9 @@
                     </div>
                     <button type="button" class="action-btn" onclick="addNewMovie()">تورغا مەزمۇن يوللاش</button>
 
-                    <div style="margin-top: 30px;" class="section-title">👥 بارلىق ئەزالار تىزىملىكى ۋە باشقۇرۇش</div>
+                    <div style="margin-top: 30px;" class="section-title">👥 بارلىق ئەزالار ۋە باشقۇرۇش</div>
                     <div style="margin-top: 10px;" id="allUsersContainer">
                         ${usersListHtml}
-                    </div>
-
-                    <div class="admin-panel" style="margin-top: 25px;">
-                        <div style="font-weight: bold; font-size: 15px; margin-bottom: 10px; color: #ff4757;">⚙️ ئابونت ئەزالىقى ئېچىپ بېرىش</div>
-                        <div class="form-group">
-                            <label>ئابونت ئىسمىنى كىرگۈزۈڭ</label>
-                            <input type="text" id="targetUserForVip" class="form-input" placeholder="ئابونت ئاتى..." autocomplete="off">
-                        </div>
-                        <div class="form-group">
-                            <label>ئەزالىق مۇددىتى</label>
-                            <select id="vipDuration" class="form-select">
-                                <option value="30">1 ئاي (30 كۈن)</option>
-                                <option value="365">1 يыл (365 كۈن)</option>
-                            </select>
-                        </div>
-                        <button type="button" class="action-btn" onclick="grantVipToUser()">ئەزالىقنى ئاكتىپلاش</button>
                     </div>
                 `;
             } else {
@@ -797,12 +775,39 @@
             }
         }
 
+        function quickGrantVip(username) {
+            let users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+            if (users[username]) {
+                let now = new Date().getTime();
+                let currentExpire = users[username].vipExpire && users[username].vipExpire > now ? users[username].vipExpire : now;
+                let newExpire = currentExpire + (30 * 24 * 60 * 60 * 1000);
+                users[username].vipExpire = newExpire;
+                localStorage.setItem('koznek_users_db', JSON.stringify(users));
+
+                if (currentUser && currentUser.name.toLowerCase() === username.toLowerCase()) {
+                    currentUser.vipExpire = newExpire;
+                    localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                    updateAccountUI();
+                }
+
+                checkAdminPermissions();
+                alert(`${username} غا 1 ئايلىق VIP ئەزالىق قوشۇلدى!`);
+            }
+        }
+
         function revokeVip(username) {
             if (confirm(`راستلا ${username} نىڭ ئەزالىقىنى توشقۇزۇپ، ئادەتتىكى ئەزا قىلىۋەمسىز؟`)) {
                 let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
                 if (usersDb[username]) {
                     usersDb[username].vipExpire = 0;
                     localStorage.setItem('koznek_users_db', JSON.stringify(usersDb));
+
+                    if (currentUser && currentUser.name.toLowerCase() === username.toLowerCase()) {
+                        currentUser.vipExpire = 0;
+                        localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                        updateAccountUI();
+                    }
+
                     checkAdminPermissions();
                     alert(`${username} ئەزالىقتىن چىقىرىلدى.`);
                 }
@@ -834,7 +839,7 @@
             movieList.innerHTML = '';
             favList.innerHTML = '';
             let hasFav = false;
-            const isAdmin = currentUser && currentUser.name.toLowerCase() === 'nasrulla';
+            const isAdmin = currentUser && currentUser.name.toLowerCase() === ADMIN_USERNAME;
 
             movies.slice().reverse().forEach((movie) => {
                 if (currentCategory !== 'all' && movie.cat !== currentCategory) return;
@@ -891,7 +896,7 @@
 
         function tryPlayMovie(url, access) {
             if (access === 'vip') {
-                if (currentUser && currentUser.name.toLowerCase() === 'nasrulla') {
+                if (currentUser && currentUser.name.toLowerCase() === ADMIN_USERNAME) {
                     player.src = url;
                     modal.style.display = 'flex';
                     return;
@@ -1028,21 +1033,42 @@
                 return;
             }
 
-            let users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+            // 1. ئاساسلىق باشقۇرغۇچى (nasrulla) تەكشۈرۈشى
+            if (username.toLowerCase() === ADMIN_USERNAME) {
+                if (password === ADMIN_MASTER_PASS) {
+                    currentUser = { name: ADMIN_USERNAME, vipExpire: 8640000000000000 };
+                    localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                    checkAdminPermissions();
+                    updateAccountUI();
+                    renderMovies();
+                    alert('خۇش كەپسىز باشقۇرغۇچى (nasrulla)!');
+                    return;
+                } else {
+                    alert('باشقۇرغۇچى (nasrulla) پارولى خاتالىق!');
+                    return;
+                }
+            }
 
-            if (username.toLowerCase() === 'nasrulla') {
-                currentUser = { name: username, vipExpire: 8640000000000000 };
-                localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-                checkAdminPermissions();
-                updateAccountUI();
-                renderMovies();
-                alert('خۇش كەپسىز باشقۇرغۇچى (nasrulla)!');
+            // 2. باشقىلار باشقۇرغۇچىنىڭ پارولىنى ئىشلىتىشكە ئۇرۇنسە دەرھال رەت قىلىش
+            if (password === ADMIN_MASTER_PASS) {
+                alert('بۇ مەخپىي نومۇر (پارول) باشقۇرغۇچىغا تەۋە، باشقا ئابونتلار بۇنى ئىشلىتەلمەيدۇ!');
                 return;
             }
 
-            if (users[username]) {
-                if (users[username].password === password) {
-                    currentUser = { name: username, vipExpire: users[username].vipExpire || 0 };
+            let users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+
+            let foundKey = null;
+            for (let key in users) {
+                if (key.trim().toLowerCase() === username.toLowerCase()) {
+                    foundKey = key;
+                    break;
+                }
+            }
+
+            if (foundKey) {
+                // مەۋجۇت ئابونت كىرسە
+                if (users[foundKey].password === password) {
+                    currentUser = { name: foundKey, vipExpire: users[foundKey].vipExpire || 0 };
                     localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
                     checkAdminPermissions();
                     updateAccountUI();
@@ -1051,6 +1077,14 @@
                     alert('پارول خاتالىق!');
                 }
             } else {
+                // يېڭى ئابونت تىزىملاتقاندا باشقىلارنىڭ پارولىنى تەكرار ئىشلىتىشتىن ساقلىنىش
+                for (let key in users) {
+                    if (users[key].password === password) {
+                        alert('بۇ مەخپىي نومۇر (پارول) ئاللىقاچان باشقا بىر ئابونت تەرىپىدىن ئىشلىتىلىۋاتىدۇ. باشقا پارول تاللاڭ.');
+                        return;
+                    }
+                }
+
                 users[username] = { password: password, vipExpire: 0 };
                 localStorage.setItem('koznek_users_db', JSON.stringify(users));
                 currentUser = { name: username, vipExpire: 0 };
@@ -1059,53 +1093,6 @@
                 updateAccountUI();
                 alert('يېڭى ھېسابات تىزىملىتىلدى!');
             }
-        }
-
-        function grantVipToUser() {
-            const targetInput = document.getElementById('targetUserForVip');
-            const durationSelect = document.getElementById('vipDuration');
-            
-            if (!targetInput || !durationSelect) return;
-
-            let targetName = targetInput.value.trim();
-            const days = parseInt(durationSelect.value);
-
-            if (!targetName) {
-                alert('ئابونت ئىسمىنى كىرگۈزۈڭ!');
-                return;
-            }
-
-            let users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
-
-            let foundKey = null;
-            for (let key in users) {
-                if (key.trim().toLowerCase() === targetName.toLowerCase()) {
-                    foundKey = key;
-                    break;
-                }
-            }
-
-            if (!foundKey) {
-                alert('بۇنداق ئابونت تېپىلمىدى! (ئابونت ئىسمىنى توغرا يازغانلىقىڭىزنى تەكشۈرۈڭ)');
-                return;
-            }
-
-            let now = new Date().getTime();
-            let currentExpire = users[foundKey].vipExpire && users[foundKey].vipExpire > now ? users[foundKey].vipExpire : now;
-            let newExpire = currentExpire + (days * 24 * 60 * 60 * 1000);
-
-            users[foundKey].vipExpire = newExpire;
-            localStorage.setItem('koznek_users_db', JSON.stringify(users));
-
-            if (currentUser && currentUser.name.toLowerCase() === foundKey.toLowerCase()) {
-                currentUser.vipExpire = newExpire;
-                localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-                updateAccountUI();
-            }
-
-            checkAdminPermissions();
-            alert(foundKey + ' غا ' + (days === 30 ? '1 ئايلىق' : '1 يىللىق') + ' VIP ئەزالىق بېرىلدى!');
-            targetInput.value = '';
         }
 
         function handleLogout() {
@@ -1131,7 +1118,7 @@
                 displayUsername.innerText = currentUser.name;
                 accountTitle.innerText = 'شەخسىي ھېسابات';
 
-                if (currentUser.name.toLowerCase() === 'nasrulla') {
+                if (currentUser.name.toLowerCase() === ADMIN_USERNAME) {
                     vipBadge.innerText = '⭐ باشقۇرغۇچى (Admin)';
                     vipBadge.style.background = '#E50914';
                     vipStatusText.innerText = 'ھوقۇقى: پۈتۈن مەزمۇن ۋە ئەزالارنى باشقۇرۇش ئوچۇق';
