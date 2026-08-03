@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>كۆزنەك كىنوخانىسى</title>
-    <link rel="manifest" href='data:application/json;charset=utf-8,{"name":"كۆزنەك كىنوخانىسى","short_name":"كۆزنەك","start_url":"./","display":"standalone","background_color":"#141414","theme_color":"#E50914","icons":[{"src":"https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=192&q=80","sizes":"192x192","type":"image/jpeg"}]}'>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
         :root {
             --bg-color: #141414;
@@ -338,7 +335,6 @@
             font-weight: bold;
         }
 
-        /* تەڭشەك ئۇسلۇبى */
         .settings-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -477,7 +473,7 @@
         </div>
     </div>
 
-    <!-- 3-بەرت: قاچىلاش ۋە VIP بېرىش -->
+    <!-- 3-بەرت: قاچىلاش -->
     <div id="uploadTab" class="tab-content">
         <div class="page-box">
             <div class="section-title">🎬 يېڭى كىنو قاچىلاش</div>
@@ -510,22 +506,6 @@
                 <input type="text" id="newMovieUrl" class="form-input" placeholder="https://www.youtube.com/embed/...">
             </div>
             <button class="action-btn" onclick="addNewMovie()">تورغا كىنو يوللاش</button>
-
-            <div style="margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">
-                <div class="section-title" style="border-left-color: #2ed573;">🛠️ ئابونتقا قولدا VIP بېرىش</div>
-                <div class="form-group" style="margin-top: 15px;">
-                    <label>ئابونت ئىسمى (Username)</label>
-                    <input type="text" id="targetUser" class="form-input" placeholder="ئابونت ئىسمىنى يېزىڭ...">
-                </div>
-                <div class="form-group">
-                    <label>مۆھلىتى</label>
-                    <select id="vipDuration" class="form-select">
-                        <option value="30">30 كۈن (ئايلىق)</option>
-                        <option value="365">365 كۈن (يىللىق)</option>
-                    </select>
-                </div>
-                <button class="action-btn" style="background-color: #2ed573;" onclick="manualActivateVip()">VIP نى قولدا ئاكتىپلاش</button>
-            </div>
         </div>
     </div>
 
@@ -557,15 +537,10 @@
                 </div>
 
                 <div class="vip-card" id="vipPaymentCard">
-                    <div style="font-weight: bold; font-size: 15px; margin-bottom: 5px; color: #ff4757;">💳 VIP سېتىۋېلىش (قولدا تەكشۈرۈش)</div>
+                    <div style="font-weight: bold; font-size: 15px; margin-bottom: 5px; color: #ff4757;">💳 VIP سېتىۋېلىش ئۇچۇرى</div>
                     <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 10px;">
-                        1. ShamCash ئارقىلىق پۇل تۆلەڭ.<br>
-                        2. تۆلىگەنلىك چېكىڭىزنى (скриншот) تېلېگرامما ئارقىلىق ئەۋەتىڭ.<br>
-                        3. ئىسمىڭىزنى ئېيتقىنىڭىزدە باشقۇرغۇچى دەرھال ئاكتىپلاپ بېرىدۇ!
+                        ئەپ ئەزالىقى ۋە باشقۇرۇش پۈتۈنلەي ئاكتىپ بولدى!
                     </p>
-                    <div style="font-size: 13px; color: #2ed573; font-weight: bold; background: var(--bg-color); padding: 8px; border-radius: 4px; text-align: center;">
-                        تېلېگرامما ئالاقە: @SizningUser
-                    </div>
                 </div>
 
                 <button class="action-btn" style="background-color: #333; margin-top: 15px;" onclick="handleLogout()">چېكىنىش (Log out)</button>
@@ -592,8 +567,8 @@
 
                 <div class="settings-item">
                     <div class="settings-info">
-                        <span class="settings-title">בילدر (باشقۇرغۇچى) بېتى</span>
-                        <span class="settings-desc">يېڭى كىنو قاچىلاش ۋە VIP بېرىش بۆلۈمىگە ئۆتۈش</span>
+                        <span class="settings-title">كىنو قاچىلاش بەتچىسى</span>
+                        <span class="settings-desc">يېڭى كىنو قاچىلاش بۆلۈمىگە ئۆتۈش</span>
                     </div>
                     <button class="action-btn" style="width: auto; padding: 6px 14px; font-size: 13px; margin: 0;" onclick="switchTab('uploadTab', document.querySelectorAll('.nav-item')[2])">ئېچىش</button>
                 </div>
@@ -601,17 +576,9 @@
                 <div class="settings-item">
                     <div class="settings-info">
                         <span class="settings-title">ساقلانما سانلىق مەلۇماتلارنى تازىلاش</span>
-                        <span class="settings-desc">ياقتۇرغانلار ۋە كېэىش خاتىرىلىرىنى تازىلاش</span>
+                        <span class="settings-desc">ياقتۇرغانلار ۋە كىنولارنى تازىلاش</span>
                     </div>
                     <button class="action-btn" style="width: auto; padding: 6px 14px; font-size: 13px; margin: 0; background-color: #ff4757;" onclick="clearLocalStorageData()">تازىلاش</button>
-                </div>
-
-                <div class="settings-item">
-                    <div class="settings-info">
-                        <span class="settings-title">ئەپ ھەققىدە</span>
-                        <span class="settings-desc">كۆزنەك كىنوخانىسى v2.0 - چەكسىز تور كىنو سۇپىسى</span>
-                    </div>
-                    <span style="font-size: 13px; color: var(--accent-color); font-weight: bold;">ئەڭ يېڭى</span>
                 </div>
             </div>
         </div>
@@ -657,18 +624,15 @@
     </div>
 
     <script>
-        const firebaseConfig = {
-            databaseURL: "https://koznek-cinema-default-rtdb.firebaseio.com/"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+        let movies = JSON.parse(localStorage.getItem('koznek_movies')) || [
+            { id: '1', title: 'ئاخىرقى جەڭ', cat: 'action', access: 'free', img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=300&q=80', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
+            { id: '2', title: 'قاتقۇلۇق كۈلكە', cat: 'comedy', access: 'vip', img: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' }
+        ];
 
-        let movies = [];
         let currentCategory = 'all';
         let currentUser = JSON.parse(localStorage.getItem('koznek_current_user')) || null;
         let favorites = JSON.parse(localStorage.getItem('koznek_favs')) || [];
 
-        // ئەپ ھالىتىنى تەكشۈرۈش (قاراڭغۇ ياكى يورۇق)
         const isLightMode = localStorage.getItem('koznek_light_mode') === 'true';
         if (isLightMode) {
             document.body.classList.add('light-mode');
@@ -681,17 +645,7 @@
         const searchInput = document.getElementById('searchInput');
         const searchResults = document.getElementById('searchResults');
 
-        db.ref('movies').on('value', (snapshot) => {
-            const data = snapshot.val();
-            movies = [];
-            if (data) {
-                Object.keys(data).forEach(key => {
-                    movies.push({ id: key, ...data[key] });
-                });
-                movies.reverse();
-            }
-            renderMovies();
-        });
+        renderMovies();
 
         function toggleDarkMode() {
             const isChecked = document.getElementById('darkModeToggle').checked;
@@ -705,11 +659,9 @@
         }
 
         function clearLocalStorageData() {
-            if (confirm('بارلىق ساقلانغان ياقتۇرغانلار كىنولارنى تازىلىۋەتەمسىز؟')) {
-                localStorage.removeItem('koznek_favs');
-                favorites = [];
-                renderMovies();
-                alert('مۇۋەپپەقىيەتلىك تازىلاندى!');
+            if (confirm('барلىق كىنولار ۋە ساقلانمىلار تازىلانسۇنمۇ?')) {
+                localStorage.clear();
+                location.reload();
             }
         }
 
@@ -721,7 +673,7 @@
             favList.innerHTML = '';
             let hasFav = false;
 
-            movies.forEach((movie) => {
+            movies.slice().reverse().forEach((movie) => {
                 if (currentCategory !== 'all' && movie.cat !== currentCategory) return;
 
                 const isLiked = favorites.includes(movie.id);
@@ -771,10 +723,9 @@
                     modal.style.display = 'flex';
                     return;
                 }
-
                 let now = new Date().getTime();
                 if (!currentUser || !currentUser.vipExpire || currentUser.vipExpire < now) {
-                    alert('بۇ كىنو پەقەت VIP ئەزالار ئۈچۈن! كۆڭۈلدىكىدەك كۆرۈش ئۈچۈن VIP بولۇڭ.');
+                    alert('بۇ كىنو پەقەت VIP ئەزالار ئۈچۈن!');
                     switchTab('accountTab', document.querySelectorAll('.nav-item')[3]);
                     return;
                 }
@@ -834,7 +785,8 @@
 
             const posterImg = img ? img : 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80';
 
-            db.ref('movies').push({
+            movies.push({
+                id: Date.now().toString(),
                 title: title,
                 cat: cat,
                 access: access,
@@ -842,31 +794,13 @@
                 url: url
             });
 
-            alert('كىنو تور بازىسىغا مۇۋەپپەقىيەتلىك يوللاندى!');
+            localStorage.setItem('koznek_movies', JSON.stringify(movies));
+            alert('كىنو مۇۋەپپەقىيەتلىك قاچىلاندى!');
             document.getElementById('newMovieTitle').value = '';
             document.getElementById('newMovieImg').value = '';
             document.getElementById('newMovieUrl').value = '';
             switchTab('homeTab', document.querySelector('.nav-item'));
-        }
-
-        function manualActivateVip() {
-            const targetUser = document.getElementById('targetUser').value.trim();
-            const days = parseInt(document.getElementById('vipDuration').value);
-
-            if (!targetUser) {
-                alert('ئابونت ئىسمىنى كىرگۈزۈڭ!');
-                return;
-            }
-
-            let expireTime = new Date().getTime() + (days * 24 * 60 * 60 * 1000);
-            db.ref('users/' + targetUser).update({ vipExpire: expireTime }, (error) => {
-                if (error) {
-                    alert('خاتالىق كۆرۈلدى!');
-                } else {
-                    alert(`${targetUser} نىڭ VIP مۆھلىتى مۇۋەپپەقىيەتلىك ${days} كۈنگە ئۇزارتىلدى!`);
-                    document.getElementById('targetUser').value = '';
-                }
-            });
+            renderMovies();
         }
 
         function filterMovies() {
@@ -906,38 +840,34 @@
                 return;
             }
 
+            // ئەگەر nasrulla بولسا مەڭگۈلۈك باشقۇرغۇچى قىلىپ كىرگۈزۈش
             if (username === 'nasrulla' && password === '0996') {
-                let infiniteTime = 8640000000000000;
-                currentUser = { name: 'nasrulla', vipExpire: infiniteTime };
+                currentUser = { name: 'nasrulla', vipExpire: 8640000000000000 };
                 localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
                 updateAccountUI();
-                alert('خۇش كەپسىز باشقۇرغۇچى (nasrulla)! سىزگە ھەمىشە مەڭگۈلۈك (چەكسىز) VIP ئاكتىپ.');
+                alert('خۇش كەپسىز باشقۇرغۇچى (nasrulla)!');
                 return;
             }
 
-            db.ref('users/' + username).once('value', (snapshot) => {
-                const userData = snapshot.val();
-                if (userData) {
-                    if (userData.password === password) {
-                        currentUser = { name: username, vipExpire: userData.vipExpire || 0 };
-                        localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-                        updateAccountUI();
-                        alert('مۇۋەپپەقىيەتلىك كىردىڭىز!');
-                    } else {
-                        alert('پارول خاتالىق! قايتا سىناڭ.');
-                    }
+            let users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+
+            if (users[username]) {
+                if (users[username].password === password) {
+                    currentUser = { name: username, vipExpire: users[username].vipExpire || 0 };
+                    localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                    updateAccountUI();
+                    alert('مۇۋەپپەقىيەتلىك كىردىڭىز!');
                 } else {
-                    let newUserData = { password: password, vipExpire: 0 };
-                    db.ref('users/' + username).set(newUserData, (error) => {
-                        if (!error) {
-                            currentUser = { name: username, vipExpire: 0 };
-                            localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-                            updateAccountUI();
-                            alert('يېڭى ھېسابات تىزىملىتىلدى ۋە كىردىڭىز!');
-                        }
-                    });
+                    alert('پارول خاتالىق!');
                 }
-            });
+            } else {
+                users[username] = { password: password, vipExpire: 8640000000000 }; // 100 كۈنلۈك سىناق VIP
+                localStorage.setItem('koznek_users_db', JSON.stringify(users));
+                currentUser = { name: username, vipExpire: 8640000000000 };
+                localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                updateAccountUI();
+                alert('يېڭى ھېسابات تىزىملىتىلدى ۋە كىردىڭىز!');
+            }
         }
 
         function handleLogout() {
@@ -956,7 +886,6 @@
             const accountTitle = document.getElementById('accountTitle');
             const vipBadge = document.getElementById('vipBadge');
             const vipStatusText = document.getElementById('vipStatusText');
-            const vipPaymentCard = document.getElementById('vipPaymentCard');
 
             if (currentUser) {
                 loginForm.style.display = 'none';
@@ -965,44 +894,19 @@
                 accountTitle.innerText = 'شەخسىي ھېسابات';
 
                 if (currentUser.name === 'nasrulla') {
-                    vipBadge.innerText = '⭐ چەكسىز باشقۇرغۇچى (Admin)';
+                    vipBadge.innerText = '⭐ باشقۇرغۇچى (Admin)';
                     vipBadge.style.background = '#E50914';
-                    vipStatusText.innerText = 'ھوقۇقى: مەڭگۈلۈك چەكسىز VIP ۋە پۈتۈن سىستېما ئوچۇق';
-                    vipPaymentCard.style.display = 'none';
+                    vipStatusText.innerText = 'ھوقۇقى: پۈتۈن كىنولار ۋە تەڭشەكلەر ئوچۇق';
                     return;
                 }
 
-                vipPaymentCard.style.display = 'block';
-                let now = new Date().getTime();
-                if (currentUser.vipExpire && currentUser.vipExpire > now) {
-                    let expireDate = new Date(currentUser.vipExpire).toLocaleDateString();
-                    vipBadge.innerText = '⭐ VIP ئەزا';
-                    vipBadge.style.background = '#ffa502';
-                    vipStatusText.innerText = `ئەزالىق ۋاقتى قالدى: ${expireDate} غىچە`;
-                } else {
-                    vipBadge.innerText = 'ئادەتتىكى ئەزا';
-                    vipBadge.style.background = '#555';
-                    vipStatusText.innerText = 'ئەزالىق ۋاقتى يوق (پۇل تۆلەپ VIP بولۇڭ)';
-                }
+                vipBadge.innerText = '⭐ VIP ئەزا';
+                vipBadge.style.background = '#ffa502';
+                vipStatusText.innerText = 'ئەزالىق ھالىتى: نورمال ئاكتىپ';
             } else {
                 loginForm.style.display = 'block';
                 userProfileView.style.display = 'none';
                 accountTitle.innerText = 'ھېساباتقا كىرىش / تىزىملىتىش';
-            }
-        }
-
-        if (currentUser) {
-            if (currentUser.name === 'nasrulla') {
-                updateAccountUI();
-            } else {
-                db.ref('users/' + currentUser.name).on('value', (snapshot) => {
-                    const userData = snapshot.val();
-                    if (userData) {
-                        currentUser.vipExpire = userData.vipExpire || 0;
-                        localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-                    }
-                    updateAccountUI();
-                });
             }
         }
 
