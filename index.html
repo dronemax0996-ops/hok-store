@@ -3,555 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>كۆزنەك كىنوخانىسى - سىنلار مەركىزى</title>
+    <title>Honor of Kings - تور دۇكىنى</title>
     <style>
-        :root {
-            --bg-color: #ffffff;
-            --card-bg: #f9f9f9;
-            --accent-red: #ff3b30;
-            --text-color: #222222;
-            --sub-text: #888888;
-            --border-color: #eeeeee;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: Arial, sans-serif;
         }
-
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: #f0f2f5;
+            color: #333;
             padding-bottom: 70px;
-            display: flex;
-            justify-content: center;
         }
-
-        .container {
-            width: 100%;
-            max-width: 480px;
-        }
-
-        /* Top Header & Categories Navbar */
-        .header-section {
-            background: #fff;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .top-navbar {
+        /* يۇقىرىقى قىسىم (Header) */
+        .header {
+            background-color: #00b074;
+            color: white;
+            padding: 15px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+        }
+        .header .title {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .balance-box {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        /* ئىزدەش قىسمى */
+        .search-container {
+            padding: 15px;
+            background-color: white;
+            text-align: right;
+        }
+        .search-box {
+            width: 100%;
             padding: 10px 15px;
-        }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .logo-img {
-            width: 30px;
-            height: 30px;
-            object-fit: contain;
-        }
-
-        .logo-text {
-            color: var(--accent-red);
-            font-weight: bold;
-            font-size: 15px;
-        }
-
-        .header-icons {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            font-size: 18px;
-            color: #444;
-            cursor: pointer;
-        }
-
-        /* Horizontal Categories Scroll */
-        .categories-scroll {
-            display: flex;
-            gap: 20px;
-            padding: 0 15px 10px 15px;
-            overflow-x: auto;
-            white-space: nowrap;
-            scrollbar-width: none;
-        }
-
-        .categories-scroll::-webkit-scrollbar {
-            display: none;
-        }
-
-        .cat-item {
-            font-size: 14px;
-            color: #666;
-            cursor: pointer;
-            position: relative;
-            padding-bottom: 4px;
-        }
-
-        .cat-item.active {
-            color: var(--accent-red);
-            font-weight: bold;
-        }
-
-        .cat-item.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 3px;
-            background: var(--accent-red);
-            border-radius: 2px;
-        }
-
-        /* Video List Grid */
-        .video-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            padding: 15px;
-        }
-
-        .video-item {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            border: 1px solid var(--border-color);
-        }
-
-        .video-item iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            pointer-events: none;
-        }
-
-        .empty-notice {
-            text-align: center;
-            color: var(--sub-text);
-            font-size: 13px;
-            padding: 40px 20px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            border: 1px dashed var(--border-color);
-            margin: 15px;
-        }
-
-        /* Views management */
-        .view {
-            display: none;
-        }
-        .view.active {
-            display: block;
-        }
-
-        /* Player View */
-        .player-section {
-            padding: 15px;
-        }
-
-        .back-btn {
-            background: none;
-            border: none;
-            color: var(--accent-red);
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .player-container {
-            width: 100%;
-            aspect-ratio: 16/9;
-            background: #000;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 12px;
-        }
-
-        .player-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .current-video-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 8px;
-        }
-
-        .current-video-desc {
-            font-size: 13px;
-            color: var(--sub-text);
-            line-height: 1.5;
-            background: var(--card-bg);
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        /* Pages Styling */
-        .page-container {
-            padding: 20px;
-        }
-
-        .page-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: var(--text-color);
-        }
-
-        .form-box {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            color: var(--sub-text);
-            margin-bottom: 6px;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px;
-            background: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: #222;
-            font-size: 13px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            background-color: #f7f7f7;
+            text-align: right;
             outline: none;
-        }
-
-        .form-input:focus {
-            border-color: var(--accent-red);
-        }
-
-        .btn-submit {
-            width: 100%;
-            padding: 12px;
-            background: var(--accent-red);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
             font-size: 14px;
+        }
+        .game-title {
+            padding: 10px 15px;
+            font-size: 18px;
             font-weight: bold;
-            cursor: pointer;
+            color: #333;
         }
-
-        .info-text {
+        /* مەھسۇلات تور كاتەكچىسى (Grid) */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            padding: 10px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .card img {
+            width: 100%;
+            border-radius: 50%;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border: 3px solid #00b074;
+        }
+        .card .item-name {
+            font-size: 12px;
+            color: #00b074;
+            margin-top: 8px;
+            font-weight: bold;
+        }
+        .card .item-price {
             font-size: 13px;
-            color: var(--sub-text);
-            line-height: 1.6;
-            margin-bottom: 15px;
+            color: #333;
+            margin-top: 4px;
+            font-weight: bold;
         }
-
-        /* Bottom Navigation Bar */
-        .bottom-nav {
+        /* تۆۋەنقى مىنيۇ (Footer Menu) */
+        .footer-menu {
             position: fixed;
             bottom: 0;
             left: 0;
-            right: 0;
-            background: #fff;
-            border-top: 1px solid var(--border-color);
+            width: 100%;
+            background: white;
             display: flex;
             justify-content: space-around;
-            padding: 8px 0;
-            z-index: 1000;
+            padding: 10px 0;
+            border-top: 1px solid #ddd;
         }
-
-        .nav-item {
+        .footer-item {
             text-align: center;
-            color: var(--sub-text);
-            text-decoration: none;
-            font-size: 11px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            cursor: pointer;
-        }
-
-        .nav-item.active {
-            color: var(--accent-red);
-        }
-
-        .nav-item span:first-child {
             font-size: 20px;
+            color: #666;
+            text-decoration: none;
+        }
+        .footer-item.active {
+            color: #00b074;
         }
     </style>
 </head>
 <body>
 
-<div class="container" id="main-container">
+    <!-- يۇقىرىقىە باش قىسمى -->
+    <div class="header">
+        <div class="title">← O</div>
+        <div class="balance-box">3,043.05 ل.س +</div>
+        <div>☰</div>
+    </div>
 
-    <!-- === Header & Categories Navbar === -->
-    <div class="header-section">
-        <div class="top-navbar">
-            <div class="logo-area">
-                <img src="https://i.ibb.co/20B4Kg78/31445.jpg" alt="Logo" class="logo-img">
-                <span class="logo-text">كۆزنەك كىنوخانىسى</span>
-            </div>
-            <div class="header-icons">
-                <span>🔍</span>
-                <span>🕒</span>
-                <span>☰</span>
-            </div>
+    <!-- ئىزدەش رامكىسى -->
+    <div class="search-container">
+        <input type="text" class="search-box" placeholder="بەھس (ئىزدەش)...">
+    </div>
+
+    <div class="game-title">Honor of king</div>
+
+    <!-- مەھسۇلاتلار تىزىملىكى (رەسىم، مىقدار ۋە باھا ئۆزگەرمەس قىسمى) -->
+    <div class="grid-container">
+        <!-- 1 -->
+        <div class="card">
+            <img src="https://i.imgur.com/32G5Q7o.png" alt="Honor">
+            <div class="item-name">Tokens Honor 240</div>
+            <div class="item-price">$ 2.73</div>
         </div>
-
-        <!-- Horizontal Tabs -->
-        <div class="categories-scroll" id="categories-scroll">
-            <div class="cat-item active" onclick="switchCategory('tavsiya', 0)">تەۋسىيە</div>
-            <div class="cat-item" onclick="switchCategory('kino', 1)">كىنو</div>
-            <div class="cat-item" onclick="switchCategory('kartun', 2)">كارتون</div>
-            <div class="cat-item" onclick="switchCategory('qisqa-film', 3)">قىسقا فىلىم</div>
+        <!-- 2 -->
+        <div class="card">
+            <img src="https://i.imgur.com/32G5Q7o.png" alt="Honor">
+            <div class="item-name">Tokens Honor 80</div>
+            <div class="item-price">$ 0.9147</div>
+        </div>
+        <!-- 3 -->
+        <div class="card">
+            <img src="https://i.imgur.com/32G5Q7o.png" alt="Honor">
+            <div class="item-name">Tokens Honor 16</div>
+            <div class="item-price">$ 0.1851</div>
+        </div>
+        <!-- 4 -->
+        <div class="card">
+            <img src="https://i.imgur.com/32G5Q7o.png" alt="Honor">
+            <div class="item-name">Tokens Honor 830</div>
+            <div class="item-price">$ 9.13</div>
+        </div>
+        <!-- 5 -->
+        <div class="card">
+            <img src="https://i.imgur.com/32G5Q7o.png" alt="Honor">
+            <div class="item-name">Tokens Honor 560</div>
+            <div class="item-price">$ 6.39</div>
+        </div>
+        <!-- 6 -->
+        <div class="card">
+            <img src="https://i.imgur.com/32G5Q7o.png" alt="Honor">
+            <div class="item-name">Tokens Honor 400</div>
+            <div class="item-price">$ 4.56</div>
+        </div>
+        <!-- 7 -->
+        <div class="card">
+            <img src="https://i.imgur.com/32G5Q7o.png" alt="Honor">
+            <div class="item-name">Tokens Honor 4180</div>
+            <div class="item-price">$ 45.65</div>
+        </div>
+        <!-- 8 -->
+        <div class="card">
+            <img src="https://i.imgur.com/32G5Q7o.png" alt="Honor">
+            <div class="item-name">Tokens Honor 2580</div>
+            <div class="item-price">$ 27.39</div>
+        </div>
+        <!-- 9 -->
+        <div class="card">
+            <img src="https://i.imgur.com/32G5Q7o.png" alt="Honor">
+            <div class="item-name">Tokens Honor 1245</div>
+            <div class="item-price">$ 13.69</div>
         </div>
     </div>
 
-    <!-- === 1. باش بەت (Home / Category Views) === -->
-    <div id="home-view" class="view active">
-        
-        <!-- تەۋسىيە بۆلىكى -->
-        <div id="cat-tavsiya" class="category-content">
-            <div class="empty-notice">تەۋسىيە بۆلىكىدە تېخى سىن يوق.</div>
-        </div>
-
-        <!-- كىنو بۆلىكى -->
-        <div id="cat-kino" class="category-content" style="display: none;">
-            <div class="video-grid">
-                <div class="video-item" onclick="playMovie('https://www.youtube.com/embed/FmsN-NPL7tU', 'كىنو فىلىمى', 'بۇ فىلىم كۆزنەك كىنوخانىسىنىڭ كىنو بۆلىكىگە يوللاندى.')">
-                    <iframe src="https://www.youtube.com/embed/FmsN-NPL7tU"></iframe>
-                </div>
-            </div>
-        </div>
-
-        <!-- كارتون بۆلىكى -->
-        <div id="cat-kartun" class="category-content" style="display: none;">
-            <div class="empty-notice">كارتون بۆلىكىدە تېخى سىن يوق.</div>
-        </div>
-
-        <!-- قىسقا فىلىم بۆلىكى (يېڭى Streamable فىلىمى قوشۇلدى) -->
-        <div id="cat-qisqa-film" class="category-content" style="display: none;">
-            <div class="video-grid">
-                <div class="video-item" onclick="playMovie('https://streamable.com/e/um41sr', 'قىسقا فىلىم', 'بۇ فىلىم كۆزنەك كىنوخانىسىنىڭ قىسقا فىلىم بۆلىكىگە يوللاندى.')">
-                    <iframe src="https://streamable.com/e/um41sr"></iframe>
-                </div>
-            </div>
-        </div>
-
+    <!-- تۆۋەنقى كۆچمە تېلېفون مىنيۇسى -->
+    <div class="footer-menu">
+        <a href="#" class="footer-item">🛡️</a>
+        <a href="#" class="footer-item">👛</a>
+        <a href="#" class="footer-item">💱</a>
+        <a href="#" class="footer-item active">🛒</a>
+        <a href="#" class="footer-item">🏠</a>
     </div>
-
-    <!-- === 2. سىن كۆرۈش بېتى (Player View) === -->
-    <div id="player-view" class="view">
-        <div class="player-section">
-            <button class="back-btn" onclick="switchView('home-view')">← ئارقىغا قايتىش</button>
-            <div class="player-container">
-                <iframe id="movie-player" src="" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-            </div>
-            <div id="movie-title" class="current-video-title">سىن تېمىسى</div>
-            <div id="movie-desc" class="current-video-desc">سىن توغرىسدىكى قىسقىچە بايان بۇ يەردە كۆرسىتىلىدۇ.</div>
-        </div>
-    </div>
-
-    <!-- === 3. تىزىملىك (Lists View) === -->
-    <div id="list-view" class="view">
-        <div class="page-container">
-            <div class="page-title">📚 تىزىملىكلىرىم</div>
-            <div class="form-box"><div class="info-text" style="text-align:center; margin:0;">تېخى ھېچقانداق سىن كورمىدىڭىز.</div></div>
-        </div>
-    </div>
-
-    <!-- === 4. ھېسابات (Account View) === -->
-    <div id="account-view" class="view">
-        <div class="page-container">
-            <div class="page-title">👤 مەخپىي نومۇر ئارقىلىق كىرىش</div>
-            <div class="form-box">
-                <div id="access-msg" class="info-text">
-                    بارلىق كىنو-سىنلارنى كۆرۈش ئۈچۈن مەخپىي نومۇرنى كىرگۈزۈڭ (نومۇر: 0996).
-                </div>
-                <form id="password-form" onsubmit="checkSitePassword(event)">
-                    <div class="form-group">
-                        <label>مەخپىي نومۇر (Password)</label>
-                        <input type="password" id="site-pass-input" class="form-input" placeholder="مەخپىي نومۇرنى كىرگۈزۈڭ" required>
-                    </div>
-                    <button type="submit" class="btn-submit">تەھقىقلەش</button>
-                </form>
-                <div id="unlocked-box" style="display: none; text-align: center;">
-                    <div style="color: #4CAF50; font-weight: bold; margin-bottom: 15px;">✔ تور بەت ئاكتىپ ھالەتتە!</div>
-                    <button onclick="logoutSite()" class="btn-submit" style="background: var(--accent-red);">چىقىش (Lock)</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bottom Navigation Bar -->
-    <div class="bottom-nav">
-        <a class="nav-item active" id="nav-home" onclick="switchBottomTab('home-view', event)">
-            <span>🏠</span>
-            باش بەت
-        </a>
-        <a class="nav-item" id="nav-list" onclick="switchBottomTab('list-view', event)">
-            <span>📜</span>
-            تىزىملىك
-        </a>
-        <a class="nav-item" id="nav-account" onclick="switchBottomTab('account-view', event)">
-            <span>👤</span>
-            مەن
-        </a>
-    </div>
-
-</div>
-
-<script>
-    const CURRENT_PASSWORD = "0996"; 
-    const categories = ['tavsiya', 'kino', 'kartun', 'qisqa-film'];
-    let currentCatIndex = 0;
-
-    function switchBottomTab(viewId, event) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
-
-        if (event) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-        }
-
-        if(viewId !== 'player-view') {
-            document.getElementById('movie-player').src = '';
-        }
-        window.scrollTo(0, 0);
-    }
-
-    function switchView(viewId) {
-        document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
-    }
-
-    function switchCategory(catId, index) {
-        currentCatIndex = index;
-        document.querySelectorAll('.category-content').forEach(c => c.style.display = 'none');
-        document.getElementById('cat-' + catId).style.display = 'block';
-
-        let catItems = document.querySelectorAll('.cat-item');
-        catItems.forEach(i => i.classList.remove('active'));
-        catItems[index].classList.add('active');
-
-        catItems[index].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-    }
-
-    // Touch / Swipe Support for Categories
-    let touchStartX = 0;
-    let touchEndX = 0;
-    const mainContainer = document.getElementById('main-container');
-
-    mainContainer.addEventListener('touchstart', e => {
-        touchStartX = e.changedTouches[0].screenX;
-    }, false);
-
-    mainContainer.addEventListener('touchend', e => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    }, false);
-
-    function handleSwipe() {
-        if (!document.getElementById('home-view').classList.contains('active')) return;
-
-        let swipeThreshold = 50;
-        if (touchEndX < touchStartX - swipeThreshold) {
-            if (currentCatIndex < categories.length - 1) {
-                currentCatIndex++;
-                switchCategory(categories[currentCatIndex], currentCatIndex);
-            }
-        }
-        if (touchEndX > touchStartX + swipeThreshold) {
-            if (currentCatIndex > 0) {
-                currentCatIndex--;
-                switchCategory(categories[currentCatIndex], currentCatIndex);
-            }
-        }
-    }
-
-    function playMovie(videoUrl, title, description) {
-        let isUnlocked = localStorage.getItem('koznek_unlocked');
-        if (isUnlocked === 'true') {
-            switchView('player-view');
-            document.getElementById('movie-player').src = videoUrl;
-            document.getElementById('movie-title').innerText = title;
-            document.getElementById('movie-desc').innerText = description;
-        } else {
-            alert('سىنلارنى كۆرۈش ئۈچۈن ئالدى بىلەن «مەن» بۆلىكىدىن مەخپىي نومۇرنى (0996) كىرگۈزۈڭ!');
-            switchBottomTab('account-view');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('nav-account').classList.add('active');
-        }
-    }
-
-    function checkSitePassword(event) {
-        event.preventDefault();
-        let inputPass = document.getElementById('site-pass-input').value.trim();
-
-        if (inputPass === CURRENT_PASSWORD) {
-            localStorage.setItem('koznek_unlocked', 'true');
-            alert('مەخپىي نومۇر توغرا! كىنو-سىنلار ئاكتىپلاندى.');
-            updateAccountUI();
-            switchBottomTab('home-view');
-        } else {
-            alert('مەخپىي نومۇر خاتا!');
-        }
-    }
-
-    function logoutSite() {
-        localStorage.removeItem('koznek_unlocked');
-        document.getElementById('site-pass-input').value = '';
-        updateAccountUI();
-        alert('تىزىمدىن چېكىندىڭىز.');
-    }
-
-    function updateAccountUI() {
-        let isUnlocked = localStorage.getItem('koznek_unlocked');
-        if (isUnlocked === 'true') {
-            document.getElementById('password-form').style.display = 'none';
-            document.getElementById('access-msg').style.display = 'none';
-            document.getElementById('unlocked-box').style.display = 'block';
-        } else {
-            document.getElementById('password-form').style.display = 'block';
-            document.getElementById('access-msg').style.display = 'block';
-            document.getElementById('unlocked-box').style.display = 'none';
-        }
-    }
-
-    window.onload = function() {
-        updateAccountUI();
-    }
-</script>
 
 </body>
 </html>
