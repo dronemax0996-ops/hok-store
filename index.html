@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ئاپتۇماتىك تور دۇكىنى - شامكەش پۇل توللاش سۇپىسى</title>
+    <title>ئاپتۇماتىك تور دۇكىنى</title>
     <style>
         * {
             box-sizing: border-box;
@@ -30,7 +30,7 @@
             font-weight: bold;
             cursor: pointer;
         }
-        /* پۇل سوممىسى كۆرسىتىش رامكىسى */
+        /* پۇل سوممىسى كۆرسىتىش رامكىسى ( (+) 2,375.35 $ ) */
         .balance-box {
             background: rgba(255, 255, 255, 0.15);
             padding: 5px 12px;
@@ -53,7 +53,6 @@
             justify-content: center;
             font-size: 14px;
             font-weight: bold;
-            cursor: pointer;
         }
         /* ئىزدەش قىسمى */
         .search-container {
@@ -77,7 +76,7 @@
             font-weight: bold;
             color: #333;
         }
-        /* مەھسۇلات تور كاتەكچىسى (Grid) */
+        /* مەھسۇلات ۋە ئويۇن تور كاتەكچىسى (Grid) */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -94,10 +93,6 @@
             flex-direction: column;
             justify-content: space-between;
             cursor: pointer;
-            transition: 0.2s;
-        }
-        .card:active {
-            transform: scale(0.97);
         }
         .card-img-wrapper {
             position: relative;
@@ -138,74 +133,6 @@
         .page.active {
             display: block;
         }
-        /* پۇل قاچىلاش ۋە سېتىۋېلىش فورمىسى */
-        .form-container {
-            background: white;
-            margin: 15px;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        .form-group input, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-            text-align: right;
-        }
-        .btn {
-            background-color: #00b074;
-            color: white;
-            border: none;
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .btn:active {
-            background-color: #008f5e;
-        }
-        /* بۇيرۇقلار تىزىملىكى (My Orders) */
-        .order-item {
-            background: white;
-            margin: 10px 15px;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .order-info h4 {
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 4px;
-        }
-        .order-info p {
-            font-size: 12px;
-            color: #777;
-        }
-        .order-status {
-            font-size: 12px;
-            font-weight: bold;
-            padding: 5px 10px;
-            border-radius: 15px;
-            background: #e1f5fe;
-            color: #0288d1;
-        }
         /* تۆۋەنقى مىنيۇ (Footer Menu) */
         .footer-menu {
             position: fixed;
@@ -237,8 +164,8 @@
         <div class="title" id="back-btn" onclick="showPage('home-page')" style="display:none;">← ئارقىغا</div>
         <div class="title" id="main-title">ئاپتۇماتىك تور دۇكىنى</div>
         <div class="balance-box">
-            <span id="user-balance">2,375.35 $</span>
-            <div class="plus-btn" onclick="showPage('deposit-page')">+</div>
+            <span>2,375.35 $</span>
+            <div class="plus-btn">+</div>
         </div>
     </div>
 
@@ -272,101 +199,104 @@
         </div>
     </div>
 
-    <!-- 2. شامكەش ئارقىلىق پۇل قاچىلاش بەتى -->
-    <div id="deposit-page" class="page">
-        <div class="section-title">شامكەش ئارقىلىق پۇل توللاش</div>
-        <div class="form-container">
-            <div class="form-group">
-                <label>پول قاچىلاش سوممىسى ($)</label>
-                <input type="number" id="deposit-amount" placeholder="مەسىلەن: 10">
-            </div>
-            <div class="form-group">
-                <label>شامكەش كودى (نومۇرى)</label>
-                <input type="text" id="shamkash-code" placeholder="شامكەش كودىنى كىرگۈزۈڭ">
-            </div>
-            <button class="btn" onclick="processDeposit()">پۇل قاچىلاشنى جەزملەش</button>
-        </div>
-    </div>
-
-    <!-- 3. سېتىۋېلىش جەزملەش بەتى (Dynamic) -->
-    <div id="checkout-page" class="page">
-        <div class="section-title" id="checkout-item-title">مەھسۇلات نامى</div>
-        <div class="form-container">
-            <div style="text-align: center; margin-bottom: 15px;">
-                <span id="checkout-item-price" style="font-size: 18px; color: #00b074; font-weight: bold;">$ 0.0</span>
-            </div>
-            <div class="form-group">
-                <label>ئويۇن كىملىكى (Player ID)</label>
-                <input type="text" id="game-player-id" placeholder="ئويۇن ID نى كىرگۈزۈڭ">
-            </div>
-            <button class="btn" onclick="confirmPurchase()">ھازىر سېتىۋېلىش (ئاپتوماتىك قاچىلاش)</button>
-        </div>
-    </div>
-
-    <!-- 4. مېنىڭ بۇيرۇقلىرىم (My Orders) بەتى -->
-    <div id="orders-page" class="page">
-        <div class="section-title">مېنىڭ بۇيرۇقلىрым (My Orders)</div>
-        <div id="orders-list">
-            <div style="text-align: center; color: #777; margin-top: 30px;">تېخى ھېچقانداق بۇيرۇق يوق</div>
-        </div>
-    </div>
-
-    <!-- ئويۇن مەھسۇلات بەتلىرى -->
+    <!-- 2. Honor of Kings بەتى -->
     <div id="hok-page" class="page">
         <div class="section-title">Honor of Kings</div>
         <div class="grid-container">
-            <div class="card" onclick="openCheckout('16 Token', 0.2)"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">16 Token</div><div class="item-price">$ 0.2</div></div>
-            <div class="card" onclick="openCheckout('80 Token', 0.95)"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">80 Token</div><div class="item-price">$ 0.95</div></div>
-            <div class="card" onclick="openCheckout('240 Token', 2.8)"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">240 Token</div><div class="item-price">$ 2.8</div></div>
-            <div class="card" onclick="openCheckout('560 Token', 6.5)"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">560 Token</div><div class="item-price">$ 6.5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">16 Token</div><div class="item-price">$ 0.2</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">80 Token</div><div class="item-price">$ 0.95</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">240 Token</div><div class="item-price">$ 2.8</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">400 Token</div><div class="item-price">$ 4.6</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">560 Token</div><div class="item-price">$ 6.5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">830 Token</div><div class="item-price">$ 9.2</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">1245 Token</div><div class="item-price">$ 13.8</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">2580 Token</div><div class="item-price">$ 27.5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">4180 Token</div><div class="item-price">$ 45.70</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">8360 Token</div><div class="item-price">$ 91.5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">Double Token Lucky Bag</div><div class="item-price">$ 0.3</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">Honor Point Value Pack</div><div class="item-price">$ 0.3</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">Weekly Card Plus</div><div class="item-price">$ 3.5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg"></div><div class="item-name">Weekly Card Honor</div><div class="item-price">$ 1.5</div></div>
         </div>
     </div>
 
+    <!-- 3. Arena Breakout بەتى -->
     <div id="arena-page" class="page">
         <div class="section-title">Arena Breakout</div>
         <div class="grid-container">
-            <div class="card" onclick="openCheckout('Bonds 66', 0.9)"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bonds 66</div><div class="item-price">$ 0.9</div></div>
-            <div class="card" onclick="openCheckout('Bonds 335', 4.5)"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bonds 335</div><div class="item-price">$ 4.5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bonds 66</div><div class="item-price">$ 0.9</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bonds 335</div><div class="item-price">$ 4.5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bonds 675</div><div class="item-price">$ 8.5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bonds 1690</div><div class="item-price">$ 21</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bonds 3400</div><div class="item-price">$ 41.5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bonds 6820</div><div class="item-price">$ 83</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Beginner Select</div><div class="item-price">$ 0.99</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bulletproof Case (30d)</div><div class="item-price">$ 2.99</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Bulletproof Case Privileges</div><div class="item-price">$ 2.55</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Composite Case Privileges</div><div class="item-price">$ 7.5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Composition Case (30d)</div><div class="item-price">$ 7.1</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Monthly Advanced Battle Pass</div><div class="item-price">$ 0.99</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Monthly Premium Battle Pass</div><div class="item-price">$ 3.99</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/d0drvSsx/31857.jpg"></div><div class="item-name">Quarterly Premium Battle Pass</div><div class="item-price">$ 11.99</div></div>
         </div>
     </div>
 
+    <!-- 4. PUBG Mobile بەتى -->
     <div id="pubg-page" class="page">
         <div class="section-title">PUBG Mobile</div>
         <div class="grid-container">
-            <div class="card" onclick="openCheckout('60 UC', 0.95)"><div class="card-img-wrapper"><img src="https://i.ibb.co/39hkL0vQ/31857.jpg"></div><div class="item-name">60 UC</div><div class="item-price">$ 0.95</div></div>
-            <div class="card" onclick="openCheckout('325 UC', 4.7)"><div class="card-img-wrapper"><img src="https://i.ibb.co/39hkL0vQ/31857.jpg"></div><div class="item-name">325 UC</div><div class="item-price">$ 4.7</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/39hkL0vQ/31857.jpg"></div><div class="item-name">60 UC</div><div class="item-price">$ 0.95</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/39hkL0vQ/31857.jpg"></div><div class="item-name">325 UC</div><div class="item-price">$ 4.7</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/39hkL0vQ/31857.jpg"></div><div class="item-name">660 UC</div><div class="item-price">$ 9.4</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/39hkL0vQ/31857.jpg"></div><div class="item-name">1800 UC</div><div class="item-price">$ 24.5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/39hkL0vQ/31857.jpg"></div><div class="item-name">3850 UC</div><div class="item-price">$ 47</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/39hkL0vQ/31857.jpg"></div><div class="item-name">8100 UC</div><div class="item-price">$ 91.5</div></div>
         </div>
     </div>
 
+    <!-- 5. MLBB گىلوبال نۇسخىسى بەتى -->
     <div id="mlbb-global-page" class="page">
-        <div class="section-title">Mobile Legends (گىلوبال)</div>
+        <div class="section-title">Mobile Legends (گىلوبال نۇسخىسى)</div>
         <div class="grid-container">
-            <div class="card" onclick="openCheckout('78 + 8 Diamonds', 1.3)"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">78 + 8 Diamonds</div><div class="item-price">$ 1.3</div></div>
-            <div class="card" onclick="openCheckout('625 + 81 Diamonds', 10.5)"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">625 + 81 Diamonds</div><div class="item-price">$ 10.5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">78 + 8 Diamonds</div><div class="item-price">$ 1.3</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">156 + 16 Diamonds</div><div class="item-price">$ 2.6</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">234 + 23 Diamonds</div><div class="item-price">$ 3.8</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">625 + 81 Diamonds</div><div class="item-price">$ 10.5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">1860 + 335 Diamonds</div><div class="item-price">$ 30.5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">3099 + 589 Diamonds</div><div class="item-price">$ 51</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">4649 + 883 Diamonds</div><div class="item-price">$ 77</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">7740 + 1548 Diamonds</div><div class="item-price">$ 127</div></div>
         </div>
     </div>
 
+    <!-- 6. MLBB تۈركىيە نۇسخىسى بەتى -->
     <div id="mlbb-tr-page" class="page">
-        <div class="section-title">Mobile Legends (تۈركىيە)</div>
+        <div class="section-title">Mobile Legends (تۈركىيە نۇسخىسى)</div>
         <div class="grid-container">
-            <div class="card" onclick="openCheckout('Diamonds 88', 1.5)"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Diamonds 88</div><div class="item-price">$ 1.5</div></div>
-            <div class="card" onclick="openCheckout('Diamonds 221', 3.8)"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Diamonds 221</div><div class="item-price">$ 3.8</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Diamonds 88</div><div class="item-price">$ 1.5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Diamonds 133</div><div class="item-price">$ 2.3</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Diamonds 221</div><div class="item-price">$ 3.8</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Diamonds 494</div><div class="item-price">$ 8</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Diamonds 1041</div><div class="item-price">$ 16</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Diamonds 2645</div><div class="item-price">$ 40</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Limited-Time Value Pack</div><div class="item-price">$ 0.3</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Monthly Elite Pack TR</div><div class="item-price">$ 5</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Twilight Pass TR</div><div class="item-price">$ 9</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Weekly Elite Pack</div><div class="item-price">$ 1.2</div></div>
+            <div class="card"><div class="card-img-wrapper"><img src="https://i.ibb.co/2YqzxSVB/31857.jpg"></div><div class="item-name">Weekly Pass TR</div><div class="item-price">$ 1.9</div></div>
         </div>
     </div>
 
     <!-- تۆۋەنقى كۆچمە تېلېفون مىنيۇسى -->
     <div class="footer-menu">
-        <a class="footer-item active" onclick="showPage('home-page')">🏠</a>
-        <a class="footer-item" onclick="showPage('orders-page')">🛒</a>
-        <a class="footer-item" onclick="showPage('deposit-page')">💱</a>
-        <a class="footer-item" onclick="showPage('deposit-page')">👛</a>
+        <a class="footer-item" onclick="showPage('home-page')">🏠</a>
+        <a class="footer-item">🛒</a>
+        <a class="footer-item">💱</a>
+        <a class="footer-item">👛</a>
+        <a class="footer-item">🛡️</a>
     </div>
 
     <script>
-        let userBalance = 2375.35;
-        let selectedItem = { name: '', price: 0 };
-        let orders = [];
-
         function showPage(pageId) {
             const pages = document.querySelectorAll('.page');
             pages.forEach(p => p.classList.remove('active'));
@@ -384,95 +314,6 @@
                 mainTitle.style.display = 'none';
             }
             window.scrollTo(0, 0);
-        }
-
-        // شامكەش ئارقىلىق پۇل قاچىلاش مەشغۇلاتى
-        function processDeposit() {
-            let amount = parseFloat(document.getElementById('deposit-amount').value);
-            let code = document.getElementById('shamkash-code').value;
-
-            if(isNaN(amount) || amount <= 0) {
-                alert('توغرا پۇل سوممىسى كىرگۈزۈڭ!');
-                return;
-            }
-            if(code.trim() === '') {
-                alert('شامكەش كودىنى كىرگۈزۈڭ!');
-                return;
-            }
-
-            // پۇل قاچىلاش مۇۋەپپەقىيەتلىك بولدى دەپ قارىلىدۇ
-            userBalance += amount;
-            document.getElementById('user-balance').innerText = userBalance.toFixed(2) + ' $';
-            
-            alert('شامكەش ئارقىلىق ' + amount + ' $ مۇۋەپپەقىيەتلىك قاچىلاندى!');
-            document.getElementById('deposit-amount').value = '';
-            document.getElementById('shamkash-code').value = '';
-            showPage('home-page');
-        }
-
-        // سېتىۋېلىش كۆزنىكىنى ئېچىش
-        function openCheckout(name, price) {
-            selectedItem = { name: name, price: price };
-            document.getElementById('checkout-item-title').innerText = name;
-            document.getElementById('checkout-item-price').innerText = '$ ' + price;
-            showPage('checkout-page');
-        }
-
-        // سېتىۋېلىشنى ۋە ئويۇنغا ئاپتوماتىك پۇل/مال قاچىلاشنى بىر تەرەپ قىلىش
-        function confirmPurchase() {
-            let playerId = document.getElementById('game-player-id').value;
-
-            if(playerId.trim() === '') {
-                alert('ئويۇن ID نى كىرگۈزۈڭ!');
-                return;
-            }
-
-            if(userBalance < selectedItem.price) {
-                alert('هېساباتىڭىزدىكى پۇل يەتمەيدۇ! ئالدى بىلەن شامكەش ئارقىلىق پۇل قاچىلاڭ.');
-                showPage('deposit-page');
-                return;
-            }
-
-            // پۇلنى چىقىرىۋېتىش
-            userBalance -= selectedItem.price;
-            document.getElementById('user-balance').innerText = userBalance.toFixed(2) + ' $';
-
-            // بۇيرۇققا قوشۇش
-            orders.unshift({
-                name: selectedItem.name,
-                price: selectedItem.price,
-                playerId: playerId,
-                status: 'ئوبدان ئۆتتى (ئاپتوماتىك قاچىلاندى)'
-            });
-
-            updateOrdersUI();
-
-            alert('مۇۋەپپەقىيەتلىك سېتىۋېلىندى! مال ئويۇن ID: ' + playerId + ' غا ئاپتوماتىك قاچىلاندى.');
-            document.getElementById('game-player-id').value = '';
-            showPage('orders-page');
-        }
-
-        // بۇيرۇقلار جەدۋىلىنى يېڭىلاش (My Orders)
-        function updateOrdersUI() {
-            let listContainer = document.getElementById('orders-list');
-            if(orders.length === 0) {
-                listContainer.innerHTML = '<div style="text-align: center; color: #777; margin-top: 30px;">تېخى ھېچقانداق بۇيرۇق يوق</div>';
-                return;
-            }
-
-            let html = '';
-            orders.forEach(ord => {
-                html += `
-                    <div class="order-item">
-                        <div class="order-info">
-                            <h4>${ord.name}</h4>
-                            <p>ئويۇن ID: ${ord.playerId} | باھاسى: $${ord.price}</p>
-                        </div>
-                        <div class="order-status">${ord.status}</div>
-                    </div>
-                `;
-            });
-            listContainer.innerHTML = html;
         }
     </script>
 
