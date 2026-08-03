@@ -641,7 +641,7 @@
         renderMovies();
 
         function checkAdminPermissions() {
-            const isAdmin = currentUser && currentUser.name === 'nasrulla';
+            const isAdmin = currentUser && currentUser.name.toLowerCase() === 'nasrulla';
             const uploadTabContent = document.getElementById('uploadPageContent');
             const navUploadBtn = document.getElementById('navUploadBtn');
             const uploadMenuSettingItem = document.getElementById('uploadMenuSettingItem');
@@ -724,7 +724,7 @@
             movieList.innerHTML = '';
             favList.innerHTML = '';
             let hasFav = false;
-            const isAdmin = currentUser && currentUser.name === 'nasrulla';
+            const isAdmin = currentUser && currentUser.name.toLowerCase() === 'nasrulla';
 
             movies.slice().reverse().forEach((movie) => {
                 if (currentCategory !== 'all' && movie.cat !== currentCategory) return;
@@ -781,7 +781,7 @@
 
         function tryPlayMovie(url, access) {
             if (access === 'vip') {
-                if (currentUser && currentUser.name === 'nasrulla') {
+                if (currentUser && currentUser.name.toLowerCase() === 'nasrulla') {
                     player.src = url;
                     modal.style.display = 'flex';
                     return;
@@ -920,8 +920,8 @@
 
             let users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
 
-            if (username === 'nasrulla') {
-                currentUser = { name: 'nasrulla', vipExpire: 8640000000000000 };
+            if (username.toLowerCase() === 'nasrulla') {
+                currentUser = { name: username, vipExpire: 8640000000000000 };
                 localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
                 checkAdminPermissions();
                 updateAccountUI();
@@ -957,7 +957,7 @@
             
             if (!targetInput || !durationSelect) return;
 
-            const targetName = targetInput.value.trim();
+            let targetName = targetInput.value.trim();
             const days = parseInt(durationSelect.value);
 
             if (!targetName) {
@@ -967,25 +967,34 @@
 
             let users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
 
-            if (!users[targetName]) {
-                alert('بۇنداق ئابونت تېپىلمىدى!');
+            // ئابونت ئىسمىنى تېپىشتا چوڭ-كىچىك ھەرپ ياكى بوشلۇق خاتالىقى بولۇپ قالسا دەسلەپتە تۈزىتىش
+            let foundKey = null;
+            for (let key in users) {
+                if (key.trim().toLowerCase() === targetName.toLowerCase()) {
+                    foundKey = key;
+                    break;
+                }
+            }
+
+            if (!foundKey) {
+                alert('بۇنداق ئابونت تېپىلمىدى! (ئابونت ئىسمىنى توغرا يازغانلىقىڭىزنى تەكشۈرۈڭ)');
                 return;
             }
 
             let now = new Date().getTime();
-            let currentExpire = users[targetName].vipExpire && users[targetName].vipExpire > now ? users[targetName].vipExpire : now;
+            let currentExpire = users[foundKey].vipExpire && users[foundKey].vipExpire > now ? users[foundKey].vipExpire : now;
             let newExpire = currentExpire + (days * 24 * 60 * 60 * 1000);
 
-            users[targetName].vipExpire = newExpire;
+            users[foundKey].vipExpire = newExpire;
             localStorage.setItem('koznek_users_db', JSON.stringify(users));
 
-            if (currentUser && currentUser.name === targetName) {
+            if (currentUser && currentUser.name.toLowerCase() === foundKey.toLowerCase()) {
                 currentUser.vipExpire = newExpire;
                 localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
                 updateAccountUI();
             }
 
-            alert(targetName + ' غا ' + (days === 30 ? '1 ئايلىق' : '1 يىللىق') + ' VIP ئەزالىق بېرىلدى!');
+            alert(foundKey + ' غا ' + (days === 30 ? '1 ئايلىق' : '1 يىللىق') + ' VIP ئەزالىق بېرىلدى!');
             targetInput.value = '';
         }
 
@@ -1012,7 +1021,7 @@
                 displayUsername.innerText = currentUser.name;
                 accountTitle.innerText = 'شەخسىي ھېسابات';
 
-                if (currentUser.name === 'nasrulla') {
+                if (currentUser.name.toLowerCase() === 'nasrulla') {
                     vipBadge.innerText = '⭐ باشقۇرغۇچى (Admin)';
                     vipBadge.style.background = '#E50914';
                     vipStatusText.innerText = 'ھوقۇقى: پۈتۈن مەزمۇن ۋە ئەزالارنى باشقۇرۇش ئوچۇق';
