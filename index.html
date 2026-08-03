@@ -345,6 +345,42 @@
             text-align: right;
         }
 
+        .user-list-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-align: right;
+        }
+        .user-info-box {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .user-name-txt {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        .user-status-txt {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .revoke-btn {
+            background-color: #ff4757;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
         .settings-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -484,11 +520,9 @@
         </div>
     </div>
 
-    <!-- 3-بەرت: قاچىلاش (پەقەت nasrulla غا ئوچۇق) -->
+    <!-- 3-بەرت: قاچىلاش / باشقۇرۇش (پەقەت nasrulla غا ئوچۇق) -->
     <div id="uploadTab" class="tab-content">
-        <div class="page-box" id="uploadPageContent">
-            <!-- بۇ يەر ئارقىلىق باشقۇرغۇچىغىلا كۆرسىتىلىدۇ -->
-        </div>
+        <div class="page-box" id="uploadPageContent"></div>
     </div>
 
     <!-- 4-بەرت: ھېسابات -->
@@ -559,8 +593,8 @@
 
                 <div class="settings-item" id="uploadMenuSettingItem" style="display: none;">
                     <div class="settings-info">
-                        <span class="settings-title">مەزمۇن قاچىلاش بەتچىسى</span>
-                        <span class="settings-desc">يېڭى مەزمۇن قاچىلاش بۆلۈمىگە ئۆتۈش</span>
+                        <span class="settings-title">مەزمۇن قاچىلاش ۋە ئەزالار</span>
+                        <span class="settings-desc">مەزمۇن يوللاش ۋە ئەزالارنى باشقۇرۇش</span>
                     </div>
                     <button type="button" class="action-btn" style="width: auto; padding: 6px 14px; font-size: 13px; margin: 0;" onclick="switchTab('uploadTab', document.querySelectorAll('.nav-item')[2])">ئېچىش</button>
                 </div>
@@ -603,7 +637,7 @@
         </button>
         <button class="nav-item" id="navUploadBtn" onclick="switchTab('uploadTab', this)" style="display: none;">
             <span>➕</span>
-            <span>قاچىلاش</span>
+            <span>باشقۇرۇش</span>
         </button>
         <button class="nav-item" onclick="switchTab('accountTab', this)">
             <span>👤</span>
@@ -625,6 +659,17 @@
         let currentUser = JSON.parse(localStorage.getItem('koznek_current_user')) || null;
         let favorites = JSON.parse(localStorage.getItem('koznek_koznek_favs') || localStorage.getItem('koznek_favs')) || [];
 
+        if (currentUser && currentUser.name.toLowerCase() !== 'nasrulla') {
+            let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+            for (let k in usersDb) {
+                if (k.trim().toLowerCase() === currentUser.name.toLowerCase()) {
+                    currentUser.vipExpire = usersDb[k].vipExpire || 0;
+                    localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                    break;
+                }
+            }
+        }
+
         const isLightMode = localStorage.getItem('koznek_light_mode') === 'true';
         if (isLightMode) {
             document.body.classList.add('light-mode');
@@ -639,18 +684,51 @@
 
         checkAdminPermissions();
         renderMovies();
+        updateAccountUI();
 
         function checkAdminPermissions() {
             const isAdmin = currentUser && currentUser.name.toLowerCase() === 'nasrulla';
             const uploadTabContent = document.getElementById('uploadPageContent');
             const navUploadBtn = document.getElementById('navUploadBtn');
             const uploadMenuSettingItem = document.getElementById('uploadMenuSettingItem');
-            const adminVipPanel = document.getElementById('adminVipPanel');
 
             if (isAdmin) {
                 navUploadBtn.style.display = 'flex';
                 uploadMenuSettingItem.style.display = 'flex';
-                if(adminVipPanel) adminVipPanel.style.display = 'block';
+
+                let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+                let usersListHtml = '';
+                let now = new Date().getTime();
+                let userCount = 0;
+
+                for (let username in usersDb) {
+                    if (username.toLowerCase() === 'nasrulla') continue;
+                    userCount++;
+                    let vExpire = usersDb[username].vipExpire || 0;
+                    let isVipActive = vExpire > now;
+                    let statusDesc = 'ئەزالىق يوق';
+
+                    if (isVipActive) {
+                        let diffMs = vExpire - now;
+                        let leftDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                        let leftHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        statusDesc = `⭐ VIP (قالدى: ${leftDays} كۈن ${leftHours} سائەت)`;
+                    }
+
+                    usersListHtml += `
+                        <div class="user-list-item">
+                            <div class="user-info-box">
+                                <span class="user-name-txt">👤 ${username}</span>
+                                <span class="user-status-txt">${statusDesc}</span>
+                            </div>
+                            ${isVipActive ? `<button class="revoke-btn" onclick="revokeVip('${username}')">ۋاقتىنى توشقۇزۇش</button>` : '<span style="font-size:12px; color:var(--text-secondary);">ئادەتتىكى</span>'}
+                        </div>
+                    `;
+                }
+
+                if (userCount === 0) {
+                    usersListHtml = '<div style="color: var(--text-secondary); text-align: center; margin: 15px 0;">ھازىرچە باشقا تىزىملاتقان ئەزا يوق</div>';
+                }
 
                 uploadTabContent.innerHTML = `
                     <div class="section-title">🎬 يېڭى مەزمۇن قاچىلاش</div>
@@ -684,11 +762,31 @@
                         <input type="text" id="newMovieUrl" class="form-input" placeholder="https://www.youtube.com/embed/..." autocomplete="off">
                     </div>
                     <button type="button" class="action-btn" onclick="addNewMovie()">تورغا مەزمۇن يوللاش</button>
+
+                    <div style="margin-top: 30px;" class="section-title">👥 بارلىق ئەزالار تىزىملىكى ۋە باشقۇرۇش</div>
+                    <div style="margin-top: 10px;" id="allUsersContainer">
+                        ${usersListHtml}
+                    </div>
+
+                    <div class="admin-panel" style="margin-top: 25px;">
+                        <div style="font-weight: bold; font-size: 15px; margin-bottom: 10px; color: #ff4757;">⚙️ ئابونت ئەزالىقى ئېچىپ بېرىش</div>
+                        <div class="form-group">
+                            <label>ئابونت ئىسمىنى كىرگۈزۈڭ</label>
+                            <input type="text" id="targetUserForVip" class="form-input" placeholder="ئابونت ئاتى..." autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label>ئەزالىق مۇددىتى</label>
+                            <select id="vipDuration" class="form-select">
+                                <option value="30">1 ئاي (30 كۈن)</option>
+                                <option value="365">1 يыл (365 كۈن)</option>
+                            </select>
+                        </div>
+                        <button type="button" class="action-btn" onclick="grantVipToUser()">ئەزالىقنى ئاكتىپلاش</button>
+                    </div>
                 `;
             } else {
                 navUploadBtn.style.display = 'none';
                 uploadMenuSettingItem.style.display = 'none';
-                if(adminVipPanel) adminVipPanel.style.display = 'none';
 
                 uploadTabContent.innerHTML = `
                     <div class="page-box" style="text-align: center; margin-top: 50px;">
@@ -696,6 +794,18 @@
                         <h3>بۇ بۆلۈم پەقەت باشقۇرغۇچى ئۈچۈنلا ئوچۇق</h3>
                     </div>
                 `;
+            }
+        }
+
+        function revokeVip(username) {
+            if (confirm(`راستلا ${username} نىڭ ئەزالىقىنى توشقۇزۇپ، ئادەتتىكى ئەزا قىلىۋەمسىز؟`)) {
+                let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+                if (usersDb[username]) {
+                    usersDb[username].vipExpire = 0;
+                    localStorage.setItem('koznek_users_db', JSON.stringify(usersDb));
+                    checkAdminPermissions();
+                    alert(`${username} ئەزالىقتىن چىقىرىلدى.`);
+                }
             }
         }
 
@@ -967,7 +1077,6 @@
 
             let users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
 
-            // ئابونت ئىسمىنى تېپىشتا چوڭ-كىچىك ھەرپ ياكى بوشلۇق خاتالىقى بولۇپ قالسا دەسلەپتە تۈزىتىش
             let foundKey = null;
             for (let key in users) {
                 if (key.trim().toLowerCase() === targetName.toLowerCase()) {
@@ -994,6 +1103,7 @@
                 updateAccountUI();
             }
 
+            checkAdminPermissions();
             alert(foundKey + ' غا ' + (days === 30 ? '1 ئايلىق' : '1 يىللىق') + ' VIP ئەزالىق بېرىلدى!');
             targetInput.value = '';
         }
@@ -1030,14 +1140,22 @@
 
                 let now = new Date().getTime();
                 if (currentUser.vipExpire && currentUser.vipExpire > now) {
-                    let leftDays = Math.ceil((currentUser.vipExpire - now) / (1000 * 60 * 60 * 24));
+                    let diffMs = currentUser.vipExpire - now;
+                    let leftDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                    let leftHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    
                     vipBadge.innerText = '⭐ VIP ئەزا';
                     vipBadge.style.background = '#ffa502';
-                    vipStatusText.innerText = 'ئەزالىق قالغان ۋاقتى: ' + leftDays + ' كۈن';
+                    
+                    if (leftDays > 0) {
+                        vipStatusText.innerText = 'ئەزالىق قالغان ۋاقتى: ' + leftDays + ' كۈن ' + leftHours + ' سائەت';
+                    } else {
+                        vipStatusText.innerText = 'ئەزالىق قالغان ۋاقتى: ' + leftHours + ' سائەت (بۈگۈن تۈگەيدۇ)';
+                    }
                 } else {
                     vipBadge.innerText = 'ئادەتتىكى ئەزا';
                     vipBadge.style.background = '#555';
-                    vipStatusText.innerText = 'ئەزالىق يوق (نەشىرنى كۆرۈش ئۈچۈن سىزگە تۈزىتىش كېرەك)';
+                    vipStatusText.innerText = 'ئەزالىق ۋاقتى توشقان ياكى ئاكتىپلانمىغان';
                 }
             } else {
                 loginForm.style.display = 'block';
@@ -1045,8 +1163,6 @@
                 accountTitle.innerText = 'ھېساباتقا كىرىش / تىزىملىتىش';
             }
         }
-
-        updateAccountUI();
     </script>
 </body>
 </html>
