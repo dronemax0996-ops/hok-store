@@ -4,21 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>كۆزنەك كىنوخانىسى</title>
-    <!-- PWA Manifest -->
     <link rel="manifest" href='data:application/json;charset=utf-8,{"name":"كۆزنەك كىنوخانىسى","short_name":"كۆزنەك","start_url":"./","display":"standalone","background_color":"#141414","theme_color":"#E50914","icons":[{"src":"https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=192&q=80","sizes":"192x192","type":"image/jpeg"}]}'>
-    <!-- Firebase SDK (كۆپ ئابونت ۋە تور بازىسى ئۈچۈن) -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <style>
+        :root {
+            --bg-color: #141414;
+            --nav-bg: rgba(20, 20, 20, 0.95);
+            --text-color: #ffffff;
+            --text-secondary: #aaa;
+            --card-bg: #1f1f1f;
+            --border-color: #282828;
+            --accent-color: #E50914;
+        }
+
+        body.light-mode {
+            --bg-color: #f4f4f4;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --text-color: #141414;
+            --text-secondary: #666;
+            --card-bg: #ffffff;
+            --border-color: #ddd;
+            --accent-color: #E50914;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
         }
         body {
-            background-color: #141414;
-            color: #ffffff;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             padding-bottom: 70px;
         }
         .navbar {
@@ -26,26 +45,25 @@
             justify-content: space-between;
             align-items: center;
             padding: 15px 20px;
-            background-color: rgba(20, 20, 20, 0.95);
+            background-color: var(--nav-bg);
             position: sticky;
             top: 0;
             z-index: 1000;
-            border-bottom: 1px solid #222;
+            border-bottom: 1px solid var(--border-color);
         }
         .logo {
-            color: #E50914;
+            color: var(--accent-color);
             font-size: 20px;
             font-weight: bold;
         }
         .search-btn {
             font-size: 18px;
-            color: #fff;
+            color: var(--text-color);
             background: none;
             border: none;
             cursor: pointer;
         }
         
-        /* ئىزدەش كۆزنىكى */
         .search-modal {
             display: none;
             position: fixed;
@@ -53,7 +71,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #141414;
+            background-color: var(--bg-color);
             z-index: 3000;
             padding: 20px;
             overflow-y: auto;
@@ -62,16 +80,16 @@
             width: 100%;
             padding: 12px 15px;
             font-size: 16px;
-            background-color: #222;
-            border: 1px solid #444;
-            color: white;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
             border-radius: 6px;
             margin-bottom: 20px;
         }
         .close-search {
             background: none;
             border: none;
-            color: #E50914;
+            color: var(--accent-color);
             font-size: 16px;
             cursor: pointer;
             margin-bottom: 15px;
@@ -84,11 +102,12 @@
         }
         .search-item {
             display: flex;
-            background: #1f1f1f;
+            background: var(--card-bg);
             border-radius: 6px;
             overflow: hidden;
             cursor: pointer;
             align-items: center;
+            border: 1px solid var(--border-color);
         }
         .search-item img {
             width: 90px;
@@ -112,7 +131,7 @@
             position: relative;
             width: 100%;
             height: 280px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.2), #141414), url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80') no-repeat center center/cover;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), var(--bg-color)), url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80') no-repeat center center/cover;
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -124,9 +143,10 @@
             font-weight: bold;
             margin-bottom: 8px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            color: #fff;
         }
         .hero-btn {
-            background-color: #E50914;
+            background-color: var(--accent-color);
             color: white;
             border: none;
             padding: 10px 25px;
@@ -138,7 +158,6 @@
             box-shadow: 0 4px 10px rgba(229, 9, 20, 0.4);
         }
 
-        /* كاتېگورىيە تاللاش بالدىقى */
         .category-tabs {
             display: flex;
             gap: 8px;
@@ -147,17 +166,18 @@
             white-space: nowrap;
         }
         .cat-chip {
-            background-color: #222;
-            color: #aaa;
-            border: none;
+            background-color: var(--card-bg);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
             padding: 6px 14px;
             border-radius: 20px;
             font-size: 13px;
             cursor: pointer;
         }
         .cat-chip.active {
-            background-color: #E50914;
+            background-color: var(--accent-color);
             color: white;
+            border-color: var(--accent-color);
             font-weight: bold;
         }
 
@@ -169,8 +189,8 @@
             font-size: 18px;
             font-weight: bold;
             margin-bottom: 12px;
-            color: #e5e5e5;
-            border-left: 3px solid #E50914;
+            color: var(--text-color);
+            border-left: 3px solid var(--accent-color);
             padding-left: 8px;
         }
         
@@ -181,10 +201,11 @@
             padding-bottom: 10px;
         }
         .movie-card {
-            background-color: #1f1f1f;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 6px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             position: relative;
         }
         .movie-poster {
@@ -208,15 +229,26 @@
             text-overflow: ellipsis;
             width: 110px;
         }
+        .movie-tag {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: #ffa502;
+            color: #000;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
         .fav-btn {
             background: none;
             border: none;
             font-size: 16px;
             cursor: pointer;
-            color: #aaa;
+            color: var(--text-secondary);
         }
         .fav-btn.liked {
-            color: #E50914;
+            color: var(--accent-color);
         }
 
         .video-modal {
@@ -245,7 +277,7 @@
             border: none;
         }
         .close-btn {
-            background-color: #E50914;
+            background-color: var(--accent-color);
             color: white;
             border: none;
             padding: 8px 20px;
@@ -264,22 +296,22 @@
         .form-group label {
             display: block;
             font-size: 13px;
-            color: #aaa;
+            color: var(--text-secondary);
             margin-bottom: 5px;
         }
         .form-input, .form-select {
             width: 100%;
             padding: 10px;
-            background-color: #1f1f1f;
-            border: 1px solid #333;
-            color: white;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
             border-radius: 5px;
             font-size: 14px;
         }
         .action-btn {
             width: 100%;
             padding: 12px;
-            background-color: #E50914;
+            background-color: var(--accent-color);
             color: white;
             border: none;
             border-radius: 5px;
@@ -290,15 +322,15 @@
         }
         
         .vip-card {
-            background: linear-gradient(135deg, #2b2b2b, #111);
-            border: 1px solid #E50914;
+            background: var(--card-bg);
+            border: 1px solid var(--accent-color);
             border-radius: 8px;
             padding: 15px;
             margin-top: 15px;
             text-align: right;
         }
         .vip-badge {
-            background-color: #E50914;
+            background-color: var(--accent-color);
             color: white;
             padding: 3px 8px;
             font-size: 11px;
@@ -306,22 +338,92 @@
             font-weight: bold;
         }
 
+        /* تەڭشەك ئۇسلۇبى */
+        .settings-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .settings-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .settings-item:last-child {
+            border-bottom: none;
+        }
+        .settings-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            text-align: right;
+        }
+        .settings-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        .settings-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+        }
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #555;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background-color: #181818;
+            background-color: var(--nav-bg);
             display: flex;
             justify-content: space-around;
             padding: 8px 0;
-            border-top: 1px solid #282828;
+            border-top: 1px solid var(--border-color);
             z-index: 1000;
         }
         .nav-item {
             background: none;
             border: none;
-            color: #888;
+            color: var(--text-secondary);
             font-size: 10px;
             display: flex;
             flex-direction: column;
@@ -330,7 +432,7 @@
             cursor: pointer;
         }
         .nav-item.active {
-            color: #E50914;
+            color: var(--accent-color);
             font-weight: bold;
         }
         .nav-item span:first-child {
@@ -350,10 +452,9 @@
         <div class="hero-section">
             <div class="hero-title">جەڭگىۋار 2026</div>
             <p style="font-size: 13px; color: #ccc;">يېڭى قويۇلغان ھەرىكەتلىك كىنو</p>
-            <button class="hero-btn" onclick="openPlayer('https://www.youtube.com/embed/dQw4w9WgXcQ')">▶ كۆرۈش</button>
+            <button class="hero-btn" onclick="tryPlayMovie('https://www.youtube.com/embed/dQw4w9WgXcQ', false)">▶ كۆرۈش</button>
         </div>
 
-        <!-- تۈر كاتېگورىيەلىرى -->
         <div class="category-tabs">
             <button class="cat-chip active" onclick="filterCategory('all', this)">بارلىقى</button>
             <button class="cat-chip" onclick="filterCategory('action', this)">ھەرىكەتلىك</button>
@@ -376,7 +477,7 @@
         </div>
     </div>
 
-    <!-- 3-بەرت: كىنو قاچىلاش ۋە قولدا VIP ئاكتىپلاش (باشقۇرغۇچى ئۈچۈن) -->
+    <!-- 3-بەرت: قاچىلاش ۋە VIP بېرىش -->
     <div id="uploadTab" class="tab-content">
         <div class="page-box">
             <div class="section-title">🎬 يېڭى كىنو قاچىلاش</div>
@@ -394,6 +495,13 @@
                 </select>
             </div>
             <div class="form-group">
+                <label>ئەزا تىپى (Access)</label>
+                <select id="newMovieAccess" class="form-select">
+                    <option value="free">ھەممىگە ھەقسىز (Free)</option>
+                    <option value="vip">پەقەت VIP ئەزالار ئۈچۈن (⭐ VIP)</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label>رەسىم ئۇلانمىسى (Image URL)</label>
                 <input type="text" id="newMovieImg" class="form-input" placeholder="رەسىم ئادرېسى...">
             </div>
@@ -403,8 +511,7 @@
             </div>
             <button class="action-btn" onclick="addNewMovie()">تورغا كىنو يوللاش</button>
 
-            <!-- قولدا VIP ئاكتىپلاش بۆلىكى -->
-            <div style="margin-top: 40px; border-top: 1px solid #333; padding-top: 20px;">
+            <div style="margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 20px;">
                 <div class="section-title" style="border-left-color: #2ed573;">🛠️ ئابونتقا قولدا VIP بېرىش</div>
                 <div class="form-group" style="margin-top: 15px;">
                     <label>ئابونت ئىسمى (Username)</label>
@@ -422,38 +529,41 @@
         </div>
     </div>
 
-    <!-- 4-بەرت: ھېسابات ۋە پۇل تۆلەش ئۇچۇرى -->
+    <!-- 4-بەرت: ھېسابات -->
     <div id="accountTab" class="tab-content">
         <div class="page-box" style="text-align: center;">
             <div style="font-size: 50px; margin-top: 10px;">👤</div>
-            <h3 id="accountTitle" style="margin-top: 10px;">ھېساباتقا كىرىش</h3>
+            <h3 id="accountTitle" style="margin-top: 10px;">ھېساباتقا كىرىش / تىزىملىتىش</h3>
             
             <div id="loginForm" style="margin-top: 20px; text-align: right;">
                 <div class="form-group">
                     <label>ئابونت ئىسمى (Username)</label>
                     <input type="text" id="loginUser" class="form-input" placeholder="ئىسمىڭىزنى كىرگۈزۈڭ">
                 </div>
-                <button class="action-btn" onclick="handleLogin()">تۆۋەندىكىلەر بىلەن كىرىش</button>
+                <div class="form-group">
+                    <label>مەخپىي نومۇر (Password)</label>
+                    <input type="password" id="loginPass" class="form-input" placeholder="پارولىڭىزنى كىرگۈزۈڭ">
+                </div>
+                <button class="action-btn" onclick="handleLoginOrRegister()">كىرىش / تىزىملىتىش</button>
             </div>
 
             <div id="userProfileView" style="display: none; margin-top: 15px; text-align: right;">
-                <div style="background: #1f1f1f; padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span id="displayUsername" style="font-size: 16px; font-weight: bold; color: #E50914;"></span>
+                        <span id="displayUsername" style="font-size: 16px; font-weight: bold; color: var(--accent-color);"></span>
                         <span id="vipBadge" class="vip-badge" style="background:#555;">ئادەتتىكى ئەزا</span>
                     </div>
-                    <div id="vipStatusText" style="font-size: 12px; color: #aaa; margin-top: 8px;">ئەزالىق ۋاقتى يوق</div>
+                    <div id="vipStatusText" style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">ئەزالىق ۋاقتى يوق</div>
                 </div>
 
-                <!-- پۇل تۆلەش ۋە تەكشۈرۈش ئۇچۇرى -->
-                <div class="vip-card">
+                <div class="vip-card" id="vipPaymentCard">
                     <div style="font-weight: bold; font-size: 15px; margin-bottom: 5px; color: #ff4757;">💳 VIP سېتىۋېلىش (قولدا تەكشۈرۈش)</div>
-                    <p style="font-size: 12px; color: #ccc; line-height: 1.5; margin-bottom: 10px;">
+                    <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 10px;">
                         1. ShamCash ئارقىلىق پۇل تۆلەڭ.<br>
                         2. تۆلىگەنلىك چېكىڭىزنى (скриншот) تېلېگرامما ئارقىلىق ئەۋەتىڭ.<br>
                         3. ئىسمىڭىزنى ئېيتقىنىڭىزدە باشقۇرغۇچى دەرھال ئاكتىپلاپ بېرىدۇ!
                     </p>
-                    <div style="font-size: 13px; color: #2ed573; font-weight: bold; background: #111; padding: 8px; border-radius: 4px; text-align: center;">
+                    <div style="font-size: 13px; color: #2ed573; font-weight: bold; background: var(--bg-color); padding: 8px; border-radius: 4px; text-align: center;">
                         تېلېگرامما ئالاقە: @SizningUser
                     </div>
                 </div>
@@ -467,9 +577,42 @@
     <div id="settingsTab" class="tab-content">
         <div class="page-box">
             <div class="section-title">⚙️ ئەپ تەڭشەكلىرى</div>
-            <div style="background: #1f1f1f; padding: 15px; border-radius: 8px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
-                <span>تۈنۈك (قاراڭغۇ) ھالەت</span>
-                <input type="checkbox" checked disabled style="width: 20px; height: 20px;">
+            
+            <div class="settings-card" style="margin-top: 15px;">
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <span class="settings-title">يورۇق / قاراڭغۇ ھالەت</span>
+                        <span class="settings-desc">ئەپ كۆرۈنۈشىنى يورۇق ياكى قارا قىلىش</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <span class="settings-title">בילدر (باشقۇرغۇچى) بېتى</span>
+                        <span class="settings-desc">يېڭى كىنو قاچىلاش ۋە VIP بېرىش بۆلۈمىگە ئۆتۈش</span>
+                    </div>
+                    <button class="action-btn" style="width: auto; padding: 6px 14px; font-size: 13px; margin: 0;" onclick="switchTab('uploadTab', document.querySelectorAll('.nav-item')[2])">ئېچىش</button>
+                </div>
+
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <span class="settings-title">ساقلانما سانلىق مەلۇماتلارنى تازىلاش</span>
+                        <span class="settings-desc">ياقتۇرغانلار ۋە كېэىش خاتىرىلىرىنى تازىلاش</span>
+                    </div>
+                    <button class="action-btn" style="width: auto; padding: 6px 14px; font-size: 13px; margin: 0; background-color: #ff4757;" onclick="clearLocalStorageData()">تازىلاش</button>
+                </div>
+
+                <div class="settings-item">
+                    <div class="settings-info">
+                        <span class="settings-title">ئەپ ھەققىدە</span>
+                        <span class="settings-desc">كۆزنەك كىنوخانىسى v2.0 - چەكسىز تور كىنو سۇپىسى</span>
+                    </div>
+                    <span style="font-size: 13px; color: var(--accent-color); font-weight: bold;">ئەڭ يېڭى</span>
+                </div>
             </div>
         </div>
     </div>
@@ -514,7 +657,6 @@
     </div>
 
     <script>
-        // Firebase تەڭشىكى (بارلىق ئابونتلار ۋە تور كىنولىرى ئۈچۈن ئورتاق база)
         const firebaseConfig = {
             databaseURL: "https://koznek-cinema-default-rtdb.firebaseio.com/"
         };
@@ -526,13 +668,19 @@
         let currentUser = JSON.parse(localStorage.getItem('koznek_current_user')) || null;
         let favorites = JSON.parse(localStorage.getItem('koznek_favs')) || [];
 
+        // ئەپ ھالىتىنى تەكشۈرۈش (قاراڭغۇ ياكى يورۇق)
+        const isLightMode = localStorage.getItem('koznek_light_mode') === 'true';
+        if (isLightMode) {
+            document.body.classList.add('light-mode');
+            document.getElementById('darkModeToggle').checked = true;
+        }
+
         const modal = document.getElementById('videoModal');
         const player = document.getElementById('youtubePlayer');
         const searchModal = document.getElementById('searchModal');
         const searchInput = document.getElementById('searchInput');
         const searchResults = document.getElementById('searchResults');
 
-        // تور بازىسىدىن كىنولارنى ئاپتوماتىك ئوقۇش (كۆپ ئابونت ئۈچۈن)
         db.ref('movies').on('value', (snapshot) => {
             const data = snapshot.val();
             movies = [];
@@ -540,10 +688,30 @@
                 Object.keys(data).forEach(key => {
                     movies.push({ id: key, ...data[key] });
                 });
-                movies.reverse(); // ئەڭ يېڭىسى ئۈستتە چىقىدۇ
+                movies.reverse();
             }
             renderMovies();
         });
+
+        function toggleDarkMode() {
+            const isChecked = document.getElementById('darkModeToggle').checked;
+            if (isChecked) {
+                document.body.classList.add('light-mode');
+                localStorage.setItem('koznek_light_mode', 'true');
+            } else {
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('koznek_light_mode', 'false');
+            }
+        }
+
+        function clearLocalStorageData() {
+            if (confirm('بارلىق ساقلانغان ياقتۇرغانلار كىنولارنى تازىلىۋەتەمسىز؟')) {
+                localStorage.removeItem('koznek_favs');
+                favorites = [];
+                renderMovies();
+                alert('مۇۋەپپەقىيەتلىك تازىلاندى!');
+            }
+        }
 
         function renderMovies() {
             const movieList = document.getElementById('movieList');
@@ -554,13 +722,15 @@
             let hasFav = false;
 
             movies.forEach((movie) => {
-                // كاتېگورىيە بويىچە سۈزۈش
                 if (currentCategory !== 'all' && movie.cat !== currentCategory) return;
 
                 const isLiked = favorites.includes(movie.id);
+                const isVipMovie = movie.access === 'vip';
+                
                 const cardHtml = `
                     <div class="movie-card">
-                        <img src="${movie.img}" class="movie-poster" onclick="openPlayer('${movie.url}')">
+                        ${isVipMovie ? '<div class="movie-tag">⭐ VIP</div>' : ''}
+                        <img src="${movie.img}" class="movie-poster" onclick="tryPlayMovie('${movie.url}', ${isVipMovie})">
                         <div class="movie-footer">
                             <div class="movie-name">${movie.title}</div>
                             <button class="fav-btn ${isLiked ? 'liked' : ''}" onclick="toggleFav('${movie.id}')">❤️</button>
@@ -576,11 +746,11 @@
             });
 
             if (movieList.innerHTML === '') {
-                movieList.innerHTML = '<div style="color: #777; grid-column: span 2; text-align: center; margin-top: 30px;">بۇ تۈردە كىنو يوق</div>';
+                movieList.innerHTML = '<div style="color: var(--text-secondary); grid-column: span 2; text-align: center; margin-top: 30px;">بۇ تۈردە كىنو يوق</div>';
             }
 
             if (!hasFav) {
-                favList.innerHTML = '<div style="color: #777; grid-column: span 2; text-align: center; margin-top: 30px;">ياقتۇرغان كىنولىرىڭىز يوق</div>';
+                favList.innerHTML = '<div style="color: var(--text-secondary); grid-column: span 2; text-align: center; margin-top: 30px;">ياقتۇرغان كىنولىرىڭىز يوق</div>';
             }
         }
 
@@ -589,13 +759,26 @@
             document.querySelectorAll('.cat-chip').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
 
-            const titles = { 'all': 'بارلىق كىنولار', 'action': 'ھەرىكەتلىك كىنولار', 'comedy': 'كومېدىيە كىنولىرى', 'sci-fi': 'فانتاستىك كىنولөр', 'horror': 'قورقۇنچلۇق كىنولөр' };
+            const titles = { 'all': 'بارلىق كىنولار', 'action': 'ھەرىكەتلىك كىنولار', 'comedy': 'كومېدىيە كىنولىرى', 'sci-fi': 'فانتاستىك كىنولار', 'horror': 'قورقۇنچلۇق كىنولار' };
             document.getElementById('currentCatTitle').innerText = titles[cat];
             renderMovies();
         }
 
-        function openPlayer(url) {
-            // ئەگەر VIP نى تەكشۈرمەكچى بولسىڭىز بۇ يەرگە قوشسىڭىز بولىدۇ
+        function tryPlayMovie(url, isVipMovie) {
+            if (isVipMovie) {
+                if (currentUser && currentUser.name === 'nasrulla') {
+                    player.src = url;
+                    modal.style.display = 'flex';
+                    return;
+                }
+
+                let now = new Date().getTime();
+                if (!currentUser || !currentUser.vipExpire || currentUser.vipExpire < now) {
+                    alert('بۇ كىنو پەقەت VIP ئەزالار ئۈچۈن! كۆڭۈلدىكىدەك كۆرۈش ئۈچۈن VIP بولۇڭ.');
+                    switchTab('accountTab', document.querySelectorAll('.nav-item')[3]);
+                    return;
+                }
+            }
             player.src = url;
             modal.style.display = 'flex';
         }
@@ -622,7 +805,7 @@
             document.getElementById(tabId).classList.add('active-tab');
 
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
+            if (btnElement) btnElement.classList.add('active');
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -637,10 +820,10 @@
             renderMovies();
         }
 
-        // كىنو قاچىلاش (تور بازىسىغا يوللاش - بارلىق ئابونتلار كۆرەلەيدۇ)
         function addNewMovie() {
             const title = document.getElementById('newMovieTitle').value.trim();
             const cat = document.getElementById('newMovieCat').value;
+            const access = document.getElementById('newMovieAccess').value;
             const img = document.getElementById('newMovieImg').value.trim();
             const url = document.getElementById('newMovieUrl').value.trim();
 
@@ -654,18 +837,18 @@
             db.ref('movies').push({
                 title: title,
                 cat: cat,
+                access: access,
                 img: posterImg,
                 url: url
             });
 
-            alert('كىنو טור بازىسىغا مۇۋەپپەقىيەتلىك يوللاندى!');
+            alert('كىنو تور بازىسىغا مۇۋەپپەقىيەتلىك يوللاندى!');
             document.getElementById('newMovieTitle').value = '';
             document.getElementById('newMovieImg').value = '';
             document.getElementById('newMovieUrl').value = '';
             switchTab('homeTab', document.querySelector('.nav-item'));
         }
 
-        // سىزنىڭ قولدا VIP ئاكتىپلىشىڭىز
         function manualActivateVip() {
             const targetUser = document.getElementById('targetUser').value.trim();
             const days = parseInt(document.getElementById('vipDuration').value);
@@ -680,7 +863,7 @@
                 if (error) {
                     alert('خاتالىق كۆرۈلدى!');
                 } else {
-                    alert(`${targetUser} نىڭ VIP مۇھلىتى مۇۋەپپەقىيەتلىك ${days} كۈنگە uzatıldı!`);
+                    alert(`${targetUser} نىڭ VIP مۆھلىتى مۇۋەپپەقىيەتلىك ${days} كۈنگە ئۇزارتىلدى!`);
                     document.getElementById('targetUser').value = '';
                 }
             });
@@ -694,52 +877,74 @@
             movies.forEach(movie => {
                 if (movie.title.toLowerCase().includes(query)) {
                     found = true;
+                    const isVip = movie.access === 'vip';
                     const item = document.createElement('div');
                     item.className = 'search-item';
                     item.innerHTML = `
                         <img src="${movie.img}">
-                        <div class="search-item-title">${movie.title}</div>
+                        <div class="search-item-title">${movie.title} ${isVip ? '⭐' : ''}</div>
                     `;
                     item.onclick = () => {
                         closeSearch();
-                        openPlayer(movie.url);
+                        tryPlayMovie(movie.url, isVip);
                     };
                     searchResults.appendChild(item);
                 }
             });
 
             if (!found && query !== '') {
-                searchResults.innerHTML = '<div style="color: #777; text-align: center; margin-top: 30px;">ھېچقانداق كىنو تېپىلمىدى</div>';
+                searchResults.innerHTML = '<div style="color: var(--text-secondary); text-align: center; margin-top: 30px;">ھېچقانداق كىنو تېپىلمىدى</div>';
             }
         }
 
-        function handleLogin() {
+        function handleLoginOrRegister() {
             const username = document.getElementById('loginUser').value.trim();
-            if (!username) {
-                alert('ئابون ئىسمىنى كىرگۈزۈڭ!');
+            const password = document.getElementById('loginPass').value.trim();
+
+            if (!username || !password) {
+                alert('ئابونت ئىسمى ۋە پارولنى تولدۇرۇڭ!');
                 return;
             }
 
-            currentUser = { name: username };
-            localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-
-            // تور بازىسىدىن ئابونتنىڭ VIP ھالىتىنى تەكشۈرۈش
-            db.ref('users/' + username).on('value', (snapshot) => {
-                const userData = snapshot.val();
-                if (userData && userData.vipExpire) {
-                    currentUser.vipExpire = userData.vipExpire;
-                } else {
-                    currentUser.vipExpire = 0;
-                }
+            if (username === 'nasrulla' && password === '0996') {
+                let infiniteTime = 8640000000000000;
+                currentUser = { name: 'nasrulla', vipExpire: infiniteTime };
+                localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
                 updateAccountUI();
-            });
+                alert('خۇش كەپسىز باشقۇرغۇچى (nasrulla)! سىزگە ھەمىشە مەڭگۈلۈك (چەكسىز) VIP ئاكتىپ.');
+                return;
+            }
 
-            alert('مۇۋەپپەقىيەتلىك كىردىڭىز!');
+            db.ref('users/' + username).once('value', (snapshot) => {
+                const userData = snapshot.val();
+                if (userData) {
+                    if (userData.password === password) {
+                        currentUser = { name: username, vipExpire: userData.vipExpire || 0 };
+                        localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                        updateAccountUI();
+                        alert('مۇۋەپپەقىيەتلىك كىردىڭىز!');
+                    } else {
+                        alert('پارول خاتالىق! قايتا سىناڭ.');
+                    }
+                } else {
+                    let newUserData = { password: password, vipExpire: 0 };
+                    db.ref('users/' + username).set(newUserData, (error) => {
+                        if (!error) {
+                            currentUser = { name: username, vipExpire: 0 };
+                            localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                            updateAccountUI();
+                            alert('يېڭى ھېسابات تىزىملىتىلدى ۋە كىردىڭىز!');
+                        }
+                    });
+                }
+            });
         }
 
         function handleLogout() {
             localStorage.removeItem('koznek_current_user');
             currentUser = null;
+            document.getElementById('loginUser').value = '';
+            document.getElementById('loginPass').value = '';
             updateAccountUI();
             alert('ھېساباتتىن چېكىندىڭىز.');
         }
@@ -751,6 +956,7 @@
             const accountTitle = document.getElementById('accountTitle');
             const vipBadge = document.getElementById('vipBadge');
             const vipStatusText = document.getElementById('vipStatusText');
+            const vipPaymentCard = document.getElementById('vipPaymentCard');
 
             if (currentUser) {
                 loginForm.style.display = 'none';
@@ -758,6 +964,15 @@
                 displayUsername.innerText = currentUser.name;
                 accountTitle.innerText = 'شەخسىي ھېسابات';
 
+                if (currentUser.name === 'nasrulla') {
+                    vipBadge.innerText = '⭐ چەكسىز باشقۇرغۇچى (Admin)';
+                    vipBadge.style.background = '#E50914';
+                    vipStatusText.innerText = 'ھوقۇقى: مەڭگۈلۈك چەكسىز VIP ۋە پۈتۈن سىستېما ئوچۇق';
+                    vipPaymentCard.style.display = 'none';
+                    return;
+                }
+
+                vipPaymentCard.style.display = 'block';
                 let now = new Date().getTime();
                 if (currentUser.vipExpire && currentUser.vipExpire > now) {
                     let expireDate = new Date(currentUser.vipExpire).toLocaleDateString();
@@ -772,19 +987,23 @@
             } else {
                 loginForm.style.display = 'block';
                 userProfileView.style.display = 'none';
-                accountTitle.innerText = 'ھېساباتقا كىرىش';
+                accountTitle.innerText = 'ھېساباتقا كىرىش / تىزىملىتىش';
             }
         }
 
-        // ئەگەر ئاللىқаچان كىرگەن بولسا ئۇچۇرنى يېڭىلاش
         if (currentUser) {
-            db.ref('users/' + currentUser.name).on('value', (snapshot) => {
-                const userData = snapshot.val();
-                if (userData && userData.vipExpire) {
-                    currentUser.vipExpire = userData.vipExpire;
-                }
+            if (currentUser.name === 'nasrulla') {
                 updateAccountUI();
-            });
+            } else {
+                db.ref('users/' + currentUser.name).on('value', (snapshot) => {
+                    const userData = snapshot.val();
+                    if (userData) {
+                        currentUser.vipExpire = userData.vipExpire || 0;
+                        localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                    }
+                    updateAccountUI();
+                });
+            }
         }
 
         updateAccountUI();
