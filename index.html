@@ -26,7 +26,7 @@
             align-items: center;
         }
         .header .title {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
             cursor: pointer;
         }
@@ -59,28 +59,7 @@
             font-weight: bold;
             color: #333;
         }
-        /* باش بەتتىكى ئويۇنلار تىزىملىكى */
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            padding: 15px;
-        }
-        .game-card {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            cursor: pointer;
-            border: 2px solid #00b074;
-        }
-        .game-card h3 {
-            font-size: 14px;
-            color: #00b074;
-            margin-top: 10px;
-        }
-        /* مەھسۇلات تور كاتەكچىسى (Grid) */
+        /* مەھسۇلات ۋە ئويۇن تور كاتەكچىسى (Grid) */
         .grid-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -96,6 +75,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            cursor: pointer;
         }
         .card-img-wrapper {
             position: relative;
@@ -167,7 +147,6 @@
         <div class="title" id="back-btn" onclick="showPage('home-page')" style="display:none;">← ئارقىغا</div>
         <div class="title" id="main-title">ئاپتۇماتىك تور دۇكىنى</div>
         <div class="balance-box">ئاپتۇماتىك تور دۇكىنى</div>
-        <div style="display:none;">☰</div>
     </div>
 
     <!-- 1. باش بەت (ئويۇن تاللاش بەتى) -->
@@ -176,26 +155,26 @@
             <input type="text" class="search-box" placeholder="ئويۇن ئىزدەش...">
         </div>
         <div class="section-title">بارلىق ئويۇنلار</div>
-        <div class="games-grid">
-            <div class="game-card" onclick="showPage('hok-page')">
+        <div class="grid-container">
+            <div class="card" onclick="showPage('hok-page')">
                 <div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg" alt="HoK"></div>
-                <h3>Honor of Kings</h3>
+                <div class="item-name">Honor of Kings</div>
             </div>
-            <div class="game-card" onclick="showPage('arena-page')">
+            <div class="card" onclick="showPage('arena-page')">
                 <div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg" alt="Arena"></div>
-                <h3>Arena Breakout</h3>
+                <div class="item-name">Arena Breakout</div>
             </div>
-            <div class="game-card" onclick="showPage('pubg-page')">
+            <div class="card" onclick="showPage('pubg-page')">
                 <div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg" alt="PUBG"></div>
-                <h3>PUBG Mobile</h3>
+                <div class="item-name">PUBG Mobile</div>
             </div>
-            <div class="game-card" onclick="showPage('mlbb-global-page')">
+            <div class="card" onclick="showPage('mlbb-global-page')">
                 <div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg" alt="MLBB Global"></div>
-                <h3>MLBB (گىلوبال نۇسخىسى)</h3>
+                <div class="item-name">MLBB (گىلوبال)</div>
             </div>
-            <div class="game-card" onclick="showPage('mlbb-tr-page')">
+            <div class="card" onclick="showPage('mlbb-tr-page')">
                 <div class="card-img-wrapper"><img src="https://i.ibb.co/3qjtngr/31857.jpg" alt="MLBB TR"></div>
-                <h3>MLBB (تۈركىيە نۇسخىسى)</h3>
+                <div class="item-name">MLBB (تۈركىيە)</div>
             </div>
         </div>
     </div>
@@ -299,14 +278,11 @@
 
     <script>
         function showPage(pageId) {
-            // بارلىق بەتلەرنى يوشۇرۇش
             const pages = document.querySelectorAll('.page');
             pages.forEach(p => p.classList.remove('active'));
             
-            // كۆرسىتىشكە تېگىشلىك بەەتنى ئېچىش
             document.getElementById(pageId).classList.add('active');
             
-            // باش بەتتە بولمىسا «ئارقىغا» كۇنۇپكىسىنى چىقىرىش
             const backBtn = document.getElementById('back-btn');
             const mainTitle = document.getElementById('main-title');
             
