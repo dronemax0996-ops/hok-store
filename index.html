@@ -336,16 +336,44 @@
             margin-top: 10px;
         }
 
+        /* سىيرىلىش ئارقىلىق ئۆچۈرۈش قۇرۇلمىسى */
+        .swipe-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #ff4757;
+        }
+        .swipe-delete-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ff4757;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            padding-left: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            z-index: 1;
+        }
         .user-list-item {
+            position: relative;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
             padding: 12px 15px;
-            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             text-align: right;
+            z-index: 2;
+            touch-action: pan-y;
+            user-select: none;
+            cursor: pointer;
         }
         .user-info-box {
             display: flex;
@@ -361,30 +389,46 @@
             font-size: 12px;
             color: var(--text-secondary);
         }
-        .user-action-btns {
-            display: flex;
-            gap: 6px;
+
+        /* ئەزانى تەڭشەش كۆزنىكى (Popup) */
+        .user-action-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 4000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
-        .grant-btn {
-            background-color: #2ed573;
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-size: 11px;
+        .user-action-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 320px;
+            padding: 20px;
+            text-align: center;
+        }
+        .user-action-title {
+            font-size: 16px;
             font-weight: bold;
-            cursor: pointer;
+            margin-bottom: 15px;
+            color: var(--text-color);
         }
-        .revoke-btn {
-            background-color: #ff4757;
-            color: white;
-            border: none;
-            padding: 6px 10px;
-            border-radius: 4px;
-            font-size: 11px;
+        .popup-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
             font-weight: bold;
+            border: none;
             cursor: pointer;
+            margin-bottom: 10px;
         }
+        .popup-btn-add { background-color: #2ed573; color: white; }
+        .popup-btn-revoke { background-color: #ff4757; color: white; }
+        .popup-btn-close { background-color: #555; color: white; margin-bottom: 0; }
 
         .settings-card {
             background: var(--card-bg);
@@ -525,7 +569,7 @@
         </div>
     </div>
 
-    <!-- 3-بەرت: قاچىلاش / باشقۇرۇش (پەقەت nasrulla غا ئوچۇق) -->
+    <!-- 3-بەرت: قاچىلاش / باشقۇرۇش -->
     <div id="uploadTab" class="tab-content">
         <div class="page-box" id="uploadPageContent"></div>
     </div>
@@ -598,6 +642,16 @@
         </div>
     </div>
 
+    <!-- ئابونت VIP تەڭشەش كۆزنىكى (Popup) -->
+    <div class="user-action-modal" id="userActionModal">
+        <div class="user-action-card">
+            <div class="user-action-title" id="popupUserName">ئابونت: </div>
+            <button type="button" class="popup-btn popup-btn-add" onclick="popupGrantVip()">+ 1 ئاي ئەزالىق قوشۇش</button>
+            <button type="button" class="popup-btn popup-btn-revoke" onclick="popupRevokeVip()">ئەزالىقنى توشقۇزۇش</button>
+            <button type="button" class="popup-btn popup-btn-close" onclick="closeUserActionModal()">چېكىنىش</button>
+        </div>
+    </div>
+
     <!-- ئىزدەش كۆزنىكى -->
     <div class="search-modal" id="searchModal">
         <button class="close-search" onclick="closeSearch()">← قايتىش</button>
@@ -639,7 +693,7 @@
 
     <script>
         const ADMIN_USERNAME = "nasrulla";
-        const ADMIN_MASTER_PASS = "nasrulla123";
+        const ADMIN_MASTER_PASS = "0996";
 
         let movies = JSON.parse(localStorage.getItem('koznek_movies')) || [
             { id: '1', title: 'ئاخىرقى جەڭ', cat: 'movie', access: 'free', img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=300&q=80', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
@@ -649,6 +703,7 @@
         let currentCategory = 'all';
         let currentUser = JSON.parse(localStorage.getItem('koznek_current_user')) || null;
         let favorites = JSON.parse(localStorage.getItem('koznek_koznek_favs') || localStorage.getItem('koznek_favs')) || [];
+        let selectedActionUser = null;
 
         if (currentUser && currentUser.name.toLowerCase() !== ADMIN_USERNAME) {
             let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
@@ -707,14 +762,14 @@
                     }
 
                     usersListHtml += `
-                        <div class="user-list-item">
-                            <div class="user-info-box">
-                                <span class="user-name-txt">👤 ${username}</span>
-                                <span class="user-status-txt">${statusDesc}</span>
-                            </div>
-                            <div class="user-action-btns">
-                                <button class="grant-btn" onclick="quickGrantVip('${username}')">+ 1 ئاي</button>
-                                ${isVipActive ? `<button class="revoke-btn" onclick="revokeVip('${username}')">توشقۇزۇش</button>` : ''}
+                        <div class="swipe-wrapper" id="swipe-${username}">
+                            <div class="swipe-delete-bg">🗑️ يۇيۋىتىش</div>
+                            <div class="user-list-item" data-username="${username}" onclick="openUserActionModal('${username}')">
+                                <div class="user-info-box">
+                                    <span class="user-name-txt">👤 ${username}</span>
+                                    <span class="user-status-txt">${statusDesc}</span>
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-secondary);">باسسىڭىز تەڭشىلىدۇ</div>
                             </div>
                         </div>
                     `;
@@ -758,10 +813,13 @@
                     <button type="button" class="action-btn" onclick="addNewMovie()">تورغا مەزمۇن يوللاش</button>
 
                     <div style="margin-top: 30px;" class="section-title">👥 بارلىق ئەزالار ۋە باشقۇرۇش</div>
-                    <div style="margin-top: 10px;" id="allUsersContainer">
+                    <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; text-align: right;">* سولغا سىيرىپ ئۆچۈرۈڭ، ئوڭغا سىيرىپ جايىغا ئەكىلىڭ، ياكى بېسىپ VIP قوشۇڭ/توشقۇزۇڭ.</div>
+                    <div style="margin-top: 5px;" id="allUsersContainer">
                         ${usersListHtml}
                     </div>
                 `;
+
+                initSwipeGestures();
             } else {
                 navUploadBtn.style.display = 'none';
                 uploadMenuSettingItem.style.display = 'none';
@@ -775,41 +833,115 @@
             }
         }
 
-        function quickGrantVip(username) {
+        // سىيرىش مەشغۇلاتى (Swipe Gestures) لوگىكىسى
+        function initSwipeGestures() {
+            const items = document.querySelectorAll('.user-list-item');
+            items.forEach(item => {
+                let startX = 0;
+                let currentX = 0;
+                let isDragging = false;
+                const username = item.getAttribute('data-username');
+
+                item.addEventListener('touchstart', (e) => {
+                    startX = e.touches[0].clientX;
+                    isDragging = true;
+                    item.style.transition = 'none';
+                });
+
+                item.addEventListener('touchmove', (e) => {
+                    if (!isDragging) return;
+                    currentX = e.touches[0].clientX;
+                    let diff = currentX - startX;
+                    if (diff < 0) { // سولغا سىيرىش
+                        if (diff > -150) {
+                            item.style.transform = `translateX(${diff}px)`;
+                        }
+                    } else if (diff > 0) { // ئوڭغا سىيرىش (جايىغا قايتۇرۇش)
+                        if (diff <= 150) {
+                            item.style.transform = `translateX(${diff}px)`;
+                        }
+                    }
+                });
+
+                item.addEventListener('touchend', (e) => {
+                    if (!isDragging) return;
+                    isDragging = false;
+                    let diff = currentX - startX;
+                    item.style.transition = 'transform 0.3s ease';
+
+                    if (diff < -80) { // سولغا يېتەرلىك سىيرىلسا ئۆچۈرۈش
+                        item.style.transform = `translateX(-100%)`;
+                        setTimeout(() => {
+                            deleteUserAccount(username);
+                        }, 300);
+                    } else { // ئوڭغا سىيرىپ جايىغا ئەكىلىش ياكى قايتۇرۇش
+                        item.style.transform = `translateX(0px)`;
+                    }
+                });
+            });
+        }
+
+        function deleteUserAccount(username) {
+            if (confirm(`راستلا ${username} ناملىق ھېساباتنى ئۆچۈرەمسىز؟`)) {
+                let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+                delete usersDb[username];
+                localStorage.setItem('koznek_users_db', JSON.stringify(usersDb));
+                checkAdminPermissions();
+            } else {
+                checkAdminPermissions(); // ئەگەر بىكار قىلسا جايىغا قايتۇرۇش
+            }
+        }
+
+        function openUserActionModal(username) {
+            selectedActionUser = username;
+            document.getElementById('popupUserName').innerText = `ئابونت: ${username}`;
+            document.getElementById('userActionModal').style.display = 'flex';
+        }
+
+        function closeUserActionModal() {
+            document.getElementById('userActionModal').style.display = 'none';
+            selectedActionUser = null;
+        }
+
+        function popupGrantVip() {
+            if (!selectedActionUser) return;
             let users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
-            if (users[username]) {
+            if (users[selectedActionUser]) {
                 let now = new Date().getTime();
-                let currentExpire = users[username].vipExpire && users[username].vipExpire > now ? users[username].vipExpire : now;
+                let currentExpire = users[selectedActionUser].vipExpire && users[selectedActionUser].vipExpire > now ? users[selectedActionUser].vipExpire : now;
                 let newExpire = currentExpire + (30 * 24 * 60 * 60 * 1000);
-                users[username].vipExpire = newExpire;
+                users[selectedActionUser].vipExpire = newExpire;
                 localStorage.setItem('koznek_users_db', JSON.stringify(users));
 
-                if (currentUser && currentUser.name.toLowerCase() === username.toLowerCase()) {
+                if (currentUser && currentUser.name.toLowerCase() === selectedActionUser.toLowerCase()) {
                     currentUser.vipExpire = newExpire;
                     localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
                     updateAccountUI();
                 }
 
+                alert(`${selectedActionUser} غا 1 ئايلىق VIP ئەزالىق قوشۇلدى!`);
+                closeUserActionModal();
                 checkAdminPermissions();
-                alert(`${username} غا 1 ئايلىق VIP ئەزالىق قوشۇلدى!`);
             }
         }
 
-        function revokeVip(username) {
-            if (confirm(`راستلا ${username} نىڭ ئەزالىقىنى توشقۇزۇپ، ئادەتتىكى ئەزا قىلىۋەمسىز؟`)) {
+        function popupRevokeVip() {
+            if (!selectedActionUser) return;
+            if (confirm(`راستلا ${selectedActionUser} نىڭ ئەزالىقىنى توشقۇزۇپ، ئادەتتىكى ئەزا قىلىۋەمسىز؟`)) {
                 let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
-                if (usersDb[username]) {
-                    usersDb[username].vipExpire = 0;
+                if (usersDb[selectedActionUser]) {
+                    usersDb[selectedActionUser].vipExpire = 0;
                     localStorage.setItem('koznek_users_db', JSON.stringify(usersDb));
 
-                    if (currentUser && currentUser.name.toLowerCase() === username.toLowerCase()) {
+                    if (currentUser && currentUser.name.toLowerCase() === selectedActionUser.toLowerCase()) {
                         currentUser.vipExpire = 0;
                         localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
                         updateAccountUI();
                     }
 
+                    alert(`${selectedActionUser} ئەزالىقتىن چىقىرىلدى.`);
+                    closeUserActionModal();
                     checkAdminPermissions();
-                    alert(`${username} ئەزالىقتىن چىقىرىلدى.`);
                 }
             }
         }
@@ -938,6 +1070,10 @@
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
             if (btnElement) btnElement.classList.add('active');
 
+            if (tabId === 'uploadTab') {
+                checkAdminPermissions();
+            }
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1033,7 +1169,6 @@
                 return;
             }
 
-            // 1. ئاساسلىق باشقۇرغۇچى (nasrulla) تەكشۈرۈشى
             if (username.toLowerCase() === ADMIN_USERNAME) {
                 if (password === ADMIN_MASTER_PASS) {
                     currentUser = { name: ADMIN_USERNAME, vipExpire: 8640000000000000 };
@@ -1049,7 +1184,6 @@
                 }
             }
 
-            // 2. باشقىلار باشقۇرغۇچىنىڭ پارولىنى ئىشلىتىشكە ئۇرۇنسە دەرھال رەت قىلىش
             if (password === ADMIN_MASTER_PASS) {
                 alert('بۇ مەخپىي نومۇر (پارول) باشقۇرغۇچىغا تەۋە، باشقا ئابونتلار بۇنى ئىشلىتەلمەيدۇ!');
                 return;
@@ -1066,7 +1200,6 @@
             }
 
             if (foundKey) {
-                // مەۋجۇت ئابونت كىرسە
                 if (users[foundKey].password === password) {
                     currentUser = { name: foundKey, vipExpire: users[foundKey].vipExpire || 0 };
                     localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
@@ -1077,14 +1210,6 @@
                     alert('پارول خاتالىق!');
                 }
             } else {
-                // يېڭى ئابونت تىزىملاتقاندا باشقىلارنىڭ پارولىنى تەكرار ئىشلىتىشتىن ساقلىنىش
-                for (let key in users) {
-                    if (users[key].password === password) {
-                        alert('بۇ مەخپىي نومۇر (پارول) ئاللىقاچان باشقا بىر ئابونت تەرىپىدىن ئىشلىتىلىۋاتىدۇ. باشقا پارول تاللاڭ.');
-                        return;
-                    }
-                }
-
                 users[username] = { password: password, vipExpire: 0 };
                 localStorage.setItem('koznek_users_db', JSON.stringify(users));
                 currentUser = { name: username, vipExpire: 0 };
