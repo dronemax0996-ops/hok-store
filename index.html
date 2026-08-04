@@ -1041,7 +1041,12 @@
             const cat = document.getElementById('newMovieCat').value;
             const access = document.getElementById('newMovieAccess').value;
             const posterInput = document.getElementById('newMovieImg');
-            const posterUrl = posterInput && posterInput.value.trim() ? posterInput.value.trim() : 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80';
+            
+            // رەسىم ئادرېسى بوش ياكى خاتا بولسا ئاپتوماتىك زاپاس رەسىم بېرىدۇ
+            let posterUrl = posterInput && posterInput.value.trim() ? posterInput.value.trim() : '';
+            if (!posterUrl.startsWith('http')) {
+                posterUrl = 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80';
+            }
 
             if (!title) {
                 alert('مەزمۇن نامىنى چوقۇم كىرگۈزۈڭ!'); return;
@@ -1087,7 +1092,7 @@
                 return;
             }
 
-            alert('مەزمۇن مۇۋەپپەقىيەتلىك ۋە خاتالىقسىز تورغا يوللاندى!');
+            alert('مەزمۇن مۇۋەپپەقىيەتلىك تورغا يوللاندى!');
             
             switchTab('homeTab', document.querySelector('.nav-item'));
             renderHomeSections();
