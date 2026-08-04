@@ -1029,7 +1029,17 @@
             renderHomeSections();
         }
 
-        function addNewMovie() {
+        // فايىلنى Base64 غا ئايلاندۇرۇپ ساقلاش فۇنكسىيەسى (ئۆچۈپ كەتمەسلىكى ئۈچۈن)
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        async function addNewMovie() {
             const title = document.getElementById('newMovieTitle').value.trim();
             const cat = document.getElementById('newMovieCat').value;
             const access = document.getElementById('newMovieAccess').value;
@@ -1041,12 +1051,17 @@
 
             let posterUrl = 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80';
             if (imageInput.files && imageInput.files.length > 0) {
-                posterUrl = URL.createObjectURL(imageInput.files[0]);
+                try {
+                    posterUrl = await fileToBase64(imageInput.files[0]);
+                } catch (e) {
+                    console.log(e);
+                }
             }
 
             const isSeries = (cat === 'series' || cat === 'cartoon_series');
             let episodesArr = [];
             let totalEpCount = 1;
+            let singleVideoUrl = 'https://www.youtube.com/embed/dQw4w9WgXcQ';
 
             if (isSeries) {
                 totalEpCount = parseInt(document.getElementById('seriesTotalCount').value) || 10;
@@ -1056,8 +1071,12 @@
                     let epType = 'embed';
 
                     if (epInput && epInput.files && epInput.files.length > 0) {
-                        epUrl = URL.createObjectURL(epInput.files[0]);
-                        epType = 'local';
+                        try {
+                            epUrl = await fileToBase64(epInput.files[0]);
+                            epType = 'local';
+                        } catch (e) {
+                            console.log(e);
+                        }
                     }
 
                     episodesArr.push({
@@ -1071,8 +1090,11 @@
                 if (!videoInput.files || videoInput.files.length === 0) {
                     alert('ۋىدېئو فىلىمنى تاللاڭ!'); return;
                 }
-                const videoFile = videoInput.files[0];
-                var singleVideoUrl = URL.createObjectURL(videoFile);
+                try {
+                    singleVideoUrl = await fileToBase64(videoInput.files[0]);
+                } catch (e) {
+                    console.log(e);
+                }
             }
 
             movies.push({
@@ -1089,7 +1111,7 @@
             });
 
             localStorage.setItem('koznek_movies', JSON.stringify(movies));
-            alert(isSeries ? `قىسىملىق مەزمۇن 1 دىن ${totalEpCount} قىسىمغىچە ئايرىم فىلىملىرى بىلەن قاچىلاندى!` : 'مەزمۇن مۇۋەپپەقىيەتلىك قاچىلاندى!');
+            alert(isSeries ? `قىسىملىق مەزمۇن 1 دىن ${totalEpCount} قىسىمغىچە ئايرىم فىلىملىرى بىلەن مۇقىم ساقلاندى!` : 'مەزمۇن مۇۋەپپەقىيەتلىك ۋە مۇقىم ساقلاندى!');
             
             switchTab('homeTab', document.querySelector('.nav-item'));
             renderHomeSections();
