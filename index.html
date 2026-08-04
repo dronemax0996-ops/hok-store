@@ -64,10 +64,7 @@
         .search-modal {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-color);
             z-index: 3000;
             padding: 20px;
@@ -83,6 +80,7 @@
             border-radius: 6px;
             margin-bottom: 20px;
             outline: none;
+            text-align: right;
         }
         .close-search {
             background: none;
@@ -116,419 +114,264 @@
             padding: 10px;
             font-size: 14px;
             font-weight: bold;
-        }
-
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active-tab {
-            display: block;
-        }
-
-        .hero-section {
-            position: relative;
+            text-align: right;
             width: 100%;
-            height: 280px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.2), var(--bg-color)), url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80') no-repeat center center/cover;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 20px;
-            text-align: center;
         }
-        .hero-title {
-            font-size: 22px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-            color: #fff;
-        }
-        .hero-btn {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            font-size: 15px;
-            font-weight: bold;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(229, 9, 20, 0.4);
-        }
+
+        .tab-content { display: none; }
+        .tab-content.active-tab { display: block; }
 
         .category-tabs {
-            display: flex;
-            gap: 8px;
+            display: flex; gap: 8px;
             padding: 15px 15px 0 15px;
-            overflow-x: auto;
-            white-space: nowrap;
+            overflow-x: auto; white-space: nowrap;
         }
         .cat-chip {
             background-color: var(--card-bg);
             color: var(--text-secondary);
             border: 1px solid var(--border-color);
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 13px;
-            cursor: pointer;
+            padding: 6px 14px; border-radius: 20px;
+            font-size: 13px; cursor: pointer;
         }
         .cat-chip.active {
             background-color: var(--accent-color);
-            color: white;
-            border-color: var(--accent-color);
+            color: white; border-color: var(--accent-color);
             font-weight: bold;
         }
 
-        .category-container {
-            margin-top: 15px;
-            padding: 0 15px;
+        .category-section {
+            margin-top: 20px; padding: 0 15px;
         }
         .section-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 12px;
-            color: var(--text-color);
+            font-size: 18px; font-weight: bold;
+            margin-bottom: 12px; color: var(--text-color);
             border-left: 3px solid var(--accent-color);
-            padding-left: 8px;
-            text-align: right;
+            padding-left: 8px; text-align: right;
         }
         
         .movie-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            padding-bottom: 10px;
+            gap: 12px; padding-bottom: 5px;
         }
         .movie-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            overflow: hidden;
+            border-radius: 6px; overflow: hidden;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             position: relative;
         }
         .movie-poster {
-            width: 100%;
-            height: 160px;
-            object-fit: cover;
-            background-color: #333;
+            width: 100%; height: 160px;
+            object-fit: cover; background-color: #333;
             cursor: pointer;
         }
         .movie-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 8px;
+            display: flex; justify-content: space-between;
+            align-items: center; padding: 10px 8px;
         }
         .movie-name {
-            font-size: 13px;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100px;
+            font-size: 13px; font-weight: 500;
+            white-space: nowrap; overflow: hidden;
+            text-overflow: ellipsis; width: 100px;
             text-align: right;
         }
         .movie-tag {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            background: #ffa502;
-            color: #000;
-            font-size: 10px;
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 4px;
+            position: absolute; top: 8px; right: 8px;
+            background: #ffa502; color: #000;
+            font-size: 10px; font-weight: bold;
+            padding: 2px 6px; border-radius: 4px; z-index: 2;
         }
         .card-actions {
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            display: flex; align-items: center; gap: 5px;
         }
         .fav-btn {
-            background: none;
-            border: none;
-            font-size: 15px;
-            cursor: pointer;
+            background: none; border: none;
+            font-size: 15px; cursor: pointer;
             color: var(--text-secondary);
         }
-        .fav-btn.liked {
-            color: var(--accent-color);
-        }
+        .fav-btn.liked { color: var(--accent-color); }
         .del-btn {
-            background: none;
-            border: none;
-            font-size: 14px;
-            cursor: pointer;
+            background: none; border: none;
+            font-size: 14px; cursor: pointer;
             color: #ff4757;
         }
 
-        .video-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.9);
-            z-index: 2000;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-        }
-        .video-container {
-            width: 100%;
-            max-width: 600px;
-            aspect-ratio: 16/9;
-            background-color: #000;
-        }
-        .video-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        .close-btn {
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            margin-top: 15px;
-            font-size: 16px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .page-box {
-            padding: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-            text-align: right;
-        }
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 5px;
-        }
-        .form-input, .form-select {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            border-radius: 5px;
-            font-size: 14px;
-            outline: none;
-            text-align: right;
-        }
-        .action-btn {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        /* سىيرىلىش ئارقىلىق ئۆچۈرۈش قۇرۇلمىسى */
-        .swipe-wrapper {
-            position: relative;
-            overflow: hidden;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            background: #ff4757;
-        }
-        .swipe-delete-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #ff4757;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            padding-left: 20px;
-            font-weight: bold;
-            font-size: 14px;
-            z-index: 1;
-        }
-        .user-list-item {
-            position: relative;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 12px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-align: right;
-            z-index: 2;
-            touch-action: pan-y;
-            user-select: none;
-            cursor: pointer;
-        }
-        .user-info-box {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        .user-name-txt {
-            font-size: 15px;
-            font-weight: bold;
-            color: var(--text-color);
-        }
-        .user-status-txt {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
-
-        /* ئەزانى تەڭشەش كۆزنىكى (Popup) */
-        .user-action-modal {
+        /* فىلىم تەپسىلات ۋە قويۇش بېتى (Detail & Player Page) */
+        .detail-page {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6);
-            z-index: 4000;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+            background-color: var(--bg-color);
+            z-index: 2000;
+            overflow-y: auto;
+            padding-bottom: 50px;
         }
-        .user-action-card {
-            background: var(--card-bg);
+        .detail-header {
+            display: flex; align-items: center;
+            padding: 15px; background: var(--nav-bg);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky; top: 0; z-index: 10;
+        }
+        .back-btn {
+            background: none; border: none;
+            color: var(--accent-color); font-size: 16px;
+            font-weight: bold; cursor: pointer;
+        }
+        .detail-player-box {
+            width: 100%; aspect-ratio: 16/9; background-color: #000;
+            position: relative;
+        }
+        .detail-player-box video, .detail-player-box iframe {
+            width: 100%; height: 100%; border: none; object-fit: contain;
+        }
+        .detail-content-info {
+            padding: 20px; text-align: right;
+        }
+        .detail-movie-title {
+            font-size: 20px; font-weight: bold;
+            color: var(--text-color); margin-bottom: 15px;
+        }
+        .detail-episodes-section {
+            margin-top: 20px;
+        }
+        .detail-episodes-title {
+            font-size: 15px; font-weight: bold; color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+        .detail-episodes-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .detail-ep-btn {
+            background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            width: 100%;
-            max-width: 320px;
-            padding: 20px;
+            color: var(--text-color);
+            padding: 10px 5px; border-radius: 6px;
+            font-size: 14px; font-weight: bold; cursor: pointer;
             text-align: center;
         }
-        .user-action-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: var(--text-color);
+        .detail-ep-btn.active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: white;
         }
+
+        .page-box { padding: 20px; }
+        .form-group { margin-bottom: 15px; text-align: right; }
+        .form-group label {
+            display: block; font-size: 13px;
+            color: var(--text-secondary); margin-bottom: 5px;
+        }
+        .form-input, .form-select {
+            width: 100%; padding: 12px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color); border-radius: 5px;
+            font-size: 14px; outline: none; text-align: right;
+        }
+        .file-input-label {
+            display: block; background-color: var(--card-bg);
+            border: 1px dashed var(--border-color); color: var(--text-color);
+            padding: 12px; text-align: center; border-radius: 5px;
+            cursor: pointer; font-size: 14px;
+        }
+        .file-input-label span { color: var(--accent-color); font-weight: bold; }
+        .action-btn {
+            width: 100%; padding: 12px;
+            background-color: var(--accent-color); color: white;
+            border: none; border-radius: 5px; font-size: 15px;
+            font-weight: bold; cursor: pointer; margin-top: 10px;
+        }
+
+        /* Swipe delete styling */
+        .swipe-wrapper {
+            position: relative; overflow: hidden;
+            border-radius: 8px; margin-bottom: 10px; background: #ff4757;
+        }
+        .swipe-delete-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #ff4757; color: white;
+            display: flex; align-items: center; justify-content: flex-start;
+            padding-left: 20px; font-weight: bold; font-size: 14px; z-index: 1;
+        }
+        .user-list-item {
+            position: relative; background: var(--card-bg);
+            border: 1px solid var(--border-color); border-radius: 8px;
+            padding: 12px 15px; display: flex; justify-content: space-between;
+            align-items: center; text-align: right; z-index: 2;
+            touch-action: pan-y; user-select: none; cursor: pointer;
+        }
+        .user-info-box { display: flex; flex-direction: column; gap: 4px; }
+        .user-name-txt { font-size: 15px; font-weight: bold; color: var(--text-color); }
+        .user-status-txt { font-size: 12px; color: var(--text-secondary); }
+
+        .user-action-modal {
+            display: none; position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 4000;
+            justify-content: center; align-items: center; padding: 20px;
+        }
+        .user-action-card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 12px; width: 100%; max-width: 320px;
+            padding: 20px; text-align: center;
+        }
+        .user-action-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: var(--text-color); }
         .popup-btn {
-            width: 100%;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            margin-bottom: 10px;
+            width: 100%; padding: 12px; border-radius: 6px;
+            font-size: 14px; font-weight: bold; border: none;
+            cursor: pointer; margin-bottom: 10px;
         }
         .popup-btn-add { background-color: #2ed573; color: white; }
         .popup-btn-revoke { background-color: #ff4757; color: white; }
         .popup-btn-close { background-color: #555; color: white; margin-bottom: 0; }
 
         .settings-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 15px;
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 10px; padding: 15px; margin-bottom: 15px;
         }
         .settings-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
+            display: flex; justify-content: space-between;
+            align-items: center; padding: 12px 0;
             border-bottom: 1px solid var(--border-color);
         }
-        .settings-item:last-child {
-            border-bottom: none;
-        }
-        .settings-info {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            text-align: right;
-        }
-        .settings-title {
-            font-size: 15px;
-            font-weight: bold;
-            color: var(--text-color);
-        }
-        .settings-desc {
-            font-size: 12px;
-            color: var(--text-secondary);
-        }
+        .settings-item:last-child { border-bottom: none; }
+        .settings-info { display: flex; flex-direction: column; gap: 3px; text-align: right; }
+        .settings-title { font-size: 15px; font-weight: bold; color: var(--text-color); }
+        .settings-desc { font-size: 12px; color: var(--text-secondary); }
+        
         .switch {
-            position: relative;
-            display: inline-block;
-            width: 46px;
-            height: 24px;
+            position: relative; display: inline-block; width: 46px; height: 24px;
         }
-        .switch input { 
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-        .slider {
-            position: absolute;
-            cursor: pointer;
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider-chk {
+            position: absolute; cursor: pointer;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #555;
-            transition: .4s;
-            border-radius: 24px;
+            background-color: #555; transition: .4s; border-radius: 24px;
         }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 18px;
-            width: 18px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
+        .slider-chk:before {
+            position: absolute; content: "";
+            height: 18px; width: 18px; left: 3px; bottom: 3px;
+            background-color: white; transition: .4s; border-radius: 50%;
         }
-        input:checked + .slider {
-            background-color: var(--accent-color);
-        }
-        input:checked + .slider:before {
-            transform: translateX(22px);
-        }
+        input:checked + .slider-chk { background-color: var(--accent-color); }
+        input:checked + .slider-chk:before { transform: translateX(22px); }
 
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: var(--nav-bg);
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 0;
-            border-top: 1px solid var(--border-color);
-            z-index: 1000;
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background-color: var(--nav-bg); display: flex;
+            justify-content: space-around; padding: 8px 0;
+            border-top: 1px solid var(--border-color); z-index: 1000;
         }
         .nav-item {
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            cursor: pointer;
+            background: none; border: none; color: var(--text-secondary);
+            font-size: 10px; display: flex; flex-direction: column;
+            align-items: center; gap: 2px; cursor: pointer;
         }
-        .nav-item.active {
-            color: var(--accent-color);
-            font-weight: bold;
-        }
-        .nav-item span:first-child {
-            font-size: 15px;
-        }
+        .nav-item.active { color: var(--accent-color); font-weight: bold; }
+        .nav-item span:first-child { font-size: 15px; }
     </style>
 </head>
 <body>
@@ -540,30 +383,21 @@
 
     <!-- 1-بەرت: باش بەت -->
     <div id="homeTab" class="tab-content active-tab">
-        <div class="hero-section">
-            <div class="hero-title">جەڭگىۋار 2026</div>
-            <p style="font-size: 13px; color: #ccc;">يېڭى قويۇلغان سۈپەتلىك مەزمۇن</p>
-            <button class="hero-btn" onclick="tryPlayMovie('https://www.youtube.com/embed/dQw4w9WgXcQ', false)">▶ كۆرۈش</button>
-        </div>
-
         <div class="category-tabs">
             <button class="cat-chip active" onclick="filterCategory('all', this)">بارلىقى</button>
-            <button class="cat-chip" onclick="filterCategory('movie', this)">🎬 كىنولөр</button>
-            <button class="cat-chip" onclick="filterCategory('series', this)">📺 قىسىملىق كىنولөр</button>
+            <button class="cat-chip" onclick="filterCategory('movie', this)">🎬 كىنولەر</button>
+            <button class="cat-chip" onclick="filterCategory('series', this)">📺 قىسىملىق كىنولەر</button>
             <button class="cat-chip" onclick="filterCategory('cartoon', this)">🧸 كارتونلار</button>
             <button class="cat-chip" onclick="filterCategory('cartoon_series', this)">🧸📺 قىسىملىق كارتۇن</button>
             <button class="cat-chip" onclick="filterCategory('short', this)">📱 قىسقا فىلىملەر</button>
         </div>
 
-        <div class="category-container">
-            <div class="section-title" id="currentCatTitle">بارلىق مەزمۇنلار</div>
-            <div class="movie-grid" id="movieList"></div>
-        </div>
+        <div id="homeSectionsContainer"></div>
     </div>
 
     <!-- 2-بەرت: ياقتۇرغانلار -->
     <div id="favTab" class="tab-content">
-        <div class="category-container" style="margin-top: 15px;">
+        <div class="category-section" style="margin-top: 15px;">
             <div class="section-title">❤️ ياقتۇرغان مەزمۇنلىرىم</div>
             <div class="movie-grid" id="favList"></div>
         </div>
@@ -596,11 +430,10 @@
                 <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span id="displayUsername" style="font-size: 16px; font-weight: bold; color: var(--accent-color);"></span>
-                        <span id="vipBadge" class="vip-badge" style="background:#555;">ئادەتتىكى ئەزا</span>
+                        <span id="vipBadge" style="background:#555; color:#fff; padding:2px 8px; border-radius:4px; font-size:11px;">ئادەتتىكى ئەزا</span>
                     </div>
                     <div id="vipStatusText" style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">ئەزالىق ۋاقتى يوق</div>
                 </div>
-
                 <button type="button" class="action-btn" style="background-color: #333; margin-top: 15px;" onclick="handleLogout()">چېكىنىش (Log out)</button>
             </div>
         </div>
@@ -610,7 +443,6 @@
     <div id="settingsTab" class="tab-content">
         <div class="page-box">
             <div class="section-title">⚙️ ئەپ تەڭشەكلىرى</div>
-            
             <div class="settings-card" style="margin-top: 15px;">
                 <div class="settings-item">
                     <div class="settings-info">
@@ -619,10 +451,9 @@
                     </div>
                     <label class="switch">
                         <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
-                        <span class="slider"></span>
+                        <span class="slider-chk"></span>
                     </label>
                 </div>
-
                 <div class="settings-item" id="uploadMenuSettingItem" style="display: none;">
                     <div class="settings-info">
                         <span class="settings-title">مەزمۇن قاچىلاش ۋە ئەزالار</span>
@@ -630,7 +461,6 @@
                     </div>
                     <button type="button" class="action-btn" style="width: auto; padding: 6px 14px; font-size: 13px; margin: 0;" onclick="switchTab('uploadTab', document.querySelectorAll('.nav-item')[2])">ئېچىش</button>
                 </div>
-
                 <div class="settings-item">
                     <div class="settings-info">
                         <span class="settings-title">ساقلانما سانلىق مەلۇماتلارنى تازىلاش</span>
@@ -642,7 +472,7 @@
         </div>
     </div>
 
-    <!-- ئابونت VIP تەڭشەش كۆزنىكى (Popup) -->
+    <!-- VIP تەڭشەش كۆزنىكى -->
     <div class="user-action-modal" id="userActionModal">
         <div class="user-action-card">
             <div class="user-action-title" id="popupUserName">ئابونت: </div>
@@ -652,19 +482,26 @@
         </div>
     </div>
 
+    <!-- ئايرىم كىنو كۆرۈش ۋە قويۇش بېتى (Detail Page) -->
+    <div class="detail-page" id="detailPage">
+        <div class="detail-header">
+            <button class="back-btn" onclick="closeDetailPage()">← قايتىش</button>
+        </div>
+        <div class="detail-player-box" id="detailPlayerBox"></div>
+        <div class="detail-content-info">
+            <div class="detail-movie-title" id="detailMovieTitle">كىنو ئىسمى</div>
+            <div class="detail-episodes-section" id="detailEpisodesSection" style="display: none;">
+                <div class="detail-episodes-title">قىسىملارنى تاللاڭ:</div>
+                <div class="detail-episodes-grid" id="detailEpisodesGrid"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- ئىزدەش كۆزنىكى -->
     <div class="search-modal" id="searchModal">
         <button class="close-search" onclick="closeSearch()">← قايتىش</button>
         <input type="text" id="searchInput" class="search-input" placeholder="مەزمۇن نامىنى كىرگۈزۈڭ..." oninput="filterMovies()" autocomplete="off">
         <div class="search-results" id="searchResults"></div>
-    </div>
-
-    <!-- كىنو قويۇش كۆزنىكى -->
-    <div class="video-modal" id="videoModal">
-        <div class="video-container">
-            <iframe id="youtubePlayer" src="" allowfullscreen></iframe>
-        </div>
-        <button class="close-btn" onclick="closePlayer()">تاقاش</button>
     </div>
 
     <!-- تۆۋەنקי تىزىملىك -->
@@ -696,8 +533,11 @@
         const ADMIN_MASTER_PASS = "0996";
 
         let movies = JSON.parse(localStorage.getItem('koznek_movies')) || [
-            { id: '1', title: 'ئاخىرقى جەڭ', cat: 'movie', access: 'free', img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=300&q=80', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' },
-            { id: '2', title: 'قاتقۇلۇق كۈلكە سېرىيالى', cat: 'series', access: 'vip', img: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ' }
+            { id: '1', title: 'ئاخىرقى جەڭ', cat: 'movie', access: 'free', img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=300&q=80', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed' },
+            { id: '2', title: 'قاتقۇلۇق كۈلكە سېرىيالى', cat: 'series', access: 'vip', img: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80', isSeries: true, totalEpisodes: 2, episodes: [
+                {epNum: 1, url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed'},
+                {epNum: 2, url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed'}
+            ]}
         ];
 
         let currentCategory = 'all';
@@ -722,14 +562,13 @@
             document.getElementById('darkModeToggle').checked = true;
         }
 
-        const modal = document.getElementById('videoModal');
-        const player = document.getElementById('youtubePlayer');
         const searchModal = document.getElementById('searchModal');
         const searchInput = document.getElementById('searchInput');
         const searchResults = document.getElementById('searchResults');
+        const detailPage = document.getElementById('detailPage');
 
         checkAdminPermissions();
-        renderMovies();
+        renderHomeSections();
         updateAccountUI();
 
         function checkAdminPermissions() {
@@ -780,21 +619,31 @@
                 }
 
                 uploadTabContent.innerHTML = `
-                    <div class="section-title">🎬 يېڭى مەزمۇن قاچىلاش</div>
+                    <div class="section-title">🎬 مەزمۇن قاچىلاش ۋە باشقۇرۇش</div>
                     <div class="form-group" style="margin-top: 15px;">
                         <label>مەزمۇن نامى</label>
-                        <input type="text" id="newMovieTitle" class="form-input" placeholder="مەسىلەن: ئاخىرقى جەڭ" autocomplete="off">
+                        <input type="text" id="newMovieTitle" class="form-input" placeholder="مەسىلەن: شاھزادە داستانى" autocomplete="off">
                     </div>
                     <div class="form-group">
                         <label>تۈرى (Category)</label>
-                        <select id="newMovieCat" class="form-select">
-                            <option value="movie">🎬 كىنولөр</option>
-                            <option value="series">📺 قىسىملىق كىنولөр</option>
-                            <option value="cartoon">🧸 كارتونلار</option>
-                            <option value="cartoon_series">🧸📺 قىسىملىق كارتۇن</option>
+                        <select id="newMovieCat" class="form-select" onchange="toggleSeriesInputs()">
+                            <option value="movie">🎬 كىنولەر (بىرتاللا)</option>
+                            <option value="series">📺 قىسىملىق كىنولەر (كۆپ قىسىملىق)</option>
+                            <option value="cartoon">🧸 كارتونلار (بىرتاللا)</option>
+                            <option value="cartoon_series">🧸📺 قىسىملىق كارتۇن (كۆپ قىسىملىق)</option>
                             <option value="short">📱 قىسقا فىلىملەر</option>
                         </select>
                     </div>
+
+                    <div id="seriesExtraInputs" style="display: none; background: var(--card-bg); padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 15px;">
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <label>قىسىم سانى (مەسىلەن: 50)</label>
+                            <input type="number" id="seriesTotalCount" class="form-input" value="10" min="1" max="100" oninput="renderEpisodeInputs()">
+                        </div>
+                        <div style="font-size: 11px; color: var(--accent-color); margin-bottom: 10px;">* تۆۋەندە ھەر بىر قىسىم ئۈچۈن ئايرىم ۋىدېئو تاللاڭ:</div>
+                        <div id="episodesInputsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto; padding-right: 5px;"></div>
+                    </div>
+
                     <div class="form-group">
                         <label>ئەزا تىپى (Access)</label>
                         <select id="newMovieAccess" class="form-select">
@@ -802,28 +651,36 @@
                             <option value="vip">پەقەت VIP ئەزالار ئۈچۈن (⭐ VIP)</option>
                         </select>
                     </div>
+                    
                     <div class="form-group">
-                        <label>رەسىم ئۇلانمىسى (Image URL)</label>
-                        <input type="text" id="newMovieImg" class="form-input" placeholder="رەسىم ئادرېسى..." autocomplete="off">
+                        <label>مۇقاۋا رەسىمى</label>
+                        <label class="file-input-label" for="imageFileInput">
+                            <span id="imageFileName">سۈرەت تاللاش ئۈچۈن بۇ يەرنى بېسىڭ...</span>
+                        </label>
+                        <input type="file" id="imageFileInput" accept="image/*" style="display: none;" onchange="updateFileName('imageFileInput', 'imageFileName')">
                     </div>
-                    <div class="form-group">
-                        <label>ۋىدېئو مەنبەسى (YouTube Embed URL)</label>
-                        <input type="text" id="newMovieUrl" class="form-input" placeholder="https://www.youtube.com/embed/..." autocomplete="off">
+
+                    <div class="form-group" id="singleVideoGroup">
+                        <label>ۋىدېئو فىلىم تاللاش</label>
+                        <label class="file-input-label" for="videoFileInput">
+                            <span id="videoFileName">ۋىدېئو تاللاش ئۈچۈن بۇ يەرنى بېسىڭ...</span>
+                        </label>
+                        <input type="file" id="videoFileInput" accept="video/*" style="display: none;" onchange="updateFileName('videoFileInput', 'videoFileName')">
                     </div>
+
                     <button type="button" class="action-btn" onclick="addNewMovie()">تورغا مەزمۇن يوللاش</button>
 
                     <div style="margin-top: 30px;" class="section-title">👥 بارلىق ئەزالار ۋە باشقۇرۇش</div>
-                    <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; text-align: right;">* سولغا سىيرىپ ئۆچۈرۈڭ، ئوڭغا سىيرىپ جايىغا ئەكىلىڭ، ياكى بېسىپ VIP قوشۇڭ/توشقۇزۇڭ.</div>
+                    <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; text-align: right;">* سولغا سىيرىپ ئۆچۈرۈڭ، ياكى بېسىپ VIP قوشۇڭ.</div>
                     <div style="margin-top: 5px;" id="allUsersContainer">
                         ${usersListHtml}
                     </div>
                 `;
-
+                renderEpisodeInputs();
                 initSwipeGestures();
             } else {
                 navUploadBtn.style.display = 'none';
                 uploadMenuSettingItem.style.display = 'none';
-
                 uploadTabContent.innerHTML = `
                     <div class="page-box" style="text-align: center; margin-top: 50px;">
                         <div style="font-size: 40px; margin-bottom: 10px;">🔒</div>
@@ -833,63 +690,87 @@
             }
         }
 
-        // سىيرىش مەشغۇلاتى (Swipe Gestures) لوگىكىسى
+        function toggleSeriesInputs() {
+            const cat = document.getElementById('newMovieCat').value;
+            const extraBox = document.getElementById('seriesExtraInputs');
+            const singleVideoGroup = document.getElementById('singleVideoGroup');
+            if (cat === 'series' || cat === 'cartoon_series') {
+                extraBox.style.display = 'block';
+                singleVideoGroup.style.display = 'none';
+            } else {
+                extraBox.style.display = 'none';
+                singleVideoGroup.style.display = 'block';
+            }
+        }
+
+        function renderEpisodeInputs() {
+            const container = document.getElementById('episodesInputsList');
+            if (!container) return;
+            let count = parseInt(document.getElementById('seriesTotalCount').value) || 10;
+            if (count > 100) count = 100;
+            if (count < 1) count = 1;
+
+            container.innerHTML = '';
+            for (let i = 1; i <= count; i++) {
+                container.innerHTML += `
+                    <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px; border-radius: 5px;">
+                        <div style="font-size: 12px; font-weight: bold; margin-bottom: 4px; text-align: right;">${i}-قىسىم ۋىدېئوسى:</div>
+                        <input type="file" id="ep_file_${i}" accept="video/*" style="display: none;" onchange="updateEpFileName(${i})">
+                        <label class="file-input-label" for="ep_file_${i}" style="padding: 8px; font-size: 12px;">
+                            <span id="ep_name_${i}">ۋىدېئو تاللاش (${i}-قىسىم)</span>
+                        </label>
+                    </div>
+                `;
+            }
+        }
+
+        function updateEpFileName(i) {
+            const input = document.getElementById(`ep_file_${i}`);
+            const span = document.getElementById(`ep_name_${i}`);
+            if (input.files && input.files.length > 0) {
+                span.innerText = "تاللاندى: " + input.files[0].name;
+            }
+        }
+
+        function updateFileName(inputId, spanId) {
+            const input = document.getElementById(inputId);
+            const span = document.getElementById(spanId);
+            if (input.files && input.files.length > 0) {
+                span.innerText = "تاللاندى: " + input.files[0].name;
+            }
+        }
+
         function initSwipeGestures() {
             const items = document.querySelectorAll('.user-list-item');
             items.forEach(item => {
-                let startX = 0;
-                let currentX = 0;
-                let isDragging = false;
+                let startX = 0, currentX = 0, isDragging = false;
                 const username = item.getAttribute('data-username');
-
                 item.addEventListener('touchstart', (e) => {
-                    startX = e.touches[0].clientX;
-                    isDragging = true;
-                    item.style.transition = 'none';
+                    startX = e.touches[0].clientX; isDragging = true; item.style.transition = 'none';
                 });
-
                 item.addEventListener('touchmove', (e) => {
                     if (!isDragging) return;
-                    currentX = e.touches[0].clientX;
-                    let diff = currentX - startX;
-                    if (diff < 0) { // سولغا سىيرىش
-                        if (diff > -150) {
-                            item.style.transform = `translateX(${diff}px)`;
-                        }
-                    } else if (diff > 0) { // ئوڭغا سىيرىش (جايىغا قايتۇرۇش)
-                        if (diff <= 150) {
-                            item.style.transform = `translateX(${diff}px)`;
-                        }
-                    }
+                    currentX = e.touches[0].clientX; let diff = currentX - startX;
+                    if (Math.abs(diff) <= 150) item.style.transform = `translateX(${diff}px)`;
                 });
-
-                item.addEventListener('touchend', (e) => {
-                    if (!isDragging) return;
-                    isDragging = false;
-                    let diff = currentX - startX;
-                    item.style.transition = 'transform 0.3s ease';
-
-                    if (diff < -80) { // سولغا يېتەرلىك سىيرىلسا ئۆچۈرۈش
+                item.addEventListener('touchend', () => {
+                    if (!isDragging) return; isDragging = false;
+                    let diff = currentX - startX; item.style.transition = 'transform 0.3s ease';
+                    if (diff < -80) {
                         item.style.transform = `translateX(-100%)`;
-                        setTimeout(() => {
-                            deleteUserAccount(username);
-                        }, 300);
-                    } else { // ئوڭغا سىيرىپ جايىغا ئەكىلىش ياكى قايتۇرۇش
-                        item.style.transform = `translateX(0px)`;
-                    }
+                        setTimeout(() => { deleteUserAccount(username); }, 300);
+                    } else { item.style.transform = `translateX(0px)`; }
                 });
             });
         }
 
         function deleteUserAccount(username) {
-            if (confirm(`راستلا ${username} ناملىق ھېساباتنى ئۆچۈرەمسىز؟`)) {
+            if (confirm(`راستلا ${username} ناملىق ھېساباتنى ئۆچۈرەمسىز?`)) {
                 let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
                 delete usersDb[username];
                 localStorage.setItem('koznek_users_db', JSON.stringify(usersDb));
                 checkAdminPermissions();
-            } else {
-                checkAdminPermissions(); // ئەگەر بىكار قىلسا جايىغا قايتۇرۇش
-            }
+            } else { checkAdminPermissions(); }
         }
 
         function openUserActionModal(username) {
@@ -912,36 +793,30 @@
                 let newExpire = currentExpire + (30 * 24 * 60 * 60 * 1000);
                 users[selectedActionUser].vipExpire = newExpire;
                 localStorage.setItem('koznek_users_db', JSON.stringify(users));
-
                 if (currentUser && currentUser.name.toLowerCase() === selectedActionUser.toLowerCase()) {
                     currentUser.vipExpire = newExpire;
                     localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
                     updateAccountUI();
                 }
-
                 alert(`${selectedActionUser} غا 1 ئايلىق VIP ئەزالىق قوشۇلدى!`);
-                closeUserActionModal();
-                checkAdminPermissions();
+                closeUserActionModal(); checkAdminPermissions();
             }
         }
 
         function popupRevokeVip() {
             if (!selectedActionUser) return;
-            if (confirm(`راستلا ${selectedActionUser} نىڭ ئەزالىقىنى توشقۇزۇپ، ئادەتتىكى ئەزا قىلىۋەمسىز؟`)) {
+            if (confirm(`راستلا ${selectedActionUser} نىڭ ئەزالىقىنى توشقۇزۇپ، ئادەتتىكى ئەزا قىلىۋەمسىز?`)) {
                 let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
                 if (usersDb[selectedActionUser]) {
                     usersDb[selectedActionUser].vipExpire = 0;
                     localStorage.setItem('koznek_users_db', JSON.stringify(usersDb));
-
                     if (currentUser && currentUser.name.toLowerCase() === selectedActionUser.toLowerCase()) {
                         currentUser.vipExpire = 0;
                         localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
                         updateAccountUI();
                     }
-
                     alert(`${selectedActionUser} ئەزالىقتىن چىقىرىلدى.`);
-                    closeUserActionModal();
-                    checkAdminPermissions();
+                    closeUserActionModal(); checkAdminPermissions();
                 }
             }
         }
@@ -958,51 +833,87 @@
         }
 
         function clearLocalStorageData() {
-            if (confirm('بارلىق كىنولөр ۋە ساقلانمىلار تازىلانسۇنمۇ?')) {
-                localStorage.clear();
-                location.reload();
+            if (confirm('بارلىق كىنولەر ۋە ساقلانمىلار تازىلانسۇنمۇ?')) {
+                localStorage.clear(); location.reload();
             }
         }
 
-        function renderMovies() {
-            const movieList = document.getElementById('movieList');
+        function renderHomeSections() {
+            const container = document.getElementById('homeSectionsContainer');
             const favList = document.getElementById('favList');
-            
-            movieList.innerHTML = '';
-            favList.innerHTML = '';
+            container.innerHTML = ''; favList.innerHTML = '';
             let hasFav = false;
             const isAdmin = currentUser && currentUser.name.toLowerCase() === ADMIN_USERNAME;
 
-            movies.slice().reverse().forEach((movie) => {
-                if (currentCategory !== 'all' && movie.cat !== currentCategory) return;
+            const categoryMeta = [
+                { key: 'movie', title: '🎬 كىنولەر' },
+                { key: 'series', title: '📺 قىسىملىق كىنولەر' },
+                { key: 'cartoon', title: '🧸 كارتونلار' },
+                { key: 'cartoon_series', title: '🧸📺 قىسىملىق كارتۇن' },
+                { key: 'short', title: '📱 قىسقا فىلىملەر' }
+            ];
 
-                const isLiked = favorites.includes(movie.id);
-                const isVipMovie = movie.access === 'vip';
-                
-                const cardHtml = `
-                    <div class="movie-card">
-                        ${isVipMovie ? '<div class="movie-tag">⭐ VIP</div>' : ''}
-                        <img src="${movie.img}" class="movie-poster" onclick="tryPlayMovie('${movie.url}', '${movie.access}')">
-                        <div class="movie-footer">
-                            <div class="movie-name">${movie.title}</div>
-                            <div class="card-actions">
-                                ${isAdmin ? `<button class="del-btn" onclick="deleteMovie('${movie.id}')">🗑️</button>` : ''}
-                                <button class="fav-btn ${isLiked ? 'liked' : ''}" onclick="toggleFav('${movie.id}')">❤️</button>
+            categoryMeta.forEach(catObj => {
+                if (currentCategory !== 'all' && currentCategory !== catObj.key) return;
+
+                let filteredMovies = movies.filter(m => m.cat === catObj.key).slice().reverse();
+                if (filteredMovies.length === 0 && currentCategory === 'all') return;
+
+                let gridHtml = '';
+                filteredMovies.forEach(movie => {
+                    const isLiked = favorites.includes(movie.id);
+                    const isVipMovie = movie.access === 'vip';
+                    const seriesBadge = movie.isSeries ? `<div class="movie-tag" style="background:#2ed573; left:8px; right:auto;">📺 ${movie.totalEpisodes} قىسىم</div>` : '';
+                    
+                    const cardHtml = `
+                        <div class="movie-card">
+                            ${isVipMovie ? '<div class="movie-tag">⭐ VIP</div>' : ''}
+                            ${seriesBadge}
+                            <img src="${movie.img}" class="movie-poster" onclick="handleCardClick('${movie.id}')">
+                            <div class="movie-footer">
+                                <div class="movie-name">${movie.title}</div>
+                                <div class="card-actions">
+                                    ${isAdmin ? `<button class="del-btn" onclick="event.stopPropagation(); deleteMovie('${movie.id}')">🗑️</button>` : ''}
+                                    <button class="fav-btn ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleFav('${movie.id}')">❤️</button>
+                                </div>
                             </div>
                         </div>
+                    `;
+                    gridHtml += cardHtml;
+                });
+
+                if (filteredMovies.length === 0 && currentCategory !== 'all') {
+                    gridHtml = '<div style="color: var(--text-secondary); grid-column: span 2; text-align: center; margin-top: 15px;">بۇ تۈردە مەزمۇن يوق</div>';
+                }
+
+                container.innerHTML += `
+                    <div class="category-section">
+                        <div class="section-title">${catObj.title}</div>
+                        <div class="movie-grid">${gridHtml}</div>
                     </div>
                 `;
-                movieList.innerHTML += cardHtml;
-
-                if (isLiked) {
-                    hasFav = true;
-                    favList.innerHTML += cardHtml;
-                }
             });
 
-            if (movieList.innerHTML === '') {
-                movieList.innerHTML = '<div style="color: var(--text-secondary); grid-column: span 2; text-align: center; margin-top: 30px;">بۇ تۈردە مەزمۇن يوق</div>';
-            }
+            movies.forEach(movie => {
+                if (favorites.includes(movie.id)) {
+                    hasFav = true;
+                    const isVipMovie = movie.access === 'vip';
+                    const seriesBadge = movie.isSeries ? `<div class="movie-tag" style="background:#2ed573; left:8px; right:auto;">📺 ${movie.totalEpisodes} قىسىم</div>` : '';
+                    favList.innerHTML += `
+                        <div class="movie-card">
+                            ${isVipMovie ? '<div class="movie-tag">⭐ VIP</div>' : ''}
+                            ${seriesBadge}
+                            <img src="${movie.img}" class="movie-poster" onclick="handleCardClick('${movie.id}')">
+                            <div class="movie-footer">
+                                <div class="movie-name">${movie.title}</div>
+                                <div class="card-actions">
+                                    <button class="fav-btn liked" onclick="toggleFav('${movie.id}')">❤️</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
 
             if (!hasFav) {
                 favList.innerHTML = '<div style="color: var(--text-secondary); grid-column: span 2; text-align: center; margin-top: 30px;">ياقتۇرغان مەزمۇنلىرىڭىز يوق</div>';
@@ -1013,67 +924,98 @@
             currentCategory = cat;
             document.querySelectorAll('.cat-chip').forEach(btn => btn.classList.remove('active'));
             btnElement.classList.add('active');
-
-            const titles = { 
-                'all': 'بارلىق مەزمۇنلار', 
-                'movie': '🎬 كىنولөр', 
-                'series': '📺 قىسىملىق كىنولөр', 
-                'cartoon': '🧸 كارتونلار', 
-                'cartoon_series': '🧸📺 قىسىملىق كارتۇن',
-                'short': '📱 قىسقا فىلىملەر' 
-            };
-            document.getElementById('currentCatTitle').innerText = titles[cat];
-            renderMovies();
+            renderHomeSections();
         }
 
-        function tryPlayMovie(url, access) {
-            if (access === 'vip') {
+        function handleCardClick(movieId) {
+            const movie = movies.find(m => m.id === movieId);
+            if (!movie) return;
+
+            if (movie.access === 'vip') {
                 if (currentUser && currentUser.name.toLowerCase() === ADMIN_USERNAME) {
-                    player.src = url;
-                    modal.style.display = 'flex';
+                    openDetailPage(movie);
                     return;
                 }
                 let now = new Date().getTime();
                 let userVipExpire = currentUser ? (currentUser.vipExpire || 0) : 0;
-                
                 if (!currentUser || userVipExpire < now) {
                     alert('بۇ مەزمۇن پەقەت VIP ئەزالار ئۈچۈن! ھېساباتىڭىزدىن ئەزالىقىڭىزنى تەكشۈرۈڭ.');
                     switchTab('accountTab', document.querySelectorAll('.nav-item')[3]);
                     return;
                 }
             }
-            player.src = url;
-            modal.style.display = 'flex';
+            openDetailPage(movie);
         }
 
-        function closePlayer() {
-            player.src = '';
-            modal.style.display = 'none';
+        function openDetailPage(movie) {
+            document.getElementById('detailMovieTitle').innerText = movie.title;
+            const episodesSection = document.getElementById('detailEpisodesSection');
+            const episodesGrid = document.getElementById('detailEpisodesGrid');
+            
+            if (movie.isSeries && movie.episodes && movie.episodes.length > 0) {
+                episodesSection.style.display = 'block';
+                episodesGrid.innerHTML = '';
+                
+                movie.episodes.forEach((ep, index) => {
+                    const epBtn = document.createElement('button');
+                    epBtn.className = `detail-ep-btn ${index === 0 ? 'active' : ''}`;
+                    epBtn.innerText = `${ep.epNum}-قىسىم`;
+                    epBtn.onclick = () => {
+                        document.querySelectorAll('.detail-ep-btn').forEach(b => b.classList.remove('active'));
+                        epBtn.classList.add('active');
+                        playInDetailPlayer(ep.url, ep.type || 'local');
+                    };
+                    episodesGrid.appendChild(epBtn);
+                });
+
+                playInDetailPlayer(movie.episodes[0].url, movie.episodes[0].type || 'local');
+            } else {
+                episodesSection.style.display = 'none';
+                playInDetailPlayer(movie.url, movie.type || 'local');
+            }
+
+            detailPage.style.display = 'block';
+        }
+
+        function playInDetailPlayer(url, type) {
+            const playerBox = document.getElementById('detailPlayerBox');
+            playerBox.innerHTML = '';
+            if (type === 'local') {
+                const videoEl = document.createElement('video');
+                videoEl.src = url; 
+                videoEl.controls = true; 
+                videoEl.autoplay = true;
+                videoEl.setAttribute('controlsList', 'nodownload');
+                videoEl.setAttribute('disablePictureInPicture', 'true');
+                videoEl.oncontextmenu = (e) => e.preventDefault();
+                playerBox.appendChild(videoEl);
+            } else {
+                const iframeEl = document.createElement('iframe');
+                iframeEl.src = url; 
+                iframeEl.allowFullscreen = true;
+                playerBox.appendChild(iframeEl);
+            }
+        }
+
+        function closeDetailPage() {
+            document.getElementById('detailPlayerBox').innerHTML = '';
+            detailPage.style.display = 'none';
         }
 
         function openSearch() {
-            searchModal.style.display = 'block';
-            searchInput.focus();
-            filterMovies();
+            searchModal.style.display = 'block'; searchInput.focus(); filterMovies();
         }
 
         function closeSearch() {
-            searchModal.style.display = 'none';
-            searchInput.value = '';
-            searchResults.innerHTML = '';
+            searchModal.style.display = 'none'; searchInput.value = ''; searchResults.innerHTML = '';
         }
 
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
             document.getElementById(tabId).classList.add('active-tab');
-
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
             if (btnElement) btnElement.classList.add('active');
-
-            if (tabId === 'uploadTab') {
-                checkAdminPermissions();
-            }
-
+            if (tabId === 'uploadTab') checkAdminPermissions();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1084,53 +1026,86 @@
                 favorites.push(id);
             }
             localStorage.setItem('koznek_favs', JSON.stringify(favorites));
-            renderMovies();
+            renderHomeSections();
         }
 
         function addNewMovie() {
             const title = document.getElementById('newMovieTitle').value.trim();
             const cat = document.getElementById('newMovieCat').value;
             const access = document.getElementById('newMovieAccess').value;
-            const img = document.getElementById('newMovieImg').value.trim();
-            const url = document.getElementById('newMovieUrl').value.trim();
+            const imageInput = document.getElementById('imageFileInput');
 
-            if (!title || !url) {
-                alert('مەزمۇن نامى ۋە ۋىدېئو ئۇلانمىسىنى چوقۇم تولدۇرۇڭ!');
-                return;
+            if (!title) {
+                alert('مەزمۇن نامىنى چوقۇم كىرگۈزۈڭ!'); return;
             }
 
-            const posterImg = img ? img : 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80';
+            let posterUrl = 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80';
+            if (imageInput.files && imageInput.files.length > 0) {
+                posterUrl = URL.createObjectURL(imageInput.files[0]);
+            }
+
+            const isSeries = (cat === 'series' || cat === 'cartoon_series');
+            let episodesArr = [];
+            let totalEpCount = 1;
+
+            if (isSeries) {
+                totalEpCount = parseInt(document.getElementById('seriesTotalCount').value) || 10;
+                for (let i = 1; i <= totalEpCount; i++) {
+                    let epInput = document.getElementById(`ep_file_${i}`);
+                    let epUrl = 'https://www.youtube.com/embed/dQw4w9WgXcQ';
+                    let epType = 'embed';
+
+                    if (epInput && epInput.files && epInput.files.length > 0) {
+                        epUrl = URL.createObjectURL(epInput.files[0]);
+                        epType = 'local';
+                    }
+
+                    episodesArr.push({
+                        epNum: i,
+                        url: epUrl,
+                        type: epType
+                    });
+                }
+            } else {
+                const videoInput = document.getElementById('videoFileInput');
+                if (!videoInput.files || videoInput.files.length === 0) {
+                    alert('ۋىدېئو فىلىمنى تاللاڭ!'); return;
+                }
+                const videoFile = videoInput.files[0];
+                var singleVideoUrl = URL.createObjectURL(videoFile);
+            }
 
             movies.push({
                 id: Date.now().toString(),
                 title: title,
                 cat: cat,
                 access: access,
-                img: posterImg,
-                url: url
+                img: posterUrl,
+                url: isSeries ? (episodesArr[0] ? episodesArr[0].url : '') : singleVideoUrl,
+                type: isSeries ? (episodesArr[0] ? episodesArr[0].type : 'embed') : 'local',
+                isSeries: isSeries,
+                totalEpisodes: isSeries ? totalEpCount : 1,
+                episodes: isSeries ? episodesArr : []
             });
 
             localStorage.setItem('koznek_movies', JSON.stringify(movies));
-            alert('مەزمۇن مۇۋەپپەقىيەتلىك قاچىلاندى!');
-            document.getElementById('newMovieTitle').value = '';
-            document.getElementById('newMovieImg').value = '';
-            document.getElementById('newMovieUrl').value = '';
+            alert(isSeries ? `قىسىملىق مەزمۇن 1 دىن ${totalEpCount} قىسىمغىچە ئايرىم فىلىملىرى بىلەن قاچىلاندى!` : 'مەزمۇن مۇۋەپپەقىيەتلىك قاچىلاندى!');
+            
             switchTab('homeTab', document.querySelector('.nav-item'));
-            renderMovies();
+            renderHomeSections();
         }
 
         function deleteMovie(id) {
             if (confirm('بۇ مەزمۇننى راستلا ئۆچۈرەمسىز?')) {
                 movies = movies.filter(m => m.id !== id);
                 localStorage.setItem('koznek_movies', JSON.stringify(movies));
-                renderMovies();
+                renderHomeSections();
             }
         }
 
         function filterMovies() {
             const query = searchInput.value.toLowerCase().trim();
             searchResults.innerHTML = '';
-
             let found = false;
             movies.forEach(movie => {
                 if (movie.title.toLowerCase().includes(query)) {
@@ -1140,16 +1115,15 @@
                     item.className = 'search-item';
                     item.innerHTML = `
                         <img src="${movie.img}">
-                        <div class="search-item-title">${movie.title} ${isVip ? '⭐' : ''}</div>
+                        <div class="search-item-title">${movie.title} ${isVip ? '⭐' : ''} ${movie.isSeries ? `(📺 ${movie.totalEpisodes} قىسىم)` : ''}</div>
                     `;
                     item.onclick = () => {
                         closeSearch();
-                        tryPlayMovie(movie.url, movie.access);
+                        handleCardClick(movie.id);
                     };
                     searchResults.appendChild(item);
                 }
             });
-
             if (!found && query !== '') {
                 searchResults.innerHTML = '<div style="color: var(--text-secondary); text-align: center; margin-top: 30px;">ھېچقانداق مەزمۇن تېپىلمىدى</div>';
             }
@@ -1158,74 +1132,50 @@
         function handleLoginOrRegister() {
             const usernameInput = document.getElementById('loginUser');
             const passwordInput = document.getElementById('loginPass');
-            
             if (!usernameInput || !passwordInput) return;
-            
             const username = usernameInput.value.trim();
             const password = passwordInput.value.trim();
 
             if (!username || !password) {
-                alert('ئابونت ئىسمى ۋە پارولنى تولدۇرۇڭ!');
-                return;
+                alert('ئابونت ئىسمى ۋە پارولنى تولدۇرۇڭ!'); return;
             }
-
             if (username.toLowerCase() === ADMIN_USERNAME) {
                 if (password === ADMIN_MASTER_PASS) {
                     currentUser = { name: ADMIN_USERNAME, vipExpire: 8640000000000000 };
                     localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-                    checkAdminPermissions();
-                    updateAccountUI();
-                    renderMovies();
-                    alert('خۇش كەپسىز باشقۇرغۇچى (nasrulla)!');
-                    return;
-                } else {
-                    alert('باشقۇرغۇچى (nasrulla) پارولى خاتالىق!');
-                    return;
-                }
+                    checkAdminPermissions(); updateAccountUI(); renderHomeSections();
+                    alert('خۇش كەپسىز باشقۇرغۇچى (nasrulla)!'); return;
+                } else { alert('باشقۇرغۇچى پارولى خاتالىق!'); return; }
             }
-
             if (password === ADMIN_MASTER_PASS) {
-                alert('بۇ مەخپىي نومۇر (پارول) باشقۇرغۇچىغا تەۋە، باشقا ئابونتلار بۇنى ئىشلىتەلمەيدۇ!');
-                return;
+                alert('بۇ مەخپىي نومۇر باشقۇرغۇچىغا تەۋە!'); return;
             }
 
             let users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
-
             let foundKey = null;
             for (let key in users) {
-                if (key.trim().toLowerCase() === username.toLowerCase()) {
-                    foundKey = key;
-                    break;
-                }
+                if (key.trim().toLowerCase() === username.toLowerCase()) { foundKey = key; break; }
             }
 
             if (foundKey) {
                 if (users[foundKey].password === password) {
                     currentUser = { name: foundKey, vipExpire: users[foundKey].vipExpire || 0 };
                     localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-                    checkAdminPermissions();
-                    updateAccountUI();
-                    alert('مۇۋەپپەقىيەتلىك كىردىڭىز!');
-                } else {
-                    alert('پارول خاتالىق!');
-                }
+                    checkAdminPermissions(); updateAccountUI(); alert('مۇۋەپپەقىيەتلىك كىردىڭىز!');
+                } else { alert('پارول خاتالىق!'); }
             } else {
                 users[username] = { password: password, vipExpire: 0 };
                 localStorage.setItem('koznek_users_db', JSON.stringify(users));
                 currentUser = { name: username, vipExpire: 0 };
                 localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-                checkAdminPermissions();
-                updateAccountUI();
-                alert('يېڭى ھېسابات تىزىملىتىلدى!');
+                checkAdminPermissions(); updateAccountUI(); alert('يېڭى ھېسابات تىزىملىتىلدى!');
             }
         }
 
         function handleLogout() {
             localStorage.removeItem('koznek_current_user');
             currentUser = null;
-            checkAdminPermissions();
-            updateAccountUI();
-            renderMovies();
+            checkAdminPermissions(); updateAccountUI(); renderHomeSections();
             alert('ھېساباتتىن چېكىندىڭىز.');
         }
 
@@ -1255,15 +1205,9 @@
                     let diffMs = currentUser.vipExpire - now;
                     let leftDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
                     let leftHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    
                     vipBadge.innerText = '⭐ VIP ئەزا';
                     vipBadge.style.background = '#ffa502';
-                    
-                    if (leftDays > 0) {
-                        vipStatusText.innerText = 'ئەزالىق قالغان ۋاقتى: ' + leftDays + ' كۈن ' + leftHours + ' سائەت';
-                    } else {
-                        vipStatusText.innerText = 'ئەزالىق قالغان ۋاقتى: ' + leftHours + ' سائەت (بۈگۈن تۈگەيدۇ)';
-                    }
+                    vipStatusText.innerText = 'ئەزالىق قالغان ۋاقتى: ' + leftDays + ' كۈن ' + leftHours + ' سائەت';
                 } else {
                     vipBadge.innerText = 'ئادەتتىكى ئەزا';
                     vipBadge.style.background = '#555';
