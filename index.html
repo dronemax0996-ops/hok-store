@@ -526,10 +526,10 @@
         let movies = [];
         try {
             movies = JSON.parse(localStorage.getItem('koznek_movies')) || [
-                { id: '1', title: 'ئاخىرقى جەڭ', cat: 'movie', access: 'free', img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=300&q=80', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed' },
+                { id: '1', title: 'ئاخىرقى جەڭ', cat: 'movie', access: 'free', img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=300&q=80', url: 'https://www.w3schools.com/html/mov_bbb.mp4', type: 'video' },
                 { id: '2', title: 'قاتقۇلۇق كۈلكە سېرىيالى', cat: 'series', access: 'vip', img: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80', isSeries: true, totalEpisodes: 2, episodes: [
-                    {epNum: 1, url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed'},
-                    {epNum: 2, url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed'}
+                    {epNum: 1, url: 'https://www.w3schools.com/html/mov_bbb.mp4'},
+                    {epNum: 2, url: 'https://www.w3schools.com/html/mov_bbb.mp4'}
                 ]}
             ];
         } catch (e) {
@@ -635,7 +635,7 @@
                 }
 
                 uploadTabContent.innerHTML = `
-                    <div class="section-title">🎬 مەزمۇن قاچىلاش ۋە باشقۇرۇش</div>
+                    <div class="section-title">🎬 تېلېفوندىن سىن ۋە رەسىم يوللاش</div>
                     <div class="form-group" style="margin-top: 15px;">
                         <label>مەزمۇن نامى</label>
                         <input type="text" id="newMovieTitle" class="form-input" placeholder="مەسىلەن: شاھزادە داستانى" autocomplete="off">
@@ -656,7 +656,7 @@
                             <label>قىسىم سانى (مەسىلەن: 5)</label>
                             <input type="number" id="seriesTotalCount" class="form-input" value="5" min="1" max="50" oninput="renderEpisodeInputs()">
                         </div>
-                        <div style="font-size: 11px; color: var(--accent-color); margin-bottom: 10px;">* تۆۋەندە ھەر بىر قىسىم ئۈچۈن تور ۋىدېئو ئادرېسىنى (URL) كىرگۈزۈڭ:</div>
+                        <div style="font-size: 11px; color: var(--accent-color); margin-bottom: 10px;">* تۆۋەندىن ھەر بىر قىسىم ئۈچۈن تېلېفونىڭىزدىكى .mp4 سىن ھۆججىتىنى تاللاڭ:</div>
                         <div id="episodesInputsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto; padding-right: 5px;"></div>
                     </div>
 
@@ -669,16 +669,16 @@
                     </div>
                     
                     <div class="form-group">
-                        <label>مۇقاۋا رەسىم ئادرېسى (URL)</label>
-                        <input type="text" id="newMovieImg" class="form-input" placeholder="https://... سۈرەت ئادرېسىنى چاپلاڭ" autocomplete="off">
+                        <label>مۇقاۋا رەسىم ھۆججىتى (تېلېفوندىن تاللاش)</label>
+                        <input type="file" id="newMovieImgFile" class="form-input" accept="image/*" style="padding: 8px;">
                     </div>
 
                     <div class="form-group" id="singleVideoGroup">
-                        <label>ۋىدېئو ئادرېسى (URL / Embed)</label>
-                        <input type="text" id="newMovieUrl" class="form-input" placeholder="YouTube ياكى باشقا ۋىدېئو ئادرېسىنى چاپلاڭ" autocomplete="off">
+                        <label>سىن ھۆججىتى (.mp4 تېلېفوندىن تاللاش)</label>
+                        <input type="file" id="newMovieVideoFile" class="form-input" accept="video/mp4,video/*" style="padding: 8px;">
                     </div>
 
-                    <button type="button" class="action-btn" onclick="addNewMovie()">تورغا مەزمۇن يوللاش</button>
+                    <button type="button" class="action-btn" onclick="addNewMovie()">تېلېفوندىن تورغا يوللاش</button>
 
                     <div style="margin-top: 30px;" class="section-title">👥 بارلىق ئەزالار ۋە باشقۇرۇش</div>
                     <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; text-align: right;">* سولغا سىيرىپ ئۆچۈرۈڭ، ياكى بېسىپ VIP قوشۇڭ.</div>
@@ -724,8 +724,8 @@
             for (let i = 1; i <= count; i++) {
                 container.innerHTML += `
                     <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px; border-radius: 5px;">
-                        <div style="font-size: 12px; font-weight: bold; margin-bottom: 4px; text-align: right;">${i}-قىسىم ۋىدېئو URL ئادرېسى:</div>
-                        <input type="text" id="ep_url_${i}" class="form-input" placeholder="${i}-قىسىم ئادرېسىنى بۇ يەرگە يېزىڭ" style="padding: 8px; font-size: 12px;" autocomplete="off">
+                        <div style="font-size: 12px; font-weight: bold; margin-bottom: 4px; text-align: right;">${i}-قىسىم سىن ھۆججىتىنى تاللاڭ:</div>
+                        <input type="file" id="ep_file_${i}" class="form-input" accept="video/mp4,video/*" style="padding: 6px; font-size: 12px;">
                     </div>
                 `;
             }
@@ -978,26 +978,11 @@
             const playerBox = document.getElementById('detailPlayerBox');
             playerBox.innerHTML = '';
             
-            if (url.includes('youtube.com') || url.includes('youtu.be') || url.includes('embed')) {
-                let embedUrl = url;
-                if (url.includes('watch?v=')) {
-                    let vId = url.split('watch?v=')[1].split('&')[0];
-                    embedUrl = `https://www.youtube.com/embed/${vId}`;
-                } else if (url.includes('youtu.be/')) {
-                    let vId = url.split('youtu.be/')[1].split('?')[0];
-                    embedUrl = `https://www.youtube.com/embed/${vId}`;
-                }
-                const iframeEl = document.createElement('iframe');
-                iframeEl.src = embedUrl; 
-                iframeEl.allowFullscreen = true;
-                playerBox.appendChild(iframeEl);
-            } else {
-                const videoEl = document.createElement('video');
-                videoEl.src = url; 
-                videoEl.controls = true; 
-                videoEl.autoplay = true;
-                playerBox.appendChild(videoEl);
-            }
+            const videoEl = document.createElement('video');
+            videoEl.src = url; 
+            videoEl.controls = true; 
+            videoEl.autoplay = true;
+            playerBox.appendChild(videoEl);
         }
 
         function closeDetailPage() {
@@ -1040,34 +1025,37 @@
             const title = titleInput.value.trim();
             const cat = document.getElementById('newMovieCat').value;
             const access = document.getElementById('newMovieAccess').value;
-            const posterInput = document.getElementById('newMovieImg');
-            
-            // رەسىم ئادرېسى بوش ياكى خاتا بولسا ئاپتوماتىك زاپاس رەسىم بېرىدۇ
-            let posterUrl = posterInput && posterInput.value.trim() ? posterInput.value.trim() : '';
-            if (!posterUrl.startsWith('http')) {
-                posterUrl = 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80';
-            }
 
             if (!title) {
                 alert('مەزمۇن نامىنى چوقۇم كىرگۈزۈڭ!'); return;
             }
 
+            const imgFile = document.getElementById('newMovieImgFile').files[0];
+            let posterUrl = 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80';
+            if (imgFile) {
+                posterUrl = URL.createObjectURL(imgFile);
+            }
+
             const isSeries = (cat === 'series' || cat === 'cartoon_series');
             let episodesArr = [];
             let totalEpCount = 1;
-            let singleVideoInput = document.getElementById('newMovieUrl');
-            let singleVideoUrl = singleVideoInput && singleVideoInput.value.trim() ? singleVideoInput.value.trim() : 'https://www.youtube.com/embed/dQw4w9WgXcQ';
+            let singleVideoUrl = 'https://www.w3schools.com/html/mov_bbb.mp4';
 
             if (isSeries) {
                 let totalCountInput = document.getElementById('seriesTotalCount');
                 totalEpCount = totalCountInput ? parseInt(totalCountInput.value) || 5 : 5;
                 for (let i = 1; i <= totalEpCount; i++) {
-                    let epInput = document.getElementById(`ep_url_${i}`);
-                    let epUrl = epInput && epInput.value.trim() ? epInput.value.trim() : 'https://www.youtube.com/embed/dQw4w9WgXcQ';
+                    let epFile = document.getElementById(`ep_file_${i}`).files[0];
+                    let epUrl = epFile ? URL.createObjectURL(epFile) : 'https://www.w3schools.com/html/mov_bbb.mp4';
                     episodesArr.push({
                         epNum: i,
                         url: epUrl
                     });
+                }
+            } else {
+                let videoFile = document.getElementById('newMovieVideoFile').files[0];
+                if (videoFile) {
+                    singleVideoUrl = URL.createObjectURL(videoFile);
                 }
             }
 
@@ -1088,11 +1076,11 @@
             try {
                 localStorage.setItem('koznek_movies', JSON.stringify(movies));
             } catch (e) {
-                alert('ساقلاشتا خاتالىق كۆرۈلدى! تېلېفون سىغىمى تولغان بولۇشى مۇمكىن.');
+                alert('ساقلاشتا خاتالىق كۆرۈلدى! سىغىمى تاماملانغان بولۇشى مۇمكىن.');
                 return;
             }
 
-            alert('مەزمۇن مۇۋەپپەقىيەتلىك تورغا يوللاندى!');
+            alert('مەزمۇن مۇۋەپپەقىيەتلىك تېلېفونىڭىزدىن يوللاندى!');
             
             switchTab('homeTab', document.querySelector('.nav-item'));
             renderHomeSections();
