@@ -197,7 +197,6 @@
             color: #ff4757;
         }
 
-        /* فىلىم تەپسىلات ۋە قويۇش بېتى (Detail & Player Page) */
         .detail-page {
             display: none;
             position: fixed;
@@ -271,13 +270,6 @@
             color: var(--text-color); border-radius: 5px;
             font-size: 14px; outline: none; text-align: right;
         }
-        .file-input-label {
-            display: block; background-color: var(--card-bg);
-            border: 1px dashed var(--border-color); color: var(--text-color);
-            padding: 12px; text-align: center; border-radius: 5px;
-            cursor: pointer; font-size: 14px;
-        }
-        .file-input-label span { color: var(--accent-color); font-weight: bold; }
         .action-btn {
             width: 100%; padding: 12px;
             background-color: var(--accent-color); color: white;
@@ -285,7 +277,6 @@
             font-weight: bold; cursor: pointer; margin-top: 10px;
         }
 
-        /* Swipe delete styling */
         .swipe-wrapper {
             position: relative; overflow: hidden;
             border-radius: 8px; margin-bottom: 10px; background: #ff4757;
@@ -532,28 +523,47 @@
         const ADMIN_USERNAME = "nasrulla";
         const ADMIN_MASTER_PASS = "0996";
 
-        let movies = JSON.parse(localStorage.getItem('koznek_movies')) || [
-            { id: '1', title: 'ئاخىرقى جەڭ', cat: 'movie', access: 'free', img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=300&q=80', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed' },
-            { id: '2', title: 'قاتقۇلۇق كۈلكە سېرىيالى', cat: 'series', access: 'vip', img: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80', isSeries: true, totalEpisodes: 2, episodes: [
-                {epNum: 1, url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed'},
-                {epNum: 2, url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed'}
-            ]}
-        ];
+        let movies = [];
+        try {
+            movies = JSON.parse(localStorage.getItem('koznek_movies')) || [
+                { id: '1', title: 'ئاخىرقى جەڭ', cat: 'movie', access: 'free', img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=300&q=80', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed' },
+                { id: '2', title: 'قاتقۇلۇق كۈلكە سېرىيالى', cat: 'series', access: 'vip', img: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80', isSeries: true, totalEpisodes: 2, episodes: [
+                    {epNum: 1, url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed'},
+                    {epNum: 2, url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed'}
+                ]}
+            ];
+        } catch (e) {
+            movies = [];
+        }
 
         let currentCategory = 'all';
-        let currentUser = JSON.parse(localStorage.getItem('koznek_current_user')) || null;
-        let favorites = JSON.parse(localStorage.getItem('koznek_koznek_favs') || localStorage.getItem('koznek_favs')) || [];
+        let currentUser = null;
+        try {
+            currentUser = JSON.parse(localStorage.getItem('koznek_current_user')) || null;
+        } catch (e) {
+            currentUser = null;
+        }
+
+        let favorites = [];
+        try {
+            favorites = JSON.parse(localStorage.getItem('koznek_favs')) || [];
+        } catch (e) {
+            favorites = [];
+        }
+
         let selectedActionUser = null;
 
         if (currentUser && currentUser.name.toLowerCase() !== ADMIN_USERNAME) {
-            let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
-            for (let k in usersDb) {
-                if (k.trim().toLowerCase() === currentUser.name.toLowerCase()) {
-                    currentUser.vipExpire = usersDb[k].vipExpire || 0;
-                    localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-                    break;
+            try {
+                let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+                for (let k in usersDb) {
+                    if (k.trim().toLowerCase() === currentUser.name.toLowerCase()) {
+                        currentUser.vipExpire = usersDb[k].vipExpire || 0;
+                        localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                        break;
+                    }
                 }
-            }
+            } catch (e) {}
         }
 
         const isLightMode = localStorage.getItem('koznek_light_mode') === 'true';
@@ -581,7 +591,13 @@
                 navUploadBtn.style.display = 'flex';
                 uploadMenuSettingItem.style.display = 'flex';
 
-                let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+                let usersDb = {};
+                try {
+                    usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+                } catch (e) {
+                    usersDb = {};
+                }
+
                 let usersListHtml = '';
                 let now = new Date().getTime();
                 let userCount = 0;
@@ -637,10 +653,10 @@
 
                     <div id="seriesExtraInputs" style="display: none; background: var(--card-bg); padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 15px;">
                         <div class="form-group" style="margin-bottom: 10px;">
-                            <label>قىسىم سانى (مەسىلەن: 50)</label>
-                            <input type="number" id="seriesTotalCount" class="form-input" value="10" min="1" max="100" oninput="renderEpisodeInputs()">
+                            <label>قىسىم سانى (مەسىلەن: 5)</label>
+                            <input type="number" id="seriesTotalCount" class="form-input" value="5" min="1" max="50" oninput="renderEpisodeInputs()">
                         </div>
-                        <div style="font-size: 11px; color: var(--accent-color); margin-bottom: 10px;">* تۆۋەندە ھەر بىر قىسىم ئۈچۈن ئايرىم ۋىدېئو تاللاڭ:</div>
+                        <div style="font-size: 11px; color: var(--accent-color); margin-bottom: 10px;">* تۆۋەندە ھەر بىر قىسىم ئۈچۈن تور ۋىدېئو ئادرېسىنى (URL) كىرگۈزۈڭ:</div>
                         <div id="episodesInputsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto; padding-right: 5px;"></div>
                     </div>
 
@@ -653,19 +669,13 @@
                     </div>
                     
                     <div class="form-group">
-                        <label>مۇقاۋا رەسىمى</label>
-                        <label class="file-input-label" for="imageFileInput">
-                            <span id="imageFileName">سۈرەت تاللاش ئۈچۈن بۇ يەرنى بېسىڭ...</span>
-                        </label>
-                        <input type="file" id="imageFileInput" accept="image/*" style="display: none;" onchange="updateFileName('imageFileInput', 'imageFileName')">
+                        <label>مۇقاۋا رەسىم ئادرېسى (URL)</label>
+                        <input type="text" id="newMovieImg" class="form-input" placeholder="https://... سۈرەت ئادرېسىنى چاپلاڭ" autocomplete="off">
                     </div>
 
                     <div class="form-group" id="singleVideoGroup">
-                        <label>ۋىدېئو فىلىم تاللاش</label>
-                        <label class="file-input-label" for="videoFileInput">
-                            <span id="videoFileName">ۋىدېئو تاللاش ئۈچۈن بۇ يەرنى بېسىڭ...</span>
-                        </label>
-                        <input type="file" id="videoFileInput" accept="video/*" style="display: none;" onchange="updateFileName('videoFileInput', 'videoFileName')">
+                        <label>ۋىدېئو ئادرېسى (URL / Embed)</label>
+                        <input type="text" id="newMovieUrl" class="form-input" placeholder="YouTube ياكى باشقا ۋىدېئو ئادرېسىنى چاپلاڭ" autocomplete="off">
                     </div>
 
                     <button type="button" class="action-btn" onclick="addNewMovie()">تورغا مەزمۇن يوللاش</button>
@@ -706,37 +716,18 @@
         function renderEpisodeInputs() {
             const container = document.getElementById('episodesInputsList');
             if (!container) return;
-            let count = parseInt(document.getElementById('seriesTotalCount').value) || 10;
-            if (count > 100) count = 100;
+            let count = parseInt(document.getElementById('seriesTotalCount').value) || 5;
+            if (count > 50) count = 50;
             if (count < 1) count = 1;
 
             container.innerHTML = '';
             for (let i = 1; i <= count; i++) {
                 container.innerHTML += `
                     <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px; border-radius: 5px;">
-                        <div style="font-size: 12px; font-weight: bold; margin-bottom: 4px; text-align: right;">${i}-قىسىم ۋىدېئوسى:</div>
-                        <input type="file" id="ep_file_${i}" accept="video/*" style="display: none;" onchange="updateEpFileName(${i})">
-                        <label class="file-input-label" for="ep_file_${i}" style="padding: 8px; font-size: 12px;">
-                            <span id="ep_name_${i}">ۋىدېئو تاللاش (${i}-قىسىم)</span>
-                        </label>
+                        <div style="font-size: 12px; font-weight: bold; margin-bottom: 4px; text-align: right;">${i}-قىسىم ۋىدېئو URL ئادرېسى:</div>
+                        <input type="text" id="ep_url_${i}" class="form-input" placeholder="${i}-قىسىم ئادرېسىنى بۇ يەرگە يېزىڭ" style="padding: 8px; font-size: 12px;" autocomplete="off">
                     </div>
                 `;
-            }
-        }
-
-        function updateEpFileName(i) {
-            const input = document.getElementById(`ep_file_${i}`);
-            const span = document.getElementById(`ep_name_${i}`);
-            if (input.files && input.files.length > 0) {
-                span.innerText = "تاللاندى: " + input.files[0].name;
-            }
-        }
-
-        function updateFileName(inputId, spanId) {
-            const input = document.getElementById(inputId);
-            const span = document.getElementById(spanId);
-            if (input.files && input.files.length > 0) {
-                span.innerText = "تاللاندى: " + input.files[0].name;
             }
         }
 
@@ -766,9 +757,11 @@
 
         function deleteUserAccount(username) {
             if (confirm(`راستلا ${username} ناملىق ھېساباتنى ئۆچۈرەمسىز?`)) {
-                let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
-                delete usersDb[username];
-                localStorage.setItem('koznek_users_db', JSON.stringify(usersDb));
+                try {
+                    let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+                    delete usersDb[username];
+                    localStorage.setItem('koznek_users_db', JSON.stringify(usersDb));
+                } catch (e) {}
                 checkAdminPermissions();
             } else { checkAdminPermissions(); }
         }
@@ -786,38 +779,42 @@
 
         function popupGrantVip() {
             if (!selectedActionUser) return;
-            let users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
-            if (users[selectedActionUser]) {
-                let now = new Date().getTime();
-                let currentExpire = users[selectedActionUser].vipExpire && users[selectedActionUser].vipExpire > now ? users[selectedActionUser].vipExpire : now;
-                let newExpire = currentExpire + (30 * 24 * 60 * 60 * 1000);
-                users[selectedActionUser].vipExpire = newExpire;
-                localStorage.setItem('koznek_users_db', JSON.stringify(users));
-                if (currentUser && currentUser.name.toLowerCase() === selectedActionUser.toLowerCase()) {
-                    currentUser.vipExpire = newExpire;
-                    localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-                    updateAccountUI();
+            try {
+                let users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+                if (users[selectedActionUser]) {
+                    let now = new Date().getTime();
+                    let currentExpire = users[selectedActionUser].vipExpire && users[selectedActionUser].vipExpire > now ? users[selectedActionUser].vipExpire : now;
+                    let newExpire = currentExpire + (30 * 24 * 60 * 60 * 1000);
+                    users[selectedActionUser].vipExpire = newExpire;
+                    localStorage.setItem('koznek_users_db', JSON.stringify(users));
+                    if (currentUser && currentUser.name.toLowerCase() === selectedActionUser.toLowerCase()) {
+                        currentUser.vipExpire = newExpire;
+                        localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                        updateAccountUI();
+                    }
+                    alert(`${selectedActionUser} غا 1 ئايلىق VIP ئەزالىق قوشۇلدى!`);
+                    closeUserActionModal(); checkAdminPermissions();
                 }
-                alert(`${selectedActionUser} غا 1 ئايلىق VIP ئەزالىق قوشۇلدى!`);
-                closeUserActionModal(); checkAdminPermissions();
-            }
+            } catch (e) {}
         }
 
         function popupRevokeVip() {
             if (!selectedActionUser) return;
             if (confirm(`راستلا ${selectedActionUser} نىڭ ئەزالىقىنى توشقۇزۇپ، ئادەتتىكى ئەزا قىلىۋەمسىز?`)) {
-                let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
-                if (usersDb[selectedActionUser]) {
-                    usersDb[selectedActionUser].vipExpire = 0;
-                    localStorage.setItem('koznek_users_db', JSON.stringify(usersDb));
-                    if (currentUser && currentUser.name.toLowerCase() === selectedActionUser.toLowerCase()) {
-                        currentUser.vipExpire = 0;
-                        localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-                        updateAccountUI();
+                try {
+                    let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+                    if (usersDb[selectedActionUser]) {
+                        usersDb[selectedActionUser].vipExpire = 0;
+                        localStorage.setItem('koznek_users_db', JSON.stringify(usersDb));
+                        if (currentUser && currentUser.name.toLowerCase() === selectedActionUser.toLowerCase()) {
+                            currentUser.vipExpire = 0;
+                            localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                            updateAccountUI();
+                        }
+                        alert(`${selectedActionUser} ئەزالىقتىن چىقىرىلدى.`);
+                        closeUserActionModal(); checkAdminPermissions();
                     }
-                    alert(`${selectedActionUser} ئەزالىقتىن چىقىرىلدى.`);
-                    closeUserActionModal(); checkAdminPermissions();
-                }
+                } catch (e) {}
             }
         }
 
@@ -963,37 +960,43 @@
                     epBtn.onclick = () => {
                         document.querySelectorAll('.detail-ep-btn').forEach(b => b.classList.remove('active'));
                         epBtn.classList.add('active');
-                        playInDetailPlayer(ep.url, ep.type || 'local');
+                        playInDetailPlayer(ep.url);
                     };
                     episodesGrid.appendChild(epBtn);
                 });
 
-                playInDetailPlayer(movie.episodes[0].url, movie.episodes[0].type || 'local');
+                playInDetailPlayer(movie.episodes[0].url);
             } else {
                 episodesSection.style.display = 'none';
-                playInDetailPlayer(movie.url, movie.type || 'local');
+                playInDetailPlayer(movie.url);
             }
 
             detailPage.style.display = 'block';
         }
 
-        function playInDetailPlayer(url, type) {
+        function playInDetailPlayer(url) {
             const playerBox = document.getElementById('detailPlayerBox');
             playerBox.innerHTML = '';
-            if (type === 'local') {
+            
+            if (url.includes('youtube.com') || url.includes('youtu.be') || url.includes('embed')) {
+                let embedUrl = url;
+                if (url.includes('watch?v=')) {
+                    let vId = url.split('watch?v=')[1].split('&')[0];
+                    embedUrl = `https://www.youtube.com/embed/${vId}`;
+                } else if (url.includes('youtu.be/')) {
+                    let vId = url.split('youtu.be/')[1].split('?')[0];
+                    embedUrl = `https://www.youtube.com/embed/${vId}`;
+                }
+                const iframeEl = document.createElement('iframe');
+                iframeEl.src = embedUrl; 
+                iframeEl.allowFullscreen = true;
+                playerBox.appendChild(iframeEl);
+            } else {
                 const videoEl = document.createElement('video');
                 videoEl.src = url; 
                 videoEl.controls = true; 
                 videoEl.autoplay = true;
-                videoEl.setAttribute('controlsList', 'nodownload');
-                videoEl.setAttribute('disablePictureInPicture', 'true');
-                videoEl.oncontextmenu = (e) => e.preventDefault();
                 playerBox.appendChild(videoEl);
-            } else {
-                const iframeEl = document.createElement('iframe');
-                iframeEl.src = url; 
-                iframeEl.allowFullscreen = true;
-                playerBox.appendChild(iframeEl);
             }
         }
 
@@ -1025,93 +1028,66 @@
             } else {
                 favorites.push(id);
             }
-            localStorage.setItem('koznek_favs', JSON.stringify(favorites));
+            try {
+                localStorage.setItem('koznek_favs', JSON.stringify(favorites));
+            } catch (e) {}
             renderHomeSections();
         }
 
-        // فايىلنى Base64 غا ئايلاندۇرۇپ ساقلاش فۇنكسىيەسى (ئۆچۈپ كەتمەسلىكى ئۈچۈن)
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
-        }
-
-        async function addNewMovie() {
-            const title = document.getElementById('newMovieTitle').value.trim();
+        function addNewMovie() {
+            const titleInput = document.getElementById('newMovieTitle');
+            if (!titleInput) return;
+            const title = titleInput.value.trim();
             const cat = document.getElementById('newMovieCat').value;
             const access = document.getElementById('newMovieAccess').value;
-            const imageInput = document.getElementById('imageFileInput');
+            const posterInput = document.getElementById('newMovieImg');
+            const posterUrl = posterInput && posterInput.value.trim() ? posterInput.value.trim() : 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80';
 
             if (!title) {
                 alert('مەزمۇن نامىنى چوقۇم كىرگۈزۈڭ!'); return;
             }
 
-            let posterUrl = 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80';
-            if (imageInput.files && imageInput.files.length > 0) {
-                try {
-                    posterUrl = await fileToBase64(imageInput.files[0]);
-                } catch (e) {
-                    console.log(e);
-                }
-            }
-
             const isSeries = (cat === 'series' || cat === 'cartoon_series');
             let episodesArr = [];
             let totalEpCount = 1;
-            let singleVideoUrl = 'https://www.youtube.com/embed/dQw4w9WgXcQ';
+            let singleVideoInput = document.getElementById('newMovieUrl');
+            let singleVideoUrl = singleVideoInput && singleVideoInput.value.trim() ? singleVideoInput.value.trim() : 'https://www.youtube.com/embed/dQw4w9WgXcQ';
 
             if (isSeries) {
-                totalEpCount = parseInt(document.getElementById('seriesTotalCount').value) || 10;
+                let totalCountInput = document.getElementById('seriesTotalCount');
+                totalEpCount = totalCountInput ? parseInt(totalCountInput.value) || 5 : 5;
                 for (let i = 1; i <= totalEpCount; i++) {
-                    let epInput = document.getElementById(`ep_file_${i}`);
-                    let epUrl = 'https://www.youtube.com/embed/dQw4w9WgXcQ';
-                    let epType = 'embed';
-
-                    if (epInput && epInput.files && epInput.files.length > 0) {
-                        try {
-                            epUrl = await fileToBase64(epInput.files[0]);
-                            epType = 'local';
-                        } catch (e) {
-                            console.log(e);
-                        }
-                    }
-
+                    let epInput = document.getElementById(`ep_url_${i}`);
+                    let epUrl = epInput && epInput.value.trim() ? epInput.value.trim() : 'https://www.youtube.com/embed/dQw4w9WgXcQ';
                     episodesArr.push({
                         epNum: i,
-                        url: epUrl,
-                        type: epType
+                        url: epUrl
                     });
-                }
-            } else {
-                const videoInput = document.getElementById('videoFileInput');
-                if (!videoInput.files || videoInput.files.length === 0) {
-                    alert('ۋىدېئو فىلىمنى تاللاڭ!'); return;
-                }
-                try {
-                    singleVideoUrl = await fileToBase64(videoInput.files[0]);
-                } catch (e) {
-                    console.log(e);
                 }
             }
 
-            movies.push({
+            const newMovieObj = {
                 id: Date.now().toString(),
                 title: title,
                 cat: cat,
                 access: access,
                 img: posterUrl,
                 url: isSeries ? (episodesArr[0] ? episodesArr[0].url : '') : singleVideoUrl,
-                type: isSeries ? (episodesArr[0] ? episodesArr[0].type : 'embed') : 'local',
                 isSeries: isSeries,
                 totalEpisodes: isSeries ? totalEpCount : 1,
                 episodes: isSeries ? episodesArr : []
-            });
+            };
 
-            localStorage.setItem('koznek_movies', JSON.stringify(movies));
-            alert(isSeries ? `قىسىملىق مەزمۇن 1 دىن ${totalEpCount} قىسىمغىچە ئايرىم فىلىملىرى بىلەن مۇقىم ساقلاندى!` : 'مەزمۇن مۇۋەپپەقىيەتلىك ۋە مۇقىم ساقلاندى!');
+            movies.push(newMovieObj);
+
+            try {
+                localStorage.setItem('koznek_movies', JSON.stringify(movies));
+            } catch (e) {
+                alert('ساقلاشتا خاتالىق كۆرۈلدى! تېلېفون سىغىمى تولغان بولۇشى مۇمكىن.');
+                return;
+            }
+
+            alert('مەزمۇن مۇۋەپپەقىيەتلىك ۋە خاتالىقسىز تورغا يوللاندى!');
             
             switchTab('homeTab', document.querySelector('.nav-item'));
             renderHomeSections();
@@ -1120,7 +1096,9 @@
         function deleteMovie(id) {
             if (confirm('بۇ مەزمۇننى راستلا ئۆچۈرەمسىز?')) {
                 movies = movies.filter(m => m.id !== id);
-                localStorage.setItem('koznek_movies', JSON.stringify(movies));
+                try {
+                    localStorage.setItem('koznek_movies', JSON.stringify(movies));
+                } catch (e) {}
                 renderHomeSections();
             }
         }
@@ -1164,7 +1142,9 @@
             if (username.toLowerCase() === ADMIN_USERNAME) {
                 if (password === ADMIN_MASTER_PASS) {
                     currentUser = { name: ADMIN_USERNAME, vipExpire: 8640000000000000 };
-                    localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                    try {
+                        localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                    } catch (e) {}
                     checkAdminPermissions(); updateAccountUI(); renderHomeSections();
                     alert('خۇش كەپسىز باشقۇرغۇچى (nasrulla)!'); return;
                 } else { alert('باشقۇرغۇچى پارولى خاتالىق!'); return; }
@@ -1173,7 +1153,13 @@
                 alert('بۇ مەخپىي نومۇر باشقۇرغۇچىغا تەۋە!'); return;
             }
 
-            let users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+            let users = {};
+            try {
+                users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
+            } catch (e) {
+                users = {};
+            }
+
             let foundKey = null;
             for (let key in users) {
                 if (key.trim().toLowerCase() === username.toLowerCase()) { foundKey = key; break; }
@@ -1182,20 +1168,28 @@
             if (foundKey) {
                 if (users[foundKey].password === password) {
                     currentUser = { name: foundKey, vipExpire: users[foundKey].vipExpire || 0 };
-                    localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                    try {
+                        localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                    } catch (e) {}
                     checkAdminPermissions(); updateAccountUI(); alert('مۇۋەپپەقىيەتلىك كىردىڭىز!');
                 } else { alert('پارول خاتالىق!'); }
             } else {
                 users[username] = { password: password, vipExpire: 0 };
-                localStorage.setItem('koznek_users_db', JSON.stringify(users));
+                try {
+                    localStorage.setItem('koznek_users_db', JSON.stringify(users));
+                } catch (e) {}
                 currentUser = { name: username, vipExpire: 0 };
-                localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                try {
+                    localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                } catch (e) {}
                 checkAdminPermissions(); updateAccountUI(); alert('يېڭى ھېسابات تىزىملىتىلدى!');
             }
         }
 
         function handleLogout() {
-            localStorage.removeItem('koznek_current_user');
+            try {
+                localStorage.removeItem('koznek_current_user');
+            } catch (e) {}
             currentUser = null;
             checkAdminPermissions(); updateAccountUI(); renderHomeSections();
             alert('ھېساباتتىن چېكىندىڭىز.');
