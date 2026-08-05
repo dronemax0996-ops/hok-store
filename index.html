@@ -891,6 +891,7 @@
                 `;
             });
 
+            // ياقتۇرغانلار بازىسىنى تولۇق ۋە كونكرېت يېڭىلاش (تۈزىتىلدى)
             movies.forEach(movie => {
                 if (favorites.includes(movie.id)) {
                     hasFav = true;
@@ -944,20 +945,16 @@
             openDetailPage(movie);
         }
 
-        // Vimeo ئادرېسلىرىنى ئاپتوماتىك پەرقلەندۈرۈپ قويغۇچقا ماسلاشتۇرۇش فۇنكسىيەسى
         function formatVideoUrl(url) {
             if (!url) return '';
             let cleanUrl = url.trim();
             
-            // ئەگەر Vimeo ئادرېسى بولسا
             if (cleanUrl.includes('vimeo.com')) {
-                // ۋىدېئو ID نى ئېلىۋېلىش (مەسىلەن: 1215654823)
                 let match = cleanUrl.match(/(\d+)/);
                 if (match) {
                     return `https://player.vimeo.com/video/${match[0]}`;
                 }
             }
-            // ئەگەر YouTube بولسا
             if (cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be')) {
                 if (cleanUrl.includes('watch?v=')) {
                     let vId = cleanUrl.split('watch?v=')[1].split('&')[0];
@@ -1051,6 +1048,7 @@
             try {
                 localStorage.setItem('koznek_favs', JSON.stringify(favorites));
             } catch (e) {}
+            // شۇئان قايتا سىزىش ئارقىلىق باش بەت ۋە ياقتۇرغانلار بېتىنى تەڭلا يېڭىلاش
             renderHomeSections();
         }
 
@@ -1115,8 +1113,10 @@
         function deleteMovie(id) {
             if (confirm('بۇ مەزمۇننى راستلا ئۆچۈرەمسىز?')) {
                 movies = movies.filter(m => m.id !== id);
+                favorites = favorites.filter(favId => favId !== id); // يۇيۇلغان كىنو ياقتۇرغانلاردىنمۇ بىرلا ۋاقىتتا ئۆچۈرۈلىدۇ
                 try {
                     localStorage.setItem('koznek_movies', JSON.stringify(movies));
+                    localStorage.setItem('koznek_favs', JSON.stringify(favorites));
                 } catch (e) {}
                 renderHomeSections();
             }
