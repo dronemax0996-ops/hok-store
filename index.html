@@ -4,6 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>كۆزنەك كىنوخانىسى</title>
+    <!-- Firebase SDK لىرىنى قوشۇش -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCKRnqHKqCpj-xLPeG4sGRkHvFH4qginds",
+            authDomain: "koznak-store.firebaseapp.com",
+            databaseURL: "https://koznak-store-default-rtdb.firebaseio.com",
+            projectId: "koznak-store",
+            storageBucket: "koznak-store.firebasestorage.app",
+            messagingSenderId: "52186498509",
+            appId: "1:52186498509:web:1ff23eaccde6b015e6f084",
+            measurementId: "G-HCSZDQW18V"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.db = db;
+        window.dbRef = ref;
+        window.dbSet = set;
+        window.dbGet = get;
+        window.dbChild = child;
+        window.dbRemove = remove;
+        window.dbOnValue = onValue;
+
+        // تور سانلىق مەلۇماتلىرى تەييار بولغاندا قوزغىتىش
+        window.initFirebaseApp();
+    </script>
     <style>
         :root {
             --bg-color: #121212;
@@ -43,7 +73,6 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Splash Screen (قارشى ئېلىش ئېكرانى) */
         #splashScreen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -487,7 +516,6 @@
 </head>
 <body>
 
-    <!-- قارشى ئېلىش ئېكرانى (Splash Screen) -->
     <div id="splashScreen">
         <div></div>
         <div class="splash-content">
@@ -506,7 +534,6 @@
         <button class="search-btn" onclick="openSearch()">🔍</button>
     </div>
 
-    <!-- 1-بەرت: باش بەت -->
     <div id="homeTab" class="tab-content active-tab">
         <div class="category-tabs">
             <button class="cat-chip active" onclick="filterCategory('all', this)">بارلىقى</button>
@@ -520,7 +547,6 @@
         <div id="homeSectionsContainer"></div>
     </div>
 
-    <!-- 2-بەرت: ياقتۇرغانلار -->
     <div id="favTab" class="tab-content">
         <div class="category-section" style="margin-top: 15px;">
             <div class="section-title">❤️ ياقتۇرغان مەزمۇنلىرىم</div>
@@ -528,12 +554,10 @@
         </div>
     </div>
 
-    <!-- 3-بەرت: قاچىلاش / باشقۇرۇش -->
     <div id="uploadTab" class="tab-content">
         <div class="page-box" id="uploadPageContent"></div>
     </div>
 
-    <!-- 4-بەرت: ھېسابات -->
     <div id="accountTab" class="tab-content">
         <div class="page-box" style="text-align: center;">
             <div style="font-size: 45px; margin-top: 15px;">👤</div>
@@ -564,7 +588,6 @@
         </div>
     </div>
 
-    <!-- 5-بەرت: تەڭشەك -->
     <div id="settingsTab" class="tab-content">
         <div class="page-box">
             <div class="section-title">⚙️ ئەپ تەڭشەكلىرى</div>
@@ -597,7 +620,6 @@
         </div>
     </div>
 
-    <!-- VIP تەڭشەش كۆزنىكى -->
     <div class="user-action-modal" id="userActionModal">
         <div class="user-action-card">
             <div class="user-action-title" id="popupUserName">ئابونت: </div>
@@ -607,7 +629,6 @@
         </div>
     </div>
 
-    <!-- ئايرىم كىنو كۆرۈش ۋە قويۇش بېتى (Detail Page) -->
     <div class="detail-page" id="detailPage">
         <div class="detail-header">
             <button class="back-btn" onclick="closeDetailPage()">← قايتىش</button>
@@ -622,14 +643,12 @@
         </div>
     </div>
 
-    <!-- ئىزدەش كۆزنىكى -->
     <div class="search-modal" id="searchModal">
         <button class="close-search" onclick="closeSearch()">← قايتىش</button>
         <input type="text" id="searchInput" class="search-input" placeholder="مەزمۇن نامىنى كىرگۈزۈڭ..." oninput="filterMovies()" autocomplete="off">
         <div class="search-results" id="searchResults"></div>
     </div>
 
-    <!-- تۆۋەنקי تىزىملىك -->
     <div class="bottom-nav">
         <button class="nav-item active" onclick="switchTab('homeTab', this)">
             <span>🏠</span>
@@ -668,47 +687,16 @@
         const ADMIN_MASTER_PASS = "0996";
 
         let movies = [];
-        try {
-            movies = JSON.parse(localStorage.getItem('koznek_movies')) || [
-                { id: '1', title: 'ئاخىرقى جەڭ', cat: 'movie', access: 'free', img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=300&q=80', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed' },
-                { id: '2', title: 'قاتقۇلۇق كۈلكە سېرىيالى', cat: 'series', access: 'vip', img: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80', isSeries: true, totalEpisodes: 2, episodes: [
-                    {epNum: 1, url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed'},
-                    {epNum: 2, url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed'}
-                ]}
-            ];
-        } catch (e) {
-            movies = [];
-        }
-
+        let globalUsersDb = {};
         let currentCategory = 'all';
         let currentUser = null;
-        try {
-            currentUser = JSON.parse(localStorage.getItem('koznek_current_user')) || null;
-        } catch (e) {
-            currentUser = null;
-        }
-
         let favorites = [];
-        try {
-            favorites = JSON.parse(localStorage.getItem('koznek_favs')) || [];
-        } catch (e) {
-            favorites = [];
-        }
-
         let selectedActionUser = null;
 
-        if (currentUser && currentUser.name.toLowerCase() !== ADMIN_USERNAME) {
-            try {
-                let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
-                for (let k in usersDb) {
-                    if (k.trim().toLowerCase() === currentUser.name.toLowerCase()) {
-                        currentUser.vipExpire = usersDb[k].vipExpire || 0;
-                        localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-                        break;
-                    }
-                }
-            } catch (e) {}
-        }
+        try {
+            currentUser = JSON.parse(localStorage.getItem('koznek_current_user')) || null;
+            favorites = JSON.parse(localStorage.getItem('koznek_favs')) || [];
+        } catch (e) {}
 
         const isLightMode = localStorage.getItem('koznek_light_mode') === 'true';
         if (isLightMode) {
@@ -723,9 +711,47 @@
         const searchResults = document.getElementById('searchResults');
         const detailPage = document.getElementById('detailPage');
 
-        checkAdminPermissions();
-        renderHomeSections();
-        updateAccountUI();
+        // Firebase ئۇلانغاندىن كېيىنكى قوزغىتىش فۇنكسىيەسى
+        window.initFirebaseApp = function() {
+            // كىنولەرنى توردىن ئوقۇش
+            const moviesRef = window.dbRef(window.db, 'koznek_movies');
+            window.dbOnValue(moviesRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    movies = Object.values(data);
+                } else {
+                    movies = [
+                        { id: '1', title: 'ئاخىرقى جەڭ', cat: 'movie', access: 'free', img: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=300&q=80', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed' },
+                        { id: '2', title: 'قاتقۇلۇق كۈلكە سېرىيالى', cat: 'series', access: 'vip', img: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80', isSeries: true, totalEpisodes: 2, episodes: [
+                            {epNum: 1, url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed'},
+                            {epNum: 2, url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', type: 'embed'}
+                        ]}
+                    ];
+                    window.dbSet(moviesRef, movies);
+                }
+                renderHomeSections();
+            });
+
+            // ئەزالار بازىسىنى توردىن دەل ۋاقتىدا ماس قەدەملەش
+            const usersRef = window.dbRef(window.db, 'koznek_users_db');
+            window.dbOnValue(usersRef, (snapshot) => {
+                const data = snapshot.val();
+                globalUsersDb = data || {};
+                
+                // ئەگەر ھازىر كىرگەن ئابونت بولسا، ئۇنىڭ VIP ۋاقتىنى يېڭىلاش
+                if (currentUser && currentUser.name.toLowerCase() !== ADMIN_USERNAME) {
+                    for (let k in globalUsersDb) {
+                        if (k.trim().toLowerCase() === currentUser.name.toLowerCase()) {
+                            currentUser.vipExpire = globalUsersDb[k].vipExpire || 0;
+                            localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                            break;
+                        }
+                    }
+                }
+                checkAdminPermissions();
+                updateAccountUI();
+            });
+        };
 
         function checkAdminPermissions() {
             const isAdmin = currentUser && currentUser.name.toLowerCase() === ADMIN_USERNAME;
@@ -737,21 +763,14 @@
                 navUploadBtn.style.display = 'flex';
                 uploadMenuSettingItem.style.display = 'flex';
 
-                let usersDb = {};
-                try {
-                    usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
-                } catch (e) {
-                    usersDb = {};
-                }
-
                 let usersListHtml = '';
                 let now = new Date().getTime();
                 let userCount = 0;
 
-                for (let username in usersDb) {
+                for (let username in globalUsersDb) {
                     if (username.toLowerCase() === ADMIN_USERNAME) continue;
                     userCount++;
-                    let vExpire = usersDb[username].vipExpire || 0;
+                    let vExpire = globalUsersDb[username].vipExpire || 0;
                     let isVipActive = vExpire > now;
                     let statusDesc = 'ئەزالىق يوق';
 
@@ -777,7 +796,7 @@
                 }
 
                 if (userCount === 0) {
-                    usersListHtml = '<div style="color: var(--text-secondary); text-align: center; margin: 15px 0;">ھازىرچە باشقا تىزىملاتقان ئەزا يوق</div>';
+                    usersListHtml = '<div style="color: var(--text-secondary); text-align: center; margin: 15px 0;">ھازىرچە توردا باشقا تىزىملاتقان ئەزا يوق</div>';
                 }
 
                 uploadTabContent.innerHTML = `
@@ -826,7 +845,7 @@
 
                     <button type="button" class="action-btn" onclick="addNewMovie()">تورغا مەزمۇن يوللاش</button>
 
-                    <div style="margin-top: 35px;" class="section-title">👥 بارلىق ئەزالار ۋە باشقۇرۇش</div>
+                    <div style="margin-top: 35px;" class="section-title">👥 توردا تىزىملاتقان بارلىق ئەزالار</div>
                     <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px;">* سولغا سىيرىپ ئۆچۈرۈڭ، ياكى بېسىپ VIP قوشۇڭ.</div>
                     <div style="margin-top: 5px;" id="allUsersContainer">
                         ${usersListHtml}
@@ -902,13 +921,11 @@
         }
 
         function deleteUserAccount(username) {
-            if (confirm(`راستلا ${username} ناملىق ھېساباتنى ئۆچۈرەمسىز?`)) {
-                try {
-                    let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
-                    delete usersDb[username];
-                    localStorage.setItem('koznek_users_db', JSON.stringify(usersDb));
-                } catch (e) {}
-                checkAdminPermissions();
+            if (confirm(`راستلا ${username} ناملىق ھېساباتنى توردىن ئۆچۈرەمسىز?`)) {
+                const userRef = window.dbRef(window.db, 'koznek_users_db/' + username);
+                window.dbRemove(userRef).then(() => {
+                    checkAdminPermissions();
+                });
             } else { checkAdminPermissions(); }
         }
 
@@ -925,42 +942,43 @@
 
         function popupGrantVip() {
             if (!selectedActionUser) return;
-            try {
-                let users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
-                if (users[selectedActionUser]) {
-                    let now = new Date().getTime();
-                    let currentExpire = users[selectedActionUser].vipExpire && users[selectedActionUser].vipExpire > now ? users[selectedActionUser].vipExpire : now;
-                    let newExpire = currentExpire + (30 * 24 * 60 * 60 * 1000);
-                    users[selectedActionUser].vipExpire = newExpire;
-                    localStorage.setItem('koznek_users_db', JSON.stringify(users));
-                    if (currentUser && currentUser.name.toLowerCase() === selectedActionUser.toLowerCase()) {
-                        currentUser.vipExpire = newExpire;
-                        localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-                        updateAccountUI();
-                    }
-                    alert(`${selectedActionUser} غا 1 ئايلىق VIP ئەزالىق قوشۇلدى!`);
-                    closeUserActionModal(); checkAdminPermissions();
+            let now = new Date().getTime();
+            let currentExpire = globalUsersDb[selectedActionUser] && globalUsersDb[selectedActionUser].vipExpire && globalUsersDb[selectedActionUser].vipExpire > now ? globalUsersDb[selectedActionUser].vipExpire : now;
+            let newExpire = currentExpire + (30 * 24 * 60 * 60 * 1000);
+            
+            const userExpireRef = window.dbRef(window.db, 'koznek_users_db/' + selectedActionUser);
+            let userData = globalUsersDb[selectedActionUser] || { password: '123' };
+            userData.vipExpire = newExpire;
+
+            window.dbSet(userExpireRef, userData).then(() => {
+                if (currentUser && currentUser.name.toLowerCase() === selectedActionUser.toLowerCase()) {
+                    currentUser.vipExpire = newExpire;
+                    localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                    updateAccountUI();
                 }
-            } catch (e) {}
+                alert(`${selectedActionUser} غا 1 ئايلىق VIP ئەزالىق قوشۇلدى!`);
+                closeUserActionModal();
+                checkAdminPermissions();
+            });
         }
 
         function popupRevokeVip() {
             if (!selectedActionUser) return;
             if (confirm(`راستلا ${selectedActionUser} نىڭ ئەزالىقىنى توشقۇزۇپ، ئادەتتىكى ئەزا قىلىۋەمسىز?`)) {
-                try {
-                    let usersDb = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
-                    if (usersDb[selectedActionUser]) {
-                        usersDb[selectedActionUser].vipExpire = 0;
-                        localStorage.setItem('koznek_users_db', JSON.stringify(usersDb));
-                        if (currentUser && currentUser.name.toLowerCase() === selectedActionUser.toLowerCase()) {
-                            currentUser.vipExpire = 0;
-                            localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-                            updateAccountUI();
-                        }
-                        alert(`${selectedActionUser} ئەزالىقتىن چىقىرىلدى.`);
-                        closeUserActionModal(); checkAdminPermissions();
+                const userExpireRef = window.dbRef(window.db, 'koznek_users_db/' + selectedActionUser);
+                let userData = globalUsersDb[selectedActionUser] || { password: '123' };
+                userData.vipExpire = 0;
+
+                window.dbSet(userExpireRef, userData).then(() => {
+                    if (currentUser && currentUser.name.toLowerCase() === selectedActionUser.toLowerCase()) {
+                        currentUser.vipExpire = 0;
+                        localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                        updateAccountUI();
                     }
-                } catch (e) {}
+                    alert(`${selectedActionUser} ئەزالىقتىن چىقىرىلدى.`);
+                    closeUserActionModal();
+                    checkAdminPermissions();
+                });
             }
         }
 
@@ -978,8 +996,8 @@
         }
 
         function clearLocalStorageData() {
-            if (confirm('بارلىق كىنولەر ۋە ساقلانمىلار تازىلانسۇنمۇ?')) {
-                localStorage.clear(); location.reload();
+            if (confirm('ياقتۇرغانلار ۋە ساقلانمىلار تازىلانسۇنمۇ?')) {
+                localStorage.removeItem('koznek_favs'); location.reload();
             }
         }
 
@@ -1246,27 +1264,25 @@
 
             movies.push(newMovieObj);
 
-            try {
-                localStorage.setItem('koznek_movies', JSON.stringify(movies));
-            } catch (e) {
-                alert('ساقلاشتا خاتالىق كۆرۈلدى!');
-                return;
-            }
-
-            alert('مەزمۇن مۇۋەپپەقىيەتلىك تورغا يوللاندى!');
-            switchTab('homeTab', document.querySelector('.nav-item'));
-            renderHomeSections();
+            const moviesRef = window.dbRef(window.db, 'koznek_movies');
+            window.dbSet(moviesRef, movies).then(() => {
+                alert('مەزمۇن مۇۋەپپەقىيەتلىك تورغا يوللاندى!');
+                switchTab('homeTab', document.querySelector('.nav-item'));
+            });
         }
 
         function deleteMovie(id) {
-            if (confirm('بۇ مەزمۇننى راستلا ئۆچۈرەمسىز?')) {
+            if (confirm('بۇ مەزمۇننى راستلا توردىن ئۆچۈرەمسىز?')) {
                 movies = movies.filter(m => m.id !== id);
                 favorites = favorites.filter(favId => favId !== id);
                 try {
-                    localStorage.setItem('koznek_movies', JSON.stringify(movies));
                     localStorage.setItem('koznek_favs', JSON.stringify(favorites));
                 } catch (e) {}
-                renderHomeSections();
+
+                const moviesRef = window.dbRef(window.db, 'koznek_movies');
+                window.dbSet(moviesRef, movies).then(() => {
+                    renderHomeSections();
+                });
             }
         }
 
@@ -1320,39 +1336,31 @@
                 alert('بۇ مەخپىي نومۇر باشقۇرغۇچىغا تەۋە!'); return;
             }
 
-            let users = {};
-            try {
-                users = JSON.parse(localStorage.getItem('koznek_users_db')) || {};
-            } catch (e) {
-                users = {};
-            }
-
             let foundKey = null;
-            for (let key in users) {
+            for (let key in globalUsersDb) {
                 if (key.trim().toLowerCase() === username.toLowerCase()) { foundKey = key; break; }
             }
 
             if (foundKey) {
-                if (users[foundKey].password === password) {
-                    currentUser = { name: foundKey, vipExpire: users[foundKey].vipExpire || 0 };
+                if (globalUsersDb[foundKey].password === password) {
+                    currentUser = { name: foundKey, vipExpire: globalUsersDb[foundKey].vipExpire || 0 };
                     try {
                         localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
                     } catch (e) {}
                     checkAdminPermissions(); updateAccountUI(); alert('مۇۋەپپەقىيەتلىك كىردىڭىز!');
                 } else { alert('پارول خاتالىق!'); }
             } else {
-                users[username] = { password: password, vipExpire: 0 };
-                try {
-                    localStorage.setItem('koznek_users_db', JSON.stringify(users));
-                } catch (e) {}
-                currentUser = { name: username, vipExpire: 0 };
-                try {
-                    localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
-                } catch (e) {}
-                
-                checkAdminPermissions(); 
-                updateAccountUI(); 
-                alert('يېڭى ھېسابات تىزىملىتىلدى ۋە ئاكتىپلاندى!');
+                // يېڭى ئابونتنى تور بازىسىغا دەرھال ساقلاش
+                const newUserRef = window.dbRef(window.db, 'koznek_users_db/' + username);
+                window.dbSet(newUserRef, { password: password, vipExpire: 0 }).then(() => {
+                    currentUser = { name: username, vipExpire: 0 };
+                    try {
+                        localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                    } catch (e) {}
+                    checkAdminPermissions(); 
+                    updateAccountUI(); 
+                    alert('يېڭى ھېسابات توردا مۇۋەپپەقىيەتلىك تىزىملىتىلدى!');
+                });
             }
         }
 
