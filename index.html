@@ -654,7 +654,6 @@
     </div>
 
     <script>
-        // قارشى ئېلىش ئېكرانىنى ئاپتوماتىك يوقىتىش
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splashScreen');
@@ -1342,7 +1341,6 @@
                     checkAdminPermissions(); updateAccountUI(); alert('مۇۋەپپەقىيەتلىك كىردىڭىز!');
                 } else { alert('پارول خاتالىق!'); }
             } else {
-                // يېڭى ئابونتنى базаغا دەرھال ۋە بىۋاسىتە يېزىش
                 users[username] = { password: password, vipExpire: 0 };
                 try {
                     localStorage.setItem('koznek_users_db', JSON.stringify(users));
@@ -1352,7 +1350,6 @@
                     localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
                 } catch (e) {}
                 
-                // دەرھال باشقۇرغۇچى ھوقۇقىنى يېڭىلاش نۇسخىسىنى چېكىش
                 checkAdminPermissions(); 
                 updateAccountUI(); 
                 alert('يېڭى ھېسابات تىزىملىتىلدى ۋە ئاكتىپلاندى!');
