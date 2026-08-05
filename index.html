@@ -1342,6 +1342,7 @@
                     checkAdminPermissions(); updateAccountUI(); alert('مۇۋەپپەقىيەتلىك كىردىڭىز!');
                 } else { alert('پارول خاتالىق!'); }
             } else {
+                // يېڭى ئابونتنى базаغا بىۋاسىتە خاتىرىلەش
                 users[username] = { password: password, vipExpire: 0 };
                 try {
                     localStorage.setItem('koznek_users_db', JSON.stringify(users));
