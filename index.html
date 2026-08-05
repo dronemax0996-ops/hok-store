@@ -674,8 +674,8 @@
                     </div>
 
                     <div class="form-group" id="singleVideoGroup">
-                        <label>ۋىدېئو ئادرېسى (Vimeo ياكى YouTube ئادرېسى)</label>
-                        <input type="text" id="newMovieUrl" class="form-input" placeholder="مەسىلەن: https://vimeo.com/1215654823" autocomplete="off">
+                        <label>ۋىدېئو ئادرېسى (YouTube ياكى Vimeo ئۇلانمىسى)</label>
+                        <input type="text" id="newMovieUrl" class="form-input" placeholder="مەسىلەن: https://youtu.be/..." autocomplete="off">
                     </div>
 
                     <button type="button" class="action-btn" onclick="addNewMovie()">تورغا مەزمۇن يوللاش</button>
@@ -725,7 +725,7 @@
                 container.innerHTML += `
                     <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px; border-radius: 5px;">
                         <div style="font-size: 12px; font-weight: bold; margin-bottom: 4px; text-align: right;">${i}-قىسىم ۋىدېئو URL:</div>
-                        <input type="text" id="ep_url_${i}" class="form-input" placeholder="${i}-قىسىم Vimeo ئادرېسى" style="padding: 8px; font-size: 12px;" autocomplete="off">
+                        <input type="text" id="ep_url_${i}" class="form-input" placeholder="${i}-قىسىم ئۇلانمىسى" style="padding: 8px; font-size: 12px;" autocomplete="off">
                     </div>
                 `;
             }
@@ -866,7 +866,7 @@
                         <div class="movie-card">
                             ${isVipMovie ? '<div class="movie-tag">⭐ VIP</div>' : ''}
                             ${seriesBadge}
-                            <img src="${movie.img}" class="movie-poster" onclick="handleCardClick('${movie.id}')">
+                            <img src="${movie.img}" class="movie-poster" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80'" onclick="handleCardClick('${movie.id}')">
                             <div class="movie-footer">
                                 <div class="movie-name">${movie.title}</div>
                                 <div class="card-actions">
@@ -891,7 +891,6 @@
                 `;
             });
 
-            // ياقتۇرغانلار بازىسىنى تولۇق ۋە كونكرېت يېڭىلاش (تۈزىتىلدى)
             movies.forEach(movie => {
                 if (favorites.includes(movie.id)) {
                     hasFav = true;
@@ -901,7 +900,7 @@
                         <div class="movie-card">
                             ${isVipMovie ? '<div class="movie-tag">⭐ VIP</div>' : ''}
                             ${seriesBadge}
-                            <img src="${movie.img}" class="movie-poster" onclick="handleCardClick('${movie.id}')">
+                            <img src="${movie.img}" class="movie-poster" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80'" onclick="handleCardClick('${movie.id}')">
                             <div class="movie-footer">
                                 <div class="movie-name">${movie.title}</div>
                                 <div class="card-actions">
@@ -962,6 +961,8 @@
                 } else if (cleanUrl.includes('youtu.be/')) {
                     let vId = cleanUrl.split('youtu.be/')[1].split('?')[0];
                     return `https://www.youtube.com/embed/${vId}`;
+                } else if (cleanUrl.includes('/embed/')) {
+                    return cleanUrl;
                 }
             }
             return cleanUrl;
@@ -1048,7 +1049,6 @@
             try {
                 localStorage.setItem('koznek_favs', JSON.stringify(favorites));
             } catch (e) {}
-            // شۇئان قايتا سىزىش ئارقىلىق باش بەت ۋە ياقتۇرغانلار بېتىنى تەڭلا يېڭىلاش
             renderHomeSections();
         }
 
@@ -1113,7 +1113,7 @@
         function deleteMovie(id) {
             if (confirm('بۇ مەزمۇننى راستلا ئۆچۈرەمسىز?')) {
                 movies = movies.filter(m => m.id !== id);
-                favorites = favorites.filter(favId => favId !== id); // يۇيۇلغان كىنو ياقتۇرغانلاردىنمۇ بىرلا ۋاقىتتا ئۆچۈرۈلىدۇ
+                favorites = favorites.filter(favId => favId !== id);
                 try {
                     localStorage.setItem('koznek_movies', JSON.stringify(movies));
                     localStorage.setItem('koznek_favs', JSON.stringify(favorites));
@@ -1133,7 +1133,7 @@
                     const item = document.createElement('div');
                     item.className = 'search-item';
                     item.innerHTML = `
-                        <img src="${movie.img}">
+                        <img src="${movie.img}" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80'">
                         <div class="search-item-title">${movie.title} ${isVip ? '⭐' : ''} ${movie.isSeries ? `(📺 ${movie.totalEpisodes} قىسىم)` : ''}</div>
                     `;
                     item.onclick = () => {
