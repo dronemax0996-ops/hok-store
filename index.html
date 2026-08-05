@@ -738,7 +738,6 @@
                 const data = snapshot.val();
                 globalUsersDb = data || {};
                 
-                // ئەگەر ھازىر كىرگەن ئابونت بولسا، ئۇنىڭ VIP ۋاقتىنى يېڭىلاش
                 if (currentUser && currentUser.name.toLowerCase() !== ADMIN_USERNAME) {
                     for (let k in globalUsersDb) {
                         if (k.trim().toLowerCase() === currentUser.name.toLowerCase()) {
@@ -839,7 +838,7 @@
                     </div>
 
                     <div class="form-group" id="singleVideoGroup">
-                        <label>ۋىدېئو ئادرېسى (YouTube ياكى Vimeo ئۇلانمىسى)</label>
+                        <label>ۋىدېئو ئادرېسى (YouTube ياكى Streamable ئۇلانمىسى)</label>
                         <input type="text" id="newMovieUrl" class="form-input" placeholder="مەسىلەن: https://youtu.be/..." autocomplete="off">
                     </div>
 
@@ -1350,7 +1349,6 @@
                     checkAdminPermissions(); updateAccountUI(); alert('مۇۋەپپەقىيەتلىك كىردىڭىز!');
                 } else { alert('پارول خاتالىق!'); }
             } else {
-                // يېڭى ئابونتنى تور بازىسىغا دەرھال ساقلاش
                 const newUserRef = window.dbRef(window.db, 'koznek_users_db/' + username);
                 window.dbSet(newUserRef, { password: password, vipExpire: 0 }).then(() => {
                     currentUser = { name: username, vipExpire: 0 };
