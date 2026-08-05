@@ -6,23 +6,25 @@
     <title>كۆزنەك كىنوخانىسى</title>
     <style>
         :root {
-            --bg-color: #141414;
-            --nav-bg: rgba(20, 20, 20, 0.95);
-            --text-color: #ffffff;
-            --text-secondary: #aaa;
-            --card-bg: #1f1f1f;
-            --border-color: #282828;
+            --bg-color: #121212;
+            --nav-bg: rgba(18, 18, 18, 0.95);
+            --text-color: #f1f1f1;
+            --text-secondary: #a0a0a0;
+            --card-bg: #1e1e1e;
+            --border-color: #2c2c2c;
             --accent-color: #E50914;
+            --accent-hover: #f40612;
         }
 
         body.light-mode {
-            --bg-color: #f4f4f4;
+            --bg-color: #f8f9fa;
             --nav-bg: rgba(255, 255, 255, 0.95);
-            --text-color: #141414;
-            --text-secondary: #666;
+            --text-color: #212529;
+            --text-secondary: #6c757d;
             --card-bg: #ffffff;
-            --border-color: #ddd;
+            --border-color: #dee2e6;
             --accent-color: #E50914;
+            --accent-hover: #b20710;
         }
 
         * {
@@ -30,37 +32,46 @@
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            transition: background-color 0.3s, color 0.3s;
+            -webkit-tap-highlight-color: transparent;
         }
+
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            padding-bottom: 70px;
+            padding-bottom: 80px;
+            direction: rtl;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
+
         .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
+            padding: 14px 20px;
             background-color: var(--nav-bg);
             position: sticky;
             top: 0;
             z-index: 1000;
             border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
         }
+
         .logo {
             color: var(--accent-color);
             font-size: 20px;
-            font-weight: bold;
+            font-weight: 800;
+            letter-spacing: 0.5px;
         }
+
         .search-btn {
             font-size: 18px;
             color: var(--text-color);
             background: none;
             border: none;
             cursor: pointer;
+            padding: 5px;
         }
-        
+
         .search-modal {
             display: none;
             position: fixed;
@@ -70,51 +81,56 @@
             padding: 20px;
             overflow-y: auto;
         }
+
         .search-input {
             width: 100%;
-            padding: 12px 15px;
-            font-size: 16px;
+            padding: 14px 16px;
+            font-size: 15px;
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            border-radius: 6px;
+            border-radius: 10px;
             margin-bottom: 20px;
             outline: none;
-            text-align: right;
         }
+
         .close-search {
             background: none;
             border: none;
             color: var(--accent-color);
-            font-size: 16px;
+            font-size: 15px;
             cursor: pointer;
             margin-bottom: 15px;
             font-weight: bold;
         }
+
         .search-results {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
+
         .search-item {
             display: flex;
             background: var(--card-bg);
-            border-radius: 6px;
+            border-radius: 10px;
             overflow: hidden;
             cursor: pointer;
             align-items: center;
             border: 1px solid var(--border-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+
         .search-item img {
             width: 90px;
             height: 60px;
             object-fit: cover;
         }
+
         .search-item-title {
-            padding: 10px;
+            padding: 12px 15px;
             font-size: 14px;
-            font-weight: bold;
-            text-align: right;
+            font-weight: 600;
             width: 100%;
         }
 
@@ -123,78 +139,99 @@
 
         .category-tabs {
             display: flex; gap: 8px;
-            padding: 15px 15px 0 15px;
+            padding: 16px 16px 0 16px;
             overflow-x: auto; white-space: nowrap;
+            scrollbar-width: none;
         }
+        .category-tabs::-webkit-scrollbar { display: none; }
+
         .cat-chip {
             background-color: var(--card-bg);
             color: var(--text-secondary);
             border: 1px solid var(--border-color);
-            padding: 6px 14px; border-radius: 20px;
+            padding: 8px 16px; border-radius: 20px;
             font-size: 13px; cursor: pointer;
+            font-weight: 500;
         }
         .cat-chip.active {
             background-color: var(--accent-color);
-            color: white; border-color: var(--accent-color);
-            font-weight: bold;
+            color: #ffffff; border-color: var(--accent-color);
+            font-weight: 700;
         }
 
         .category-section {
-            margin-top: 20px; padding: 0 15px;
+            margin-top: 24px; padding: 0 16px;
         }
+
         .section-title {
-            font-size: 18px; font-weight: bold;
-            margin-bottom: 12px; color: var(--text-color);
-            border-left: 3px solid var(--accent-color);
-            padding-left: 8px; text-align: right;
+            font-size: 17px; font-weight: 700;
+            margin-bottom: 14px; color: var(--text-color);
+            border-right: 3px solid var(--accent-color);
+            padding-right: 10px;
         }
-        
+
         .movie-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px; padding-bottom: 5px;
+            gap: 14px;
         }
+
+        @media (min-width: 600px) {
+            .movie-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
         .movie-card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 6px; overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 12px; overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
+
         .movie-poster {
-            width: 100%; height: 160px;
-            object-fit: cover; background-color: #333;
+            width: 100%; height: 180px;
+            object-fit: cover; background-color: #222;
             cursor: pointer;
         }
+
         .movie-footer {
             display: flex; justify-content: space-between;
-            align-items: center; padding: 10px 8px;
+            align-items: center; padding: 10px 12px;
+            flex-grow: 1;
         }
+
         .movie-name {
-            font-size: 13px; font-weight: 500;
+            font-size: 13px; font-weight: 600;
             white-space: nowrap; overflow: hidden;
-            text-overflow: ellipsis; width: 100px;
-            text-align: right;
+            text-overflow: ellipsis; flex-grow: 1;
         }
+
         .movie-tag {
-            position: absolute; top: 8px; right: 8px;
+            position: absolute; top: 10px; right: 10px;
             background: #ffa502; color: #000;
-            font-size: 10px; font-weight: bold;
-            padding: 2px 6px; border-radius: 4px; z-index: 2;
+            font-size: 10px; font-weight: 700;
+            padding: 3px 8px; border-radius: 6px; z-index: 2;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
+
         .card-actions {
-            display: flex; align-items: center; gap: 5px;
+            display: flex; align-items: center; gap: 8px;
         }
+
         .fav-btn {
             background: none; border: none;
-            font-size: 15px; cursor: pointer;
+            font-size: 16px; cursor: pointer;
             color: var(--text-secondary);
+            padding: 4px;
         }
         .fav-btn.liked { color: var(--accent-color); }
+
         .del-btn {
             background: none; border: none;
-            font-size: 14px; cursor: pointer;
-            color: #ff4757;
+            font-size: 15px; cursor: pointer;
+            color: #ff4757; padding: 4px;
         }
 
         .detail-page {
@@ -206,49 +243,56 @@
             overflow-y: auto;
             padding-bottom: 50px;
         }
+
         .detail-header {
             display: flex; align-items: center;
-            padding: 15px; background: var(--nav-bg);
+            padding: 15px 20px; background: var(--nav-bg);
             border-bottom: 1px solid var(--border-color);
             position: sticky; top: 0; z-index: 10;
         }
+
         .back-btn {
             background: none; border: none;
-            color: var(--accent-color); font-size: 16px;
-            font-weight: bold; cursor: pointer;
+            color: var(--accent-color); font-size: 15px;
+            font-weight: 700; cursor: pointer;
         }
+
         .detail-player-box {
             width: 100%; aspect-ratio: 16/9; background-color: #000;
             position: relative;
         }
+
         .detail-player-box video, .detail-player-box iframe {
             width: 100%; height: 100%; border: none; object-fit: contain;
         }
+
         .detail-content-info {
-            padding: 20px; text-align: right;
+            padding: 20px;
         }
+
         .detail-movie-title {
-            font-size: 20px; font-weight: bold;
+            font-size: 18px; font-weight: 700;
             color: var(--text-color); margin-bottom: 15px;
         }
-        .detail-episodes-section {
-            margin-top: 20px;
-        }
+
+        .detail-episodes-section { margin-top: 20px; }
         .detail-episodes-title {
-            font-size: 15px; font-weight: bold; color: var(--text-secondary);
+            font-size: 14px; font-weight: 600; color: var(--text-secondary);
             margin-bottom: 10px;
         }
+
         .detail-episodes-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            gap: 8px;
         }
+
         .detail-ep-btn {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             color: var(--text-color);
-            padding: 10px 5px; border-radius: 6px;
-            font-size: 14px; font-weight: bold; cursor: pointer;
+            padding: 10px 5px; border-radius: 8px;
+            font-size: 13px; font-weight: 700; cursor: pointer;
             text-align: center;
         }
         .detail-ep-btn.active {
@@ -257,71 +301,79 @@
             color: white;
         }
 
-        .page-box { padding: 20px; }
-        .form-group { margin-bottom: 15px; text-align: right; }
+        .page-box { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .form-group { margin-bottom: 16px; }
         .form-group label {
             display: block; font-size: 13px;
-            color: var(--text-secondary); margin-bottom: 5px;
+            color: var(--text-secondary); margin-bottom: 6px; font-weight: 500;
         }
         .form-input, .form-select {
-            width: 100%; padding: 12px;
+            width: 100%; padding: 13px 15px;
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            color: var(--text-color); border-radius: 5px;
-            font-size: 14px; outline: none; text-align: right;
+            color: var(--text-color); border-radius: 10px;
+            font-size: 14px; outline: none;
         }
+
         .action-btn {
-            width: 100%; padding: 12px;
+            width: 100%; padding: 14px;
             background-color: var(--accent-color); color: white;
-            border: none; border-radius: 5px; font-size: 15px;
-            font-weight: bold; cursor: pointer; margin-top: 10px;
+            border: none; border-radius: 10px; font-size: 15px;
+            font-weight: 700; cursor: pointer; margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
+            transition: background-color 0.2s;
         }
+        .action-btn:hover { background-color: var(--accent-hover); }
 
         .swipe-wrapper {
             position: relative; overflow: hidden;
-            border-radius: 8px; margin-bottom: 10px; background: #ff4757;
+            border-radius: 10px; margin-bottom: 10px;
+            background: #ff4757;
         }
         .swipe-delete-bg {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-color: #ff4757; color: white;
             display: flex; align-items: center; justify-content: flex-start;
-            padding-left: 20px; font-weight: bold; font-size: 14px; z-index: 1;
+            padding-left: 20px; font-weight: bold; font-size: 13px; z-index: 1;
         }
         .user-list-item {
             position: relative; background: var(--card-bg);
-            border: 1px solid var(--border-color); border-radius: 8px;
-            padding: 12px 15px; display: flex; justify-content: space-between;
-            align-items: center; text-align: right; z-index: 2;
+            border: 1px solid var(--border-color); border-radius: 10px;
+            padding: 12px 16px; display: flex; justify-content: space-between;
+            align-items: center; z-index: 2;
             touch-action: pan-y; user-select: none; cursor: pointer;
         }
-        .user-info-box { display: flex; flex-direction: column; gap: 4px; }
-        .user-name-txt { font-size: 15px; font-weight: bold; color: var(--text-color); }
-        .user-status-txt { font-size: 12px; color: var(--text-secondary); }
+        .user-info-box { display: flex; flex-direction: column; gap: 3px; }
+        .user-name-txt { font-size: 14px; font-weight: 700; color: var(--text-color); }
+        .user-status-txt { font-size: 11px; color: var(--text-secondary); }
 
         .user-action-modal {
             display: none; position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); z-index: 4000;
+            background: rgba(0,0,0,0.7); z-index: 4000;
             justify-content: center; align-items: center; padding: 20px;
+            backdrop-filter: blur(5px);
         }
         .user-action-card {
             background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 12px; width: 100%; max-width: 320px;
-            padding: 20px; text-align: center;
+            border-radius: 16px; width: 100%; max-width: 320px;
+            padding: 24px; text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
         }
-        .user-action-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; color: var(--text-color); }
+        .user-action-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; color: var(--text-color); }
         .popup-btn {
-            width: 100%; padding: 12px; border-radius: 6px;
-            font-size: 14px; font-weight: bold; border: none;
+            width: 100%; padding: 12px; border-radius: 8px;
+            font-size: 14px; font-weight: 700; border: none;
             cursor: pointer; margin-bottom: 10px;
         }
         .popup-btn-add { background-color: #2ed573; color: white; }
         .popup-btn-revoke { background-color: #ff4757; color: white; }
-        .popup-btn-close { background-color: #555; color: white; margin-bottom: 0; }
+        .popup-btn-close { background-color: #444; color: white; margin-bottom: 0; }
 
         .settings-card {
             background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 10px; padding: 15px; margin-bottom: 15px;
+            border-radius: 12px; padding: 16px; margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         .settings-item {
             display: flex; justify-content: space-between;
@@ -329,40 +381,42 @@
             border-bottom: 1px solid var(--border-color);
         }
         .settings-item:last-child { border-bottom: none; }
-        .settings-info { display: flex; flex-direction: column; gap: 3px; text-align: right; }
-        .settings-title { font-size: 15px; font-weight: bold; color: var(--text-color); }
-        .settings-desc { font-size: 12px; color: var(--text-secondary); }
+        .settings-info { display: flex; flex-direction: column; gap: 2px; }
+        .settings-title { font-size: 14px; font-weight: 700; color: var(--text-color); }
+        .settings-desc { font-size: 11px; color: var(--text-secondary); }
         
         .switch {
-            position: relative; display: inline-block; width: 46px; height: 24px;
+            position: relative; display: inline-block; width: 44px; height: 24px;
         }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider-chk {
             position: absolute; cursor: pointer;
             top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #555; transition: .4s; border-radius: 24px;
+            background-color: #555; transition: .3s; border-radius: 24px;
         }
         .slider-chk:before {
             position: absolute; content: "";
             height: 18px; width: 18px; left: 3px; bottom: 3px;
-            background-color: white; transition: .4s; border-radius: 50%;
+            background-color: white; transition: .3s; border-radius: 50%;
         }
         input:checked + .slider-chk { background-color: var(--accent-color); }
-        input:checked + .slider-chk:before { transform: translateX(22px); }
+        input:checked + .slider-chk:before { transform: translateX(20px); }
 
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%;
             background-color: var(--nav-bg); display: flex;
             justify-content: space-around; padding: 8px 0;
             border-top: 1px solid var(--border-color); z-index: 1000;
+            backdrop-filter: blur(10px);
         }
         .nav-item {
             background: none; border: none; color: var(--text-secondary);
             font-size: 10px; display: flex; flex-direction: column;
-            align-items: center; gap: 2px; cursor: pointer;
+            align-items: center; gap: 3px; cursor: pointer;
+            font-weight: 500;
         }
-        .nav-item.active { color: var(--accent-color); font-weight: bold; }
-        .nav-item span:first-child { font-size: 15px; }
+        .nav-item.active { color: var(--accent-color); font-weight: 700; }
+        .nav-item span:first-child { font-size: 18px; }
     </style>
 </head>
 <body>
@@ -390,7 +444,7 @@
     <div id="favTab" class="tab-content">
         <div class="category-section" style="margin-top: 15px;">
             <div class="section-title">❤️ ياقتۇرغان مەزمۇنلىرىم</div>
-            <div class="movie-grid" id="favList"></div>
+            <div class="movie-grid" id="favList" style="margin-top: 14px;"></div>
         </div>
     </div>
 
@@ -402,8 +456,8 @@
     <!-- 4-بەرت: ھېسابات -->
     <div id="accountTab" class="tab-content">
         <div class="page-box" style="text-align: center;">
-            <div style="font-size: 50px; margin-top: 10px;">👤</div>
-            <h3 id="accountTitle" style="margin-top: 10px;">ھېساباتقا كىرىش / تىزىملىتىش</h3>
+            <div style="font-size: 45px; margin-top: 15px;">👤</div>
+            <h3 id="accountTitle" style="margin-top: 10px; font-size: 18px;">ھېساباتقا كىرىش / تىزىملىتىش</h3>
             
             <div id="loginForm" style="margin-top: 20px; text-align: right;">
                 <div class="form-group">
@@ -417,15 +471,15 @@
                 <button type="button" class="action-btn" onclick="handleLoginOrRegister()">كىرىش / تىزىملىتىش</button>
             </div>
 
-            <div id="userProfileView" style="display: none; margin-top: 15px; text-align: right;">
-                <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+            <div id="userProfileView" style="display: none; margin-top: 20px; text-align: right;">
+                <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 16px; border-radius: 12px; margin-bottom: 15px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span id="displayUsername" style="font-size: 16px; font-weight: bold; color: var(--accent-color);"></span>
-                        <span id="vipBadge" style="background:#555; color:#fff; padding:2px 8px; border-radius:4px; font-size:11px;">ئادەتتىكى ئەزا</span>
+                        <span id="displayUsername" style="font-size: 16px; font-weight: 700; color: var(--accent-color);"></span>
+                        <span id="vipBadge" style="background:#555; color:#fff; padding:3px 10px; border-radius:6px; font-size:11px; font-weight:700;">ئادەتتىكى ئەزا</span>
                     </div>
                     <div id="vipStatusText" style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">ئەزالىق ۋاقتى يوق</div>
                 </div>
-                <button type="button" class="action-btn" style="background-color: #333; margin-top: 15px;" onclick="handleLogout()">چېكىنىش (Log out)</button>
+                <button type="button" class="action-btn" style="background-color: #333;" onclick="handleLogout()">چېكىنىش (Log out)</button>
             </div>
         </div>
     </div>
@@ -434,7 +488,7 @@
     <div id="settingsTab" class="tab-content">
         <div class="page-box">
             <div class="section-title">⚙️ ئەپ تەڭشەكلىرى</div>
-            <div class="settings-card" style="margin-top: 15px;">
+            <div class="settings-card" style="margin-top: 14px;">
                 <div class="settings-item">
                     <div class="settings-info">
                         <span class="settings-title">يورۇق / قاراڭغۇ ھالەت</span>
@@ -450,14 +504,14 @@
                         <span class="settings-title">مەزمۇن قاچىلاش ۋە ئەزالار</span>
                         <span class="settings-desc">مەزمۇن يوللاش ۋە ئەزالارنى باشقۇرۇش</span>
                     </div>
-                    <button type="button" class="action-btn" style="width: auto; padding: 6px 14px; font-size: 13px; margin: 0;" onclick="switchTab('uploadTab', document.querySelectorAll('.nav-item')[2])">ئېچىش</button>
+                    <button type="button" class="action-btn" style="width: auto; padding: 6px 14px; font-size: 13px; margin: 0; box-shadow: none;" onclick="switchTab('uploadTab', document.querySelectorAll('.nav-item')[2])">ئېچىش</button>
                 </div>
                 <div class="settings-item">
                     <div class="settings-info">
                         <span class="settings-title">ساقلانما سانلىق مەلۇماتلارنى تازىلاش</span>
                         <span class="settings-desc">ياقتۇرغانلار ۋە ساقلانمىلارنى تازىلاش</span>
                     </div>
-                    <button type="button" class="action-btn" style="width: auto; padding: 6px 14px; font-size: 13px; margin: 0; background-color: #ff4757;" onclick="clearLocalStorageData()">تازىلاش</button>
+                    <button type="button" class="action-btn" style="width: auto; padding: 6px 14px; font-size: 13px; margin: 0; background-color: #ff4757; box-shadow: none;" onclick="clearLocalStorageData()">تازىلاش</button>
                 </div>
             </div>
         </div>
@@ -624,7 +678,7 @@
                                     <span class="user-name-txt">👤 ${username}</span>
                                     <span class="user-status-txt">${statusDesc}</span>
                                 </div>
-                                <div style="font-size: 12px; color: var(--text-secondary);">باسسىڭىز تەڭشىلىدۇ</div>
+                                <div style="font-size: 11px; color: var(--text-secondary);">باسسىڭىز تەڭشىلىدۇ</div>
                             </div>
                         </div>
                     `;
@@ -636,7 +690,7 @@
 
                 uploadTabContent.innerHTML = `
                     <div class="section-title">🎬 مەزمۇن قاچىلاش ۋە باشقۇرۇش</div>
-                    <div class="form-group" style="margin-top: 15px;">
+                    <div class="form-group" style="margin-top: 14px;">
                         <label>مەزمۇن نامى</label>
                         <input type="text" id="newMovieTitle" class="form-input" placeholder="مەسىلەن: شاھزادە داستانى" autocomplete="off">
                     </div>
@@ -651,13 +705,13 @@
                         </select>
                     </div>
 
-                    <div id="seriesExtraInputs" style="display: none; background: var(--card-bg); padding: 12px; border-radius: 6px; border: 1px solid var(--border-color); margin-bottom: 15px;">
+                    <div id="seriesExtraInputs" style="display: none; background: var(--card-bg); padding: 14px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 16px;">
                         <div class="form-group" style="margin-bottom: 10px;">
                             <label>قىسىم سانى (مەسىلەن: 5)</label>
                             <input type="number" id="seriesTotalCount" class="form-input" value="5" min="1" max="50" oninput="renderEpisodeInputs()">
                         </div>
                         <div style="font-size: 11px; color: var(--accent-color); margin-bottom: 10px;">* تۆۋەندە ھەر بىر قىسىم ئۈچۈن ۋىدېئو ئادرېسىنى كىرگۈزۈڭ:</div>
-                        <div id="episodesInputsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto; padding-right: 5px;"></div>
+                        <div id="episodesInputsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 220px; overflow-y: auto; padding-left: 5px;"></div>
                     </div>
 
                     <div class="form-group">
@@ -680,8 +734,8 @@
 
                     <button type="button" class="action-btn" onclick="addNewMovie()">تورغا مەزمۇن يوللاش</button>
 
-                    <div style="margin-top: 30px;" class="section-title">👥 بارلىق ئەزالار ۋە باشقۇرۇش</div>
-                    <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px; text-align: right;">* سولغا سىيرىپ ئۆچۈرۈڭ، ياكى بېسىپ VIP قوشۇڭ.</div>
+                    <div style="margin-top: 35px;" class="section-title">👥 بارلىق ئەزالار ۋە باشقۇرۇش</div>
+                    <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px;">* سولغا سىيرىپ ئۆچۈرۈڭ، ياكى بېسىپ VIP قوشۇڭ.</div>
                     <div style="margin-top: 5px;" id="allUsersContainer">
                         ${usersListHtml}
                     </div>
@@ -692,9 +746,9 @@
                 navUploadBtn.style.display = 'none';
                 uploadMenuSettingItem.style.display = 'none';
                 uploadTabContent.innerHTML = `
-                    <div class="page-box" style="text-align: center; margin-top: 50px;">
+                    <div class="page-box" style="text-align: center; margin-top: 60px;">
                         <div style="font-size: 40px; margin-bottom: 10px;">🔒</div>
-                        <h3>بۇ بۆلۈم پەقەت باشقۇرغۇچى ئۈچۈنلا ئوچۇق</h3>
+                        <h3 style="font-size: 16px;">بۇ بۆلۈم پەقەت باشقۇرغۇچى ئۈچۈنلا ئوچۇق</h3>
                     </div>
                 `;
             }
@@ -723,8 +777,8 @@
             container.innerHTML = '';
             for (let i = 1; i <= count; i++) {
                 container.innerHTML += `
-                    <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px; border-radius: 5px;">
-                        <div style="font-size: 12px; font-weight: bold; margin-bottom: 4px; text-align: right;">${i}-قىسىم ۋىدېئو URL:</div>
+                    <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 8px; border-radius: 8px;">
+                        <div style="font-size: 11px; font-weight: 600; margin-bottom: 4px;">${i}-قىسىم ۋىدېئو URL:</div>
                         <input type="text" id="ep_url_${i}" class="form-input" placeholder="${i}-قىسىم ئۇلانمىسى" style="padding: 8px; font-size: 12px;" autocomplete="off">
                     </div>
                 `;
@@ -860,7 +914,7 @@
                 filteredMovies.forEach(movie => {
                     const isLiked = favorites.includes(movie.id);
                     const isVipMovie = movie.access === 'vip';
-                    const seriesBadge = movie.isSeries ? `<div class="movie-tag" style="background:#2ed573; left:8px; right:auto;">📺 ${movie.totalEpisodes} قىسىم</div>` : '';
+                    const seriesBadge = movie.isSeries ? `<div class="movie-tag" style="background:#2ed573; left:10px; right:auto;">📺 ${movie.totalEpisodes} قىسىم</div>` : '';
                     
                     const cardHtml = `
                         <div class="movie-card">
@@ -880,7 +934,7 @@
                 });
 
                 if (filteredMovies.length === 0 && currentCategory !== 'all') {
-                    gridHtml = '<div style="color: var(--text-secondary); grid-column: span 2; text-align: center; margin-top: 15px;">بۇ تۈردە مەزمۇن يوق</div>';
+                    gridHtml = '<div style="color: var(--text-secondary); grid-column: span 2; text-align: center; margin-top: 20px;">بۇ تۈردە مەزمۇن يوق</div>';
                 }
 
                 container.innerHTML += `
@@ -895,7 +949,7 @@
                 if (favorites.includes(movie.id)) {
                     hasFav = true;
                     const isVipMovie = movie.access === 'vip';
-                    const seriesBadge = movie.isSeries ? `<div class="movie-tag" style="background:#2ed573; left:8px; right:auto;">📺 ${movie.totalEpisodes} قىسىم</div>` : '';
+                    const seriesBadge = movie.isSeries ? `<div class="movie-tag" style="background:#2ed573; left:10px; right:auto;">📺 ${movie.totalEpisodes} قىسىم</div>` : '';
                     favList.innerHTML += `
                         <div class="movie-card">
                             ${isVipMovie ? '<div class="movie-tag">⭐ VIP</div>' : ''}
@@ -913,7 +967,7 @@
             });
 
             if (!hasFav) {
-                favList.innerHTML = '<div style="color: var(--text-secondary); grid-column: span 2; text-align: center; margin-top: 30px;">ياقتۇرغان مەزمۇنلىرىڭىز يوق</div>';
+                favList.innerHTML = '<div style="color: var(--text-secondary); grid-column: span 2; text-align: center; margin-top: 40px;">ياقتۇرغان مەزمۇنلىرىڭىز يوق</div>';
             }
         }
 
