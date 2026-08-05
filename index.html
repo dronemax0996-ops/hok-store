@@ -72,7 +72,7 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* كىرىش ئېلان (Popup) كۆزنىكى ئۇسلۇبى */
+        /* كىرىش ئېلان (Popup) كۆزنىكى ئۇسلۇبى (رەسىمسىز، پەقەت خەت) */
         .popup-overlay {
             position: fixed;
             top: 0;
@@ -90,7 +90,7 @@
         .popup-container {
             background: #1a1a1a;
             width: 90%;
-            max-width: 450px;
+            max-width: 420px;
             border-radius: 14px;
             overflow: hidden;
             position: relative;
@@ -104,7 +104,7 @@
             position: absolute;
             top: 12px;
             right: 15px;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(255, 255, 255, 0.1);
             color: #fff;
             border: none;
             width: 32px;
@@ -123,27 +123,20 @@
             background: #ff4757;
         }
 
-        .popup-image-wrapper img {
-            width: 100%;
-            height: 220px;
-            object-fit: cover;
-            display: block;
-        }
-
         .popup-content {
-            padding: 20px 25px 25px 25px;
+            padding: 35px 25px 25px 25px;
         }
 
         .popup-content h2 {
-            margin: 0 0 10px 0;
+            margin: 0 0 12px 0;
             font-size: 20px;
             color: #ffd700;
         }
 
         .popup-content p {
-            margin: 0 0 20px 0;
+            margin: 0 0 22px 0;
             font-size: 14px;
-            color: #bbb;
+            color: #ccc;
             line-height: 1.6;
         }
 
@@ -157,6 +150,7 @@
             border-radius: 8px;
             cursor: pointer;
             width: 100%;
+            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
             transition: opacity 0.2s;
         }
 
@@ -615,18 +609,13 @@
 </head>
 <body>
 
-    <!-- توربەتكە كىرگەندە ئاپتوماتىك چىقىدىغان كىرىش ئېلان (Popup) كۆزنىكى -->
+    <!-- توربەتكە كىرگەندە ئاپتوماتىك چىقىدىغان كىرىش ئېلان (Popup) كۆزنىكى (رەسىمسىز، پەقەت ئۇيغۇرچە تېكىست) -->
     <div id="welcomePopup" class="popup-overlay" style="display: none;">
         <div class="popup-container">
             <!-- تاقاش توپچىسى (X) -->
             <button class="popup-close" onclick="closePopup()">&times;</button>
             
-            <!-- ئېلان رەسىمى -->
-            <div class="popup-image-wrapper">
-                <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=800&auto=format&fit=crop" alt="كۆزنەك كىنوخانىسى ئېلانى">
-            </div>
-            
-            <!-- مەزمۇنلۇق خەت ۋە تەكلىپ -->
+            <!-- مەزمۇنلۇق ئۇيغۇرچە خەت ۋە تەكلىپ -->
             <div class="popup-content">
                 <h2>🎬 كۆزنەك كىنوخانىسىغا خۇش كەلدىڭىز!</h2>
                 <p>ئەڭ يېڭى، ئەڭ سۈپەتلىك كىنو، تىياتىر ۋە سەھرە ئەسەرلىرىنى بزدە كۆرۈڭ. ھۇزۇرلۇق ۋاقىت سىزگە تىلەيمىز!</p>
@@ -799,14 +788,12 @@
                     splash.style.opacity = '0';
                     setTimeout(() => { 
                         splash.style.display = 'none'; 
-                        // ئېچىلىش ئېكرانى (Splash) غايىب بولغاندىن كېيىن كىرىش ئېلانىنى چىقىرىش
                         showWelcomePopup();
                     }, 500);
                 }
             }, 1800);
         });
 
-        // كىرىش ئېلانىنى باشقۇرۇش فۇنكسىيىلىرى
         function showWelcomePopup() {
             const popup = document.getElementById('welcomePopup');
             if (!sessionStorage.getItem('popupClosed')) {
