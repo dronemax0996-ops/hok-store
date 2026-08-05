@@ -711,7 +711,6 @@
         const detailPage = document.getElementById('detailPage');
 
         window.initFirebaseApp = function() {
-            // كىنولەرنى توردىن ئوقۇش
             const moviesRef = window.dbRef(window.db, 'koznek_movies');
             window.dbOnValue(moviesRef, (snapshot) => {
                 const data = snapshot.val();
@@ -730,7 +729,6 @@
                 renderHomeSections();
             });
 
-            // ئەزالار بازىسىنى توردىن دەل ۋاقتىدا ماس قەدەملەش
             const usersRef = window.dbRef(window.db, 'koznek_users_db');
             window.dbOnValue(usersRef, (snapshot) => {
                 const data = snapshot.val();
@@ -796,7 +794,6 @@
                     usersListHtml = '<div style="color: var(--text-secondary); text-align: center; margin: 15px 0;">ھازىرچە توردا باشقا تىزىملاتقان ئەزا يوق</div>';
                 }
 
-                // ئەگەر باشقۇرغۇچى ھازىرلا باشقۇرۇش بېتىدە تۇرغان بولسا، تىزىملىكنى ئاپتوماتىك يېڭىلاش
                 const existingUsersContainer = document.getElementById('allUsersContainer');
                 if (existingUsersContainer) {
                     existingUsersContainer.innerHTML = usersListHtml;
@@ -842,8 +839,8 @@
                         </div>
 
                         <div class="form-group" id="singleVideoGroup">
-                            <label>ۋىدېئو ئادرېسى (YouTube ياكى Streamable ئۇلانمىسى)</label>
-                            <input type="text" id="newMovieUrl" class="form-input" placeholder="مەسىلەن: https://youtu.be/..." autocomplete="off">
+                            <label>ۋىدېئو ئادرېسى (YouTube نىڭ خالىغان ئۇلانمىسى ياكى Share ئۇلانمىسى)</label>
+                            <input type="text" id="newMovieUrl" class="form-input" placeholder="مەسىلەن: https://youtu.be/... ياكى يۇتۇب ئۇلانمىسى" autocomplete="off">
                         </div>
 
                         <button type="button" class="action-btn" onclick="addNewMovie()">تورغا مەزمۇن يوللاش</button>
@@ -1114,6 +1111,7 @@
             openDetailPage(movie);
         }
 
+        // YouTube ئۇلانمىلىرىنى تولۇق پەرقلەندۈرۈپ توغرا Format قىلىش فۇنكسىيەسى
         function formatVideoUrl(url) {
             if (!url) return '';
             let cleanUrl = url.trim();
@@ -1125,14 +1123,24 @@
                 }
             }
             if (cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be')) {
+                let vId = '';
                 if (cleanUrl.includes('watch?v=')) {
-                    let vId = cleanUrl.split('watch?v=')[1].split('&')[0];
-                    return `https://www.youtube.com/embed/${vId}`;
+                    vId = cleanUrl.split('watch?v=')[1].split('&')[0];
                 } else if (cleanUrl.includes('youtu.be/')) {
-                    let vId = cleanUrl.split('youtu.be/')[1].split('?')[0];
-                    return `https://www.youtube.com/embed/${vId}`;
+                    vId = cleanUrl.split('youtu.be/')[1].split('?')[0];
                 } else if (cleanUrl.includes('/embed/')) {
-                    return cleanUrl;
+                    let parts = cleanUrl.split('/embed/');
+                    if (parts[1]) {
+                        vId = parts[1].split('?')[0];
+                    }
+                } else if (cleanUrl.includes('/shorts/')) {
+                    let parts = cleanUrl.split('/shorts/');
+                    if (parts[1]) {
+                        vId = parts[1].split('?')[0];
+                    }
+                }
+                if (vId) {
+                    return `https://www.youtube.com/embed/${vId}`;
                 }
             }
             return cleanUrl;
