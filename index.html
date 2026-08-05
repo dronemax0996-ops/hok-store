@@ -487,7 +487,7 @@
 </head>
 <body>
 
-    <!-- ئېچىلىش قارشى ئېلىش ئېكرانى (Splash Screen) -->
+    <!-- قارشى ئېلىش ئېكرانى (Splash Screen) -->
     <div id="splashScreen">
         <div></div>
         <div class="splash-content">
@@ -1342,7 +1342,7 @@
                     checkAdminPermissions(); updateAccountUI(); alert('مۇۋەپپەقىيەتلىك كىردىڭىز!');
                 } else { alert('پارول خاتالىق!'); }
             } else {
-                // يېڭى ئابونتنى базаغا بىۋاسىتە خاتىرىلەش
+                // يېڭى ئابونتنى базаغا دەرھال ۋە بىۋاسىتە يېزىش
                 users[username] = { password: password, vipExpire: 0 };
                 try {
                     localStorage.setItem('koznek_users_db', JSON.stringify(users));
@@ -1351,7 +1351,11 @@
                 try {
                     localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
                 } catch (e) {}
-                checkAdminPermissions(); updateAccountUI(); alert('يېڭى ھېسابات تىزىملىتىلدى!');
+                
+                // دەرھال باشقۇرغۇچى ھوقۇقىنى يېڭىلاش نۇسخىسىنى چېكىش
+                checkAdminPermissions(); 
+                updateAccountUI(); 
+                alert('يېڭى ھېسابات تىزىملىتىلدى ۋە ئاكتىپلاندى!');
             }
         }
 
