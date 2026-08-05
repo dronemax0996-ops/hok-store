@@ -43,6 +43,72 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
+        /* Splash Screen (قارشى ئېلىش ئېكرانى) */
+        #splashScreen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #fff0f3 0%, #e6f0ff 100%);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 40px 20px;
+            transition: opacity 0.5s ease;
+        }
+
+        body.dark-mode #splashScreen {
+            background: linear-gradient(135deg, #1a1a1a 0%, #121212 100%);
+        }
+
+        .splash-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        .splash-logo-img {
+            width: 110px;
+            height: 110px;
+            object-fit: contain;
+            margin-bottom: 15px;
+            border-radius: 20px;
+        }
+
+        .splash-brand-text {
+            font-size: 16px;
+            font-weight: 700;
+            color: #d63031;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+
+        .splash-slogan-box {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .splash-slogan-cn {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .splash-slogan-ug {
+            font-size: 13px;
+            color: #d63031;
+            font-weight: 600;
+        }
+
+        .splash-footer {
+            font-size: 11px;
+            color: #888;
+            margin-top: 20px;
+        }
+
         .navbar {
             display: flex;
             justify-content: space-between;
@@ -421,6 +487,20 @@
 </head>
 <body>
 
+    <!-- ئېچىلىش قارشى ئېلىش ئېكرانى (Splash Screen) -->
+    <div id="splashScreen">
+        <div></div>
+        <div class="splash-content">
+            <img src="https://i.ibb.co/31595/31595.jpg" class="splash-logo-img" alt="Koznak Logo" onerror="this.src='https://i.ibb.co/31445/31445.jpg'">
+            <div class="splash-brand-text">- koznak -</div>
+            <div class="splash-slogan-box">
+                <span class="splash-slogan-cn">掌上观影超有趣, koznak好搭档一起快乐看不停!</span>
+                <span class="splash-slogan-ug">ئالقىشىڭىزدىكى كىنوخانا قەلبىناس هەمراھىڭىز كۆزنەك</span>
+            </div>
+        </div>
+        <div class="splash-footer">Copyright © 2016-2025 Koznak</div>
+    </div>
+
     <div class="navbar">
         <div class="logo">كۆزنەك كىنوخانىسى</div>
         <button class="search-btn" onclick="openSearch()">🔍</button>
@@ -574,6 +654,17 @@
     </div>
 
     <script>
+        // قارشى ئېلىش ئېكرانىنى ئاپتوماتىك يوقىتىش
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splashScreen');
+                if (splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => { splash.style.display = 'none'; }, 500);
+                }
+            }, 1800);
+        });
+
         const ADMIN_USERNAME = "nasrulla";
         const ADMIN_MASTER_PASS = "0996";
 
@@ -624,6 +715,8 @@
         if (isLightMode) {
             document.body.classList.add('light-mode');
             document.getElementById('darkModeToggle').checked = true;
+        } else {
+            document.body.classList.add('dark-mode');
         }
 
         const searchModal = document.getElementById('searchModal');
@@ -876,9 +969,11 @@
             const isChecked = document.getElementById('darkModeToggle').checked;
             if (isChecked) {
                 document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
                 localStorage.setItem('koznek_light_mode', 'true');
             } else {
                 document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
                 localStorage.setItem('koznek_light_mode', 'false');
             }
         }
