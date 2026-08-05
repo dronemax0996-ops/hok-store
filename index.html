@@ -31,7 +31,6 @@
         window.dbRemove = remove;
         window.dbOnValue = onValue;
 
-        // تور سانلىق مەلۇماتلىرى تەييار بولغاندا قوزغىتىش
         window.initFirebaseApp();
     </script>
     <style>
@@ -711,7 +710,6 @@
         const searchResults = document.getElementById('searchResults');
         const detailPage = document.getElementById('detailPage');
 
-        // Firebase ئۇلانغاندىن كېيىنكى قوزغىتىش فۇنكسىيەسى
         window.initFirebaseApp = function() {
             // كىنولەرنى توردىن ئوقۇش
             const moviesRef = window.dbRef(window.db, 'koznek_movies');
@@ -798,60 +796,67 @@
                     usersListHtml = '<div style="color: var(--text-secondary); text-align: center; margin: 15px 0;">ھازىرچە توردا باشقا تىزىملاتقان ئەزا يوق</div>';
                 }
 
-                uploadTabContent.innerHTML = `
-                    <div class="section-title">🎬 مەزمۇن قاچىلاش ۋە باشقۇرۇش</div>
-                    <div class="form-group" style="margin-top: 14px;">
-                        <label>مەزمۇن نامى</label>
-                        <input type="text" id="newMovieTitle" class="form-input" placeholder="مەسىلەن: شاھزادە داستانى" autocomplete="off">
-                    </div>
-                    <div class="form-group">
-                        <label>تۈرى (Category)</label>
-                        <select id="newMovieCat" class="form-select" onchange="toggleSeriesInputs()">
-                            <option value="movie">🎬 كىنولەر (بىرتاللا)</option>
-                            <option value="series">📺 قىسىملىق كىنولەر (كۆپ قىسىملىق)</option>
-                            <option value="cartoon">🧸 كارتونلار (بىرتاللا)</option>
-                            <option value="cartoon_series">🧸📺 قىسىملىق كارتۇن (كۆپ قىسىملىق)</option>
-                            <option value="short">📱 قىسقا فىلىملەر</option>
-                        </select>
-                    </div>
-
-                    <div id="seriesExtraInputs" style="display: none; background: var(--card-bg); padding: 14px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 16px;">
-                        <div class="form-group" style="margin-bottom: 10px;">
-                            <label>قىسىم سانى (مەسىلەن: 5)</label>
-                            <input type="number" id="seriesTotalCount" class="form-input" value="5" min="1" max="50" oninput="renderEpisodeInputs()">
+                // ئەگەر باشقۇرغۇچى ھازىرلا باشقۇرۇش بېتىدە تۇرغان بولسا، تىزىملىكنى ئاپتوماتىك يېڭىلاش
+                const existingUsersContainer = document.getElementById('allUsersContainer');
+                if (existingUsersContainer) {
+                    existingUsersContainer.innerHTML = usersListHtml;
+                    initSwipeGestures();
+                } else {
+                    uploadTabContent.innerHTML = `
+                        <div class="section-title">🎬 مەزمۇن قاچىلاش ۋە باشقۇرۇش</div>
+                        <div class="form-group" style="margin-top: 14px;">
+                            <label>مەزمۇن نامى</label>
+                            <input type="text" id="newMovieTitle" class="form-input" placeholder="مەسىلەن: شاھزادە داستانى" autocomplete="off">
                         </div>
-                        <div style="font-size: 11px; color: var(--accent-color); margin-bottom: 10px;">* تۆۋەندە ھەر بىر قىسىم ئۈچۈن ۋىدېئو ئادرېسىنى كىرگۈزۈڭ:</div>
-                        <div id="episodesInputsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 220px; overflow-y: auto; padding-left: 5px;"></div>
-                    </div>
+                        <div class="form-group">
+                            <label>تۈرى (Category)</label>
+                            <select id="newMovieCat" class="form-select" onchange="toggleSeriesInputs()">
+                                <option value="movie">🎬 كىنولەر (بىرتاللا)</option>
+                                <option value="series">📺 قىسىملىق كىنولەر (كۆپ قىسىملىق)</option>
+                                <option value="cartoon">🧸 كارتونلار (بىرتاللا)</option>
+                                <option value="cartoon_series">🧸📺 قىسىملىق كارتۇن (كۆپ قىسىملىق)</option>
+                                <option value="short">📱 قىسقا فىلىملەر</option>
+                            </select>
+                        </div>
 
-                    <div class="form-group">
-                        <label>ئەزا تىپى (Access)</label>
-                        <select id="newMovieAccess" class="form-select">
-                            <option value="free">ھەممىگە ھەقسىز (Free)</option>
-                            <option value="vip">پەقەت VIP ئەزالار ئۈچۈن (⭐ VIP)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>مۇقاۋا رەسىم ئادرېسى (ImgBB نىڭ Direct Link ئادرېسى)</label>
-                        <input type="text" id="newMovieImg" class="form-input" placeholder="https://i.ibb.co/.../image.jpg" autocomplete="off">
-                    </div>
+                        <div id="seriesExtraInputs" style="display: none; background: var(--card-bg); padding: 14px; border-radius: 10px; border: 1px solid var(--border-color); margin-bottom: 16px;">
+                            <div class="form-group" style="margin-bottom: 10px;">
+                                <label>قىسىم سانى (مەسىلەن: 5)</label>
+                                <input type="number" id="seriesTotalCount" class="form-input" value="5" min="1" max="50" oninput="renderEpisodeInputs()">
+                            </div>
+                            <div style="font-size: 11px; color: var(--accent-color); margin-bottom: 10px;">* تۆۋەندە ھەر بىر قىسىم ئۈچۈن ۋىدېئو ئادرېسىنى كىرگۈزۈڭ:</div>
+                            <div id="episodesInputsList" style="display: flex; flex-direction: column; gap: 10px; max-height: 220px; overflow-y: auto; padding-left: 5px;"></div>
+                        </div>
 
-                    <div class="form-group" id="singleVideoGroup">
-                        <label>ۋىدېئو ئادرېسى (YouTube ياكى Streamable ئۇلانمىسى)</label>
-                        <input type="text" id="newMovieUrl" class="form-input" placeholder="مەسىلەن: https://youtu.be/..." autocomplete="off">
-                    </div>
+                        <div class="form-group">
+                            <label>ئەزا تىپى (Access)</label>
+                            <select id="newMovieAccess" class="form-select">
+                                <option value="free">ھەممىگە ھەقسىز (Free)</option>
+                                <option value="vip">پەقەت VIP ئەزالار ئۈچۈن (⭐ VIP)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>مۇقاۋا رەسىم ئادرېسى (ImgBB نىڭ Direct Link ئادرېسى)</label>
+                            <input type="text" id="newMovieImg" class="form-input" placeholder="https://i.ibb.co/.../image.jpg" autocomplete="off">
+                        </div>
 
-                    <button type="button" class="action-btn" onclick="addNewMovie()">تورغا مەزمۇن يوللاش</button>
+                        <div class="form-group" id="singleVideoGroup">
+                            <label>ۋىدېئو ئادرېسى (YouTube ياكى Streamable ئۇلانمىسى)</label>
+                            <input type="text" id="newMovieUrl" class="form-input" placeholder="مەسىلەن: https://youtu.be/..." autocomplete="off">
+                        </div>
 
-                    <div style="margin-top: 35px;" class="section-title">👥 توردا تىزىملاتقان بارلىق ئەزالار</div>
-                    <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px;">* سولغا سىيرىپ ئۆچۈرۈڭ، ياكى بېسىپ VIP قوشۇڭ.</div>
-                    <div style="margin-top: 5px;" id="allUsersContainer">
-                        ${usersListHtml}
-                    </div>
-                `;
-                renderEpisodeInputs();
-                initSwipeGestures();
+                        <button type="button" class="action-btn" onclick="addNewMovie()">تورغا مەزمۇن يوللاش</button>
+
+                        <div style="margin-top: 35px;" class="section-title">👥 توردا تىزىملاتقان بارلىق ئەزالار</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px;">* سولغا سىيرىپ ئۆچۈرۈڭ، ياكى بېسىپ VIP قوشۇڭ.</div>
+                        <div style="margin-top: 5px;" id="allUsersContainer">
+                            ${usersListHtml}
+                        </div>
+                    `;
+                    renderEpisodeInputs();
+                    initSwipeGestures();
+                }
             } else {
                 navUploadBtn.style.display = 'none';
                 uploadMenuSettingItem.style.display = 'none';
