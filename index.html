@@ -72,7 +72,6 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* كىرىش ئېلان (Popup) كۆزنىكى ئۇسلۇبى (رەسىمسىز، پەقەت خەت) */
         .popup-overlay {
             position: fixed;
             top: 0;
@@ -166,7 +165,7 @@
         #splashScreen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #1f0406 0%, #121212 100%);
+            background: linear-gradient(135deg, #160204 0%, #121212 100%);
             z-index: 99999;
             display: flex;
             flex-direction: column;
@@ -185,49 +184,62 @@
             text-align: center;
         }
 
-        .splash-logo-img {
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-            margin-bottom: 20px;
-            border-radius: 24px;
-            box-shadow: 0 8px 25px rgba(229, 9, 20, 0.4);
-            border: 2px solid var(--accent-color);
+        .splash-cinema-icon {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #E50914, #b20710);
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            box-shadow: 0 10px 30px rgba(229, 9, 20, 0.4);
+            margin-bottom: 22px;
+            position: relative;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            animation: pulseLogo 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseLogo {
+            0% { transform: scale(1); box-shadow: 0 10px 30px rgba(229, 9, 20, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 15px 40px rgba(229, 9, 20, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 10px 30px rgba(229, 9, 20, 0.4); }
         }
 
         .splash-brand-text {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 800;
-            color: var(--accent-color);
-            letter-spacing: 1px;
+            color: #fff;
+            letter-spacing: 0.8px;
             margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .splash-brand-text span {
+            color: var(--accent-color);
         }
 
         .splash-slogan-box {
             text-align: center;
             display: flex;
             flex-direction: column;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px 20px;
-            border-radius: 12px;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 16px 22px;
+            border-radius: 14px;
             border: 1px solid var(--border-color);
-        }
-
-        .splash-slogan-cn {
-            font-size: 13px;
-            color: #aaa;
+            max-width: 340px;
         }
 
         .splash-slogan-ug {
-            font-size: 14px;
-            color: #fff;
+            font-size: 13px;
+            color: #eee;
             font-weight: 600;
         }
 
         .splash-footer {
             font-size: 11px;
-            color: #777;
+            color: #666;
             margin-top: 20px;
         }
 
@@ -609,13 +621,10 @@
 </head>
 <body>
 
-    <!-- توربەتكە كىرگەندە ئاپتوماتىك چىقىدىغان كىرىش ئېلان (Popup) كۆزنىكى (رەسىمسىز، پەقەت ئۇيغۇرچە تېكىست) -->
+    <!-- توربەتكە كىرگەندە ئاپتوماتىك چىقىدىغان كىرىش ئېلان (Popup) كۆزنىكى -->
     <div id="welcomePopup" class="popup-overlay" style="display: none;">
         <div class="popup-container">
-            <!-- تاقاش توپچىسى (X) -->
             <button class="popup-close" onclick="closePopup()">&times;</button>
-            
-            <!-- مەزمۇنلۇق ئۇيغۇرچە خەت ۋە تەكلىپ -->
             <div class="popup-content">
                 <h2>🎬 كۆزنەك كىنوخانىسىغا خۇش كەلدىڭىز!</h2>
                 <p>ئەڭ يېڭى، ئەڭ سۈپەتلىك كىنو، تىياتىر ۋە سەھرە ئەسەرلىرىنى بزدە كۆرۈڭ. ھۇزۇرلۇق ۋاقىت سىزگە تىلەيمىز!</p>
@@ -624,14 +633,14 @@
         </div>
     </div>
 
+    <!-- كۆزنەك كىنوخانىسى باش ئېلان (Splash Screen) -->
     <div id="splashScreen">
         <div></div>
         <div class="splash-content">
-            <img src="https://i.ibb.co/31595/31595.jpg" class="splash-logo-img" alt="Koznak Logo" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80'">
-            <div class="splash-brand-text">كۆزنەك كىنوخانىسى</div>
+            <div class="splash-cinema-icon">🎬</div>
+            <div class="splash-brand-text">كۆزنەك <span>كىنوخانىسى</span></div>
             <div class="splash-slogan-box">
-                <span class="splash-slogan-cn">掌上观影超有趣, koznak好搭档一起快乐看不停!</span>
-                <span class="splash-slogan-ug">ئالقىشىڭىزدىكى كىنوخانا قەلبىناس هەمراھىڭىز - كۆزنەك</span>
+                <span class="splash-slogan-ug">ئالقىشىڭىزدىكى كىنوخانا قەلبىناس همراھىڭىز - كۆزنەك</span>
             </div>
         </div>
         <div class="splash-footer">Copyright © 2016-2026 Koznak Store</div>
