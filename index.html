@@ -263,6 +263,97 @@
         .fav-btn.liked { color: var(--accent-color); }
         .del-btn { background: none; border: none; font-size: 15px; cursor: pointer; color: #ff4757; padding: 4px; }
 
+        /* TikTok / Kuaishou ئۇسلۇبىدىكى قىسقا فىلىم ئېكرانى */
+        .shorts-container {
+            position: fixed;
+            top: 57px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 57px - 60px);
+            background-color: #000;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+            z-index: 99;
+        }
+        .shorts-container::-webkit-scrollbar { display: none; }
+
+        .short-item-card {
+            width: 100%;
+            height: 100%;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .short-item-card video, .short-item-card iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: none;
+        }
+
+        .short-overlay-info {
+            position: absolute;
+            bottom: 30px;
+            right: 20px;
+            left: 80px;
+            color: #fff;
+            z-index: 2;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+            pointer-events: none;
+        }
+
+        .short-title-txt {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .short-desc-txt {
+            font-size: 12px;
+            color: #ddd;
+        }
+
+        .short-side-actions {
+            position: absolute;
+            bottom: 40px;
+            left: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            z-index: 3;
+        }
+
+        .short-action-btn {
+            background: rgba(0, 0, 0, 0.4);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .short-action-btn.liked { color: var(--accent-color); }
+        .short-action-lbl {
+            font-size: 10px;
+            color: #fff;
+            margin-top: 2px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+        }
+
         .detail-page {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-color); z-index: 2000; overflow-y: auto; padding-bottom: 50px;
@@ -454,6 +545,13 @@
         <div id="homeSectionsContainer"></div>
     </div>
 
+    <!-- TikTok ئۇسلۇبىدىكى قىسقا فىلىملەر تەتقىقات ئېكرانى -->
+    <div id="shortsTab" class="tab-content">
+        <div class="shorts-container" id="shortsContainerList">
+            <!-- JavaScript ئارقىلىق قىسقا فىلىملەر بۇ يەرگە تولدۇرۇلىدۇ -->
+        </div>
+    </div>
+
     <div id="favTab" class="tab-content">
         <div class="category-section" style="margin-top: 15px;">
             <div class="section-title">❤️ ياقتۇرغان مەزمۇنلىرىم</div>
@@ -550,7 +648,7 @@
                             <span class="settings-item-desc">يېڭى كىنو ۋە ئەزالارنى باشقۇرۇش</span>
                         </div>
                     </div>
-                    <button type="button" class="action-btn" style="width: auto; padding: 6px 14px; font-size: 13px; margin: 0; box-shadow: none;" onclick="switchTab('uploadTab', document.querySelectorAll('.nav-item')[2])">ئېچىش</button>
+                    <button type="button" class="action-btn" style="width: auto; padding: 6px 14px; font-size: 13px; margin: 0; box-shadow: none;" onclick="switchTab('uploadTab', document.querySelectorAll('.nav-item')[3])">ئېچىش</button>
                 </div>
 
                 <div class="settings-row-item">
@@ -638,6 +736,10 @@
             <span>🏠</span>
             <span>باش بەت</span>
         </button>
+        <button class="nav-item" onclick="switchTab('shortsTab', this)">
+            <span>📱</span>
+            <span>قىسقا فىلىم</span>
+        </button>
         <button class="nav-item" onclick="switchTab('favTab', this)">
             <span>❤️</span>
             <span>ياقتۇرغان</span>
@@ -718,6 +820,7 @@
                     window.dbSet(moviesRef, movies);
                 }
                 renderHomeSections();
+                renderShortsFeed();
             });
 
             const usersRef = window.dbRef(window.db, 'koznek_users_db');
@@ -1029,7 +1132,7 @@
                     localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
                     updateAccountUI();
                 }
-                alert(`${selectedActionUser} نىڭ ئەزالىقىدىن 1 ئاي ئازايتىلدى!`);
+                alert(`${selectedActionUser} نىڭ ئەزالىقىدىدىن 1 ئاي ئازايتىلدى!`);
                 closeUserActionModal();
                 checkAdminPermissions();
             });
@@ -1113,7 +1216,6 @@
 
             let totalVisibleMovies = 0;
 
-            // ئالدى بىلەن يېڭى يوللانغان مەزمۇنلار تەۋسىيە (Featured) سۈپىتىدە كۆرسىتىلىدۇ
             let allReversed = movies.slice().reverse();
             if (allReversed.length > 0 && currentCategory === 'all') {
                 let featuredHtml = '';
@@ -1219,6 +1321,102 @@
             }
         }
 
+        /* قىسقا فىلىملەر تەتقىقات ئېكرانىنى تولدۇرۇش ۋە پەقەت ئېكراندىكىسىلا قويۇلۇش لوگىكىسى */
+        function renderShortsFeed() {
+            const container = document.getElementById('shortsContainerList');
+            if (!container) return;
+            container.innerHTML = '';
+
+            let shortsList = movies.filter(m => m.cat === 'short').slice().reverse();
+
+            if (shortsList.length === 0) {
+                container.innerHTML = `
+                    <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff; text-align: center; padding: 20px;">
+                        <div style="font-size: 40px; margin-bottom: 10px;">📱</div>
+                        <div style="font-size: 16px; font-weight: 600;">ھازىرچە قىسقا فىلىم يوق</div>
+                        <div style="font-size: 12px; color: #aaa; margin-top: 6px;">باشقۇرۇش بېتىدىن «قىسقا فىلىملەر» تۈرىدە مەزمۇن قوشۇڭ.</div>
+                    </div>
+                `;
+                return;
+            }
+
+            shortsList.forEach(movie => {
+                let formattedUrl = formatVideoUrl(movie.url);
+                const isLiked = favorites.includes(movie.id);
+
+                let mediaElement = '';
+                if (formattedUrl.includes('vimeo.com') || formattedUrl.includes('youtube.com') || formattedUrl.includes('embed')) {
+                    let cleanEmbedUrl = formattedUrl;
+                    if (cleanEmbedUrl.includes('autoplay=1')) {
+                        cleanEmbedUrl = cleanEmbedUrl.replace('autoplay=1', 'autoplay=0');
+                    }
+                    if (!cleanEmbedUrl.includes('enablejsapi=1')) {
+                        cleanEmbedUrl += (cleanEmbedUrl.includes('?') ? '&' : '?') + 'enablejsapi=1';
+                    }
+                    mediaElement = `<iframe class="short-media-element" src="${cleanEmbedUrl}" allow="autoplay" allowfullscreen></iframe>`;
+                } else {
+                    mediaElement = `<video class="short-media-element" src="${formattedUrl}" playsinline loop preload="metadata"></video>`;
+                }
+
+                container.innerHTML += `
+                    <div class="short-item-card">
+                        ${mediaElement}
+                        <div class="short-overlay-info">
+                            <div class="short-title-txt">${movie.title}</div>
+                            <div class="short-desc-txt">#كۆزنەككىنوخانىسى #قىسقافىلىم</div>
+                        </div>
+                        <div class="short-side-actions">
+                            <button class="short-action-btn ${isLiked ? 'liked' : ''}" onclick="toggleFav('${movie.id}'); renderShortsFeed();">
+                                <span>❤️</span>
+                            </button>
+                            <span class="short-action-lbl">ياقتۇرۇش</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            setupShortsObserver();
+        }
+
+        function setupShortsObserver() {
+            const container = document.getElementById('shortsContainerList');
+            if (!container) return;
+            const items = container.querySelectorAll('.short-item-card');
+
+            const observerOptions = {
+                root: container,
+                threshold: 0.7 
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    const mediaEl = entry.target.querySelector('.short-media-element');
+                    if (!mediaEl) return;
+
+                    if (entry.isIntersecting) {
+                        if (mediaEl.tagName === 'VIDEO') {
+                            mediaEl.play().catch(err => {});
+                        } else if (mediaEl.tagName === 'IFRAME') {
+                            try {
+                                mediaEl.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+                            } catch(e) {}
+                        }
+                    } else {
+                        if (mediaEl.tagName === 'VIDEO') {
+                            mediaEl.pause();
+                            mediaEl.currentTime = 0;
+                        } else if (mediaEl.tagName === 'IFRAME') {
+                            try {
+                                mediaEl.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                            } catch(e) {}
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            items.forEach(item => observer.observe(item));
+        }
+
         function filterCategory(cat, btnElement) {
             currentCategory = cat;
             document.querySelectorAll('.cat-chip').forEach(btn => btn.classList.remove('active'));
@@ -1239,7 +1437,7 @@
                 let userVipExpire = currentUser ? (currentUser.vipExpire || 0) : 0;
                 if (!currentUser || userVipExpire < now) {
                     alert('بۇ مەزمۇن پەقەت VIP ئەزالار ئۈچۈن! ھېساباتىڭىزدىن ئەزالىقىڭىزنى تەكشۈرۈڭ.');
-                    switchTab('accountTab', document.querySelectorAll('.nav-item')[3]);
+                    switchTab('accountTab', document.querySelectorAll('.nav-item')[4]);
                     return;
                 }
             }
@@ -1267,7 +1465,7 @@
                     let parts = cleanUrl.split('/shorts/');
                     if (parts[1]) vId = parts[1].split('?')[0];
                 }
-                if (vId) return `https://www.youtube.com/embed/${vId}`;
+                if (vId) return `https://www.youtube.com/embed/${vId}?autoplay=1&mute=0&enablejsapi=1`;
             }
             return cleanUrl;
         }
@@ -1275,7 +1473,6 @@
         function openDetailPage(movie) {
             document.getElementById('detailMovieTitle').innerText = movie.title;
             
-            // يوللانغان ۋاقتىنى كۆرسىتىش
             let dateStr = "نامەلۇم";
             if (movie.id) {
                 let dateObj = new Date(parseInt(movie.id));
@@ -1311,7 +1508,6 @@
                 playInDetailPlayer(movie.url);
             }
 
-            // ئوخشاش تۈردىكى 5-6 تەۋسىيە فىلىمنى كۆرسىتىش
             renderRelatedMovies(movie);
 
             detailPage.style.display = 'block';
@@ -1322,7 +1518,6 @@
             const relatedGrid = document.getElementById('relatedMoviesGrid');
             relatedGrid.innerHTML = '';
 
-            // ئوخشاش تۈردىكى (Category) فىلىملەرنى سۈزۈپ چىقىش (ئۆزىدىن باشقا)
             let relatedList = movies.filter(m => m.cat === currentMovie.cat && m.id !== currentMovie.id).slice().reverse().slice(0, 6);
 
             if (relatedList.length === 0) {
@@ -1389,7 +1584,13 @@
             document.getElementById(tabId).classList.add('active-tab');
             document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
             if (btnElement) btnElement.classList.add('active');
+            
+            if (tabId !== 'shortsTab') {
+                document.querySelectorAll('.shorts-container video').forEach(v => { v.pause(); });
+            }
+
             if (tabId === 'uploadTab') checkAdminPermissions();
+            if (tabId === 'shortsTab') renderShortsFeed();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1403,6 +1604,7 @@
                 localStorage.setItem('koznek_favs', JSON.stringify(favorites));
             } catch (e) {}
             renderHomeSections();
+            renderShortsFeed();
         }
 
         function addNewMovie() {
@@ -1471,6 +1673,7 @@
                 const moviesRef = window.dbRef(window.db, 'koznek_movies');
                 window.dbSet(moviesRef, movies).then(() => {
                     renderHomeSections();
+                    renderShortsFeed();
                 });
             }
         }
@@ -1517,7 +1720,7 @@
                     try {
                         localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
                     } catch (e) {}
-                    checkAdminPermissions(); updateAccountUI(); renderHomeSections();
+                    checkAdminPermissions(); updateAccountUI(); renderHomeSections(); renderShortsFeed();
                     alert('خۇش كەپسىز باشقۇرغۇچى (nasrulla)!'); return;
                 } else { alert('باشقۇرغۇچى پارولى خاتالىق!'); return; }
             }
@@ -1561,7 +1764,7 @@
                 localStorage.removeItem('koznek_current_user');
             } catch (e) {}
             currentUser = null;
-            checkAdminPermissions(); updateAccountUI(); renderHomeSections();
+            checkAdminPermissions(); updateAccountUI(); renderHomeSections(); renderShortsFeed();
             alert('ھېساباتتىن چېكىندىڭىز.');
         }
 
