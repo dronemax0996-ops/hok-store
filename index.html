@@ -72,7 +72,6 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* دائىملىق ئالاقىلىشىش كۇنۇپكىسى */
         .floating-contact-btn {
             position: fixed;
             bottom: 75px;
@@ -92,9 +91,7 @@
             transition: transform 0.2s;
             border: 1px solid rgba(255,255,255,0.2);
         }
-        .floating-contact-btn:hover {
-            transform: scale(1.05);
-        }
+        .floating-contact-btn:hover { transform: scale(1.05); }
 
         .popup-overlay {
             position: fixed;
@@ -123,7 +120,6 @@
             display: flex; align-items: center; justify-content: center;
             transition: background 0.2s;
         }
-
         .popup-close:hover { background: #ff4757; color: #fff; }
 
         .popup-content { padding: 35px 25px 25px 25px; }
@@ -282,7 +278,9 @@
         .detail-player-box video, .detail-player-box iframe { width: 100%; height: 100%; border: none; object-fit: contain; }
 
         .detail-content-info { padding: 20px; }
-        .detail-movie-title { font-size: 18px; font-weight: 700; color: var(--text-color); margin-bottom: 15px; }
+        .detail-movie-title { font-size: 18px; font-weight: 700; color: var(--text-color); margin-bottom: 4px; }
+        .detail-movie-date { font-size: 12px; color: var(--text-secondary); margin-bottom: 15px; }
+
         .detail-episodes-section { margin-top: 20px; }
         .detail-episodes-title { font-size: 14px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; }
         .detail-episodes-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
@@ -292,6 +290,9 @@
             padding: 10px 5px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; text-align: center;
         }
         .detail-ep-btn.active { background-color: var(--accent-color); border-color: var(--accent-color); color: white; }
+
+        .related-section { margin-top: 30px; }
+        .related-title { font-size: 15px; font-weight: 700; color: var(--text-color); margin-bottom: 12px; border-right: 3px solid var(--accent-color); padding-right: 8px; }
 
         .page-box { padding: 20px; max-width: 600px; margin: 0 auto; }
         .form-group { margin-bottom: 16px; }
@@ -341,6 +342,7 @@
         .user-action-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; color: var(--text-color); }
         .popup-btn { width: 100%; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 700; border: none; cursor: pointer; margin-bottom: 10px; }
         .popup-btn-add { background-color: #2ed573; color: white; }
+        .popup-btn-sub { background-color: #ffa502; color: white; }
         .popup-btn-revoke { background-color: #ff4757; color: white; }
         .popup-btn-close { background-color: #444; color: white; margin-bottom: 0; }
 
@@ -352,9 +354,7 @@
             box-shadow: 0 6px 20px rgba(0,0,0,0.04); position: relative; text-align: center;
         }
 
-        .profile-top-row {
-            display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 18px;
-        }
+        .profile-top-row { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 18px; }
 
         .profile-avatar-circle {
             width: 90px; height: 90px; border-radius: 50%;
@@ -409,7 +409,6 @@
 </head>
 <body>
 
-    <!-- دائىملىق ئالاقىلىشىش كۇنۇپكىسى -->
     <a href="https://t.me/kuznakkino" target="_blank" class="floating-contact-btn">
         <span>💬</span> ئالاقىلىشىش
     </a>
@@ -468,7 +467,6 @@
 
     <div id="accountTab" class="tab-content">
         <div class="page-box" style="text-align: center;">
-            
             <div style="display: flex; flex-direction: column; align-items: center; margin-top: 10px; margin-bottom: 20px;">
                 <div class="profile-avatar-circle" id="mainAccountAvatarBox" onclick="document.getElementById('phoneImageInput').click()" title="رەسىمنى ئۆزگەرتىش ئۈچۈن بېسىڭ">
                     👤
@@ -505,7 +503,6 @@
         </div>
     </div>
 
-    <!-- ئەزالىق ئېچىش بېتى -->
     <div id="vipOpenTab" class="tab-content">
         <div class="page-box" style="max-width: 450px; text-align: right;">
             <div class="section-title" style="font-size: 18px; margin-bottom: 15px; text-align: center;">👑 ئەزالىق ئېچىش مەركىزى</div>
@@ -522,10 +519,8 @@
         </div>
     </div>
 
-    <!-- تەڭشەك بېتى -->
     <div id="settingsTab" class="tab-content">
         <div class="settings-page-wrapper">
-            
             <div class="user-profile-card">
                 <div class="profile-top-row">
                     <div class="profile-avatar-circle" id="settingsAvatarBox">👤</div>
@@ -547,7 +542,6 @@
             <div class="section-title">تەڭشەكلەر</div>
 
             <div class="settings-block-card">
-                
                 <div class="settings-row-item" id="uploadMenuSettingItem" style="display: none;">
                     <div class="settings-row-right">
                         <div class="settings-icon-box">📂</div>
@@ -588,7 +582,7 @@
                     </div>
                 </div>
 
-                <div class="settings-row-item" onclick="alert('كۆزنەك كىنوخانىسى v2.7. ئەڭ سۈپەتلىك كىنو سەھنىسى.')" style="cursor: pointer;">
+                <div class="settings-row-item" onclick="alert('كۆزنەك كىنوخانىسى v2.8. ئەڭ سۈپەتلىك كىنو سەھنىسى.')" style="cursor: pointer;">
                     <div class="settings-row-right">
                         <div class="settings-icon-box">📄</div>
                         <div class="settings-text-box">
@@ -598,7 +592,6 @@
                     </div>
                     <div style="color: var(--text-secondary); font-size: 14px;">›</div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -607,6 +600,7 @@
         <div class="user-action-card">
             <div class="user-action-title" id="popupUserName">ئابونت: </div>
             <button type="button" class="popup-btn popup-btn-add" onclick="popupGrantVip()">+ 1 ئاي ئەزالىق قوشۇش</button>
+            <button type="button" class="popup-btn popup-btn-sub" onclick="popupSubVip()">- 1 ئاي ئەزالىق ئازايتىش</button>
             <button type="button" class="popup-btn popup-btn-revoke" onclick="popupRevokeVip()">ئەزالىقنى توشقۇزۇش</button>
             <button type="button" class="popup-btn popup-btn-close" onclick="closeUserActionModal()">چېكىنىش</button>
         </div>
@@ -619,9 +613,16 @@
         <div class="detail-player-box" id="detailPlayerBox"></div>
         <div class="detail-content-info">
             <div class="detail-movie-title" id="detailMovieTitle">كىنو ئىسمى</div>
+            <div class="detail-movie-date" id="detailMovieDate">يوللانغان ۋاقتى: -</div>
+            
             <div class="detail-episodes-section" id="detailEpisodesSection" style="display: none;">
                 <div class="detail-episodes-title">قىسىملارنى تاللاڭ:</div>
                 <div class="detail-episodes-grid" id="detailEpisodesGrid"></div>
+            </div>
+
+            <div class="related-section">
+                <div class="related-title">تەۋسىيە فىلىملەر</div>
+                <div class="movie-grid" id="relatedMoviesGrid" style="margin-top: 10px;"></div>
             </div>
         </div>
     </div>
@@ -691,6 +692,7 @@
         let currentUser = null;
         let favorites = [];
         let selectedActionUser = null;
+        let uploadedPosterBase64 = "";
 
         try {
             currentUser = JSON.parse(localStorage.getItem('koznek_current_user')) || null;
@@ -761,6 +763,21 @@
                     updateAccountUI();
                     alert('شەخسىي رەسىمى مۇۋەپپەقىيەتلىك ئۆزگەرتىلدى!');
                 });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function handleMoviePosterSelected(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(uploadEvent) {
+                uploadedPosterBase64 = uploadEvent.target.result;
+                const previewBox = document.getElementById('posterPreviewBox');
+                if (previewBox) {
+                    previewBox.innerHTML = `<img src="${uploadedPosterBase64}" style="width:100%; height:100%; object-fit:cover; border-radius:10px;">`;
+                }
             };
             reader.readAsDataURL(file);
         }
@@ -857,8 +874,11 @@
                         </div>
                         
                         <div class="form-group">
-                            <label>مۇقاۋا رەسىم ئادرېسى (ImgBB نىڭ Direct Link ئادرېسى)</label>
-                            <input type="text" id="newMovieImg" class="form-input" placeholder="https://i.ibb.co/.../image.jpg" autocomplete="off">
+                            <label>مۇقاۋا رەسىم (تېلېفوندىن تاللاش)</label>
+                            <div id="posterPreviewBox" onclick="document.getElementById('moviePosterFile').click()" style="width: 100%; height: 120px; background: var(--card-bg); border: 2px dashed var(--border-color); border-radius: 10px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-secondary); font-size: 13px;">
+                                📷 بۇ يەرنى بېسىپ تېلېفوندىن رەسىم تاللاڭ
+                            </div>
+                            <input type="file" id="moviePosterFile" accept="image/*" style="display: none;" onchange="handleMoviePosterSelected(event)">
                         </div>
 
                         <div class="form-group" id="singleVideoGroup">
@@ -869,7 +889,7 @@
                         <button type="button" class="action-btn" onclick="addNewMovie()">تورغا مەزمۇن يوللاش</button>
 
                         <div style="margin-top: 35px;" class="section-title">توردا تىزىملاتقان بارلىق ئەزالار</div>
-                        <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px;">* سولغا سىيرىپ ئۆچۈرۈڭ، ياكى بېسىپ VIP قوشۇڭ.</div>
+                        <div style="font-size: 11px; color: var(--text-secondary); margin-bottom: 8px;">* سولغا سىيرىپ ئۆچۈرۈڭ، ياكى بېسىپ VIP تەڭشەڭ.</div>
                         <div style="margin-top: 5px;" id="allUsersContainer">
                             ${usersListHtml}
                         </div>
@@ -986,6 +1006,35 @@
             });
         }
 
+        function popupSubVip() {
+            if (!selectedActionUser) return;
+            let now = new Date().getTime();
+            let currentExpire = globalUsersDb[selectedActionUser] && globalUsersDb[selectedActionUser].vipExpire ? globalUsersDb[selectedActionUser].vipExpire : now;
+            
+            if (currentExpire <= now) {
+                alert('بۇ ئەزانىڭ ئاكتىپ VIP ۋاقتى يوق ياكى ئاللىقاچان توشقان!');
+                return;
+            }
+
+            let newExpire = currentExpire - (30 * 24 * 60 * 60 * 1000);
+            if (newExpire < now) newExpire = now;
+
+            const userExpireRef = window.dbRef(window.db, 'koznek_users_db/' + selectedActionUser);
+            let userData = globalUsersDb[selectedActionUser] || { password: '123' };
+            userData.vipExpire = newExpire;
+
+            window.dbSet(userExpireRef, userData).then(() => {
+                if (currentUser && currentUser.name.toLowerCase() === selectedActionUser.toLowerCase()) {
+                    currentUser.vipExpire = newExpire;
+                    localStorage.setItem('koznek_current_user', JSON.stringify(currentUser));
+                    updateAccountUI();
+                }
+                alert(`${selectedActionUser} نىڭ ئەزالىقىدىن 1 ئاي ئازايتىلدى!`);
+                closeUserActionModal();
+                checkAdminPermissions();
+            });
+        }
+
         function popupRevokeVip() {
             if (!selectedActionUser) return;
             if (confirm(`راستلا ${selectedActionUser} نىڭ ئەزالىقىنى توشقۇزۇپ، ئادەتتىكى ئەزا قىلىۋەمسىز?`)) {
@@ -1064,20 +1113,16 @@
 
             let totalVisibleMovies = 0;
 
-            categoryMeta.forEach(catObj => {
-                if (currentCategory !== 'all' && currentCategory !== catObj.key) return;
-
-                let filteredMovies = movies.filter(m => m.cat === catObj.key).slice().reverse();
-                if (filteredMovies.length === 0 && currentCategory === 'all') return;
-
-                totalVisibleMovies += filteredMovies.length;
-                let gridHtml = '';
-                filteredMovies.forEach(movie => {
+            // ئالدى بىلەن يېڭى يوللانغان مەزمۇنلار تەۋسىيە (Featured) سۈپىتىدە كۆرسىتىلىدۇ
+            let allReversed = movies.slice().reverse();
+            if (allReversed.length > 0 && currentCategory === 'all') {
+                let featuredHtml = '';
+                allReversed.slice(0, 4).forEach(movie => {
                     const isLiked = favorites.includes(movie.id);
                     const isVipMovie = movie.access === 'vip';
                     const seriesBadge = movie.isSeries ? `<div class="movie-tag" style="background:#2ed573; left:10px; right:auto;">📺 ${movie.totalEpisodes} قىسىم</div>` : '';
                     
-                    const cardHtml = `
+                    featuredHtml += `
                         <div class="movie-card">
                             ${isVipMovie ? '<div class="movie-tag">⭐ VIP</div>' : ''}
                             ${seriesBadge}
@@ -1091,12 +1136,44 @@
                             </div>
                         </div>
                     `;
-                    gridHtml += cardHtml;
                 });
 
-                if (filteredMovies.length === 0 && currentCategory !== 'all') {
-                    gridHtml = '<div style="color: var(--text-secondary); grid-column: span 2; text-align: center; margin-top: 20px;">بۇ تۈردە مەزمۇن يوق</div>';
-                }
+                container.innerHTML += `
+                    <div class="category-section" style="margin-top: 10px;">
+                        <div class="section-title">🔥 تەۋسىيە ۋە يېڭى مەزمۇنلار</div>
+                        <div class="movie-grid">${featuredHtml}</div>
+                    </div>
+                `;
+            }
+
+            categoryMeta.forEach(catObj => {
+                if (currentCategory !== 'all' && currentCategory !== catObj.key) return;
+
+                let filteredMovies = movies.filter(m => m.cat === catObj.key).slice().reverse();
+                if (filteredMovies.length === 0 && currentCategory === 'all') return;
+
+                totalVisibleMovies += filteredMovies.length;
+                let gridHtml = '';
+                filteredMovies.forEach(movie => {
+                    const isLiked = favorites.includes(movie.id);
+                    const isVipMovie = movie.access === 'vip';
+                    const seriesBadge = movie.isSeries ? `<div class="movie-tag" style="background:#2ed573; left:10px; right:auto;">📺 ${movie.totalEpisodes} قىسىم</div>` : '';
+                    
+                    gridHtml += `
+                        <div class="movie-card">
+                            ${isVipMovie ? '<div class="movie-tag">⭐ VIP</div>' : ''}
+                            ${seriesBadge}
+                            <img src="${movie.img}" class="movie-poster" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80'" onclick="handleCardClick('${movie.id}')">
+                            <div class="movie-footer">
+                                <div class="movie-name">${movie.title}</div>
+                                <div class="card-actions">
+                                    ${isAdmin ? `<button class="del-btn" onclick="event.stopPropagation(); deleteMovie('${movie.id}')">🗑️</button>` : ''}
+                                    <button class="fav-btn ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleFav('${movie.id}')">❤️</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
 
                 container.innerHTML += `
                     <div class="category-section">
@@ -1175,9 +1252,7 @@
             
             if (cleanUrl.includes('vimeo.com')) {
                 let match = cleanUrl.match(/(\d+)/);
-                if (match) {
-                    return `https://player.vimeo.com/video/${match[0]}`;
-                }
+                if (match) return `https://player.vimeo.com/video/${match[0]}`;
             }
             if (cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be')) {
                 let vId = '';
@@ -1187,24 +1262,30 @@
                     vId = cleanUrl.split('youtu.be/')[1].split('?')[0];
                 } else if (cleanUrl.includes('/embed/')) {
                     let parts = cleanUrl.split('/embed/');
-                    if (parts[1]) {
-                        vId = parts[1].split('?')[0];
-                    }
+                    if (parts[1]) vId = parts[1].split('?')[0];
                 } else if (cleanUrl.includes('/shorts/')) {
                     let parts = cleanUrl.split('/shorts/');
-                    if (parts[1]) {
-                        vId = parts[1].split('?')[0];
-                    }
+                    if (parts[1]) vId = parts[1].split('?')[0];
                 }
-                if (vId) {
-                    return `https://www.youtube.com/embed/${vId}`;
-                }
+                if (vId) return `https://www.youtube.com/embed/${vId}`;
             }
             return cleanUrl;
         }
 
         function openDetailPage(movie) {
             document.getElementById('detailMovieTitle').innerText = movie.title;
+            
+            // يوللانغان ۋاقتىنى كۆرسىتىش
+            let dateStr = "نامەلۇم";
+            if (movie.id) {
+                let dateObj = new Date(parseInt(movie.id));
+                if (!isNaN(dateObj)) {
+                    dateStr = `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate())
+                    .padStart(2, '0')} ${String(dateObj.getHours()).padStart(2, '0')}:${String(dateObj.getMinutes()).padStart(2, '0')}`;
+                }
+            }
+            document.getElementById('detailMovieDate').innerText = `يوللانغان ۋاقتى: ${dateStr}`;
+
             const episodesSection = document.getElementById('detailEpisodesSection');
             const episodesGrid = document.getElementById('detailEpisodesGrid');
             
@@ -1230,7 +1311,44 @@
                 playInDetailPlayer(movie.url);
             }
 
+            // ئوخشاش تۈردىكى 5-6 تەۋسىيە فىلىمنى كۆرسىتىش
+            renderRelatedMovies(movie);
+
             detailPage.style.display = 'block';
+            detailPage.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function renderRelatedMovies(currentMovie) {
+            const relatedGrid = document.getElementById('relatedMoviesGrid');
+            relatedGrid.innerHTML = '';
+
+            // ئوخشاش تۈردىكى (Category) فىلىملەرنى سۈزۈپ چىقىش (ئۆزىدىن باشقا)
+            let relatedList = movies.filter(m => m.cat === currentMovie.cat && m.id !== currentMovie.id).slice().reverse().slice(0, 6);
+
+            if (relatedList.length === 0) {
+                relatedGrid.innerHTML = '<div style="color: var(--text-secondary); font-size: 13px; grid-column: span 2;">بۇ تۈردە باشقا فىلىم يوق</div>';
+                return;
+            }
+
+            relatedList.forEach(movie => {
+                const isLiked = favorites.includes(movie.id);
+                const isVipMovie = movie.access === 'vip';
+                const seriesBadge = movie.isSeries ? `<div class="movie-tag" style="background:#2ed573; left:10px; right:auto;">📺 ${movie.totalEpisodes} قىسىم</div>` : '';
+                
+                relatedGrid.innerHTML += `
+                    <div class="movie-card">
+                        ${isVipMovie ? '<div class="movie-tag">⭐ VIP</div>' : ''}
+                        ${seriesBadge}
+                        <img src="${movie.img}" class="movie-poster" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80'" onclick="handleCardClick('${movie.id}')">
+                        <div class="movie-footer">
+                            <div class="movie-name">${movie.title}</div>
+                            <div class="card-actions">
+                                <button class="fav-btn ${isLiked ? 'liked' : ''}" onclick="event.stopPropagation(); toggleFav('${movie.id}')">❤️</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
         function playInDetailPlayer(url) {
@@ -1293,11 +1411,12 @@
             const title = titleInput.value.trim();
             const cat = document.getElementById('newMovieCat').value;
             const access = document.getElementById('newMovieAccess').value;
-            const posterInput = document.getElementById('newMovieImg');
-            const posterUrl = posterInput && posterInput.value.trim() ? posterInput.value.trim() : 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=300&q=80';
 
             if (!title) {
                 alert('مەزمۇن نامىنى چوقۇم كىرگۈزۈڭ!'); return;
+            }
+            if (!uploadedPosterBase64) {
+                alert('تېلېفوندىن مۇقاۋا رەسىم تاللاڭ!'); return;
             }
 
             const isSeries = (cat === 'series' || cat === 'cartoon_series');
@@ -1324,7 +1443,7 @@
                 title: title,
                 cat: cat,
                 access: access,
-                img: posterUrl,
+                img: uploadedPosterBase64,
                 url: isSeries ? (episodesArr[0] ? episodesArr[0].url : '') : singleVideoUrl,
                 isSeries: isSeries,
                 totalEpisodes: isSeries ? totalEpCount : 1,
@@ -1336,6 +1455,7 @@
             const moviesRef = window.dbRef(window.db, 'koznek_movies');
             window.dbSet(moviesRef, movies).then(() => {
                 alert('مەزمۇن مۇۋەپپەقىيەتلىك تورغا يوللاندى!');
+                uploadedPosterBase64 = "";
                 switchTab('homeTab', document.querySelector('.nav-item'));
             });
         }
