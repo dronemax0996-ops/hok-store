@@ -127,7 +127,7 @@
         .popup-close:hover { background: #ff4757; color: #fff; }
 
         .popup-content { padding: 35px 25px 25px 25px; }
-        .popup-content h2 { margin: 0 0 12px 0; font-size: 20px; color: var(--accent-color); }
+        .popup-content h2 { margin: 0 0 12px 0; font-size: 18px; color: var(--accent-color); }
         .popup-content p { margin: 0 0 22px 0; font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
 
         .popup-btn-custom {
@@ -319,7 +319,13 @@
             border-radius: 10px; padding: 12px 16px; display: flex; justify-content: space-between;
             align-items: center; z-index: 2; touch-action: pan-y; user-select: none; cursor: pointer;
         }
-        .user-info-box { display: flex; flex-direction: column; gap: 3px; }
+        .user-info-box { display: flex; align-items: center; gap: 10px; }
+        .user-avatar-mini {
+            width: 36px; height: 36px; border-radius: 50%; background: #e0e0e0;
+            display: flex; align-items: center; justify-content: center; font-size: 16px; overflow: hidden; border: 1px solid var(--border-color); flex-shrink: 0;
+        }
+        .user-avatar-mini img { width: 100%; height: 100%; object-fit: cover; }
+        .user-text-details { display: flex; flex-direction: column; gap: 2px; }
         .user-name-txt { font-size: 14px; font-weight: 700; color: var(--text-color); }
         .user-status-txt { font-size: 11px; color: var(--text-secondary); }
 
@@ -350,7 +356,6 @@
             display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 18px;
         }
 
-        /* قىزىل سىزىق بىلەن بەلگىلەنگەن باش رەسىم ئورنى */
         .profile-avatar-circle {
             width: 90px; height: 90px; border-radius: 50%;
             background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
@@ -413,9 +418,9 @@
         <div class="popup-container">
             <button class="popup-close" onclick="closePopup()">&times;</button>
             <div class="popup-content">
-                <h2>🎬 كۆزنەك كىنوخانىسىغا خۇش كەلدىڭىز!</h2>
-                <p>ئەڭ يېڭى، ئەڭ سۈپەتلىك كىنو، تىياتىر ۋە سەھرە ئەسەرلىرىنى بزدە كۆرۈڭ. ھۇزۇرلۇق ۋاقىت سىزگە تىلەيمىز!</p>
-                <button class="popup-btn-custom" onclick="closePopup()">تاماشا قىلىشنى باشلاش</button>
+                <h2>كۆزنەك كىنوخانىسىغا كەلگىنىگىزگە قارشى ئالىمىز خۇش كەپسىز!</h2>
+                <p>ئەڭ يىڭى، ئەڭ سۈپەتلىك كىنو تىياتىر ۋە قىسقا فىلىملەر بىزنىڭ توربىتىمىزدە</p>
+                <button class="popup-btn-custom" onclick="closePopup()">بۇ يەرنى بىسىپ كىرىڭ</button>
             </div>
         </div>
     </div>
@@ -426,7 +431,7 @@
             <div class="splash-cinema-icon">🎬</div>
             <div class="splash-brand-text">كۆزنەك <span>كىنوخانىسى</span></div>
             <div class="splash-slogan-box">
-                <span class="splash-slogan-ug">ئالقىشىڭىزدىكى كىنوخانا قەلبىناس همراھىڭىز - كۆزنەك</span>
+                <span class="splash-slogan-ug">كۆزنەك كىنوخانىسىغا كەلگىنىگىزگە قارشى ئالىمىز خۇش كەپسىز!</span>
             </div>
         </div>
         <div class="splash-footer">Copyright © 2016-2026 Koznak Store</div>
@@ -464,7 +469,6 @@
     <div id="accountTab" class="tab-content">
         <div class="page-box" style="text-align: center;">
             
-            <!-- تېلېفوندىن بىۋاسىتە رەسىم تاللاش ئۈچۈن قىزىل سىزىق ئورنىدىكى ئاۋاتار بۆلىكى -->
             <div style="display: flex; flex-direction: column; align-items: center; margin-top: 10px; margin-bottom: 20px;">
                 <div class="profile-avatar-circle" id="mainAccountAvatarBox" onclick="document.getElementById('phoneImageInput').click()" title="رەسىمنى ئۆزگەرتىش ئۈچۈن بېسىڭ">
                     👤
@@ -734,7 +738,6 @@
             });
         };
 
-        // تېلېفوندىن سۈرەت تاللانغاندا ئىجرا بولىدىغان פۇنكسىيە
         function handlePhoneImageSelected(event) {
             if (!currentUser) {
                 alert('ئەvvəl ھېساباتقا كىرىڭ ياكى تىزىملىتىڭ!');
@@ -780,6 +783,7 @@
                     if (username.toLowerCase() === ADMIN_USERNAME) continue;
                     userCount++;
                     let vExpire = globalUsersDb[username].vipExpire || 0;
+                    let uAvatar = globalUsersDb[username].avatar || '';
                     let isVipActive = vExpire > now;
                     let statusDesc = 'ئەزالىق يوق';
 
@@ -790,13 +794,18 @@
                         statusDesc = `⭐ VIP (قالدى: ${leftDays} كۈن ${leftHours} سائەت)`;
                     }
 
+                    let avatarHtml = uAvatar ? `<img src="${uAvatar}" onerror="this.parentElement.innerHTML='👤'">` : '👤';
+
                     usersListHtml += `
                         <div class="swipe-wrapper" id="swipe-${username}">
                             <div class="swipe-delete-bg">🗑️ يۇيۋىتىش</div>
                             <div class="user-list-item" data-username="${username}" onclick="openUserActionModal('${username}')">
                                 <div class="user-info-box">
-                                    <span class="user-name-txt">👤 ${username}</span>
-                                    <span class="user-status-txt">${statusDesc}</span>
+                                    <div class="user-avatar-mini">${avatarHtml}</div>
+                                    <div class="user-text-details">
+                                        <span class="user-name-txt">👤 ${username}</span>
+                                        <span class="user-status-txt">${statusDesc}</span>
+                                    </div>
                                 </div>
                                 <div style="font-size: 11px; color: var(--text-secondary);">باسسىڭىز تەڭشىلىدۇ</div>
                             </div>
@@ -1457,7 +1466,6 @@
 
                 if (settingsProfileName) settingsProfileName.innerText = currentUser.name;
                 
-                // ئاۋاتار رەسىمىنى يېڭىلاش (ھېسابات بېتى ۋە تەڭشەك بېتىدىكى)
                 if (currentUser.avatar && currentUser.avatar.trim() !== '') {
                     if (mainAccountAvatarBox) mainAccountAvatarBox.innerHTML = `<img src="${currentUser.avatar}" onerror="this.parentElement.innerHTML='👤'">`;
                     if (settingsAvatarBox) settingsAvatarBox.innerHTML = `<img src="${currentUser.avatar}" onerror="this.parentElement.innerHTML='👤'">`;
