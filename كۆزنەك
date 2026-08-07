@@ -31,9 +31,7 @@
         window.dbRemove = remove;
         window.dbOnValue = onValue;
 
-        if (typeof window.initFirebaseApp === 'function') {
-            window.initFirebaseApp();
-        }
+        window.initFirebaseApp();
     </script>
     <style>
         :root {
@@ -265,41 +263,96 @@
         .fav-btn.liked { color: var(--accent-color); }
         .del-btn { background: none; border: none; font-size: 15px; cursor: pointer; color: #ff4757; padding: 4px; }
 
+        /* TikTok / Kuaishou ئۇسلۇبىدىكى قىسقا فىلىم ئېكرانى */
         .shorts-container {
-            position: fixed; top: 57px; left: 0; width: 100%; height: calc(100vh - 57px - 60px);
-            background-color: #000; overflow-y: scroll; scroll-snap-type: y mandatory;
-            scrollbar-width: none; z-index: 99;
+            position: fixed;
+            top: 57px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 57px - 60px);
+            background-color: #000;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+            z-index: 99;
         }
         .shorts-container::-webkit-scrollbar { display: none; }
 
         .short-item-card {
-            width: 100%; height: 100%; scroll-snap-align: start; scroll-snap-stop: always;
-            position: relative; background: #000; display: flex; align-items: center; justify-content: center;
+            width: 100%;
+            height: 100%;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+            position: relative;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .short-item-card video, .short-item-card iframe { width: 100%; height: 100%; object-fit: cover; border: none; }
+        .short-item-card video, .short-item-card iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border: none;
+        }
 
         .short-overlay-info {
-            position: absolute; bottom: 30px; right: 20px; left: 80px; color: #fff; z-index: 2;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.8); pointer-events: none;
+            position: absolute;
+            bottom: 30px;
+            right: 20px;
+            left: 80px;
+            color: #fff;
+            z-index: 2;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+            pointer-events: none;
         }
 
-        .short-title-txt { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
-        .short-desc-txt { font-size: 12px; color: #ddd; }
+        .short-title-txt {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .short-desc-txt {
+            font-size: 12px;
+            color: #ddd;
+        }
 
         .short-side-actions {
-            position: absolute; bottom: 40px; left: 15px; display: flex;
-            flex-direction: column; align-items: center; gap: 20px; z-index: 3;
+            position: absolute;
+            bottom: 40px;
+            left: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            z-index: 3;
         }
 
         .short-action-btn {
-            background: rgba(0, 0, 0, 0.4); border: none; width: 45px; height: 45px;
-            border-radius: 50%; display: flex; flex-direction: column; align-items: center;
-            justify-content: center; color: white; font-size: 20px; cursor: pointer;
-            backdrop-filter: blur(5px); box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            background: rgba(0, 0, 0, 0.4);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .short-action-btn.liked { color: var(--accent-color); }
-        .short-action-lbl { font-size: 10px; color: #fff; margin-top: 2px; text-shadow: 0 1px 3px rgba(0,0,0,0.9); }
+        .short-action-lbl {
+            font-size: 10px;
+            color: #fff;
+            margin-top: 2px;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+        }
 
         .detail-page {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -492,8 +545,11 @@
         <div id="homeSectionsContainer"></div>
     </div>
 
+    <!-- TikTok ئۇسلۇبىدىكى قىسقا فىلىملەر تەتقىقات ئېكرانى -->
     <div id="shortsTab" class="tab-content">
-        <div class="shorts-container" id="shortsContainerList"></div>
+        <div class="shorts-container" id="shortsContainerList">
+            <!-- JavaScript ئارقىلىق قىسقا فىلىملەر بۇ يەرگە تولدۇرۇلىدۇ -->
+        </div>
     </div>
 
     <div id="favTab" class="tab-content">
@@ -1265,6 +1321,7 @@
             }
         }
 
+        /* قىسقا فىلىملەر تەتقىقات ئېكرانىنى تولدۇرۇش ۋە پەقەت ئېكراندىكىسىلا قويۇلۇش لوگىكىسى */
         function renderShortsFeed() {
             const container = document.getElementById('shortsContainerList');
             if (!container) return;
@@ -1787,3 +1844,4 @@
     </script>
 </body>
 </html>
+ل
