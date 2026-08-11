@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="ug">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>كۆزنەك كىنوخانىسى</title>
+    <!-- Firebase SDK لىرىنى قوشۇش -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, get, child, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCKRnqHKqCpj-xLPeG4sGRkHvFH4qginds",
+            authDomain: "koznak-store.firebaseapp.com",
+            databaseURL: "https://koznak-store-default-rtdb.firebaseio.com",
+            projectId: "koznak-store",
+            storageBucket: "koznak-store.firebasestorage.app",
+            messagingSenderId: "52186498509",
+            appId: "1:52186498509:web:1ff23eaccde6b015e6f084",
+            measurementId: "G-HCSZDQW18V"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        window.db = db;
+        window.dbRef = ref;
+        window.dbSet = set;
+        window.dbGet = get;
+        window.dbChild = child;
+        window.dbRemove = remove;
+        window.dbOnValue = onValue;
+
+        if (window.initFirebaseApp) {
+            window.initFirebaseApp();
+        }
+    </script>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --text-color: #212529;
+            --text-secondary: #6c757d;
+            --card-bg: #ffffff;
+            --border-color: #e9ecef;
+            --accent-color: #E50914;
+            --accent-hover: #b20710;
+        }
+
+        body.dark-mode {
+            --bg-color: #121212;
+            --nav-bg: rgba(18, 18, 18, 0.95);
+            --text-color: #f1f1f1;
+            --text-secondary: #a0a0a0;
+            --card-bg: #1e1e1e;
+            --border-color: #2c2c2c;
+            --accent-color: #E50914;
+            --accent-hover: #f40612;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 90px;
+            direction: rtl;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .floating-contact-btn {
+            position: fixed;
+            bottom: 75px;
+            left: 15px;
+            background: linear-gradient(135deg, #0088cc, #00a2ff);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4);
+            z-index: 999;
+            transition: transform 0.2s;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .floating-contact-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 99999; animation: fadeIn 0.4s ease;
+        }
+
+        .popup-container {
+            background: var(--card-bg);
+            width: 90%; max-width: 420px;
+            border-radius: 14px; overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            text-align: center; color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+
+        .popup-close {
+            position: absolute; top: 12px; right: 15px;
+            background: rgba(128, 128, 128, 0.1);
+            color: var(--text-color); border: none;
+            width: 32px; height: 32px; border-radius: 50%;
+            font-size: 22px; cursor: pointer; z-index: 10;
+            display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .popup-close:hover { background: #ff4757; color: #fff; }
+
+        .popup-content { padding: 35px 25px 25px 25px; }
+        .popup-content h2 { margin: 0 0 12px 0; font-size: 18px; color: var(--accent-color); }
+        .popup-content p { margin: 0 0 22px 0; font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+        .popup-btn-custom {
+            background: linear-gradient(135deg, #ff4757, #ff6b81);
+            color: white; border: none; padding: 12px 25px;
+            font-size: 15px; font-weight: bold; border-radius: 8px;
+            cursor: pointer; width: 100%;
+            box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+            transition: opacity 0.2s;
+        }
+        .popup-btn-custom:hover { opacity: 0.9; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        #splashScreen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #160204 0%, #121212 100%);
+            z-index: 99999; display: flex; flex-direction: column;
+            align-items: center; justify-content: space-between;
+            padding: 40px 20px; transition: opacity 0.5s ease;
+        }
+
+        .splash-content {
+            display: flex; flex-direction: column; align-items: center;
+            margin-top: auto; margin-bottom: auto; text-align: center;
+        }
+
+        .splash-cinema-icon {
+            width: 100px; height: 100px;
+            background: linear-gradient(135deg, #E50914, #b20710);
+            border-radius: 22px; display: flex; align-items: center;
+            justify-content: center; font-size: 48px;
+            box-shadow: 0 10px 30px rgba(229, 9, 20, 0.4);
+            margin-bottom: 22px; border: 2px solid rgba(255, 255, 255, 0.15);
+            animation: pulseLogo 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseLogo {
+            0% { transform: scale(1); box-shadow: 0 10px 30px rgba(229, 9, 20, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 15px 40px rgba(229, 9, 20, 0.6); }
+            100% { transform: scale(1); box-shadow: 0 10px 30px rgba(229, 9, 20, 0.4); }
+        }
+
+        .splash-brand-text {
+            font-size: 26px; font-weight: 800; color: #fff;
+            letter-spacing: 0.8px; margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        .splash-brand-text span { color: var(--accent-color); }
+
+        .splash-slogan-box {
+            text-align: center; display: flex; flex-direction: column; gap: 6px;
+            background: rgba(255, 255, 255, 0.04); padding: 16px 22px;
+            border-radius: 14px; border: 1px solid var(--border-color); max-width: 340px;
+        }
+        .splash-slogan-ug { font-size: 13px; color: #eee; font-weight: 600; }
+        .splash-footer { font-size: 11px; color: #666; margin-top: 20px; }
+
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 20px; background-color: var(--nav-bg);
+            position: sticky; top: 0; z-index: 1000;
+            border-bottom: 1px solid var(--border-color); backdrop-filter: blur(10px);
+        }
+
+        .logo { color: var(--accent-color); font-size: 20px; font-weight: 800; letter-spacing: 0.5px; }
+        .search-btn { font-size: 18px; color: var(--text-color); background: none; border: none; cursor: pointer; padding: 5px; }
+
+        .search-modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--bg-color); z-index: 3000; padding: 20px; overflow-y: auto;
+        }
+
+        .search-input {
+            width: 100%; padding: 14px 16px; font-size: 15px;
+            background-color: var(--card-bg); border: 1px solid var(--border-color);
+            color: var(--text-color); border-radius: 10px; margin-bottom: 20px; outline: none;
+        }
+
+        .close-search { background: none; border: none; color: var(--accent-color); font-size: 15px; cursor: pointer; margin-bottom: 15px; font-weight: bold; }
+        .search-results { display: flex; flex-direction: column; gap: 12px; }
+
+        .search-item {
+            display: flex; background: var(--card-bg); border-radius: 10px;
+            overflow: hidden; cursor: pointer; align-items: center;
+            border: 1px solid var(--border-color); box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .search-item-title { padding: 12px 15px; font-size: 14px; font-weight: 600; width: 100%; }
+
+        .tab-content { display: none; }
+        .tab-content.active-tab { display: block; }
+
+        .category-tabs {
+            display: flex; gap: 8px; padding: 16px 16px 0 16px;
+            overflow-x: auto; white-space: nowrap; scrollbar-width: none;
+        }
+        .category-tabs::-webkit-scrollbar { display: none; }
+
+        .cat-chip {
+            background-color: var(--card-bg); color: var(--text-secondary);
+            border: 1px solid var(--border-color); padding: 8px 16px;
+            border-radius: 20px; font-size: 13px; cursor: pointer; font-weight: 500;
+        }
+        .cat-chip.active {
+            background-color: var(--accent-color); color: #ffffff;
+            border-color: var(--accent-color); font-weight: 700;
+        }
+
+        .category-section { margin-top: 24px; padding: 0 16px; }
+        .section-title { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--text-secondary); letter-spacing: 0.5px; }
+
+        .movie-grid { display: grid; grid-template-columns: repeat(1, 1fr); gap: 14px; }
+        @media (min-width: 600px) { .movie-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .movie-card {
+            background-color: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 12px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            position: relative; display: flex; flex-direction: column;
+        }
+
+        .movie-footer { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; flex-grow: 1; cursor: pointer; }
+        .movie-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-grow: 1; }
+
+        .movie-tag {
+            position: absolute; top: 10px; right: 10px; background: #ffa502; color: #000;
+            font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; z-index: 2;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .card-actions { display: flex; align-items: center; gap: 8px; }
+        .fav-btn { background: none; border: none; font-size: 16px; cursor: pointer; color: var(--text-secondary); padding: 4px; }
+        .fav-btn.liked { color: var(--accent-color); }
+        .del-btn { background: none; border: none; font-size: 15px; cursor: pointer; color: #ff4757; padding: 4px; }
+
+        /* تېكتوك ئۇسلۇبىدىكى سىيىرىش ئېكرانى */
+        .reels-container {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100vh;
+            background-color: #000;
+            z-index: 2500;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            display: none;
+            direction: ltr;
+        }
+
+        .reel-item {
+            width: 100%;
+            height: 100vh;
+            scroll-snap-align: start;
+            position: relative;
+            background-color: #050505;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reel-player {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0; left: 0;
+        }
+
+        .reel-player video, .reel-player iframe {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border: none;
+        }
+
+        .reel-overlay {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            padding: 30px 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.85));
+            color: #fff;
+            z-index: 10;
+            direction: rtl;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .reel-info h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+        }
+
+        .reel-close-btn {
+            position: absolute;
+            top: 20px; right: 20px;
+            background: rgba(0,0,0,0.5);
+            color: #fff; border: none;
+            width: 40px; height: 40px; border-radius: 50%;
+            font-size: 20px; cursor: pointer; z-index: 20;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        .reel-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            margin-right: 15px;
+        }
+
+        .reel-action-btn {
+            background: rgba(0,0,0,0.4);
+            border: none; color: #fff;
+            width: 45px; height: 45px; border-radius: 50%;
+            font-size: 20px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .reel-action-btn.liked { color: var(--accent-color); }
+
+        .page-box { padding: 20px; max-width: 600px; margin: 0 auto; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 500; }
+        .form-input, .form-select {
+            width: 100%; padding: 13px 15px; background-color: var(--card-bg);
+            border: 1px solid var(--border-color); color: var(--text-color); border-radius: 10px; font-size: 14px; outline: none;
+        }
+
+        .action-btn {
+            width: 100%; padding: 14px; background-color: var(--accent-color); color: white;
+            border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3); transition: background-color 0.2s;
+        }
+        .action-btn:hover { background-color: var(--accent-hover); }
+
+        .settings-page-wrapper { max-width: 450px; margin: 15px auto; padding: 0 15px; }
+
+        .user-profile-card {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 20px; padding: 22px; margin-bottom: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.04); position: relative; text-align: center;
+        }
+
+        .profile-top-row {
+            display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 18px;
+        }
+
+        .profile-avatar-circle {
+            width: 90px; height: 90px; border-radius: 50%;
+            background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
+            border: 3px solid var(--accent-color);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 40px; overflow: hidden; flex-shrink: 0;
+            cursor: pointer; position: relative; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .profile-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
+
+        .profile-meta-info { display: flex; flex-direction: column; gap: 4px; align-items: center; }
+        .profile-username-txt { font-size: 17px; font-weight: 800; color: var(--text-color); }
+        .profile-role-txt { font-size: 12px; color: var(--text-secondary); }
+
+        .profile-buttons-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .profile-action-chip {
+            background: var(--bg-color); border: 1px solid var(--border-color); padding: 12px 14px;
+            border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 13px; font-weight: 700; color: var(--text-color); cursor: pointer; transition: all 0.2s; text-decoration: none;
+        }
+        .profile-action-chip:hover { opacity: 0.85; }
+
+        .settings-block-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 6px 16px; box-shadow: 0 6px 20px rgba(0,0,0,0.04); }
+        .settings-row-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border-color); }
+        .settings-row-item:last-child { border-bottom: none; }
+        .settings-row-right { display: flex; align-items: center; gap: 14px; }
+        .settings-icon-box { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: rgba(128, 128, 128, 0.08); }
+        .settings-text-box { display: flex; flex-direction: column; gap: 2px; }
+        .settings-item-title { font-size: 14px; font-weight: 700; color: var(--text-color); }
+        .settings-item-desc { font-size: 11px; color: var(--text-secondary); }
+
+        .theme-buttons-container { display: flex; background: var(--bg-color); border: 1px solid var(--border-color); padding: 3px; border-radius: 12px; gap: 3px; }
+        .theme-select-btn {
+            flex: 1; text-align: center; padding: 7px 10px; font-size: 12px; font-weight: 600;
+            color: var(--text-secondary); border-radius: 9px; cursor: pointer; transition: all 0.2s ease; background: transparent; border: none;
+        }
+        .theme-select-btn.active { background: var(--card-bg); color: var(--text-color); box-shadow: 0 2px 8px rgba(0,0,0,0.08); font-weight: 700; }
+
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--nav-bg);
+            display: flex; justify-content: space-around; padding: 8px 0;
+            border-top: 1px solid var(--border-color); z-index: 1000; backdrop-filter: blur(10px);
+        }
+        .nav-item {
+            background: none; border: none; color: var(--text-secondary); font-size: 10px;
+            display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; font-weight: 500;
+        }
+        .nav-item.active { color: var(--accent-color); font-weight: 700; }
+        .nav-item span:first-child { font-size: 18px; }
+    </style>
+</head>
+<body>
+
+    <a href="https://t.me/kuznakkino" target="_blank" class="floating-contact-btn">
+        <span>💬</span> ئالاقىلىشىش
+    </a>
+
+    <div id="welcomePopup" class="popup-overlay" style="display: none;">
+        <div class="popup-container">
+            <button class="popup-close" onclick="closePopup()">&times;</button>
+            <div class="popup-content">
+                <h2>كۆزنەك كىنوخانىسىغا كەلگىنىگىزگە قارشى ئالىمىز خۇش كەپسىز!</h2>
+                <p>ئەڭ يىڭى، ئەڭ سۈپەتلىك كىنو تىياتىر ۋە قىسقا فىلىملەر بىزنىڭ توربىتىمىزدە</p>
+                <button class="popup-btn-custom" onclick="closePopup()">بۇ يەرنى بىسىپ كىرىڭ</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="splashScreen">
+        <div></div>
+        <div class="splash-content">
+            <div class="splash-cinema-icon">🎬</div>
+            <div class="splash-brand-text">كۆزنەك <span>كىنوخانىسى</span></div>
+            <div class="splash-slogan-box">
+                <span class="splash-slogan-ug">كۆزنەك كىنوخانىسىغا كەلگىنىگىزگە قارشى ئالىمىز خۇش كەپسىز!</span>
+            </div>
+        </div>
+        <div class="splash-footer">Copyright © 2016-2026 Koznak Store</div>
+    </div>
+
+    <div class="navbar">
+        <div class="logo">كۆزنەك كىنوخانىسى</div>
+        <button class="search-btn" onclick="openSearch()">🔍</button>
+    </div>
+
+    <div id="homeTab" class="tab-content active-tab">
+        <div class="category-tabs">
+            <button class="cat-chip active" onclick="filterCategory('all', this)">بارلىق كىنولەر</button>
+            <button class="cat-chip" onclick="filterCategory('movie', this)">كىنولار</button>
+            <button class="cat-chip" onclick="filterCategory('series', this)">قىسىملىق كىنولەر</button>
+            <button class="cat-chip" onclick="filterCategory('cartoon', this)">🧸 كارتونلار</button>
+            <button class="cat-chip" onclick="filterCategory('cartoon_series', this)">🧸📺 قىسىملىق كارتۇن</button>
+            <button class="cat-chip" onclick="filterCategory('short', this)">📱 قىسقا فىلىملەر</button>
+        </div>
+
+        <div style="padding: 12px 16px 0 16px;">
+            <button type="button" onclick="openFavReelsViewer()" style="width: 100%; background: linear-gradient(135deg, var(--accent-color), var(--accent-hover)); color: #fff; border: none; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3); display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <span>📱</span> قىسقا فىلىملەر (سىيىرىپ كۆرۈش)
+            </button>
+        </div>
+
+        <div id="homeSectionsContainer" class="category-section">
+            <div class="movie-grid" id="mainMovieGrid"></div>
+        </div>
+    </div>
+
+    <!-- ياقتۇرغانلار بەتى -->
+    <div id="favTab" class="tab-content">
+        <div class="category-section" style="margin-top: 15px;">
+            <div class="section-title" style="margin-bottom: 12px;">❤️ ياقتۇرغان مەزمۇنلىرىم</div>
+            <div class="movie-grid" id="favList"></div>
+        </div>
+    </div>
+
+    <div id="uploadTab" class="tab-content">
+        <div class="page-box" id="uploadPageContent">
+            <div class="section-title" style="font-size: 16px; margin-bottom: 15px;">➕ يېڭى مەزمۇن قوشۇش</div>
+            <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
+                <div class="form-group">
+                    <label>مەزمۇن تىپى</label>
+                    <select id="contentType" class="form-select" onchange="toggleUploadInputs()">
+                        <option value="movie">كىنو (Movie)</option>
+                        <option value="series">قىسىملىق كىنو (Series)</option>
+                        <option value="cartoon">كارتون (Cartoon)</option>
+                        <option value="cartoon_series">قىسىملىق كارتون (Cartoon Series)</option>
+                        <option value="short">قىسقا فىلىم (Short Film)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>مەزمۇن نامى</label>
+                    <input type="text" id="contentTitle" class="form-input" placeholder="مەزمۇن ئىسمىنى كىرگۈزۈڭ" required autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>مەزمۇن بەلگىسى (مەسىلەن: VIP, يېڭى)</label>
+                    <input type="text" id="contentTag" class="form-input" placeholder="خەتكۈچ كىرگۈزۈڭ" autocomplete="off">
+                </div>
+                
+                <div id="singleLinkGroup" class="form-group">
+                    <label>ۋىدىيو ئۇلانمىسى (Link)</label>
+                    <input type="url" id="contentLink" class="form-input" placeholder="https://..." autocomplete="off">
+                </div>
+
+                <div id="seriesLinksGroup" class="form-group" style="display: none;">
+                    <label>قىسىملار ئۇلانمىلىرى (ھەر بىر قىسىمنى يېڭى قۇرغا يېزىڭ: قىسىم 1: URL)</label>
+                    <textarea id="contentSeriesLinks" class="form-input" rows="5" placeholder="1-قىسىم: https://...&#10;2-قىسىم: https://..."></textarea>
+                </div>
+
+                <button type="submit" class="action-btn">مەزمۇننى يوللاش</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="accountTab" class="tab-content">
+        <div class="page-box" style="text-align: center;">
+            
+            <div style="display: flex; flex-direction: column; align-items: center; margin-top: 10px; margin-bottom: 20px;">
+                <div class="profile-avatar-circle" id="mainAccountAvatarBox" onclick="document.getElementById('phoneImageInput').click()" title="رەسىمنى ئۆزگەرتىش ئۈچۈن بېسىڭ">
+                    👤
+                </div>
+                <input type="file" id="phoneImageInput" accept="image/*" style="display: none;" onchange="handlePhoneImageSelected(event)">
+                <span style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">رەسىمنى ئۆزگەرتىش ئۈچۈن يۇقىرىدىكى سۈرەتنى بېسىڭ</span>
+            </div>
+
+            <h3 id="accountTitle" style="margin-top: 5px; font-size: 18px;">ھېساباتقا كىرىش / تىزىملىتىش</h3>
+            
+            <div id="loginForm" style="margin-top: 20px; text-align: right;">
+                <div class="form-group">
+                    <label>ئابونت ئىسمى (Username)</label>
+                    <input type="text" id="loginUser" class="form-input" placeholder="ئىسمىڭىزنى كىرگۈزۈڭ" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>مەخپىي نومۇر (Password)</label>
+                    <input type="password" id="loginPass" class="form-input" placeholder="پارولىڭىزنى كىرگۈزۈڭ" autocomplete="off">
+                </div>
+                <button type="button" class="action-btn" onclick="handleLoginOrRegister()">كىرىش / تىزىملىتىش</button>
+            </div>
+
+            <div id="userProfileView" style="display: none; margin-top: 20px; text-align: right;">
+                <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 16px; border-radius: 12px; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span id="displayUsername" style="font-size: 16px; font-weight: 700; color: var(--accent-color);"></span>
+                        <span id="vipBadge" style="background:#555; color:#fff; padding:3px 10px; border-radius:6px; font-size:11px; font-weight:700;">ئادەتتىكى ئەزا</span>
+                    </div>
+                    <div id="vipStatusText" style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">ئەزالىق ۋاقتى يوق</div>
+                </div>
+
+                <button type="button" class="action-btn" style="background-color: #333;" onclick="handleLogout()">چېكىنىش (Log out)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ئەزالىق ئېچىش بېتى -->
+    <div id="vipOpenTab" class="tab-content">
+        <div class="page-box" style="max-width: 450px; text-align: right;">
+            <div class="section-title" style="font-size: 18px; margin-bottom: 15px; text-align: center;">👑 ئەزالىق ئېچىش مەركىزى</div>
+            <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; line-height: 1.7; font-size: 14px;">
+                <p style="margin-bottom: 12px; color: var(--text-color); font-weight: 600;">ھۆرمەتلىك ئەزا، سىز ئايلىق ئەزالىق ئېچىش ئارقىلىق بارلىق VIP كىنولەردən چەكلىمىسىز بەھرىمەن بولالايسىز.</p>
+                <hr style="border: none; border-top: 1px solid var(--border-color); margin: 15px 0;">
+                <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 15px;">
+                    👉 ئايلىق ئەزالىق ئېچىش ياكى يېڭىلاش ئۈچۈن تۆۋەندىكى تېلېگرامما ئادرېسىغا بىۋاسىتە ئۇچۇر قىلىڭ:
+                </p>
+                <a href="https://t.me/kuznakkino" target="_blank" style="display: block; text-align: center; background: #0088cc; color: white; padding: 14px; border-radius: 10px; font-weight: bold; text-decoration: none; font-size: 15px; box-shadow: 0 4px 12px rgba(0, 136, 204, 0.3);">
+                    💬 Telegram دا ئالاقىلىشىش (@kuznakkino)
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- تەڭشەك بېتى -->
+    <div id="settingsTab" class="tab-content">
+        <div class="settings-page-wrapper">
+            
+            <div class="user-profile-card">
+                <div class="profile-top-row">
+                    <div class="profile-avatar-circle" id="settingsAvatarBox">👤</div>
+                    <div class="profile-meta-info">
+                        <span class="profile-username-txt" id="settingsProfileName">مېھمان ئابونت</span>
+                        <span class="profile-role-txt" id="settingsProfileDesc">تېخىمۇ كۆپ ئىقتىدار ئۈچۈن كىرىڭ</span>
+                    </div>
+                </div>
+                <div class="profile-buttons-row">
+                    <div class="profile-action-chip" onclick="switchTab('accountTab', document.querySelectorAll('.nav-item')[3])">
+                        <span>👤</span> ھېسابات
+                    </div>
+                    <div class="profile-action-chip" onclick="switchTab('vipOpenTab', null)">
+                        <span>⭐</span> ئەزالىق ئېچىش
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-title">تەڭشەكلەر</div>
+
+            <div class="settings-block-card">
+                
+                <div class="settings-row-item" id="uploadMenuSettingItem" style="display: none;">
+                    <div class="settings-row-right">
+                        <div class="settings-icon-box">📂</div>
+                        <div class="settings-text-box">
+                            <span class="settings-item-title">مەزمۇن باشقۇرۇش</span>
+                            <span class="settings-item-desc">يېڭى كىنو ۋە ئەزالارنى باشقۇرۇش</span>
+                        </div>
+                    </div>
+                    <button type="button" class="action-btn" style="width: auto; padding: 6px 14px; font-size: 13px; margin: 0; box-shadow: none;" onclick="switchTab('uploadTab', document.querySelectorAll('.nav-item')[2])">ئېچىش</button>
+                </div>
+
+                <div class="settings-row-item">
+                    <div class="settings-row-right">
+                        <div class="settings-icon-box">🌙</div>
+                        <div class="settings-text-box">
+                            <span class="settings-item-title">كۆرۈنۈش ھالىتى</span>
+                            <span class="settings-item-desc">قاراڭغۇ ياكى يورۇق ئۇسلۇب</span>
+                        </div>
+                    </div>
+                    <div class="theme-buttons-container">
+                        <button class="theme-select-btn active" id="lightThemeBtn" onclick="setTheme('light')">يورۇق</button>
+                        <button class="theme-select-btn" id="darkThemeBtn" onclick="setTheme('dark')">قارا</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ئاستىدىكى يول باشلاش 판 (Bottom Navigation) -->
+    <div class="bottom-nav" id="bottomNavContainer">
+        <button class="nav-item active" onclick="switchTab('homeTab', this)">
+            <span>🏠</span>
+            <span>باش بەت</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('favTab', this)">
+            <span>❤️</span>
+            <span>ياقتۇرغانلار</span>
+        </button>
+        <button class="nav-item" id="navUploadBtn" onclick="switchTab('uploadTab', this)" style="display: none;">
+            <span>➕</span>
+            <span>قوشۇش</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('accountTab', this)">
+            <span>👤</span>
+            <span>ھېسابات</span>
+        </button>
+        <button class="nav-item" onclick="switchTab('settingsTab', this)">
+            <span>⚙️</span>
+            <span>تەڭشەك</span>
+        </button>
+    </div>
+
+    <!-- ئىزدىرش كۆزنىكى (Modal) -->
+    <div id="searchModal" class="search-modal">
+        <button class="close-search" onclick="closeSearch()">تاقاش ✕</button>
+        <input type="text" id="searchInputBox" class="search-input" placeholder="كىنو ئىسمىنى كىرگۈزۈپ ئىزدەڭ..." oninput="handleSearchInput(event)">
+        <div class="search-results" id="searchResultsContainer"></div>
+    </div>
+
+    <!-- سىيىرىپ كۆرىدىغان فىلىم ئېكرانى (TikTok / Reels Swipe Mode) -->
+    <div id="reelsContainer" class="reels-container">
+        <button class="reel-close-btn" onclick="closeReelsViewer()">✕</button>
+        <div id="reelsWrapper"></div>
+    </div>
+
+    <!-- JavaScript كودلىرى -->
+    <script>
+        let allMovies = {};
+        let currentFilter = 'all';
+        let currentUser = null;
+        let favorites = JSON.parse(localStorage.getItem('koznak_favs') || '[]');
+
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
+            document.getElementById(tabId).classList.add('active-tab');
+            
+            if(el) {
+                document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                el.classList.add('active');
+            }
+        }
+
+        function closePopup() {
+            const popup = document.getElementById('welcomePopup');
+            if(popup) popup.style.display = 'none';
+        }
+
+        function openSearch() {
+            document.getElementById('searchModal').style.display = 'block';
+        }
+
+        function closeSearch() {
+            document.getElementById('searchModal').style.display = 'none';
+        }
+
+        function setTheme(mode) {
+            if(mode === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('darkThemeBtn').classList.add('active');
+                document.getElementById('lightThemeBtn').classList.remove('active');
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.getElementById('lightThemeBtn').classList.add('active');
+                document.getElementById('darkThemeBtn').classList.remove('active');
+            }
+        }
+
+        function toggleUploadInputs() {
+            const type = document.getElementById('contentType').value;
+            const singleGroup = document.getElementById('singleLinkGroup');
+            const seriesGroup = document.getElementById('seriesLinksGroup');
+            if(type.includes('series')) {
+                singleGroup.style.display = 'none';
+                seriesGroup.style.display = 'block';
+            } else {
+                singleGroup.style.display = 'block';
+                seriesGroup.style.display = 'none';
+            }
+        }
+
+        window.initFirebaseApp = function() {
+            const moviesRef = window.dbRef(window.db, 'movies');
+            window.dbOnValue(moviesRef, (snapshot) => {
+                const data = snapshot.val();
+                allMovies = data || {};
+                renderMovies();
+                renderFavorites();
+            });
+        }
+
+        function filterCategory(category, el) {
+            currentFilter = category;
+            document.querySelectorAll('.cat-chip').forEach(btn => btn.classList.remove('active'));
+            if(el) el.classList.add('active');
+            renderMovies();
+        }
+
+        function renderMovies() {
+            const grid = document.getElementById('mainMovieGrid');
+            if(!grid) return;
+            grid.innerHTML = '';
+
+            const keys = Object.keys(allMovies).reverse();
+            let filteredKeys = keys.filter(id => {
+                const item = allMovies[id];
+                if(currentFilter === 'all') return true;
+                return item.type === currentFilter;
+            });
+
+            if(filteredKeys.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 40px;">مەزمۇن تېپىلمىدى</div>';
+                return;
+            }
+
+            filteredKeys.forEach(id => {
+                const item = allMovies[id];
+                const isFav = favorites.includes(id);
+                const isAdmin = currentUser && currentUser.role === 'admin';
+
+                const card = document.createElement('div');
+                card.className = 'movie-card';
+                card.innerHTML = `
+                    ${item.tag ? `<div class="movie-tag">${item.tag}</div>` : ''}
+                    <div class="movie-footer" onclick="openReelsViewer('${id}')">
+                        <div class="movie-name">${item.title}</div>
+                        <div class="card-actions" onclick="event.stopPropagation()">
+                            <button class="fav-btn ${isFav ? 'liked' : ''}" onclick="toggleFavorite('${id}')">❤️</button>
+                            ${isAdmin ? `<button class="del-btn" onclick="deleteMovie('${id}')">🗑️</button>` : ''}
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderFavorites() {
+            const favGrid = document.getElementById('favList');
+            if(!favGrid) return;
+            favGrid.innerHTML = '';
+
+            if(favorites.length === 0) {
+                favGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 40px;">ياقتۇرغان مەزمۇن يوق</div>';
+                return;
+            }
+
+            favorites.forEach(id => {
+                const item = allMovies[id];
+                if(!item) return;
+
+                const card = document.createElement('div');
+                card.className = 'movie-card';
+                card.innerHTML = `
+                    ${item.tag ? `<div class="movie-tag">${item.tag}</div>` : ''}
+                    <div class="movie-footer" onclick="openReelsViewer('${id}')">
+                        <div class="movie-name">${item.title}</div>
+                        <div class="card-actions" onclick="event.stopPropagation()">
+                            <button class="fav-btn liked" onclick="toggleFavorite('${id}')">❤️</button>
+                        </div>
+                    </div>
+                `;
+                favGrid.appendChild(card);
+            });
+        }
+
+        function toggleFavorite(id) {
+            if(favorites.includes(id)) {
+                favorites = favorites.filter(favId => favId !== id);
+            } else {
+                favorites.push(id);
+            }
+            localStorage.setItem('koznak_favs', JSON.stringify(favorites));
+            renderMovies();
+            renderFavorites();
+        }
+
+        function deleteMovie(id) {
+            if(confirm('بۇ مەزمۇننى ئۆچۈرەمسىز؟')) {
+                const movieRef = window.dbRef(window.db, 'movies/' + id);
+                window.dbRemove(movieRef).then(() => {
+                    alert('مەزمۇن ئۆچۈرۈلدى!');
+                });
+            }
+        }
+
+        function openReelsViewer(startId) {
+            const container = document.getElementById('reelsContainer');
+            const wrapper = document.getElementById('reelsWrapper');
+            wrapper.innerHTML = '';
+
+            const keys = Object.keys(allMovies).reverse();
+            let targetList = keys;
+            
+            if(startId && keys.includes(startId)) {
+                targetList = [startId, ...keys.filter(k => k !== startId)];
+            }
+
+            targetList.forEach(id => {
+                const item = allMovies[id];
+                if(!item) return;
+
+                const isFav = favorites.includes(id);
+                let videoUrl = item.link || '';
+                
+                if(item.type && item.type.includes('series')) {
+                    if(typeof item.links === 'string' && item.links.trim() !== '') {
+                        const firstLine = item.links.split('\n')[0];
+                        const parts = firstLine.split(':');
+                        videoUrl = parts.slice(1).join(':').trim();
+                    }
+                }
+
+                const reelItem = document.createElement('div');
+                reelItem.className = 'reel-item';
+                
+                let playerHtml = '';
+                if(videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
+                    let embedUrl = videoUrl;
+                    if(videoUrl.includes('youtu.be/')) {
+                        const vid = videoUrl.split('youtu.be/')[1].split('?')[0];
+                        embedUrl = `https://www.youtube.com/embed/${vid}?autoplay=1`;
+                    } else if(videoUrl.includes('watch?v=')) {
+                        const vid = videoUrl.split('watch?v=')[1].split('&')[0];
+                        embedUrl = `https://www.youtube.com/embed/${vid}?autoplay=1`;
+                    }
+                    playerHtml = `<iframe src="${embedUrl}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;
+                } else {
+                    playerHtml = `<video src="${videoUrl}" controls autoplay loop playsinline></video>`;
+                }
+
+                reelItem.innerHTML = `
+                    <div class="reel-player">${playerHtml}</div>
+                    <div class="reel-overlay">
+                        <div class="reel-info">
+                            <h3>${item.title}</h3>
+                            <p style="font-size: 13px; color: #ccc;">${item.tag ? 'بەلگە: ' + item.tag : 'كۆزنەك كىنوخانىسى'}</p>
+                        </div>
+                        <div class="reel-actions">
+                            <button class="reel-action-btn ${isFav ? 'liked' : ''}" onclick="toggleFavorite('${id}')">❤️</button>
+                        </div>
+                    </div>
+                `;
+                wrapper.appendChild(reelItem);
+            });
+
+            container.style.display = 'block';
+        }
+
+        function closeReelsViewer() {
+            const container = document.getElementById('reelsContainer');
+            container.style.display = 'none';
+            document.getElementById('reelsWrapper').innerHTML = '';
+        }
+
+        function handleUploadSubmit(e) {
+            e.preventDefault();
+            if(!currentUser || currentUser.role !== 'admin') {
+                alert('سىزدە مەزمۇن يوللاش ھوقۇقى يوق!');
+                return;
+            }
+
+            const type = document.getElementById('contentType').value;
+            const title = document.getElementById('contentTitle').value;
+            const tag = document.getElementById('contentTag').value;
+            const link = document.getElementById('contentLink').value;
+            const seriesLinks = document.getElementById('contentSeriesLinks').value;
+
+            const newId = 'movie_' + Date.now();
+            let data = { type, title, tag };
+
+            if(type.includes('series')) {
+                data.links = seriesLinks;
+            } else {
+                data.link = link;
+            }
+
+            const newRef = window.dbRef(window.db, 'movies/' + newId);
+            window.dbSet(newRef, data).then(() => {
+                alert('مەزمۇن مۇۋەپپەقىيەتلىك قوشۇلدى!');
+                document.getElementById('uploadForm').reset();
+                switchTab('homeTab', document.querySelectorAll('.nav-item')[0]);
+            });
+        }
+
+        function handleSearchInput(e) {
+            const keyword = e.target.value.toLowerCase().trim();
+            const container = document.getElementById('searchResultsContainer');
+            container.innerHTML = '';
+
+            if(!keyword) return;
+
+            const keys = Object.keys(allMovies);
+            const matches = keys.filter(id => allMovies[id].title && allMovies[id].title.toLowerCase().includes(keyword));
+
+            if(matches.length === 0) {
+                container.innerHTML = '<div style="text-align:center; color:var(--text-secondary); padding:20px;">ھېچقانداق نەتىجە تېپىلمىدى</div>';
+                return;
+            }
+
+            matches.forEach(id => {
+                const item = allMovies[id];
+                const div = document.createElement('div');
+                div.className = 'search-item';
+                div.innerHTML = `<div class="search-item-title">${item.title}</div>`;
+                div.onclick = () => {
+                    closeSearch();
+                    openReelsViewer(id);
+                };
+                container.appendChild(div);
+            });
+        }
+
+        function handleLoginOrRegister() {
+            const user = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+
+            if(!user || !pass) {
+                alert('ئابونت ئىسمى ۋە پارولنى كىرگۈزۈڭ!');
+                return;
+            }
+
+            if(user === 'nasrulla' && pass === '0996') {
+                currentUser = { user: 'nasrulla', role: 'admin', vip: true };
+                updateUIAfterLogin();
+                alert('باشقۇرغۇچى (Admin) بولۇپ كىردىڭىز!');
+                return;
+            }
+
+            const userRef = window.dbRef(window.db, 'users/' + user);
+            window.dbGet(userRef).then(snapshot => {
+                if(snapshot.exists()) {
+                    const data = snapshot.val();
+                    if(data.pass === pass) {
+                        currentUser = { user: data.user, role: 'user', vip: data.vip || false };
+                        updateUIAfterLogin();
+                    } else {
+                        alert('پارول خاتا!');
+                    }
+                } else {
+                    const newUser = { user, pass, role: 'user', vip: false };
+                    window.dbSet(userRef, newUser).then(() => {
+                        currentUser = newUser;
+                        updateUIAfterLogin();
+                        alert('ھېسابات مۇۋەپپەقىيەتلىك قۇرۇلدى!');
+                    });
+                }
+            }).catch(() => {
+                currentUser = { user, role: 'user', vip: false };
+                updateUIAfterLogin();
+            });
+        }
+
+        function updateUIAfterLogin() {
+            if(!currentUser) return;
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('userProfileView').style.display = 'block';
+            document.getElementById('accountTitle').innerText = 'خۇش كەپسىز, ' + currentUser.user;
+            document.getElementById('displayUsername').innerText = currentUser.user;
+            
+            const badge = document.getElementById('vipBadge');
+            const uploadMenu = document.getElementById('uploadMenuSettingItem');
+            const navUploadBtn = document.getElementById('navUploadBtn');
+
+            if(currentUser.role === 'admin') {
+                badge.innerText = 'باشقۇرغۇچى (Admin)';
+                badge.style.background = '#E50914';
+                uploadMenu.style.display = 'flex';
+                navUploadBtn.style.display = 'flex';
+            } else {
+                badge.innerText = 'ئادەتتىكى ئەزا';
+                badge.style.background = '#555';
+                uploadMenu.style.display = 'none';
+                navUploadBtn.style.display = 'none';
+            }
+
+            document.getElementById('settingsProfileName').innerText = currentUser.user;
+            document.getElementById('settingsProfileDesc').innerText = badge.innerText;
+            renderMovies();
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('userProfileView').style.display = 'none';
+            document.getElementById('accountTitle').innerText = 'ھېساباتقا كىرىش / تىزىملىتىش';
+            document.getElementById('uploadMenuSettingItem').style.display = 'none';
+            document.getElementById('navUploadBtn').style.display = 'none';
+            document.getElementById('settingsProfileName').innerText = 'مېھمان ئابونت';
+            document.getElementById('settingsProfileDesc').innerText = 'تېخىمۇ كۆپ ئىقتىدار ئۈچۈن كىرىڭ';
+            document.getElementById('loginUser').value = '';
+            document.getElementById('loginPass').value = '';
+            
+            if(document.getElementById('uploadTab').classList.contains('active-tab')) {
+                switchTab('homeTab', document.querySelectorAll('.nav-item')[0]);
+            }
+            renderMovies();
+        }
+
+        function handlePhoneImageSelected(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(uploadEvent) {
+                const base64Img = uploadEvent.target.result;
+                document.getElementById('mainAccountAvatarBox').innerHTML = `<img src="${base64Img}">`;
+                document.getElementById('settingsAvatarBox').innerHTML = `<img src="${base64Img}">`;
+                localStorage.setItem('koznak_avatar', base64Img);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splashScreen');
+                if(splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => splash.style.display = 'none', 500);
+                }
+            }, 1200);
+
+            const savedAvatar = localStorage.getItem('koznak_avatar');
+            if(savedAvatar) {
+                document.getElementById('mainAccountAvatarBox').innerHTML = `<img src="${savedAvatar}">`;
+                document.getElementById('settingsAvatarBox').innerHTML = `<img src="${savedAvatar}">`;
+            }
+        });
+    </script>
+</body>
+</html>
