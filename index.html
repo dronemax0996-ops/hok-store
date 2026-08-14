@@ -289,10 +289,13 @@
             background: var(--bg-color); color: var(--text-color); margin-bottom: 10px; outline: none; font-size: 13px;
         }
         .comment-item {
-            padding: 8px 0; border-bottom: 1px solid var(--border-color); font-size: 13px;
+            display: flex; gap: 10px; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border-color); font-size: 13px;
         }
         .comment-item:last-child { border-bottom: none; }
-        .comment-user { font-weight: 700; color: var(--accent-color); margin-bottom: 3px; }
+        .comment-avatar { width: 32px; height: 32px; border-radius: 50%; background: #eee; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; border: 1px solid var(--accent-color); }
+        .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .comment-content-box { display: flex; flex-direction: column; width: 100%; }
+        .comment-user { font-weight: 700; color: var(--accent-color); margin-bottom: 3px; display: flex; justify-content: space-between; }
 
         .page-box { padding: 20px; max-width: 600px; margin: 0 auto; }
         .form-group { margin-bottom: 16px; }
@@ -646,10 +649,21 @@
 
                 <div class="settings-row-item">
                     <div class="settings-row-right">
+                        <div class="settings-icon-box">🧹</div>
+                        <div class="settings-text-box">
+                            <span class="settings-item-title">كۆرگەنلىرىمنى تازىلاش</span>
+                            <span class="settings-item-desc">فىلىم كۆرۈش ۋاقىت خاتىرىسىنى ئۆچۈرۈش</span>
+                        </div>
+                    </div>
+                    <button type="button" class="action-btn" style="width: auto; padding: 6px 12px; font-size: 12px; margin: 0; background: #e67e22; box-shadow: none;" onclick="clearWatchHistory()">تازىلاش</button>
+                </div>
+
+                <div class="settings-row-item">
+                    <div class="settings-row-right">
                         <div class="settings-icon-box">⚡</div>
                         <div class="settings-text-box">
                             <span class="settings-item-title">سۈرئەتنى تېزلىتىش (Cache)</span>
-                            <span class="settings-item-desc">ۋاقىتلىق سانلىق مەلۇماتلارنى تازىلاش</span>
+                            <span class="settings-item-desc">ياقتۇرغانلارنى ئۆچۈرۈپ تازىلاش</span>
                         </div>
                     </div>
                     <button type="button" class="action-btn" style="width: auto; padding: 6px 12px; font-size: 12px; margin: 0; background: #636e72; box-shadow: none;" onclick="clearAppCache()">تازىلاش</button>
@@ -740,8 +754,17 @@
             localStorage.setItem('koznak_theme', mode);
         }
 
+        function clearWatchHistory() {
+            if(confirm('كۆرگەن فىلىملىرىڭىزنىڭ توختاش ۋاقىت خاتىرىسى تازىلسۇنمۇ؟')) {
+                Object.keys(localStorage).forEach(key => {
+                    if(key.startsWith('video_time_')) localStorage.removeItem(key);
+                });
+                alert('فىلىم كۆرۈش خاتىرىلىرى مۇۋەپپەقىيەتلىك تازىلاندى!');
+            }
+        }
+
         function clearAppCache() {
-            if(confirm('ۋاقىتلىق ساقلانغان ئەستە تۇتۇش بوشلۇقى (Cache) تازىلسۇنمۇ؟')) {
+            if(confirm('ياقتۇرغانلار ۋە ساقلانمىلار تازىلسۇنمۇ؟')) {
                 localStorage.removeItem('koznak_favs');
                 favorites = [];
                 alert('مۇۋەپپەقىيەتلىك تازىلاندى!');
@@ -794,6 +817,16 @@
             window.dbOnValue(usersRef, (snapshot) => {
                 const data = snapshot.val();
                 allUsers = data || {};
+                
+                // ئەگەر ئابونت كىرگەن بولسا، DB دىكى ئەڭ يېڭى ئۇچۇرلىرى بىلەن يېڭىلاش
+                if(currentUser && currentUser.user !== 'nasrulla') {
+                    if(allUsers[currentUser.user]) {
+                        currentUser = { ...allUsers[currentUser.user], user: currentUser.user };
+                        localStorage.setItem('koznak_user', JSON.stringify(currentUser));
+                        updateUIAfterLogin();
+                    }
+                }
+
                 checkAndUpdateExpiredVips();
                 renderAdminUsersList();
             });
@@ -1055,6 +1088,7 @@
             
             window.dbSet(commentRef, {
                 user: currentUser.user,
+                avatar: currentUser.avatar || '',
                 text: commentText,
                 time: new Date().toLocaleDateString()
             }).then(() => {
@@ -1081,11 +1115,18 @@
 
             comKeys.forEach(k => {
                 const com = commentsObj[k];
+                const avatarHtml = com.avatar ? `<img src="${com.avatar}">` : '👤';
                 const div = document.createElement('div');
                 div.className = 'comment-item';
                 div.innerHTML = `
-                    <div class="comment-user">${com.user} <span style="font-weight:normal; font-size:11px; color:var(--text-secondary);">(${com.time})</span></div>
-                    <div>${com.text}</div>
+                    <div class="comment-avatar">${avatarHtml}</div>
+                    <div class="comment-content-box">
+                        <div class="comment-user">
+                            <span>${com.user}</span>
+                            <span style="font-weight:normal; font-size:11px; color:var(--text-secondary);">(${com.time})</span>
+                        </div>
+                        <div>${com.text}</div>
+                    </div>
                 `;
                 container.appendChild(div);
             });
@@ -1466,6 +1507,7 @@
                     const newUser = { user, pass, role: 'user', vip: false, vipExpire: null, avatar: '' };
                     window.dbSet(userRef, newUser).then(() => {
                         currentUser = newUser;
+                        localStorage.setItem('koznak_user', JSON.stringify(currentUser));
                         updateUIAfterLogin();
                         alert('ھېسابات قۇرۇلدى!');
                     });
@@ -1480,7 +1522,8 @@
 
             const encodedAdminPass = btoa(pass);
             if(user.toLowerCase() === 'nasrulla' && encodedAdminPass === 'MDk5Ng==') {
-                currentUser = { user: 'nasrulla', role: 'admin', vip: true };
+                currentUser = { user: 'nasrulla', role: 'admin', vip: true, avatar: '' };
+                localStorage.setItem('koznak_user', JSON.stringify(currentUser));
                 updateUIAfterLogin();
                 alert('ھۆرمەتلىك باشقۇرغۇچى، كۆزنەك كىنوخانىسىغا قارشى ئالىمىز!');
                 return;
@@ -1490,7 +1533,8 @@
                 if(snapshot.exists()) {
                     const data = snapshot.val();
                     if(data.pass === pass) {
-                        currentUser = { ...data };
+                        currentUser = { ...data, user };
+                        localStorage.setItem('koznak_user', JSON.stringify(currentUser));
                         updateUIAfterLogin();
                     } else { alert('پارول خاتا!'); }
                 } else { alert('ئابونت تېپىلمىدى!'); }
@@ -1506,6 +1550,12 @@
             document.getElementById('accountTitle').innerText = 'خۇش كەپسىز, ' + currentUser.user;
             document.getElementById('displayUsername').innerText = currentUser.user;
             
+            if(currentUser.avatar) {
+                const avatarImgHtml = `<img src="${currentUser.avatar}">`;
+                document.getElementById('mainAccountAvatarBox').innerHTML = avatarImgHtml;
+                document.getElementById('settingsAvatarBox').innerHTML = avatarImgHtml;
+            }
+
             const badge = document.getElementById('vipBadge');
             const vipStatusText = document.getElementById('vipStatusText');
             const uploadMenu = document.getElementById('uploadMenuSettingItem');
@@ -1543,24 +1593,38 @@
 
         function handleLogout() {
             currentUser = null;
+            localStorage.removeItem('koznak_user');
             document.getElementById('authModeSwitch').style.display = 'flex';
             setAuthMode('login');
             document.getElementById('userProfileView').style.display = 'none';
             document.getElementById('accountTitle').innerText = 'ھېساباتقا كىرىش / تىزىملىتىش';
             document.getElementById('uploadMenuSettingItem').style.display = 'none';
             document.getElementById('navUploadBtn').style.display = 'none';
+            document.getElementById('mainAccountAvatarBox').innerHTML = '👤';
+            document.getElementById('settingsAvatarBox').innerHTML = '👤';
             renderMovies();
         }
 
         function handlePhoneImageSelected(e) {
             const file = e.target.files[0];
             if(!file) return;
+            if(!currentUser) {
+                alert('سۈرەتنى ئۆزگەرتىش ئۈچۈن ئاۋۋال ھېساباتقا كىرىڭ!');
+                return;
+            }
             const reader = new FileReader();
             reader.onload = function(ev) {
                 const base64 = ev.target.result;
                 document.getElementById('mainAccountAvatarBox').innerHTML = `<img src="${base64}">`;
                 document.getElementById('settingsAvatarBox').innerHTML = `<img src="${base64}">`;
-                localStorage.setItem('koznak_avatar', base64);
+                
+                currentUser.avatar = base64;
+                localStorage.setItem('koznak_user', JSON.stringify(currentUser));
+
+                if(currentUser.user !== 'nasrulla') {
+                    const avatarRef = window.dbRef(window.db, 'users/' + currentUser.user + '/avatar');
+                    window.dbSet(avatarRef, base64);
+                }
             };
             reader.readAsDataURL(file);
         }
@@ -1577,10 +1641,16 @@
             const savedTheme = localStorage.getItem('koznak_theme') || 'dark';
             setTheme(savedTheme);
 
-            const savedAvatar = localStorage.getItem('koznak_avatar');
-            if(savedAvatar) {
-                document.getElementById('mainAccountAvatarBox').innerHTML = `<img src="${savedAvatar}">`;
-                document.getElementById('settingsAvatarBox').innerHTML = `<img src="${savedAvatar}">`;
+            const savedUserJson = localStorage.getItem('koznak_user');
+            if(savedUserJson) {
+                try {
+                    currentUser = JSON.parse(savedUserJson);
+                    if(currentUser) {
+                        updateUIAfterLogin();
+                    }
+                } catch(err) {
+                    localStorage.removeItem('koznak_user');
+                }
             }
 
             setupVideoTimePersistence("koznakVideo");
