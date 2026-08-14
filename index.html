@@ -478,6 +478,14 @@
         </div>
     </div>
 
+    <!-- كۆرگەنلىرىم بەتى -->
+    <div id="historyTab" class="tab-content">
+        <div class="category-section" style="margin-top: 15px;">
+            <div class="section-title" style="margin-bottom: 12px;">🕒 كۆرگەن فىلىملىرىم</div>
+            <div class="movie-grid" id="historyList"></div>
+        </div>
+    </div>
+
     <!-- باشقۇرۇش مەركىزى -->
     <div id="uploadTab" class="tab-content">
         <div class="page-box" id="uploadPageContent">
@@ -615,7 +623,7 @@
                     </div>
                 </div>
                 <div class="profile-buttons-row">
-                    <div class="profile-action-chip" onclick="switchTab('accountTab', document.querySelectorAll('.nav-item')[4])"><span>👤</span> ھېسابات</div>
+                    <div class="profile-action-chip" onclick="switchTab('accountTab', document.querySelectorAll('.nav-item')[5])"><span>👤</span> ھېسابات</div>
                     <div class="profile-action-chip" onclick="switchTab('vipOpenTab', null)"><span>⭐</span> ئەزالىق ئېچىش</div>
                 </div>
             </div>
@@ -630,7 +638,7 @@
                             <span class="settings-item-desc">كىنو، ئابونت ئەزالىقى ۋە ئۆچۈرۈش</span>
                         </div>
                     </div>
-                    <button type="button" class="action-btn" style="width: auto; padding: 6px 14px; font-size: 13px; margin: 0; box-shadow: none;" onclick="switchTab('uploadTab', document.querySelectorAll('.nav-item')[3])">ئېچىش</button>
+                    <button type="button" class="action-btn" style="width: auto; padding: 6px 14px; font-size: 13px; margin: 0; box-shadow: none;" onclick="switchTab('uploadTab', document.querySelectorAll('.nav-item')[4])">ئېچىش</button>
                 </div>
 
                 <div class="settings-row-item">
@@ -688,6 +696,7 @@
         <button class="nav-item active" onclick="switchTab('homeTab', this)"><span>🏠</span><span>باش بەت</span></button>
         <button class="nav-item" onclick="switchTab('shortsTab', this)"><span>📱</span><span>قىسقا فىلىم</span></button>
         <button class="nav-item" onclick="switchTab('favTab', this)"><span>❤️</span><span>ياقتۇرغانلار</span></button>
+        <button class="nav-item" onclick="switchTab('historyTab', this)"><span>🕒</span><span>كۆرگەنلىرىم</span></button>
         <button class="nav-item" id="navUploadBtn" onclick="switchTab('uploadTab', this)" style="display: none;"><span>➕</span><span>باشقۇرۇش</span></button>
         <button class="nav-item" onclick="switchTab('accountTab', this)"><span>👤</span><span>ھېسابات</span></button>
         <button class="nav-item" onclick="switchTab('settingsTab', this)"><span>⚙️</span><span>تەڭشەك</span></button>
@@ -706,6 +715,7 @@
         let currentFilter = 'all';
         let currentUser = null;
         let favorites = JSON.parse(localStorage.getItem('koznak_favs') || '[]');
+        let historyList = JSON.parse(localStorage.getItem('koznak_history') || '[]');
         let currentActiveMovieId = null;
         let searchTimeout = null;
 
@@ -734,6 +744,8 @@
 
             if(tabId === 'shortsTab') {
                 renderReelsViewer();
+            } else if(tabId === 'historyTab') {
+                renderHistory();
             }
         }
 
@@ -755,10 +767,13 @@
         }
 
         function clearWatchHistory() {
-            if(confirm('كۆرگەن فىلىملىرىڭىزنىڭ توختاش ۋاقىت خاتىرىسى تازىلسۇنمۇ؟')) {
+            if(confirm('كۆرگەن فىلىملىرىڭىزنىڭ كۆرۈش خاتىرىسى ۋە ۋاقىت ئۇچۇرلىرى تازىلسۇنمۇ؟')) {
                 Object.keys(localStorage).forEach(key => {
                     if(key.startsWith('video_time_')) localStorage.removeItem(key);
                 });
+                historyList = [];
+                localStorage.removeItem('koznak_history');
+                renderHistory();
                 alert('فىلىم كۆرۈش خاتىرىلىرى مۇۋەپپەقىيەتلىك تازىلاندى!');
             }
         }
@@ -811,6 +826,7 @@
                 allMovies = data || {};
                 renderMovies();
                 renderFavorites();
+                renderHistory();
             });
 
             const usersRef = window.dbRef(window.db, 'users');
@@ -818,7 +834,6 @@
                 const data = snapshot.val();
                 allUsers = data || {};
                 
-                // ئەگەر ئابونت كىرگەن بولسا، DB دىكى ئەڭ يېڭى ئۇچۇرلىرى بىلەن يېڭىلاش
                 if(currentUser && currentUser.user !== 'nasrulla') {
                     if(allUsers[currentUser.user]) {
                         currentUser = { ...allUsers[currentUser.user], user: currentUser.user };
@@ -948,9 +963,54 @@
             return card;
         }
 
+        function addToHistory(id) {
+            if(!historyList.includes(id)) {
+                historyList.unshift(id);
+                if(historyList.length > 50) historyList.pop();
+                localStorage.setItem('koznak_history', JSON.stringify(historyList));
+            } else {
+                historyList = historyList.filter(hId => hId !== id);
+                historyList.unshift(id);
+                localStorage.setItem('koznak_history', JSON.stringify(historyList));
+            }
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const histGrid = document.getElementById('historyList');
+            if(!histGrid) return;
+            histGrid.innerHTML = '';
+
+            if(historyList.length === 0) {
+                histGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 40px;">ھېچقانداق كۆرگەن مەزمۇن يوق</div>';
+                return;
+            }
+
+            historyList.forEach(id => {
+                const item = allMovies[id];
+                if(!item) return;
+                
+                const card = createMovieCardElement(id, item);
+                const delBtn = document.createElement('button');
+                delBtn.className = 'del-btn';
+                delBtn.innerHTML = '✕';
+                delBtn.title = 'خاتىرىدىن ئۆچۈرۈش';
+                delBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    historyList = historyList.filter(hId => hId !== id);
+                    localStorage.setItem('koznak_history', JSON.stringify(historyList));
+                    renderHistory();
+                };
+                card.querySelector('.card-actions').appendChild(delBtn);
+                histGrid.appendChild(card);
+            });
+        }
+
         function handleCardClick(id) {
             const item = allMovies[id];
             if(!item) return;
+
+            addToHistory(id);
 
             if(item.type === 'short') {
                 const shortsNavBtn = document.querySelectorAll('.nav-item')[1];
@@ -1034,7 +1094,7 @@
         function rateMovie(score) {
             if(!currentUser) {
                 alert('باھا بېرىش ئۈچۈن ئاۋۋال ھېساباتىڭىزغا كىرىڭ!');
-                switchTab('accountTab', document.querySelectorAll('.nav-item')[4]);
+                switchTab('accountTab', document.querySelectorAll('.nav-item')[5]);
                 return;
             }
             if(!currentActiveMovieId) return;
@@ -1073,7 +1133,7 @@
         function submitComment() {
             if(!currentUser) {
                 alert('پىكىر قالدۇرۇش ئۈچۈن ئاۋۋال ھېساباتىڭىزغا كىرىڭ!');
-                switchTab('accountTab', document.querySelectorAll('.nav-item')[4]);
+                switchTab('accountTab', document.querySelectorAll('.nav-item')[5]);
                 return;
             }
             const commentText = document.getElementById('commentInputBox').value.trim();
