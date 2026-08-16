@@ -79,6 +79,31 @@
             transition: background-color 0.4s ease, color 0.4s ease;
         }
 
+        /* 🔔 يېڭى كىنو ئۇقتۇرۇش Banner */
+        #notificationBanner {
+            position: fixed;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: linear-gradient(135deg, #E50914, #b20710);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            z-index: 9999;
+            box-shadow: 0 6px 20px rgba(229, 9, 20, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 90%;
+            text-align: center;
+        }
+        #notificationBanner.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
         .floating-contact-btn {
             position: fixed;
             bottom: 75px;
@@ -203,7 +228,20 @@
         .movie-card:hover .movie-poster-box img { transform: scale(1.08); }
 
         .movie-footer { display: flex; flex-direction: column; padding: 12px; flex-grow: 1; }
-        .movie-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 8px; }
+        .movie-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; }
+        
+        /* 🕒 كۆرۈش تارىخىدىكى ۋاقىت بەلگىسى */
+        .resume-progress-badge {
+            font-size: 11px;
+            color: var(--accent-color);
+            font-weight: 700;
+            background: rgba(229, 9, 20, 0.1);
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+
         .movie-card-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
 
         .movie-tag {
@@ -262,7 +300,7 @@
             border-radius: 16px; padding: 18px; margin-top: 15px; box-shadow: var(--card-shadow);
         }
         .detail-title { font-size: 18px; font-weight: 800; margin-bottom: 8px; color: var(--text-color); }
-        .detail-meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text-secondary); }
+        .detail-meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text-secondary); flex-wrap: wrap; gap: 8px; }
 
         .series-episode-bar-detail {
             display: flex; gap: 8px; overflow-x: auto; padding: 12px 0; margin-top: 10px; scrollbar-width: none;
@@ -388,6 +426,12 @@
 </head>
 <body>
 
+    <!-- 🔔 يېڭى كىنو ئۇقتۇرۇش كۆزنىكى -->
+    <div id="notificationBanner">
+        <span>🎬 يېڭى مەزمۇن قوشۇلدى:</span>
+        <span id="notifMovieTitle" style="text-decoration: underline; cursor: pointer;"></span>
+    </div>
+
     <a href="https://t.me/koznakkino" target="_blank" class="floating-contact-btn">
         <span>💬</span> ئالاقىلىشىش
     </a>
@@ -418,6 +462,7 @@
             <button class="cat-chip" onclick="filterCategory('cartoon', this)">🧸 كارتونلار</button>
             <button class="cat-chip" onclick="filterCategory('cartoon_series', this)">🧸📺 قىسىملىق كارتۇن</button>
             <button class="cat-chip" onclick="filterCategory('short', this)">📱 قىسقا فىلىملەر</button>
+            <button class="cat-chip" onclick="filterCategory('top_rated', this)">⭐ يۇقىرى باھالىق</button>
         </div>
 
         <div id="homeSectionsContainer"></div>
@@ -480,10 +525,10 @@
         </div>
     </div>
 
-    <!-- كۆرگەنلىرىم بەتى -->
+    <!-- كۆرگەنلىرىم بەتى (داۋاملاشتۇرۇش ئىقتىدارى بىلەن) -->
     <div id="historyTab" class="tab-content">
         <div class="category-section" style="margin-top: 15px;">
-            <div class="section-title" style="margin-bottom: 12px;">🕒 كۆرگەن فىلىملىرىم</div>
+            <div class="section-title" style="margin-bottom: 12px;">🕒 كۆرگەن فىلىملىرىم ۋە داۋاملاشتۇرۇش</div>
             <div class="movie-grid" id="historyList"></div>
         </div>
     </div>
@@ -648,12 +693,13 @@
                         <div class="settings-icon-box">🎨</div>
                         <div class="settings-text-box">
                             <span class="settings-item-title">لايىھە ئۇسلۇبى (Theme)</span>
-                            <span class="settings-item-desc">توربەت كۆرۈنۈشىنى تاللاڭ</span>
+                            <span class="settings-item-desc">يورۇق، قارا ياكى ئاپتوماتىك</span>
                         </div>
                     </div>
                     <div class="theme-buttons-container">
-                        <button class="theme-select-btn active" id="lightThemeBtn" onclick="setTheme('light')">يورۇق</button>
+                        <button class="theme-select-btn" id="lightThemeBtn" onclick="setTheme('light')">يورۇق</button>
                         <button class="theme-select-btn" id="darkThemeBtn" onclick="setTheme('dark')">قارا</button>
+                        <button class="theme-select-btn" id="autoThemeBtn" onclick="setTheme('auto')">ئاپتوماتىك</button>
                     </div>
                 </div>
 
@@ -720,6 +766,7 @@
         let historyList = JSON.parse(localStorage.getItem('koznak_history') || '[]');
         let currentActiveMovieId = null;
         let searchTimeout = null;
+        let lastNotifiedMovieId = localStorage.getItem('koznak_last_notif') || '';
 
         function stopAllVideos() {
             const videos = document.querySelectorAll('video');
@@ -754,16 +801,23 @@
         function openSearch() { document.getElementById('searchModal').style.display = 'block'; }
         function closeSearch() { document.getElementById('searchModal').style.display = 'none'; }
 
+        // 🌙 4. قاراڭغۇ/يورۇق ھالەتنى تەڭشەش (ئاپتوماتىك ھالەتنىمۇ ئۆز ئىچىگە ئالىدۇ)
         function setTheme(mode) {
             document.body.classList.remove('dark-mode');
             document.getElementById('lightThemeBtn').classList.remove('active');
             document.getElementById('darkThemeBtn').classList.remove('active');
+            document.getElementById('autoThemeBtn').classList.remove('active');
 
             if(mode === 'dark') {
                 document.body.classList.add('dark-mode');
                 document.getElementById('darkThemeBtn').classList.add('active');
-            } else {
+            } else if(mode === 'light') {
                 document.getElementById('lightThemeBtn').classList.add('active');
+            } else if(mode === 'auto') {
+                document.getElementById('autoThemeBtn').classList.add('active');
+                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                    document.body.classList.add('dark-mode');
+                }
             }
             localStorage.setItem('koznak_theme', mode);
         }
@@ -826,6 +880,10 @@
             window.dbOnValue(moviesRef, (snapshot) => {
                 const data = snapshot.val();
                 allMovies = data || {};
+                
+                // 🔔 5. يېڭى كىنو قوشۇلغاندا ئۇقتۇرۇش كۆرسىتىش تەكشۈرۈشى
+                checkNewMovieNotification();
+
                 renderMovies();
                 renderFavorites();
                 renderHistory();
@@ -848,11 +906,37 @@
                 renderAdminUsersList();
             });
 
-            // تېلېگرامما ئارقىلىق ئاپتوماتىك كىرىشنى تекشүрۈش ۋە ئورنىتىش
             checkTelegramAuth();
         }
 
-        // تېلېگرامما ئارقىلىق ئاپتوماتىك كىرىش فۇنكسىيەسى
+        // 🔔 5. يېڭى كىنو ئۇقتۇرۇش فۇنكسىيەسى
+        function checkNewMovieNotification() {
+            const keys = Object.keys(allMovies).sort((a, b) => (allMovies[b].createdAt || 0) - (allMovies[a].createdAt || 0));
+            if(keys.length > 0) {
+                const latestId = keys[0];
+                const latestMovie = allMovies[latestId];
+                if(latestId !== lastNotifiedMovieId && latestMovie && (Date.now() - (latestMovie.createdAt || 0) < 86400000)) {
+                    showNotificationBanner(latestMovie.title, latestId);
+                    lastNotifiedMovieId = latestId;
+                    localStorage.setItem('koznak_last_notif', latestId);
+                }
+            }
+        }
+
+        function showNotificationBanner(title, movieId) {
+            const banner = document.getElementById('notificationBanner');
+            const titleSpan = document.getElementById('notifMovieTitle');
+            titleSpan.innerText = title;
+            titleSpan.onclick = () => {
+                banner.classList.remove('show');
+                handleCardClick(movieId);
+            };
+            banner.classList.add('show');
+            setTimeout(() => {
+                banner.classList.remove('show');
+            }, 6000);
+        }
+
         function checkTelegramAuth() {
             if (window.Telegram && window.Telegram.WebApp) {
                 const tg = window.Telegram.WebApp;
@@ -861,9 +945,6 @@
 
                 if (tgUser) {
                     const telegramUsername = tgUser.username ? tgUser.username : `tg_${tgUser.id}`;
-                    const fullName = `${tgUser.first_name || ''} ${tgUser.last_name || ''}`.trim() || telegramUsername;
-
-                    // Firebase دىن شۇ تېلېگرامما ئابونتى باريوقلىقىنى تекشۈرۈش
                     const userRef = window.dbRef(window.db, 'users/' + telegramUsername);
                     window.dbGet(userRef).then(snapshot => {
                         if (snapshot.exists()) {
@@ -872,7 +953,6 @@
                             localStorage.setItem('koznak_user', JSON.stringify(currentUser));
                             updateUIAfterLogin();
                         } else {
-                            // ئەگەر تېخىمۇ تىزىملىتىلمىگەن بولسا، ئاپتوماتىك تىزىملاپ كىرگۈزۈش
                             const newTgUser = {
                                 user: telegramUsername,
                                 pass: 'telegram_auth',
@@ -926,6 +1006,28 @@
                 return;
             }
 
+            // ⭐ 2. ئەڭ يۇقىرى باھالىق (Top Rated) كىنولەر سۈزگۈچى
+            if (currentFilter === 'top_rated') {
+                let ratedKeys = [...keys].sort((a, b) => {
+                    const avgA = calculateAverageRating(allMovies[a].ratings || {});
+                    const avgB = calculateAverageRating(allMovies[b].ratings || {});
+                    return avgB - avgA;
+                });
+
+                let sectionDiv = document.createElement('div');
+                sectionDiv.className = 'category-section';
+                sectionDiv.innerHTML = `
+                    <div class="section-title">⭐ ئەڭ يۇقىرى باھالىق كىنولەر</div>
+                    <div class="movie-grid" id="grid_top_rated"></div>
+                `;
+                container.appendChild(sectionDiv);
+                let grid = document.getElementById('grid_top_rated');
+                ratedKeys.forEach(id => {
+                    grid.appendChild(createMovieCardElement(id, allMovies[id]));
+                });
+                return;
+            }
+
             if (currentFilter !== 'all') {
                 let filteredKeys = keys.filter(id => allMovies[id].type === currentFilter);
                 let sectionTitleText = getCategoryName(currentFilter);
@@ -975,6 +1077,14 @@
             }
         }
 
+        function calculateAverageRating(ratingsObj) {
+            const counts = Object.keys(ratingsObj).length;
+            if (counts === 0) return 0;
+            let sum = 0;
+            Object.values(ratingsObj).forEach(v => sum += v);
+            return sum / counts;
+        }
+
         function getCategoryName(type) {
             switch(type) {
                 case 'movie': return 'كىنولەر';
@@ -986,11 +1096,19 @@
             }
         }
 
-        function createMovieCardElement(id, item) {
+        function createMovieCardElement(id, item, resumeTimeSec = null) {
             const isFav = favorites.includes(id);
             const isAdmin = currentUser && currentUser.role === 'admin';
             const posterHtml = item.poster ? `<img src="${item.poster}" alt="${item.title}">` : '🎬';
             const viewsCount = item.views || 0;
+
+            let resumeBadgeHtml = '';
+            if (resumeTimeSec && resumeTimeSec > 5) {
+                const mins = Math.floor(resumeTimeSec / 60);
+                const secs = Math.floor(resumeTimeSec % 60);
+                const timeFormatted = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                resumeBadgeHtml = `<span class="resume-progress-badge">⏱️ داۋاملاشتۇرۇش: ${timeFormatted}</span>`;
+            }
 
             const card = document.createElement('div');
             card.className = 'movie-card';
@@ -1001,6 +1119,7 @@
                 </div>
                 <div class="movie-footer" onclick="handleCardClick('${id}')">
                     <div class="movie-name">${item.title}</div>
+                    ${resumeBadgeHtml}
                     <div class="movie-card-bottom">
                         <span style="font-size: 11px; color: var(--text-secondary);">👀 ${viewsCount} قېتىم</span>
                         <div class="card-actions" onclick="event.stopPropagation()">
@@ -1026,6 +1145,7 @@
             renderHistory();
         }
 
+        // 🕒 1. كۆرگەنلىرىم بەتىدە ۋاقىت خاتىرىسىنى كۆرسىتىش
         function renderHistory() {
             const histGrid = document.getElementById('historyList');
             if(!histGrid) return;
@@ -1040,7 +1160,9 @@
                 const item = allMovies[id];
                 if(!item) return;
                 
-                const card = createMovieCardElement(id, item);
+                const savedTime = parseFloat(localStorage.getItem('video_time_' + id) || '0');
+                const card = createMovieCardElement(id, item, savedTime);
+                
                 const delBtn = document.createElement('button');
                 delBtn.className = 'del-btn';
                 delBtn.innerHTML = '✕';
@@ -1049,6 +1171,7 @@
                     e.stopPropagation();
                     historyList = historyList.filter(hId => hId !== id);
                     localStorage.setItem('koznak_history', JSON.stringify(historyList));
+                    localStorage.removeItem('video_time_' + id);
                     renderHistory();
                 };
                 card.querySelector('.card-actions').appendChild(delBtn);
@@ -1130,6 +1253,8 @@
             } else {
                 playerBox.innerHTML = getEmbedPlayerHtml(item.link, id);
             }
+
+            setupVideoTimePersistence(isSeries ? (id + '_ep0') : id);
 
             renderStarsRating(item.ratings || {});
             renderComments(item.comments || {});
@@ -1247,6 +1372,7 @@
             btnEl.closest('.series-episode-bar-detail').querySelectorAll('.episode-chip-det').forEach(b => b.classList.remove('active'));
             btnEl.classList.add('active');
             document.getElementById('detailPlayerContainer').innerHTML = getEmbedPlayerHtml(url, videoKey);
+            setupVideoTimePersistence(videoKey);
         }
 
         function renderRelatedMovies(currentId) {
@@ -1430,10 +1556,11 @@
             }
         }
 
+        // 🕒 1. ۋىدىيو كۆرۈش ۋاقتىنى ساقلاش ۋە داۋاملاشتۇرۇش فۇنكسىيەسى
         function setupVideoTimePersistence(videoElementId) {
             const video = document.getElementById(videoElementId);
             if (video) {
-                const storageKey = "video_time_" + videoElementId;
+                const storageKey = "video_time_" + (currentActiveMovieId || videoElementId);
                 const savedTime = localStorage.getItem(storageKey);
                 if (savedTime) {
                     video.currentTime = parseFloat(savedTime);
@@ -1762,7 +1889,7 @@
                 }
             }, 1200);
 
-            const savedTheme = localStorage.getItem('koznak_theme') || 'dark';
+            const savedTheme = localStorage.getItem('koznak_theme') || 'auto';
             setTheme(savedTheme);
 
             const savedUserJson = localStorage.getItem('koznak_user');
