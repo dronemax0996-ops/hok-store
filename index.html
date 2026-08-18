@@ -79,6 +79,79 @@
             transition: background-color 0.4s ease, color 0.4s ease;
         }
 
+        /* 🎬 باش بەت سىلايدېر (Slider) ئۇسلۇبى */
+        .hero-slider-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            margin: 16px 0;
+            padding: 0 16px;
+            overflow: hidden;
+        }
+        @media (min-width: 600px) {
+            .hero-slider-container { height: 260px; max-width: 700px; margin: 16px auto; }
+        }
+        .hero-slider-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+        .hero-slide-item {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+            cursor: pointer;
+            background: #1a1a1a;
+        }
+        .hero-slide-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .hero-slide-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 15px;
+            color: #fff;
+        }
+        .hero-slide-title {
+            font-size: 15px;
+            font-weight: 700;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .hero-dots {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 6px;
+            z-index: 5;
+        }
+        .hero-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .hero-dot.active {
+            background: var(--accent-color);
+            width: 20px;
+            border-radius: 4px;
+        }
+
         /* 🔔 يېڭى كىنو ئۇقتۇرۇش Banner */
         #notificationBanner {
             position: fixed;
@@ -452,6 +525,12 @@
     </div>
 
     <div id="homeTab" class="tab-content active-tab">
+        <!-- 🎬 باش بەت سىلايدېر (Slider) ئورنى -->
+        <div class="hero-slider-container" id="heroSliderContainer" style="display: none;">
+            <div class="hero-slider-track" id="heroSliderTrack"></div>
+            <div class="hero-dots" id="heroDotsContainer"></div>
+        </div>
+
         <div class="category-tabs">
             <button class="cat-chip active" onclick="filterCategory('all', this)">بارلىق كىنولەر</button>
             <button class="cat-chip" onclick="filterCategory('movie', this)">كىنولەر</button>
@@ -526,7 +605,6 @@
         </div>
     </div>
 
-    <!-- باشقۇرۇش مەركىزى (رەسىم تاللاش ئىقتىدارى بىلەن) -->
     <div id="uploadTab" class="tab-content">
         <div class="page-box" id="uploadPageContent">
             <div class="section-title" style="font-size: 16px; margin-bottom: 15px;">➕ يېڭى مەزمۇن قوشۇش</div>
@@ -546,7 +624,6 @@
                     <input type="text" id="contentTitle" class="form-input" placeholder="مەزمۇن ئىسمىنى كىرگۈزۈڭ" required autocomplete="off">
                 </div>
 
-                <!-- رەسىم يوللاش ئۇسۇلى -->
                 <div class="form-group">
                     <label>تەشۋىقات رەسىمى (Poster Image)</label>
                     <div style="display: flex; gap: 10px; margin-bottom: 8px;">
@@ -775,6 +852,8 @@
         
         let uploadedPosterData = '';
         let currentPosterMode = 'url';
+        let currentSlideIndex = 0;
+        let sliderInterval = null;
 
         function setPosterInputMode(mode) {
             currentPosterMode = mode;
@@ -936,6 +1015,7 @@
                 allMovies = data || {};
                 
                 checkNewMovieNotification();
+                renderHeroSlider();
                 renderMovies();
                 renderFavorites();
                 renderHistory();
@@ -959,6 +1039,80 @@
             });
 
             checkTelegramAuth();
+        }
+
+        /* 🎬 باش بەت سىلايدېر (Slider) لوگىكىسى */
+        function renderHeroSlider() {
+            const sliderContainer = document.getElementById('heroSliderContainer');
+            const track = document.getElementById('heroSliderTrack');
+            const dotsContainer = document.getElementById('heroDotsContainer');
+            
+            track.innerHTML = '';
+            dotsContainer.innerHTML = '';
+
+            const keys = Object.keys(allMovies).filter(id => allMovies[id].type !== 'short').sort((a, b) => {
+                return (allMovies[b].createdAt || 0) - (allMovies[a].createdAt || 0);
+            }).slice(0, 4); // ئەڭ يېڭى 4 تال كىنو
+
+            if (keys.length === 0) {
+                sliderContainer.style.display = 'none';
+                return;
+            }
+
+            sliderContainer.style.display = 'block';
+
+            keys.forEach((id, idx) => {
+                const item = allMovies[id];
+                if (!item || !item.poster) return;
+
+                const slide = document.createElement('div');
+                slide.className = 'hero-slide-item';
+                slide.innerHTML = `
+                    <img src="${item.poster}" alt="${item.title}">
+                    <div class="hero-slide-overlay">
+                        <div class="hero-slide-title">🎬 ${item.title}</div>
+                    </div>
+                `;
+                slide.onclick = () => handleCardClick(id);
+                track.appendChild(slide);
+
+                const dot = document.createElement('div');
+                dot.className = `hero-dot ${idx === 0 ? 'active' : ''}`;
+                dot.onclick = () => goToSlide(idx);
+                dotsContainer.appendChild(dot);
+            });
+
+            currentSlideIndex = 0;
+            if (sliderInterval) clearInterval(sliderInterval);
+            if (keys.length > 1) {
+                sliderInterval = setInterval(() => {
+                    currentSlideIndex = (currentSlideIndex + 1) % keys.length;
+                    updateSliderPosition(keys.length);
+                }, 3500);
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlideIndex = index;
+            const keys = Object.keys(allMovies).filter(id => allMovies[id].type !== 'short').sort((a, b) => {
+                return (allMovies[b].createdAt || 0) - (allMovies[a].createdAt || 0);
+            }).slice(0, 4);
+            updateSliderPosition(keys.length);
+        }
+
+        function updateSliderPosition(totalSlides) {
+            const track = document.getElementById('heroSliderTrack');
+            if (track) {
+                track.style.transform = `translateX(${currentSlideIndex * 100}%)`;
+            }
+            const dots = document.querySelectorAll('.hero-dot');
+            dots.forEach((dot, idx) => {
+                if (idx === currentSlideIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
         }
 
         function checkNewMovieNotification() {
