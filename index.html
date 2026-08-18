@@ -230,7 +230,6 @@
         .movie-footer { display: flex; flex-direction: column; padding: 12px; flex-grow: 1; }
         .movie-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; }
         
-        /* 🕒 كۆرۈش تارىخىدىكى ۋاقىت بەلگىسى */
         .resume-progress-badge {
             font-size: 11px;
             color: var(--accent-color);
@@ -426,7 +425,6 @@
 </head>
 <body>
 
-    <!-- 🔔 يېڭى كىنو ئۇقتۇرۇش كۆزنىكى -->
     <div id="notificationBanner">
         <span>🎬 يېڭى مەزمۇن قوشۇلدى:</span>
         <span id="notifMovieTitle" style="text-decoration: underline; cursor: pointer;"></span>
@@ -453,7 +451,6 @@
         <button class="search-btn" onclick="openSearch()">🔍</button>
     </div>
 
-    <!-- باش بەت -->
     <div id="homeTab" class="tab-content active-tab">
         <div class="category-tabs">
             <button class="cat-chip active" onclick="filterCategory('all', this)">بارلىق كىنولەر</button>
@@ -468,7 +465,6 @@
         <div id="homeSectionsContainer"></div>
     </div>
 
-    <!-- كىنو تەپسىلات بەتى -->
     <div id="detailTab" class="tab-content">
         <div class="detail-container">
             <button class="detail-back-btn" onclick="goBackToHome()">⬅️ قايتىش</button>
@@ -512,12 +508,10 @@
         </div>
     </div>
 
-    <!-- قىسقا فىلىم كۆزنىكى -->
     <div id="shortsTab" class="tab-content">
         <div class="reels-tab-container" id="reelsWrapper"></div>
     </div>
 
-    <!-- ياقتۇرغانلار بەتى -->
     <div id="favTab" class="tab-content">
         <div class="category-section" style="margin-top: 15px;">
             <div class="section-title" style="margin-bottom: 12px;">❤️ ياقتۇرغان مەزمۇنلىرىم</div>
@@ -525,7 +519,6 @@
         </div>
     </div>
 
-    <!-- كۆرگەنلىرىم بەتى (داۋاملاشتۇرۇش ئىقتىدارى بىلەن) -->
     <div id="historyTab" class="tab-content">
         <div class="category-section" style="margin-top: 15px;">
             <div class="section-title" style="margin-bottom: 12px;">🕒 كۆرگەن فىلىملىرىم ۋە داۋاملاشتۇرۇش</div>
@@ -533,7 +526,7 @@
         </div>
     </div>
 
-    <!-- باشقۇرۇش مەركىزى -->
+    <!-- باشقۇرۇش مەركىزى (رەسىم تاللاش ئىقتىدارى بىلەن) -->
     <div id="uploadTab" class="tab-content">
         <div class="page-box" id="uploadPageContent">
             <div class="section-title" style="font-size: 16px; margin-bottom: 15px;">➕ يېڭى مەزمۇن قوشۇش</div>
@@ -544,7 +537,7 @@
                         <option value="movie">كىنو (Movie)</option>
                         <option value="series">قىسىملىق كىنو (Series)</option>
                         <option value="cartoon">كارتون (Cartoon)</option>
-                        <option value="cartoon_series">قىسىملىق كارتون (Cartoon Series)</option>
+                        <option value="cartoon_series">قىسىملىق كارتۇن (Cartoon Series)</option>
                         <option value="short">قىسقا فىلىم (Short Film)</option>
                     </select>
                 </div>
@@ -552,9 +545,26 @@
                     <label>مەزمۇن نامى</label>
                     <input type="text" id="contentTitle" class="form-input" placeholder="مەزمۇن ئىسمىنى كىرگۈزۈڭ" required autocomplete="off">
                 </div>
+
+                <!-- رەسىم يوللاش ئۇسۇلى -->
                 <div class="form-group">
-                    <label>تەشۋىقات رەسىمى ئۇلانمىسى (Poster Image URL)</label>
-                    <input type="text" id="contentPoster" class="form-input" placeholder="https://... سۈرەت ئۇلانمىسىنى كىرگۈزۈڭ" autocomplete="off">
+                    <label>تەشۋىقات رەسىمى (Poster Image)</label>
+                    <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+                        <button type="button" class="auth-switch-btn active" id="posterTypeUrlBtn" onclick="setPosterInputMode('url')" style="padding: 8px; font-size: 12px;">تور ئۇلانمىسى (URL)</button>
+                        <button type="button" class="auth-switch-btn" id="posterTypeFileBtn" onclick="setPosterInputMode('file')" style="padding: 8px; font-size: 12px;">تېلېفوندىن تاللاش (فايىل)</button>
+                    </div>
+
+                    <div id="posterUrlBox">
+                        <input type="text" id="contentPoster" class="form-input" placeholder="https://... سۈرەت ئۇلانمىسىنى كىرگۈزۈڭ" autocomplete="off" oninput="previewPosterUrl(this.value)">
+                    </div>
+
+                    <div id="posterFileBox" style="display: none;">
+                        <input type="file" id="contentPosterFile" accept="image/*" class="form-input" style="padding: 9px;" onchange="handlePosterFileSelected(event)">
+                    </div>
+
+                    <div id="posterPreviewContainer" style="margin-top: 10px; display: none; text-align: center;">
+                        <img id="posterPreviewImg" src="" alt="رەسىم" style="max-height: 120px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    </div>
                 </div>
                 
                 <div class="form-group">
@@ -590,7 +600,6 @@
         </div>
     </div>
 
-    <!-- ھېسابات بەتى -->
     <div id="accountTab" class="tab-content">
         <div class="page-box" style="text-align: center;">
             <div style="display: flex; flex-direction: column; align-items: center; margin-top: 10px; margin-bottom: 20px;">
@@ -643,7 +652,6 @@
         </div>
     </div>
 
-    <!-- ئەزالىق ئېچىش بەتى -->
     <div id="vipOpenTab" class="tab-content">
         <div class="page-box" style="max-width: 450px; text-align: right;">
             <div class="section-title" style="font-size: 18px; margin-bottom: 15px; text-align: center;">👑 ئەزالىق ئېچىش مەركىزى</div>
@@ -658,7 +666,6 @@
         </div>
     </div>
 
-    <!-- تەڭشەك بەتى -->
     <div id="settingsTab" class="tab-content">
         <div class="settings-page-wrapper">
             <div class="user-profile-card">
@@ -739,7 +746,6 @@
         </div>
     </div>
 
-    <!-- ئاستىدىكى يول باشلاش -->
     <div class="bottom-nav" id="bottomNavContainer">
         <button class="nav-item active" onclick="switchTab('homeTab', this)"><span>🏠</span><span>باش بەت</span></button>
         <button class="nav-item" onclick="switchTab('shortsTab', this)"><span>📱</span><span>قىسقا فىلىم</span></button>
@@ -750,7 +756,6 @@
         <button class="nav-item" onclick="switchTab('settingsTab', this)"><span>⚙️</span><span>تەڭشەك</span></button>
     </div>
 
-    <!-- ئىزدەش كۆزنىكى -->
     <div id="searchModal" class="search-modal">
         <button class="close-search" onclick="closeSearch()">تاقاش ✕</button>
         <input type="text" id="searchInputBox" class="search-input" placeholder="كىنو ئىسمىنى كىرگۈزۈپ ئىزدەڭ..." oninput="handleSearchInput(event)">
@@ -767,6 +772,56 @@
         let currentActiveMovieId = null;
         let searchTimeout = null;
         let lastNotifiedMovieId = localStorage.getItem('koznak_last_notif') || '';
+        
+        let uploadedPosterData = '';
+        let currentPosterMode = 'url';
+
+        function setPosterInputMode(mode) {
+            currentPosterMode = mode;
+            const urlBox = document.getElementById('posterUrlBox');
+            const fileBox = document.getElementById('posterFileBox');
+            const btnUrl = document.getElementById('posterTypeUrlBtn');
+            const btnFile = document.getElementById('posterTypeFileBtn');
+
+            if(mode === 'url') {
+                urlBox.style.display = 'block';
+                fileBox.style.display = 'none';
+                btnUrl.classList.add('active');
+                btnFile.classList.remove('active');
+            } else {
+                urlBox.style.display = 'none';
+                fileBox.style.display = 'block';
+                btnFile.classList.add('active');
+                btnUrl.classList.remove('active');
+            }
+        }
+
+        function previewPosterUrl(url) {
+            const previewContainer = document.getElementById('posterPreviewContainer');
+            const previewImg = document.getElementById('posterPreviewImg');
+            if(url.trim().length > 5) {
+                previewImg.src = url.trim();
+                previewContainer.style.display = 'block';
+                uploadedPosterData = url.trim();
+            } else {
+                previewContainer.style.display = 'none';
+            }
+        }
+
+        function handlePosterFileSelected(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                const base64 = ev.target.result;
+                uploadedPosterData = base64;
+                const previewContainer = document.getElementById('posterPreviewContainer');
+                const previewImg = document.getElementById('posterPreviewImg');
+                previewImg.src = base64;
+                previewContainer.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
 
         function stopAllVideos() {
             const videos = document.querySelectorAll('video');
@@ -801,7 +856,6 @@
         function openSearch() { document.getElementById('searchModal').style.display = 'block'; }
         function closeSearch() { document.getElementById('searchModal').style.display = 'none'; }
 
-        // 🌙 4. قاراڭغۇ/يورۇق ھالەتنى تەڭشەش (ئاپتوماتىك ھالەتنىمۇ ئۆز ئىچىگە ئالىدۇ)
         function setTheme(mode) {
             document.body.classList.remove('dark-mode');
             document.getElementById('lightThemeBtn').classList.remove('active');
@@ -881,9 +935,7 @@
                 const data = snapshot.val();
                 allMovies = data || {};
                 
-                // 🔔 5. يېڭى كىنو قوشۇلغاندا ئۇقتۇرۇش كۆرسىتىش تەكشۈرۈشى
                 checkNewMovieNotification();
-
                 renderMovies();
                 renderFavorites();
                 renderHistory();
@@ -909,7 +961,6 @@
             checkTelegramAuth();
         }
 
-        // 🔔 5. يېڭى كىنو ئۇقتۇرۇش فۇنكسىيەسى
         function checkNewMovieNotification() {
             const keys = Object.keys(allMovies).sort((a, b) => (allMovies[b].createdAt || 0) - (allMovies[a].createdAt || 0));
             if(keys.length > 0) {
@@ -1006,7 +1057,6 @@
                 return;
             }
 
-            // ⭐ 2. ئەڭ يۇقىرى باھالىق (Top Rated) كىنولەر سۈزگۈچى
             if (currentFilter === 'top_rated') {
                 let ratedKeys = [...keys].sort((a, b) => {
                     const avgA = calculateAverageRating(allMovies[a].ratings || {});
@@ -1145,7 +1195,6 @@
             renderHistory();
         }
 
-        // 🕒 1. كۆرگەنلىرىم بەتىدە ۋاقىت خاتىرىسىنى كۆرسىتىش
         function renderHistory() {
             const histGrid = document.getElementById('historyList');
             if(!histGrid) return;
@@ -1556,7 +1605,6 @@
             }
         }
 
-        // 🕒 1. ۋىدىيو كۆرۈش ۋاقتىنى ساقلاش ۋە داۋاملاشتۇرۇش فۇنكسىيەسى
         function setupVideoTimePersistence(videoElementId) {
             const video = document.getElementById(videoElementId);
             if (video) {
@@ -1677,11 +1725,16 @@
 
             const type = document.getElementById('contentType').value;
             const title = document.getElementById('contentTitle').value.trim();
-            const poster = document.getElementById('contentPoster').value.trim();
+            const poster = uploadedPosterData;
             const trailer = document.getElementById('contentTrailer').value.trim();
             const tag = document.getElementById('contentTag').value;
             const link = document.getElementById('contentLink').value.trim();
             const seriesLinks = document.getElementById('contentSeriesLinks').value.trim();
+
+            if(!poster) {
+                alert('تەشۋىقات رەسىمىنى كىرگۈزۈڭ ياكى تاللاڭ!');
+                return;
+            }
 
             if (type.includes('series') && !seriesLinks) {
                 alert('قىسىملىق فىلىملەر ئۈچۈن قىسىم ئۇلانمىلىرىنى تولدۇرۇڭ!');
@@ -1708,6 +1761,8 @@
             window.dbSet(window.dbRef(window.db, 'movies/' + newId), data).then(() => {
                 alert('مەزمۇن مۇۋەپپەقىيەتلىك قوشۇلدى!');
                 document.getElementById('uploadForm').reset();
+                uploadedPosterData = '';
+                document.getElementById('posterPreviewContainer').style.display = 'none';
                 switchTab('homeTab', document.querySelectorAll('.nav-item')[0]);
             });
         }
