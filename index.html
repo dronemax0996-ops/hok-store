@@ -379,15 +379,7 @@
             width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 20px; overflow: hidden;
             position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.6); border: 1px solid var(--border-color);
         }
-        /* Video Player & Landscape full styles */
-        .detail-player-box iframe, 
-        .detail-player-box video { 
-            width: 100%; 
-            height: 100%; 
-            border: none; 
-            object-fit: contain; 
-            background: #000;
-        }
+        .detail-player-box iframe, .detail-player-box video { width: 100%; height: 100%; border: none; object-fit: cover; }
 
         .detail-info-box {
             background: var(--card-bg); backdrop-filter: var(--backdrop); border: 1px solid var(--border-color);
@@ -639,9 +631,9 @@
                     <label>مەزمۇن تىپى</label>
                     <select id="contentType" class="form-select" onchange="toggleUploadInputs()">
                         <option value="movie">كىنو (Movie)</option>
-                        <option value="series">قىسىملىق كىنو (Series - 1-قىسىم ھەقسىز)</option>
+                        <option value="series">قىسىملىق كىنو (Series)</option>
                         <option value="cartoon">كارتون (Cartoon)</option>
-                        <option value="cartoon_series">قىسىملىق كارتۇن (Cartoon Series - 1-قىسىم ھەقسىز)</option>
+                        <option value="cartoon_series">قىسىملىق كارتۇن (Cartoon Series)</option>
                         <option value="short">قىسقا فىلىم (Short Film)</option>
                     </select>
                 </div>
@@ -671,26 +663,26 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>فىلىم ئېلانى ئۇلانمىسى (Trailer URL - 1-قىسىم ۋە ئېلان ھەممىگە ھەقسىز)</label>
-                    <input type="text" id="contentTrailer" class="form-input" placeholder="تەشۋىقات ئېلانى (YouTube ياكى Video URL)" autocomplete="off">
+                    <label>فىلىم ئېلانى ئۇلانمىسى (Trailer URL - ئىختىيارى)</label>
+                    <input type="text" id="contentTrailer" class="form-input" placeholder="تەشۋىقات ئېلانى YouTube ئۇلانمىسى" autocomplete="off">
                 </div>
 
                 <div class="form-group">
                     <label>مەزمۇن بەلگىسى (كۆرۈش ھوقۇقى)</label>
                     <select id="contentTag" class="form-select">
                         <option value="ھەممە ئەزا كۆرەلەيدىغان">ھەممە ئەزا كۆرەلەيدىغان (ئادەتتىكى)</option>
-                        <option value="VIP">پەقەت VIP ئەزالارلا كۆرەلەيدىغان (VIP - قىسىملىقلاردا 1-قىسىمدىن باشقىسى)</option>
+                        <option value="VIP">پەقەت VIP ئەزالارلا كۆرەلەيدىغان (VIP)</option>
                     </select>
                 </div>
                 
                 <div id="singleLinkGroup" class="form-group">
-                    <label>ۋىدىيو ئۇلانمىسى (Video / Direct / YouTube Link)</label>
-                    <input type="text" id="contentLink" class="form-input" placeholder="https://... (ۋىدىيو قويغۇچ ئۈچۈن بىۋاسىتە ئۇلانما)" autocomplete="off">
+                    <label>ۋىدىيو ئۇلانمىسى (YouTube ياكى نورمال ئۇلانما)</label>
+                    <input type="text" id="contentLink" class="form-input" placeholder="https://youtube.com/watch?v=..." autocomplete="off">
                 </div>
 
                 <div id="seriesLinksGroup" class="form-group" style="display: none;">
-                    <label>قىسىملارنى ئاسان كىرگۈزۈش (مەسىلەن: 1-قىسىم: https://...)</label>
-                    <textarea id="contentSeriesLinks" class="form-input" rows="6" placeholder="1-قىسىم: https://...&#10;2-قىسىم: https://...&#10;3-قىسىم: https://..."></textarea>
+                    <label>قىسىم سانى ۋە ئۇلانمىلىرى (مەسىلەن: 1-قىسىم: https://...)</label>
+                    <textarea id="contentSeriesLinks" class="form-input" rows="6" placeholder="1-قىسىم: https://...&#10;2-قىسىم: https://..."></textarea>
                 </div>
 
                 <button type="submit" class="action-btn">مەزمۇننى يوللاش</button>
@@ -759,7 +751,7 @@
         <div class="page-box" style="max-width: 450px; text-align: right;">
             <div class="section-title" style="font-size: 18px; margin-bottom: 15px; text-align: center;">👑 ئەزالىق ئېچىش مەركىزى</div>
             <div style="background: var(--card-bg); backdrop-filter: var(--backdrop); border: 1px solid var(--border-color); padding: 22px; border-radius: 18px; line-height: 1.7; font-size: 14px; box-shadow: var(--card-shadow);">
-                <p style="margin-bottom: 12px; color: var(--text-color); font-weight: 600;">ھۆرمەتلىك ئەزا، سىز ئايلىق ئەزالىق ئېچىش ئارقىلىق بارلىق قىسىملىق ۋە VIP كىنولەردən تولۇق بەھرىمەن بولالايسىز.</p>
+                <p style="margin-bottom: 12px; color: var(--text-color); font-weight: 600;">ھۆرمەتلىك ئەزا، سىز ئايلىق ئەزالىق ئېچىش ئارقىلىق بارلىق VIP كىنولەردən چەكلىمىسىز بەھرىمەن بولالايسىز.</p>
                 <hr style="border: none; border-top: 1px solid var(--border-color); margin: 15px 0;">
                 <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 15px;">👉 ئايلىق ئەزالىق ئېچىش ياكى يېڭىلاش ئۈچۈن تۆۋەندىكى تېلېگرامما ئادرېسىغا بىۋاسىتە ئۇچۇر قىلىڭ:</p>
                 <a href="https://t.me/KOZNAK_USD" target="_blank" style="display: block; text-align: center; background: #0088cc; color: white; padding: 14px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 15px; box-shadow: 0 4px 12px rgba(0, 136, 204, 0.3);">
@@ -1215,9 +1207,9 @@
             } else {
                 const categories = [
                     { key: 'movie', title: '🎬 يېڭى كىنولەر' },
-                    { key: 'series', title: '📺 قىسىملىق كىنولەر (1-قىسىم ھەقسىز)' },
+                    { key: 'series', title: '📺 قىسىملىق كىنولەر' },
                     { key: 'cartoon', title: '🧸 كارتونلار' },
-                    { key: 'cartoon_series', title: '🧸📺 قىسىملىق كارتۇن (1-قىسىم ھەقسىز)' },
+                    { key: 'cartoon_series', title: '🧸📺 قىسىملىق كارتۇن' },
                     { key: 'short', title: '📱 قىسقا فىلىملەر' }
                 ];
 
@@ -1337,8 +1329,7 @@
                 return;
             }
 
-            // ئۆزگەرتىش: ئەگەر فىلىم VIP بولسا ھەم قىسىملىق بولمىسا تەكشۈرۈش
-            if(item.tag === 'VIP' && (!item.type || !item.type.includes('series')) && (!currentUser || (currentUser.role !== 'admin' && !currentUser.vip))) {
+            if(item.tag === 'VIP' && (!currentUser || (currentUser.role !== 'admin' && !currentUser.vip))) {
                 alert('بۇ فىلىم پەقەت VIP ئەزالار ئۈچۈنلا! ئاۋۋال ئەزالىق ئېچىڭ.');
                 switchTab('vipOpenTab', null);
                 return;
@@ -1362,9 +1353,8 @@
             document.getElementById('detailMovieTag').innerText = item.tag ? `بەلگە: ${item.tag}` : '';
             document.getElementById('detailMovieViews').innerText = `👀 كۆرۈش سانى: ${item.views || 1}`;
 
-            // 1-قىسىم ۋە ئېلانلار ھەممىگە ھەقسىز كۆرسىتىلىدۇ
             document.getElementById('trailerBtnContainer').innerHTML = item.trailer ? 
-                `<button class="action-btn" style="background:linear-gradient(135deg, #0984e3, #74b9ff); padding:10px; font-size:13px; margin:0;" onclick="playTrailer('${item.trailer}')">🎬 فىلىم ئېلانىنى كۆرۈش (Trailer - ھەقسىز)</button>` : '';
+                `<button class="action-btn" style="background:linear-gradient(135deg, #0984e3, #74b9ff); padding:10px; font-size:13px; margin:0;" onclick="playTrailer('${item.trailer}')">🎬 فىلىم ئېلانىنى كۆرۈش (Trailer)</button>` : '';
 
             const playerBox = document.getElementById('detailPlayerContainer');
             const episodeBarBox = document.getElementById('detailEpisodeBarContainer');
@@ -1374,12 +1364,10 @@
             if(isSeries) {
                 let episodes = parseSeriesEpisodes(item.links);
                 if(episodes.length > 0) {
-                    // بىرىنچى قىسىم ھەقسىز قويۇلىدۇ
                     playerBox.innerHTML = getEmbedPlayerHtml(episodes[0].url, id + '_ep0');
                     let epBarHtml = `<div class="series-episode-bar-detail">`;
                     episodes.forEach((ep, idx) => {
-                        // 1-قىسىم (idx === 0) ھەممىگە ئوچۇق، قالغانلىرى VIP تەكشۈرۈلىدۇ
-                        epBarHtml += `<button class="episode-chip-det ${idx === 0 ? 'active' : ''}" onclick="changeDetailEpisode(this, '${ep.url}', '${id}_ep${idx}', ${idx})">${ep.name} ${idx === 0 ? '(ھەقسىز)' : ''}</button>`;
+                        epBarHtml += `<button class="episode-chip-det ${idx === 0 ? 'active' : ''}" onclick="changeDetailEpisode(this, '${ep.url}', '${id}_ep${idx}')">${ep.name}</button>`;
                     });
                     episodeBarBox.innerHTML = epBarHtml + `</div>`;
                 }
@@ -1471,17 +1459,7 @@
             });
         }
 
-        function changeDetailEpisode(btnEl, url, videoKey, episodeIndex) {
-            // 1-قىسىمدىن باشقا قىسىملار ئۈچۈن VIP ئەزالىق تەكشۈرۈش
-            if (episodeIndex > 0) {
-                const item = allMovies[currentActiveMovieId];
-                if (item && item.tag === 'VIP' && (!currentUser || (currentUser.role !== 'admin' && !currentUser.vip))) {
-                    alert('بۇ قىسىم پەقەت VIP ئەزالار ئۈچۈنلا! ئاۋۋال ئەزالىق ئېچىڭ.');
-                    switchTab('vipOpenTab', null);
-                    return;
-                }
-            }
-
+        function changeDetailEpisode(btnEl, url, videoKey) {
             stopAllVideos();
             btnEl.closest('.series-episode-bar-detail').querySelectorAll('.episode-chip-det').forEach(b => b.classList.remove('active'));
             btnEl.classList.add('active');
@@ -1566,13 +1544,9 @@
         function parseSeriesEpisodes(linksText) {
             if (!linksText) return [];
             return linksText.split('\n').map((line, idx) => {
-                let cleanLine = line.trim();
-                if (!cleanLine) return null;
-                let parts = cleanLine.split(':');
-                let name = parts.length >= 2 ? parts[0].trim() : `قىسىم ${idx+1}`;
-                let url = parts.length >= 2 ? parts.slice(1).join(':').trim() : cleanLine;
-                return { name, url };
-            }).filter(e => e && e.url);
+                let parts = line.trim().split(':');
+                return { name: parts.length >= 2 ? parts[0].trim() : `قىسىم ${idx+1}`, url: parts.length >= 2 ? parts.slice(1).join(':').trim() : line.trim() };
+            }).filter(e => e.url);
         }
 
         function formatEmbedUrl(url, autoplay = 0) {
@@ -1591,7 +1565,7 @@
             let final = formatEmbedUrl(url, autoplay);
             return final.includes('youtube.com/embed/') ? 
                 `<iframe src="${final}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>` :
-                `<video id="${videoIdKey}" src="${final}" controls ${autoplay ? 'autoplay' : ''} playsinline webkit-playsinline></video>`;
+                `<video id="${videoIdKey}" src="${final}" controls ${autoplay ? 'autoplay' : ''} playsinline></video>`;
         }
 
         function setupVideoTimePersistence(id) {
@@ -1640,7 +1614,7 @@
                 links: document.getElementById('contentSeriesLinks').value.trim(),
                 views: 0, createdAt: Date.now()
             }).then(() => {
-                alert('مەزمۇن مۇۋەپپەقىيەتلىك قوشۇلدى!');
+                alert('مەزمۇن قوشۇلدى!');
                 document.getElementById('uploadForm').reset();
                 uploadedPosterData = '';
                 document.getElementById('posterPreviewContainer').style.display = 'none';
@@ -1672,7 +1646,7 @@
             const pass = document.getElementById('regPass').value.trim();
             if(!user || !pass) return alert('بۆشلۇقنى تولدۇرۇڭ!');
             window.dbGet(window.dbRef(window.db, 'users/' + user)).then(snap => {
-                if(snap.exists()) alert('بۇ ئىسىم ئاللىقاچان بار!');
+                if(snap.exists()) alert('بار ئىسم!');
                 else {
                     const newUser = { user, pass, role: 'user', vip: false, avatar: '' };
                     window.dbSet(window.dbRef(window.db, 'users/' + user), newUser).then(() => {
@@ -1698,7 +1672,7 @@
                     currentUser = { ...snap.val(), user };
                     localStorage.setItem('koznak_user', JSON.stringify(currentUser));
                     updateUIAfterLogin();
-                } else alert('ئىسم ياكى مەخپىي نومۇر خاتா!');
+                } else alert('خاتا!');
             });
         }
 
