@@ -1141,7 +1141,6 @@
                     if(sItem && sItem.poster) slidesData.push({ id: sItem.movieId, title: sItem.title, poster: sItem.poster, type: sItem.type, sKey: sKey });
                 });
             } else {
-                // ئەگەر ئالاھىدە سىلايدېر قوشۇلمىغان بولسا ئەڭ يېڭى كىنولەردىن ئاپتوماتىك ئالىدۇ
                 let fallbackKeys = Object.keys(allMovies).filter(id => allMovies[id].type !== 'short').sort((a, b) => {
                     return (allMovies[b].createdAt || 0) - (allMovies[a].createdAt || 0);
                 }).slice(0, 4);
@@ -1507,7 +1506,6 @@
                         settings: ['quality', 'speed']
                     });
 
-                    // 📱 5. ئېكراننى چوڭايتقاندا (Fullscreen) تېلېفوننى ئاپتوماتىك يانتۇ (Landscape) قىلىش ئۇرۇنلۇقى
                     currentPlyrPlayer.on('enterfullscreen', () => {
                         if (screen.orientation && screen.orientation.lock) {
                             screen.orientation.lock('landscape').catch(() => {});
@@ -1582,7 +1580,6 @@
             });
         }
 
-        // 💬 2. ئىنكاسلارغا يۈرەك (Like) قويۇش ۋە باشقۇرغۇچى ئۆچۈرۈش ئىقتىدارى
         function toggleCommentLike(commentId) {
             if(!currentUser) {
                 alert('يۈرەك قويۇش ئۈچۈن كىرىڭ!');
@@ -1781,26 +1778,35 @@
             const title = document.getElementById('contentTitle').value.trim();
             const poster = uploadedPosterData;
             
-            if(!poster) return alert('رەسىم تاللاڭ!');
+            if(!title) return alert('مەزمۇن نامىنى كىرگۈزۈڭ!');
+            if(!poster) return alert('تەشۋىقات رەسىمىنى تاللاڭ ياكى ئۇلانما كىرگۈزۈڭ!');
 
             let episodesArr = [];
             if (type.includes('series')) {
                 const rows = document.querySelectorAll('#dynamicEpisodesContainer > div');
                 rows.forEach(row => {
-                    const name = row.querySelector('.ep-name-input').value.trim();
-                    const url = row.querySelector('.ep-url-input').value.trim();
-                    if(url) episodesArr.push({ name: name || 'قىسىم', url });
+                    const nameInput = row.querySelector('.ep-name-input');
+                    const urlInput = row.querySelector('.ep-url-input');
+                    if (nameInput && urlInput) {
+                        const name = nameInput.value.trim();
+                        const url = urlInput.value.trim();
+                        if(url) episodesArr.push({ name: name || 'قىسىم', url });
+                    }
                 });
                 if(episodesArr.length === 0) return alert('ئەڭ كەم بولغاندا بىر قىسىم ئۇلانمىسى كىرگۈزۈڭ!');
             }
 
-            window.dbSet(window.dbRef(window.db, 'movies/movie_' + Date.now()), {
-                type, title, poster,
+            const movieId = 'movie_' + Date.now();
+            window.dbSet(window.dbRef(window.db, 'movies/' + movieId), {
+                type, 
+                title, 
+                poster,
                 trailer: document.getElementById('contentTrailer').value.trim(),
                 tag: document.getElementById('contentTag').value,
                 link: document.getElementById('contentLink').value.trim(),
                 links: episodesArr,
-                views: 0, createdAt: Date.now()
+                views: 0, 
+                createdAt: Date.now()
             }).then(() => {
                 alert('مەزمۇن مۇۋەپپەقىيەتلىك قوشۇلدى!');
                 document.getElementById('uploadForm').reset();
@@ -1808,6 +1814,8 @@
                 document.getElementById('posterPreviewContainer').style.display = 'none';
                 document.getElementById('dynamicEpisodesContainer').innerHTML = '';
                 switchTab('homeTab', document.querySelectorAll('.nav-item')[0]);
+            }).catch(err => {
+                alert('يوللاشتا خاتالىق كۆرۈلدى: ' + err.message);
             });
         }
 
