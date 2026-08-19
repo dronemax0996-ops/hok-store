@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>كۆزنەك كىنوخانىسى - Koznak TV</title>
-    <!-- تېلېگرامما WebApp كۇتۇپخانىسى قوشۇلدى -->
+    <!-- تېلېگرامما WebApp كۇتۇپخانىسى -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- 🎬 Plyr.js (فىلىم قويغۇچ) CSS ئۇسلۇبى ۋە JS كۇتۇپخانىسى قوشۇلدى -->
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -79,7 +84,7 @@
             transition: background-color 0.4s ease, color 0.4s ease;
         }
 
-        /* 🎬 Netflix باش بەت سىلايدېر (Slider) ئۇسلۇبى */
+        /* 🎬 Netflix باش بەت سىلايدېر ئۇسلۇبى */
         .hero-slider-container {
             position: relative;
             width: 100%;
@@ -162,7 +167,6 @@
             border-radius: 4px;
         }
 
-        /* 🔔 يېڭى كىنو ئۇقتۇرۇش Banner */
         #notificationBanner {
             position: fixed;
             top: 15px;
@@ -379,7 +383,17 @@
             width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 20px; overflow: hidden;
             position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.6); border: 1px solid var(--border-color);
         }
-        .detail-player-box iframe, .detail-player-box video { width: 100%; height: 100%; border: none; object-fit: cover; }
+        
+        /* Plyr قويغۇچ لايىھىسى */
+        .detail-player-box iframe, 
+        .detail-player-box video { 
+            width: 100%; 
+            height: 100%; 
+            border: none; 
+            object-fit: contain; 
+            background: #000;
+        }
+        .plyr { width: 100%; height: 100%; }
 
         .detail-info-box {
             background: var(--card-bg); backdrop-filter: var(--backdrop); border: 1px solid var(--border-color);
@@ -543,7 +557,6 @@
     </div>
 
     <div id="homeTab" class="tab-content active-tab">
-        <!-- 🎬 باش بەت سىلايدېر (Slider) ئورنى -->
         <div class="hero-slider-container" id="heroSliderContainer" style="display: none;">
             <div class="hero-slider-track" id="heroSliderTrack"></div>
             <div class="hero-dots" id="heroDotsContainer"></div>
@@ -631,9 +644,9 @@
                     <label>مەزمۇن تىپى</label>
                     <select id="contentType" class="form-select" onchange="toggleUploadInputs()">
                         <option value="movie">كىنو (Movie)</option>
-                        <option value="series">قىسىملىق كىنو (Series)</option>
+                        <option value="series">قىسىملىق كىنو (Series - 1-قىسىم ھەقسىز)</option>
                         <option value="cartoon">كارتون (Cartoon)</option>
-                        <option value="cartoon_series">قىسىملىق كارتۇن (Cartoon Series)</option>
+                        <option value="cartoon_series">قىسىملىق كارتۇن (Cartoon Series - 1-قىسىم ھەقسىز)</option>
                         <option value="short">قىسقا فىلىم (Short Film)</option>
                     </select>
                 </div>
@@ -663,8 +676,8 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>فىلىم ئېلانى ئۇلانمىسى (Trailer URL - ئىختىيارى)</label>
-                    <input type="text" id="contentTrailer" class="form-input" placeholder="تەشۋىقات ئېلانى YouTube ئۇلانمىسى" autocomplete="off">
+                    <label>فىلىم ئېلانى ئۇلانمىسى (Trailer URL)</label>
+                    <input type="text" id="contentTrailer" class="form-input" placeholder="تەشۋىقات ئېلانى (Archive ياكى YouTube ئۇلانمىسى)" autocomplete="off">
                 </div>
 
                 <div class="form-group">
@@ -676,13 +689,13 @@
                 </div>
                 
                 <div id="singleLinkGroup" class="form-group">
-                    <label>ۋىدىيو ئۇلانمىسى (YouTube ياكى نورمال ئۇلانما)</label>
-                    <input type="text" id="contentLink" class="form-input" placeholder="https://youtube.com/watch?v=..." autocomplete="off">
+                    <label>ۋىدىيو ئۇلانمىسى (Archive.org بىۋاسىتە MP4 ئۇلانمىسى)</label>
+                    <input type="text" id="contentLink" class="form-input" placeholder="https://archive.org/.../film.mp4" autocomplete="off">
                 </div>
 
                 <div id="seriesLinksGroup" class="form-group" style="display: none;">
-                    <label>قىسىم سانى ۋە ئۇلانمىلىرى (مەسىلەن: 1-قىسىم: https://...)</label>
-                    <textarea id="contentSeriesLinks" class="form-input" rows="6" placeholder="1-قىسىم: https://...&#10;2-قىسىم: https://..."></textarea>
+                    <label>قىسىملارنى كىرگۈزۈش (مەسىلەن: 1-قىسىم: https://archive.org/.../ep1.mp4)</label>
+                    <textarea id="contentSeriesLinks" class="form-input" rows="6" placeholder="1-قىسىم: https://archive.org/.../ep1.mp4&#10;2-قىسىم: https://archive.org/.../ep2.mp4"></textarea>
                 </div>
 
                 <button type="submit" class="action-btn">مەزمۇننى يوللاش</button>
@@ -698,7 +711,7 @@
     <div id="accountTab" class="tab-content">
         <div class="page-box" style="text-align: center;">
             <div style="display: flex; flex-direction: column; align-items: center; margin-top: 10px; margin-bottom: 20px;">
-                <div class="profile-avatar-circle" id="mainAccountAvatarBox" onclick="document.getElementById('phoneImageInput').click()" title="رەسىمنى ئۆزگەرتىش ئۈچۈن بېسىڭ">👤</div>
+                <div class="profile-avatar-circle" id="mainAccountAvatarBox" onclick="document.getElementById('phoneImageInput').click()" title="رەسىمنى ئۆزگەرتىش">👤</div>
                 <input type="file" id="phoneImageInput" accept="image/*" style="display: none;" onchange="handlePhoneImageSelected(event)">
                 <span style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">رەسىمنى ئۆزگەرتىش ئۈچۈن سۈرەتنى بېسىڭ</span>
             </div>
@@ -751,7 +764,7 @@
         <div class="page-box" style="max-width: 450px; text-align: right;">
             <div class="section-title" style="font-size: 18px; margin-bottom: 15px; text-align: center;">👑 ئەزالىق ئېچىش مەركىزى</div>
             <div style="background: var(--card-bg); backdrop-filter: var(--backdrop); border: 1px solid var(--border-color); padding: 22px; border-radius: 18px; line-height: 1.7; font-size: 14px; box-shadow: var(--card-shadow);">
-                <p style="margin-bottom: 12px; color: var(--text-color); font-weight: 600;">ھۆرمەتلىك ئەزا، سىز ئايلىق ئەزالىق ئېچىش ئارقىلىق بارلىق VIP كىنولەردən چەكلىمىسىز بەھرىمەن بولالايسىز.</p>
+                <p style="margin-bottom: 12px; color: var(--text-color); font-weight: 600;">ھۆرمەتلىك ئەزا، سىز ئايلىق ئەزالىق ئېچىش ئارقىلىق بارلىق قىسىملىق ۋە VIP كىنولەردən تولۇق بەھرىمەن بولالايسىز.</p>
                 <hr style="border: none; border-top: 1px solid var(--border-color); margin: 15px 0;">
                 <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 15px;">👉 ئايلىق ئەزالىق ئېچىش ياكى يېڭىلاش ئۈچۈن تۆۋەندىكى تېلېگرامما ئادرېسىغا بىۋاسىتە ئۇچۇر قىلىڭ:</p>
                 <a href="https://t.me/KOZNAK_USD" target="_blank" style="display: block; text-align: center; background: #0088cc; color: white; padding: 14px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 15px; box-shadow: 0 4px 12px rgba(0, 136, 204, 0.3);">
@@ -867,6 +880,7 @@
         let currentActiveMovieId = null;
         let searchTimeout = null;
         let lastNotifiedMovieId = localStorage.getItem('koznak_last_notif') || '';
+        let currentPlyrPlayer = null;
         
         let uploadedPosterData = '';
         let currentPosterMode = 'url';
@@ -921,6 +935,10 @@
         }
 
         function stopAllVideos() {
+            if (currentPlyrPlayer) {
+                try { currentPlyrPlayer.destroy(); } catch(e){}
+                currentPlyrPlayer = null;
+            }
             document.querySelectorAll('video').forEach(v => { v.pause(); v.currentTime = 0; });
             document.querySelectorAll('iframe').forEach(iframe => { iframe.src = ''; });
         }
@@ -1039,7 +1057,6 @@
             checkTelegramAuth();
         }
 
-        /* 🎬 باش بەت سىلايدېر (Slider) لوگىكىسى */
         function renderHeroSlider() {
             const sliderContainer = document.getElementById('heroSliderContainer');
             const track = document.getElementById('heroSliderTrack');
@@ -1207,9 +1224,9 @@
             } else {
                 const categories = [
                     { key: 'movie', title: '🎬 يېڭى كىنولەر' },
-                    { key: 'series', title: '📺 قىسىملىق كىنولەر' },
+                    { key: 'series', title: '📺 قىسىملىق كىنولەر (1-قىسىم ھەقسىز)' },
                     { key: 'cartoon', title: '🧸 كارتونلار' },
-                    { key: 'cartoon_series', title: '🧸📺 قىسىملىق كارتۇن' },
+                    { key: 'cartoon_series', title: '🧸📺 قىسىملىق كارتۇن (1-قىسىم ھەقسىز)' },
                     { key: 'short', title: '📱 قىسقا فىلىملەر' }
                 ];
 
@@ -1329,7 +1346,7 @@
                 return;
             }
 
-            if(item.tag === 'VIP' && (!currentUser || (currentUser.role !== 'admin' && !currentUser.vip))) {
+            if(item.tag === 'VIP' && (!item.type || !item.type.includes('series')) && (!currentUser || (currentUser.role !== 'admin' && !currentUser.vip))) {
                 alert('بۇ فىلىم پەقەت VIP ئەزالار ئۈچۈنلا! ئاۋۋال ئەزالىق ئېچىڭ.');
                 switchTab('vipOpenTab', null);
                 return;
@@ -1356,7 +1373,6 @@
             document.getElementById('trailerBtnContainer').innerHTML = item.trailer ? 
                 `<button class="action-btn" style="background:linear-gradient(135deg, #0984e3, #74b9ff); padding:10px; font-size:13px; margin:0;" onclick="playTrailer('${item.trailer}')">🎬 فىلىم ئېلانىنى كۆرۈش (Trailer)</button>` : '';
 
-            const playerBox = document.getElementById('detailPlayerContainer');
             const episodeBarBox = document.getElementById('detailEpisodeBarContainer');
             episodeBarBox.innerHTML = '';
 
@@ -1364,18 +1380,17 @@
             if(isSeries) {
                 let episodes = parseSeriesEpisodes(item.links);
                 if(episodes.length > 0) {
-                    playerBox.innerHTML = getEmbedPlayerHtml(episodes[0].url, id + '_ep0');
+                    setupPlayer(episodes[0].url, id + '_ep0');
                     let epBarHtml = `<div class="series-episode-bar-detail">`;
                     episodes.forEach((ep, idx) => {
-                        epBarHtml += `<button class="episode-chip-det ${idx === 0 ? 'active' : ''}" onclick="changeDetailEpisode(this, '${ep.url}', '${id}_ep${idx}')">${ep.name}</button>`;
+                        epBarHtml += `<button class="episode-chip-det ${idx === 0 ? 'active' : ''}" onclick="changeDetailEpisode(this, '${ep.url}', '${id}_ep${idx}', ${idx})">${ep.name} ${idx === 0 ? '(ھەقسىز)' : ''}</button>`;
                     });
                     episodeBarBox.innerHTML = epBarHtml + `</div>`;
                 }
             } else {
-                playerBox.innerHTML = getEmbedPlayerHtml(item.link, id);
+                setupPlayer(item.link, id);
             }
 
-            setupVideoTimePersistence(isSeries ? (id + '_ep0') : id);
             renderStarsRating(item.ratings || {});
             renderComments(item.comments || {});
             renderRelatedMovies(id);
@@ -1383,7 +1398,41 @@
 
         function playTrailer(trailerUrl) {
             stopAllVideos();
-            document.getElementById('detailPlayerContainer').innerHTML = getEmbedPlayerHtml(trailerUrl, 'trailerVid', 1);
+            setupPlayer(trailerUrl, 'trailerVid', 1);
+        }
+
+        function setupPlayer(url, videoKey, autoplay = 0) {
+            stopAllVideos();
+            const playerBox = document.getElementById('detailPlayerContainer');
+            let cleanUrl = url ? url.trim() : '';
+
+            if (cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be')) {
+                let vid = cleanUrl.includes('/shorts/') ? cleanUrl.split('/shorts/')[1].split('?')[0] :
+                          cleanUrl.includes('youtu.be/') ? cleanUrl.split('youtu.be/')[1].split('?')[0] :
+                          cleanUrl.includes('watch?v=') ? cleanUrl.split('watch?v=')[1].split('&')[0] : '';
+                playerBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=${autoplay}&controls=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+            } else {
+                // Internet Archive بىۋاسىتە MP4 ئۇلىنىشى ئۈچۈن Plyr قوللىنىلىدۇ
+                playerBox.innerHTML = `<video id="${videoKey}" playsinline controls><source src="${cleanUrl}" type="video/mp4" /></video>`;
+                const videoEl = document.getElementById(videoKey);
+                if (videoEl) {
+                    currentPlyrPlayer = new Plyr(videoEl, {
+                        controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'volume', 'settings', 'fullscreen'],
+                        settings: ['quality', 'speed']
+                    });
+                    
+                    const timeKey = "video_time_" + (currentActiveMovieId || videoKey);
+                    if (localStorage.getItem(timeKey)) {
+                        videoEl.currentTime = parseFloat(localStorage.getItem(timeKey));
+                    }
+                    videoEl.ontimeupdate = () => {
+                        localStorage.setItem(timeKey, videoEl.currentTime);
+                    };
+                    if(autoplay) {
+                        videoEl.play().catch(e => console.log(e));
+                    }
+                }
+            }
         }
 
         function rateMovie(score) {
@@ -1459,12 +1508,19 @@
             });
         }
 
-        function changeDetailEpisode(btnEl, url, videoKey) {
-            stopAllVideos();
+        function changeDetailEpisode(btnEl, url, videoKey, episodeIndex) {
+            if (episodeIndex > 0) {
+                const item = allMovies[currentActiveMovieId];
+                if (item && item.tag === 'VIP' && (!currentUser || (currentUser.role !== 'admin' && !currentUser.vip))) {
+                    alert('بۇ قىسىم پەقەت VIP ئەزالار ئۈچۈنلا! ئاۋۋال ئەزالىق ئېچىڭ.');
+                    switchTab('vipOpenTab', null);
+                    return;
+                }
+            }
+
             btnEl.closest('.series-episode-bar-detail').querySelectorAll('.episode-chip-det').forEach(b => b.classList.remove('active'));
             btnEl.classList.add('active');
-            document.getElementById('detailPlayerContainer').innerHTML = getEmbedPlayerHtml(url, videoKey);
-            setupVideoTimePersistence(videoKey);
+            setupPlayer(url, videoKey);
         }
 
         function renderRelatedMovies(currentId) {
@@ -1544,37 +1600,13 @@
         function parseSeriesEpisodes(linksText) {
             if (!linksText) return [];
             return linksText.split('\n').map((line, idx) => {
-                let parts = line.trim().split(':');
-                return { name: parts.length >= 2 ? parts[0].trim() : `قىسىم ${idx+1}`, url: parts.length >= 2 ? parts.slice(1).join(':').trim() : line.trim() };
-            }).filter(e => e.url);
-        }
-
-        function formatEmbedUrl(url, autoplay = 0) {
-            if (!url) return '';
-            let clean = url.trim();
-            if (clean.includes('youtube.com') || clean.includes('youtu.be')) {
-                let vid = clean.includes('/shorts/') ? clean.split('/shorts/')[1].split('?')[0] :
-                          clean.includes('youtu.be/') ? clean.split('youtu.be/')[1].split('?')[0] :
-                          clean.includes('watch?v=') ? clean.split('watch?v=')[1].split('&')[0] : '';
-                if(vid) return `https://www.youtube.com/embed/${vid}?autoplay=${autoplay}&controls=1`;
-            }
-            return clean;
-        }
-
-        function getEmbedPlayerHtml(url, videoIdKey, autoplay = 0) {
-            let final = formatEmbedUrl(url, autoplay);
-            return final.includes('youtube.com/embed/') ? 
-                `<iframe src="${final}" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>` :
-                `<video id="${videoIdKey}" src="${final}" controls ${autoplay ? 'autoplay' : ''} playsinline></video>`;
-        }
-
-        function setupVideoTimePersistence(id) {
-            const video = document.getElementById(id);
-            if (video) {
-                const key = "video_time_" + (currentActiveMovieId || id);
-                if (localStorage.getItem(key)) video.currentTime = parseFloat(localStorage.getItem(key));
-                video.ontimeupdate = () => localStorage.setItem(key, video.currentTime);
-            }
+                let cleanLine = line.trim();
+                if (!cleanLine) return null;
+                let parts = cleanLine.split(':');
+                let name = parts.length >= 2 ? parts[0].trim() : `قىسىم ${idx+1}`;
+                let url = parts.length >= 2 ? parts.slice(1).join(':').trim() : cleanLine;
+                return { name, url };
+            }).filter(e => e && e.url);
         }
 
         function renderReelsViewer(startId = null) {
@@ -1588,11 +1620,15 @@
                 const div = document.createElement('div');
                 div.className = 'reel-item';
                 div.innerHTML = `
-                    <div class="reel-player">${getEmbedPlayerHtml(item.link, 'reel_' + id, idx === 0 ? 1 : 0)}</div>
+                    <div class="reel-player">
+                        <video id="reel_${id}" src="${item.link}" playsinline controls ${idx === 0 ? 'autoplay' : ''}></video>
+                    </div>
                     <div class="reel-overlay"><h3>${item.title}</h3></div>
                     <div class="sidebar"><button class="action-btn-tiktok ${favorites.includes(id) ? 'liked' : ''}" onclick="toggleFavorite('${id}'); this.classList.toggle('liked');">❤️</button></div>
                 `;
                 wrapper.appendChild(div);
+                const vidEl = document.getElementById('reel_' + id);
+                if(vidEl) new Plyr(vidEl, { controls: ['play-large', 'play', 'progress', 'mute', 'fullscreen'] });
             });
         }
 
@@ -1614,7 +1650,7 @@
                 links: document.getElementById('contentSeriesLinks').value.trim(),
                 views: 0, createdAt: Date.now()
             }).then(() => {
-                alert('مەزمۇن قوشۇلدى!');
+                alert('مەزمۇن مۇۋەپپەقىيەتلىك قوشۇلدى!');
                 document.getElementById('uploadForm').reset();
                 uploadedPosterData = '';
                 document.getElementById('posterPreviewContainer').style.display = 'none';
@@ -1646,7 +1682,7 @@
             const pass = document.getElementById('regPass').value.trim();
             if(!user || !pass) return alert('بۆشلۇقنى تولدۇرۇڭ!');
             window.dbGet(window.dbRef(window.db, 'users/' + user)).then(snap => {
-                if(snap.exists()) alert('بار ئىسم!');
+                if(snap.exists()) alert('بۇ ئىسىم ئاللىقاچان بار!');
                 else {
                     const newUser = { user, pass, role: 'user', vip: false, avatar: '' };
                     window.dbSet(window.dbRef(window.db, 'users/' + user), newUser).then(() => {
@@ -1672,7 +1708,7 @@
                     currentUser = { ...snap.val(), user };
                     localStorage.setItem('koznak_user', JSON.stringify(currentUser));
                     updateUIAfterLogin();
-                } else alert('خاتا!');
+                } else alert('ئىسم ياكى مەخپىي نومۇر خاتா!');
             });
         }
 
@@ -1725,7 +1761,7 @@
             }, 1000);
             setTheme(localStorage.getItem('koznak_theme') || 'dark');
             if(localStorage.getItem('koznak_user')) {
-                try { currentUser = JSON.parse(localStorage.getItem('koznak_user')); updateUIAfterLogin(); } catch(e){}
+                try { currentUser = JSON.parse(localStorage.getItem('koznak_user')); updateUIAFormLogin = updateUIAfterLogin(); } catch(e){}
             }
         });
     </script>
