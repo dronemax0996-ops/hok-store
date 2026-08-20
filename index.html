@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>كۆزنەك كىنوخانىسى - Koznak TV</title>
+    
+    <!-- 📱 PWABuilder ئۈچۈن زۆرۈر مېتا ۋە Manifest ئۇلانمىسى -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f1015">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-transverse">
+    <meta name="apple-mobile-web-app-title" content="Koznak TV">
+
     <!-- تېلېگرامما WebApp كۇتۇپخانىسى -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
@@ -304,7 +312,6 @@
             margin-bottom: 14px; display: inline-flex; align-items: center; gap: 6px;
         }
         
-        /* 🎬 MaxPlayer ئۇسلۇبىدىكى كىنو قويغۇچ تاشقى كۆرۈنۈشى */
         .detail-player-box {
             width: 100%; 
             aspect-ratio: 16/9; 
@@ -1325,7 +1332,7 @@
         function checkUserVipStatus(userObj) {
             if (!userObj || !userObj.vip) return false;
             if (userObj.vipExpire && userObj.vipExpire <= Date.now()) {
-                return false; // ۋاقتى توشقان
+                return false; 
             }
             return true;
         }
@@ -1833,6 +1840,13 @@
             setTheme(localStorage.getItem('koznak_theme') || 'dark');
             if(localStorage.getItem('koznak_user')) {
                 try { currentUser = JSON.parse(localStorage.getItem('koznak_user')); updateUIAfterLogin(); } catch(e){}
+            }
+
+            // PWABuilder Service Worker نى تىزىملاش كودى
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                .then(() => console.log('Service Worker مۇۋەپپەقىيەتلىك تىزىملاندى.'))
+                .catch(err => console.log('Service Worker خاتالىقى:', err));
             }
         });
     </script>
