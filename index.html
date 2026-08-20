@@ -90,6 +90,7 @@
             margin: 12px 0;
             padding: 0 16px;
             overflow: hidden;
+            touch-action: pan-y;
         }
         @media (min-width: 600px) {
             .hero-slider-container { height: 300px; max-width: 800px; margin: 16px auto; }
@@ -98,17 +99,19 @@
             display: flex;
             width: 100%;
             height: 100%;
-            transition: transform 0.5s ease;
+            transition: transform 0.4s ease-in-out;
             border-radius: 16px;
             overflow: hidden;
             box-shadow: var(--card-shadow);
         }
         .hero-slide-item {
             min-width: 100%;
+            width: 100%;
             height: 100%;
             position: relative;
             cursor: pointer;
             background: #111;
+            flex-shrink: 0;
         }
         .hero-slide-item img {
             width: 100%;
@@ -789,6 +792,10 @@
         let currentSlideIndex = 0;
         let sliderInterval = null;
 
+        // سىلايدېر ئۈچۈن سىيرىلىش (Swipe) ئۆزگەرگۈچىلىرى
+        let touchStartX = 0;
+        let touchEndX = 0;
+
         function setPosterInputMode(mode) {
             currentPosterMode = mode;
             const urlBox = document.getElementById('posterUrlBox');
@@ -1064,6 +1071,15 @@
                 dotsContainer.appendChild(dot);
             });
 
+            // باش بەت سىلايدېرىنى ئوڭغا-سولغا قولدا سىيرىش (Swipe Touch Events)
+            sliderContainer.ontouchstart = (e) => {
+                touchStartX = e.touches[0].clientX;
+            };
+            sliderContainer.ontouchend = (e) => {
+                touchEndX = e.changedTouches[0].clientX;
+                handleSlideSwipe(slidesData.length, track);
+            };
+
             currentSlideIndex = 0;
             if (sliderInterval) clearInterval(sliderInterval);
             if (slidesData.length > 1) {
@@ -1073,6 +1089,19 @@
                     document.querySelectorAll('.hero-dot').forEach((d, i) => d.classList.toggle('active', i === currentSlideIndex));
                 }, 4000);
             }
+        }
+
+        function handleSlideSwipe(totalSlides, trackEl) {
+            const swipeThreshold = 50;
+            if (touchStartX - touchEndX > swipeThreshold) {
+                // سولغا سىيرىش
+                currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
+            } else if (touchEndX - touchStartX > swipeThreshold) {
+                // ئوڭغا سىيرىش
+                currentSlideIndex = (currentSlideIndex - 1 + totalSlides) % totalSlides;
+            }
+            trackEl.style.transform = `translateX(${currentSlideIndex * 100}%)`;
+            document.querySelectorAll('.hero-dot').forEach((d, i) => d.classList.toggle('active', i === currentSlideIndex));
         }
 
         function deleteSliderItem(sKey) {
@@ -1100,7 +1129,7 @@
             titleSpan.innerText = title;
             titleSpan.onclick = () => { banner.classList.remove('show'); handleCardClick(movieId); };
             banner.classList.add('show');
-            setTimeout(() => banner.classList.remove('show'), 5000); // 5 سېكۇنت تۇرىدىغان قىلىندى
+            setTimeout(() => banner.classList.remove('show'), 5000);
         }
 
         function checkTelegramAuth() {
@@ -1226,8 +1255,8 @@
             card.className = 'movie-card';
             card.innerHTML = `
                 ${item.tag ? `<div class="movie-tag">${item.tag}</div>` : ''}
-                <div class="movie-poster-box" onclick="handleCardClick('${id}')">${posterHtml}</div>
-                <div class="movie-footer" onclick="handleCardClick('${id}')">
+                <div class="movie-poster-box">${posterHtml}</div>
+                <div class="movie-footer">
                     <div class="movie-name">${item.title}</div>
                     ${resumeBadgeHtml}
                     <div class="movie-card-bottom">
@@ -1239,6 +1268,8 @@
                     </div>
                 </div>
             `;
+            // فۇنكسىيەگە ئېنىق كىنو ID بېرىلىپ، خاتالىق كۆرۈلۈشنىڭ ئالدى ئېلىندى
+            card.onclick = () => handleCardClick(id);
             return card;
         }
 
