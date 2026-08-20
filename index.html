@@ -303,19 +303,34 @@
             padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: bold; cursor: pointer;
             margin-bottom: 14px; display: inline-flex; align-items: center; gap: 6px;
         }
+        
+        /* 🎬 MaxPlayer ئۇسلۇبىدىكى كىنو قويغۇچ تاشقى كۆرۈنۈشى */
         .detail-player-box {
-            width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 16px; overflow: hidden;
-            position: relative; box-shadow: var(--card-shadow); border: 1px solid var(--border-color);
+            width: 100%; 
+            aspect-ratio: 16/9; 
+            background: #000; 
+            border-radius: 18px; 
+            overflow: hidden;
+            position: relative; 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); 
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
         
         .player-loading-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); display: flex; flex-direction: column;
-            align-items: center; justify-content: center; color: #fff; font-size: 14px;
-            font-weight: 700; z-index: 10; gap: 8px; transition: opacity 0.3s ease;
+            background: rgba(10, 10, 15, 0.88); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; color: #fff; font-size: 13px;
+            font-weight: 700; z-index: 10; gap: 10px; transition: opacity 0.3s ease;
+            backdrop-filter: blur(5px);
         }
         .player-loading-overlay.hidden { opacity: 0; pointer-events: none; }
-        .spinner { width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.2); border-top-color: var(--accent-color); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .spinner { 
+            width: 38px; height: 38px; 
+            border: 3.5px solid rgba(255,255,255,0.15); 
+            border-top-color: var(--accent-color); 
+            border-radius: 50%; 
+            animation: spin 0.75s linear infinite; 
+        }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         .detail-player-box iframe, .detail-player-box video { width: 100%; height: 100%; border: none; object-fit: contain; background: #000; }
@@ -490,7 +505,7 @@
             <div class="detail-player-box" id="detailPlayerContainer">
                 <div id="playerLoadingOverlay" class="player-loading-overlay">
                     <div class="spinner"></div>
-                    <span>(سەل ساقلاڭ، قويۇلۇۋاتىدۇ...)</span>
+                    <span>(قويۇلىۋاتىدۇ...)</span>
                 </div>
             </div>
             
@@ -1307,12 +1322,21 @@
             });
         }
 
+        function checkUserVipStatus(userObj) {
+            if (!userObj || !userObj.vip) return false;
+            if (userObj.vipExpire && userObj.vipExpire <= Date.now()) {
+                return false; // ۋاقتى توشقان
+            }
+            return true;
+        }
+
         function handleCardClick(id) {
             const item = allMovies[id];
             if(!item) return;
             addToHistory(id);
 
-            if(item.tag === 'VIP' && (!item.type || !item.type.includes('series')) && (!currentUser || (currentUser.role !== 'admin' && !currentUser.vip))) {
+            const isUserVipActive = currentUser && (currentUser.role === 'admin' || checkUserVipStatus(currentUser));
+            if(item.tag === 'VIP' && (!item.type || !item.type.includes('series')) && !isUserVipActive) {
                 alert('بۇ فىلىم پەقەت VIP ئەزالار ئۈچۈنلا!');
                 switchTab('vipOpenTab', null);
                 return;
@@ -1379,14 +1403,27 @@
                 let vid = cleanUrl.includes('/shorts/') ? cleanUrl.split('/shorts/')[1].split('?')[0] :
                           cleanUrl.includes('youtu.be/') ? cleanUrl.split('youtu.be/')[1].split('?')[0] :
                           cleanUrl.includes('watch?v=') ? cleanUrl.split('watch?v=')[1].split('&')[0] : '';
-                playerBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=${autoplay}&controls=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+                playerBox.innerHTML = `
+                    <div id="playerLoadingOverlay" class="player-loading-overlay">
+                        <div class="spinner"></div>
+                        <span>(قويۇلىۋاتىدۇ...)</span>
+                    </div>
+                    <iframe src="https://www.youtube.com/embed/${vid}?autoplay=${autoplay}&controls=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen onload="hidePlayerLoading()"></iframe>`;
             } else {
-                playerBox.innerHTML = `<video id="${videoKey}" playsinline controls><source src="${cleanUrl}" type="video/mp4" /></video>`;
+                playerBox.innerHTML = `
+                    <div id="playerLoadingOverlay" class="player-loading-overlay">
+                        <div class="spinner"></div>
+                        <span>(قويۇلىۋاتىدۇ...)</span>
+                    </div>
+                    <video id="${videoKey}" playsinline controls><source src="${cleanUrl}" type="video/mp4" /></video>`;
                 const videoEl = document.getElementById(videoKey);
                 if (videoEl) {
                     currentPlyrPlayer = new Plyr(videoEl, {
                         controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'volume', 'fullscreen']
                     });
+
+                    videoEl.oncanplay = () => hidePlayerLoading();
+                    setTimeout(() => hidePlayerLoading(), 1500);
 
                     const timeKey = "video_time_" + (currentActiveMovieId || videoKey);
                     if (localStorage.getItem(timeKey)) {
@@ -1516,7 +1553,8 @@
         function changeDetailEpisode(btnEl, url, videoKey, episodeIndex) {
             if (episodeIndex > 0) {
                 const item = allMovies[currentActiveMovieId];
-                if (item && item.tag === 'VIP' && (!currentUser || (currentUser.role !== 'admin' && !currentUser.vip))) {
+                const isUserVipActive = currentUser && (currentUser.role === 'admin' || checkUserVipStatus(currentUser));
+                if (item && item.tag === 'VIP' && !isUserVipActive) {
                     alert('بۇ قىسىم پەقەت VIP ئەزالار ئۈچۈنلا!');
                     switchTab('vipOpenTab', null);
                     return;
@@ -1556,7 +1594,14 @@
             Object.keys(allUsers).forEach(username => {
                 if(username === 'nasrulla') return;
                 const uData = allUsers[username];
-                const isVip = uData.vip === true;
+                const isVip = checkUserVipStatus(uData);
+                
+                let remainingDays = 0;
+                if (isVip && uData.vipExpire) {
+                    remainingDays = Math.ceil((uData.vipExpire - Date.now()) / (1000 * 60 * 60 * 24));
+                    if (remainingDays < 0) remainingDays = 0;
+                }
+
                 const card = document.createElement('div');
                 card.className = 'admin-user-card';
                 card.innerHTML = `
@@ -1564,7 +1609,7 @@
                         <div class="admin-user-avatar">${uData.avatar ? `<img src="${uData.avatar}">` : '👤'}</div>
                         <div class="admin-user-info">
                             <span class="admin-user-name">${username}</span>
-                            <span class="admin-user-status" style="color: ${isVip ? '#2ed573' : 'var(--text-secondary)'};">${isVip ? '👑 VIP' : '👤 ئادەتتىكى'}</span>
+                            <span class="admin-user-status" style="color: ${isVip ? '#2ed573' : 'var(--text-secondary)'};">${isVip ? `👑 VIP (قالدى: ${remainingDays} كۈن)` : '👤 ئادەتتىكى'}</span>
                         </div>
                     </div>
                     <div class="admin-user-btns">
@@ -1578,13 +1623,23 @@
 
         function modifyVipTime(username, daysToAdd) {
             const uData = allUsers[username] || {};
-            let baseTime = (uData.vip && uData.vipExpire > Date.now()) ? uData.vipExpire : Date.now();
-            window.dbSet(window.dbRef(window.db, 'users/' + username), { ...uData, vip: true, vipExpire: baseTime + (daysToAdd * 86400000) }).then(() => alert('يېڭىلاندى!'));
+            let baseTime = (uData.vip && uData.vipExpire && uData.vipExpire > Date.now()) ? uData.vipExpire : Date.now();
+            let newExpire = baseTime + (daysToAdd * 86400000);
+            
+            window.dbSet(window.dbRef(window.db, 'users/' + username), { 
+                ...uData, 
+                vip: true, 
+                vipExpire: newExpire 
+            }).then(() => alert('ئەزالىق ۋاقتى مۇۋەپپەقىيەتلىك ئۇزارتىلدى!'));
         }
 
         function setVipStatus(username, status) {
             const uData = allUsers[username] || {};
-            window.dbSet(window.dbRef(window.db, 'users/' + username), { ...uData, vip: status, vipExpire: null }).then(() => alert('ئۆزگەرتىلدى!'));
+            window.dbSet(window.dbRef(window.db, 'users/' + username), { 
+                ...uData, 
+                vip: status, 
+                vipExpire: status ? (Date.now() + 30 * 86400000) : null 
+            }).then(() => alert('ئەزالىق ھالىتى ئۆزگەرتىلدى!'));
         }
 
         function deleteUserAccount(username) {
@@ -1688,7 +1743,7 @@
             window.dbGet(window.dbRef(window.db, 'users/' + user)).then(snap => {
                 if(snap.exists()) alert('بۇ ئىسىم ئاللىقاچان بار!');
                 else {
-                    const newUser = { user, pass, role: 'user', vip: false, avatar: '' };
+                    const newUser = { user, pass, role: 'user', vip: false, vipExpire: null, avatar: '' };
                     window.dbSet(window.dbRef(window.db, 'users/' + user), newUser).then(() => {
                         currentUser = newUser;
                         localStorage.setItem('koznak_user', JSON.stringify(currentUser));
@@ -1702,7 +1757,7 @@
             const user = document.getElementById('loginUser').value.trim();
             const pass = document.getElementById('loginPass').value.trim();
             if(user.toLowerCase() === 'nasrulla' && btoa(pass) === 'MDk5Ng==') {
-                currentUser = { user: 'nasrulla', role: 'admin', vip: true, avatar: '' };
+                currentUser = { user: 'nasrulla', role: 'admin', vip: true, vipExpire: null, avatar: '' };
                 localStorage.setItem('koznak_user', JSON.stringify(currentUser));
                 updateUIAfterLogin();
                 return;
@@ -1732,7 +1787,18 @@
             }
 
             const isAdmin = currentUser.role === 'admin';
-            document.getElementById('vipBadge').innerText = isAdmin ? 'باشقۇرغۇچى' : (currentUser.vip ? 'VIP ئەزا' : 'ئادەتتىكى');
+            const isVipActive = checkUserVipStatus(currentUser);
+
+            let vipText = 'ئادەتتىكى ئەزا';
+            if (isAdmin) {
+                vipText = 'باشقۇرغۇچى';
+            } else if (isVipActive) {
+                let remainingDays = Math.ceil((currentUser.vipExpire - Date.now()) / (1000 * 60 * 60 * 24));
+                if (remainingDays < 0) remainingDays = 0;
+                vipText = `👑 VIP ئەزا (قالدى: ${remainingDays} كۈن)`;
+            }
+
+            document.getElementById('vipBadge').innerText = vipText;
             document.getElementById('uploadMenuSettingItem').style.display = isAdmin ? 'flex' : 'none';
             document.getElementById('navUploadBtn').style.display = isAdmin ? 'flex' : 'none';
             document.getElementById('adminPanelSection').style.display = isAdmin ? 'block' : 'none';
