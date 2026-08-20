@@ -792,7 +792,6 @@
         let currentSlideIndex = 0;
         let sliderInterval = null;
 
-        // سىلايدېر ئۈچۈن سىيرىلىش (Swipe) ئۆزگەرگۈچىلىرى
         let touchStartX = 0;
         let touchEndX = 0;
 
@@ -1071,7 +1070,6 @@
                 dotsContainer.appendChild(dot);
             });
 
-            // باش بەت سىلايدېرىنى ئوڭغا-سولغا قولدا سىيرىش (Swipe Touch Events)
             sliderContainer.ontouchstart = (e) => {
                 touchStartX = e.touches[0].clientX;
             };
@@ -1094,10 +1092,8 @@
         function handleSlideSwipe(totalSlides, trackEl) {
             const swipeThreshold = 50;
             if (touchStartX - touchEndX > swipeThreshold) {
-                // سولغا سىيرىش
                 currentSlideIndex = (currentSlideIndex + 1) % totalSlides;
             } else if (touchEndX - touchStartX > swipeThreshold) {
-                // ئوڭغا سىيرىش
                 currentSlideIndex = (currentSlideIndex - 1 + totalSlides) % totalSlides;
             }
             trackEl.style.transform = `translateX(${currentSlideIndex * 100}%)`;
@@ -1268,7 +1264,6 @@
                     </div>
                 </div>
             `;
-            // فۇنكسىيەگە ئېنىق كىنو ID بېرىلىپ، خاتالىق كۆرۈلۈشنىڭ ئالدى ئېلىندى
             card.onclick = () => handleCardClick(id);
             return card;
         }
@@ -1384,9 +1379,9 @@
                 let vid = cleanUrl.includes('/shorts/') ? cleanUrl.split('/shorts/')[1].split('?')[0] :
                           cleanUrl.includes('youtu.be/') ? cleanUrl.split('youtu.be/')[1].split('?')[0] :
                           cleanUrl.includes('watch?v=') ? cleanUrl.split('watch?v=')[1].split('&')[0] : '';
-                playerBox.innerHTML += `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=${autoplay}&controls=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+                playerBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${vid}?autoplay=${autoplay}&controls=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
             } else {
-                playerBox.innerHTML += `<video id="${videoKey}" playsinline controls><source src="${cleanUrl}" type="video/mp4" /></video>`;
+                playerBox.innerHTML = `<video id="${videoKey}" playsinline controls><source src="${cleanUrl}" type="video/mp4" /></video>`;
                 const videoEl = document.getElementById(videoKey);
                 if (videoEl) {
                     currentPlyrPlayer = new Plyr(videoEl, {
