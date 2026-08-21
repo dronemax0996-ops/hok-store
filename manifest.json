@@ -2,7 +2,7 @@
   "name": "كۆزنەك كىنوخانىسى",
   "short_name": "كۆزنەك",
   "description": "ئەڭ يېڭى كىنو ۋە فىلىملەر توپلىمى",
-  "start_url": "/",
+  "start_url": "/hok-store/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#3b82f6",
