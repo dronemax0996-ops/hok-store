@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ug">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>كۆزنەك كىنوخانىسى - Koznak TV</title>
@@ -523,6 +524,9 @@
                     <span id="detailMovieTag" style="color: var(--accent-color); font-weight: bold;"></span>
                 </div>
                 
+                <!-- 📥 تورسىز چۈشۈرۈش توپچىسى قوشۇلدى -->
+                <div id="offlineDownloadContainer" style="margin-top: 12px;"></div>
+
                 <div id="trailerBtnContainer" style="margin-top: 12px;"></div>
                 <div id="detailEpisodeBarContainer"></div>
 
@@ -746,7 +750,7 @@
                         <div class="settings-icon-box">🎨</div>
                         <div class="settings-text-box">
                             <span class="settings-item-title">لايىھە ئۇسلۇبى (Theme)</span>
-                            <span class="settings-item-desc">قاراڭغۇ ياكى يورۇق</span>
+                            <span class="settings-item-desc">قاراڭغۇ ياки يورۇق</span>
                         </div>
                     </div>
                     <div class="theme-buttons-container">
@@ -797,6 +801,74 @@
     </div>
 
     <script>
+        // 🗄️ IndexedDB ئارقىلىق تورسىز ساقلاش ياردەمچى فۇنكسىيەلىرى
+        const dbName = "KoznakOfflineDB";
+        const storeName = "videos";
+
+        function openOfflineDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(dbName, 1);
+                request.onerror = () => reject(request.error);
+                request.onsuccess = () => resolve(request.result);
+                request.onupgradeneeded = (event) => {
+                    const db = event.target.result;
+                    if (!db.objectStoreNames.contains(storeName)) {
+                        db.createObjectStore(storeName);
+                    }
+                };
+            });
+        }
+
+        async function saveVideoOffline(key, videoUrl) {
+            try {
+                alert('فىلىم تورسىز كۆرۈش ئۈچۈن چۈшۈرۈلۈۋاتىدۇ، ساقلاپ تۇرۇڭ...');
+                const response = await fetch(videoUrl);
+                const blob = await response.blob();
+                const db = await openOfflineDB();
+                const transaction = db.transaction(storeName, "readwrite");
+                const store = transaction.objectStore(storeName);
+                store.put(blob, key);
+                transaction.oncomplete = () => alert('✅ فىلىم مۇۋەپپەقىيەتلىك تورسىز ساقلاندى! ئىнтэрنېتسىزمۇ كۆرەلەيسىز.');
+                transaction.onerror = () => alert('ساقلاشتا خاتالىق كۆرۈلدى!');
+            } catch (err) {
+                console.error(err);
+                alert('فىلىمنى چۈشۈرۈشكە بولمىدى (CORS چەكلىمىسى بولۇشى مۇمكىن).');
+            }
+        }
+
+        async function getOfflineVideoURL(key) {
+            try {
+                const db = await openOfflineDB();
+                return new Promise((resolve) => {
+                    const transaction = db.transaction(storeName, "readonly");
+                    const store = transaction.objectStore(storeName);
+                    const request = store.get(key);
+                    request.onsuccess = () => {
+                        if (request.result) {
+                            const blobUrl = URL.createObjectURL(request.result);
+                            resolve(blobUrl);
+                        } else {
+                            resolve(null);
+                        }
+                    };
+                    request.onerror = () => resolve(null);
+                });
+            } catch (e) {
+                return null;
+            }
+        }
+
+        async function checkIsDownloaded(key) {
+            const db = await openOfflineDB();
+            return new Promise((resolve) => {
+                const transaction = db.transaction(storeName, "readonly");
+                const store = transaction.objectStore(storeName);
+                const request = store.get(key);
+                request.onsuccess = () => resolve(!!request.result);
+                request.onerror = () => resolve(false);
+            });
+        }
+
         let allMovies = {};
         let allUsers = {};
         let featuredSliders = {};
@@ -1353,7 +1425,7 @@
             openMovieDetail(id);
         }
 
-        function openMovieDetail(id) {
+        async function openMovieDetail(id) {
             const item = allMovies[id];
             if(!item) return;
 
@@ -1376,7 +1448,7 @@
             if(isSeries) {
                 let episodes = parseSeriesEpisodes(item.links);
                 if(episodes.length > 0) {
-                    setupPlayer(episodes[0].url, id + '_ep0');
+                    await setupPlayerWithOfflineCheck(episodes[0].url, id + '_ep0');
                     let epBarHtml = `<div class="series-episode-bar-detail">`;
                     episodes.forEach((ep, idx) => {
                         epBarHtml += `<button class="episode-chip-det ${idx === 0 ? 'active' : ''}" onclick="changeDetailEpisode(this, '${ep.url}', '${id}_ep${idx}', ${idx})">${ep.name} ${idx === 0 ? '(ھەقسىز)' : ''}</button>`;
@@ -1384,7 +1456,7 @@
                     episodeBarBox.innerHTML = epBarHtml + `</div>`;
                 }
             } else {
-                setupPlayer(item.link, id);
+                await setupPlayerWithOfflineCheck(item.link, id);
             }
 
             renderStarsRating(item.ratings || {});
@@ -1392,16 +1464,33 @@
             renderRelatedMovies(id);
         }
 
-        function playTrailer(trailerUrl) {
-            stopAllVideos();
-            setupPlayer(trailerUrl, 'trailerVid', 1);
-        }
-
-        function setupPlayer(url, videoKey, autoplay = 0) {
+        async function setupPlayerWithOfflineCheck(url, videoKey) {
             stopAllVideos();
             showPlayerLoading();
             const playerBox = document.getElementById('detailPlayerContainer');
+            const downloadContainer = document.getElementById('offlineDownloadContainer');
+            downloadContainer.innerHTML = '';
+
             let cleanUrl = url ? url.trim() : '';
+            let playTargetUrl = cleanUrl;
+
+            // تەكشۈرۈش: بۇ فىلىم بۇرۇن تورسىز ساقلانغانمۇ؟
+            const isDownloaded = await checkIsDownloaded(videoKey);
+            if (isDownloaded) {
+                const offlineBlobUrl = await getOfflineVideoURL(videoKey);
+                if (offlineBlobUrl) {
+                    playTargetUrl = offlineBlobUrl;
+                }
+            }
+
+            // چۈشۈرۈش توپچىسىنى قوشۇش
+            if (cleanUrl && !cleanUrl.includes('youtube.com') && !cleanUrl.includes('youtu.be')) {
+                downloadContainer.innerHTML = `
+                    <button class="action-btn" style="background:${isDownloaded ? '#2ed573' : '#e67e22'}; padding:9px; font-size:12px; margin:0;" onclick="saveVideoOffline('${videoKey}', '${cleanUrl}')">
+                        ${isDownloaded ? '✅ تورسىز ساقلانغان (قايتا چۈشۈرۈش)' : '📥 تورسىز كۆرۈش ئۈچۈن چۈшۈرۈش'}
+                    </button>
+                `;
+            }
 
             setTimeout(() => hidePlayerLoading(), 800);
 
@@ -1414,14 +1503,14 @@
                         <div class="spinner"></div>
                         <span>(قويۇلىۋاتىدۇ...)</span>
                     </div>
-                    <iframe src="https://www.youtube.com/embed/${vid}?autoplay=${autoplay}&controls=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen onload="hidePlayerLoading()"></iframe>`;
+                    <iframe src="https://www.youtube.com/embed/${vid}?autoplay=0&controls=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen onload="hidePlayerLoading()"></iframe>`;
             } else {
                 playerBox.innerHTML = `
                     <div id="playerLoadingOverlay" class="player-loading-overlay">
                         <div class="spinner"></div>
                         <span>(قويۇلىۋاتىدۇ...)</span>
                     </div>
-                    <video id="${videoKey}" playsinline controls><source src="${cleanUrl}" type="video/mp4" /></video>`;
+                    <video id="${videoKey}" playsinline controls><source src="${playTargetUrl}" type="video/mp4" /></video>`;
                 const videoEl = document.getElementById(videoKey);
                 if (videoEl) {
                     currentPlyrPlayer = new Plyr(videoEl, {
@@ -1438,11 +1527,13 @@
                     videoEl.ontimeupdate = () => {
                         localStorage.setItem(timeKey, videoEl.currentTime);
                     };
-                    if(autoplay) {
-                        videoEl.play().catch(e => console.log(e));
-                    }
                 }
             }
+        }
+
+        function playTrailer(trailerUrl) {
+            stopAllVideos();
+            setupPlayerWithOfflineCheck(trailerUrl, 'trailerVid');
         }
 
         function rateMovie(score) {
@@ -1556,7 +1647,7 @@
             });
         }
 
-        function changeDetailEpisode(btnEl, url, videoKey, episodeIndex) {
+        async function changeDetailEpisode(btnEl, url, videoKey, episodeIndex) {
             if (episodeIndex > 0) {
                 const item = allMovies[currentActiveMovieId];
                 const isUserVipActive = currentUser && (currentUser.role === 'admin' || checkUserVipStatus(currentUser));
@@ -1569,7 +1660,7 @@
 
             btnEl.closest('.series-episode-bar-detail').querySelectorAll('.episode-chip-det').forEach(b => b.classList.remove('active'));
             btnEl.classList.add('active');
-            setupPlayer(url, videoKey);
+            await setupPlayerWithOfflineCheck(url, videoKey);
         }
 
         function renderRelatedMovies(currentId) {
@@ -1841,7 +1932,6 @@
                 try { currentUser = JSON.parse(localStorage.getItem('koznak_user')); updateUIAfterLogin(); } catch(e){}
             }
 
-            // PWABuilder Service Worker نى تىزىملاش كودى
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('sw.js')
                 .then(() => console.log('Service Worker مۇۋەپپەقىيەتلىك تىزىملاندى.'))
@@ -1849,6 +1939,5 @@
             }
         });
     </script>
-<link rel="manifest" href="manifest.json">
 </body>
-    </html>
+</html>
