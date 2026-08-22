@@ -7,10 +7,13 @@
     
     <!-- 📱 PWABuilder ئۈچۈن زۆرۈر مېتا ۋە Manifest ئۇلانمىسى -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0f1015">
+    <meta name="theme-color" content="#121212">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-transverse">
     <meta name="apple-mobile-web-app-title" content="Koznak TV">
+
+    <!-- FontAwesome سىنبەلگىلىرى ئۈچۈن -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- تېلېگرامما WebApp كۇتۇپخانىسى -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -51,14 +54,14 @@
     </script>
     <style>
         :root {
-            --bg-color: #0f1015;
-            --nav-bg: rgba(15, 16, 21, 0.9);
+            --bg-color: #121212;
+            --nav-bg: rgba(31, 31, 31, 0.9);
             --text-color: #ffffff;
             --text-secondary: #a1a1aa;
-            --card-bg: rgba(24, 24, 27, 0.75);
-            --border-color: rgba(255, 255, 255, 0.08);
-            --accent-color: #E50914;
-            --accent-hover: #b20710;
+            --card-bg: #1f1f1f;
+            --border-color: #333333;
+            --accent-color: #e50914;
+            --accent-hover: #f40612;
             --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             --backdrop: blur(12px);
         }
@@ -68,10 +71,10 @@
             --nav-bg: rgba(255, 255, 255, 0.85);
             --text-color: #212529;
             --text-secondary: #6c757d;
-            --card-bg: rgba(255, 255, 255, 0.9);
+            --card-bg: #ffffff;
             --border-color: rgba(0, 0, 0, 0.08);
-            --accent-color: #E50914;
-            --accent-hover: #b20710;
+            --accent-color: #e50914;
+            --accent-hover: #f40612;
             --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
             --backdrop: blur(10px);
         }
@@ -80,7 +83,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -91,86 +94,129 @@
             direction: rtl;
         }
 
+        /* باش بەت (Navbar) */
+        header {
+            background-color: var(--nav-bg);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: var(--backdrop);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .search-btn { font-size: 15px; color: var(--text-color); background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+
+        /* Hero Slider (باش بەت سىلايدېرى) */
         .hero-slider-container {
             position: relative;
             width: 100%;
-            height: 220px;
-            margin: 12px 0;
-            padding: 0 16px;
+            height: 350px;
             overflow: hidden;
-            touch-action: pan-y;
+            background-color: #000;
+            margin-bottom: 15px;
         }
-        @media (min-width: 600px) {
-            .hero-slider-container { height: 300px; max-width: 800px; margin: 16px auto; }
-        }
+
         .hero-slider-track {
             display: flex;
             width: 100%;
             height: 100%;
-            transition: transform 0.4s ease-in-out;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
+            transition: transform 0.6s ease-in-out;
         }
+
         .hero-slide-item {
             min-width: 100%;
             width: 100%;
             height: 100%;
             position: relative;
             cursor: pointer;
-            background: #111;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: flex-end;
+            padding: 30px;
             flex-shrink: 0;
         }
+
         .hero-slide-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            display: none; /* Background-image ئارقىلىق بىر تەرەپ قىلىنىدۇ */
         }
+
         .hero-slide-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
-            padding: 16px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 20px;
+            border-radius: 8px;
+            max-width: 85%;
             color: #fff;
         }
+
         .hero-slide-title {
-            font-size: 16px;
-            font-weight: 800;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            margin-bottom: 4px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #fff;
         }
+
         .hero-slide-badge {
             font-size: 11px;
             background: var(--accent-color);
             color: white;
             padding: 3px 8px;
-            border-radius: 6px;
-            font-weight: 700;
+            border-radius: 4px;
+            font-weight: bold;
             display: inline-block;
+            margin-bottom: 8px;
         }
+
+        .btn-watch {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-watch:hover {
+            background-color: var(--accent-hover);
+        }
+
         .hero-dots {
             position: absolute;
-            bottom: 8px;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 5px;
+            gap: 6px;
             z-index: 5;
         }
         .hero-dot {
-            width: 6px;
-            height: 6px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: rgba(255,255,255,0.4);
             cursor: pointer;
         }
         .hero-dot.active {
             background: var(--accent-color);
-            width: 18px;
+            width: 20px;
             border-radius: 4px;
         }
 
@@ -179,7 +225,7 @@
             top: 15px;
             left: 50%;
             transform: translateX(-50%) translateY(-100px);
-            background: linear-gradient(135deg, #E50914, #b20710);
+            background: linear-gradient(135deg, #e50914, #f40612);
             color: white;
             padding: 10px 18px;
             border-radius: 30px;
@@ -200,7 +246,7 @@
 
         #splashScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #0b0f19;
+            background: #121212;
             z-index: 99999; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             padding: 20px; transition: opacity 0.3s ease;
@@ -209,20 +255,11 @@
         .splash-cinema-icon {
             width: 80px; height: 80px; background: var(--accent-color);
             border-radius: 20px; display: flex; align-items: center;
-            justify-content: center; font-size: 40px; margin-bottom: 16px;
+            justify-content: center; font-size: 40px; margin-bottom: 16px; color: #fff;
         }
         .splash-brand-text { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 10px; }
         .splash-brand-text span { color: var(--accent-color); }
         .splash-slogan-ug { font-size: 12px; color: #aaa; }
-
-        .navbar {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 20px; background-color: var(--nav-bg);
-            position: sticky; top: 0; z-index: 1000;
-            border-bottom: 1px solid var(--border-color); backdrop-filter: var(--backdrop);
-        }
-        .logo { color: var(--accent-color); font-size: 18px; font-weight: 900; }
-        .search-btn { font-size: 16px; color: var(--text-color); background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 
         .search-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -246,7 +283,7 @@
         .tab-content.active-tab { display: block; }
 
         .category-tabs {
-            display: flex; gap: 8px; padding: 14px 16px 0 16px;
+            display: flex; gap: 8px; padding: 10px 20px;
             overflow-x: auto; white-space: nowrap; scrollbar-width: none;
         }
         .category-tabs::-webkit-scrollbar { display: none; }
@@ -262,30 +299,46 @@
             border-color: var(--accent-color); font-weight: 700;
         }
 
-        .category-section { margin-top: 24px; padding: 0 16px; }
-        .section-title { font-size: 15px; font-weight: 800; margin-bottom: 12px; color: var(--text-color); display: flex; align-items: center; gap: 6px; }
+        .category-section { margin-top: 15px; padding: 0 20px; }
+        .section-title {
+            padding: 10px 0;
+            font-size: 17px;
+            color: #fff;
+            border-bottom: 2px solid var(--accent-color);
+            display: inline-block;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
 
-        .movie-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        @media (min-width: 600px) { .movie-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; } }
-        @media (min-width: 900px) { .movie-grid { grid-template-columns: repeat(4, 1fr); gap: 18px; } }
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+            padding-bottom: 20px;
+        }
 
         .movie-card {
             background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 14px; overflow: hidden; box-shadow: var(--card-shadow);
-            position: relative; display: flex; flex-direction: column; cursor: pointer;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
             transition: transform 0.2s ease;
+            border: 1px solid var(--border-color);
         }
-        .movie-card:hover { transform: translateY(-3px); }
+        .movie-card:hover { transform: scale(1.03); }
 
         .movie-poster-box {
-            width: 100%; height: 190px; background: #1a1a1a; position: relative; overflow: hidden;
+            width: 100%; height: 200px; background: #1a1a1a; position: relative; overflow: hidden;
             display: flex; align-items: center; justify-content: center; color: #555; font-size: 28px;
         }
         .movie-poster-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        .movie-footer { display: flex; flex-direction: column; padding: 12px; flex-grow: 1; }
-        .movie-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+        .movie-footer { display: flex; flex-direction: column; padding: 10px; flex-grow: 1; }
+        .movie-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; text-align: center; }
         
         .resume-progress-badge {
             font-size: 10px; color: var(--accent-color); font-weight: 700;
@@ -325,7 +378,7 @@
         
         .player-loading-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(10, 10, 15, 0.88); display: flex; flex-direction: column;
+            background: rgba(18, 18, 18, 0.9); display: flex; flex-direction: column;
             align-items: center; justify-content: center; color: #fff; font-size: 13px;
             font-weight: 700; z-index: 10; gap: 10px; transition: opacity 0.3s ease;
             backdrop-filter: blur(5px);
@@ -476,18 +529,20 @@
 
     <div id="splashScreen">
         <div class="splash-content">
-            <div class="splash-cinema-icon">🎬</div>
+            <div class="splash-cinema-icon"><i class="fa-solid fa-clapperboard"></i></div>
             <div class="splash-brand-text">كۆزنەك <span>كىنوخانىسى</span></div>
             <div class="splash-slogan-ug">كۆزنەك كىنوخانىسىغا كەلگىنىڭىزگە قارشى ئالىمىز!</div>
         </div>
     </div>
 
-    <div class="navbar">
-        <div class="logo">Koznak TV</div>
-        <button class="search-btn" onclick="openSearch()">🔍</button>
-    </div>
+    <!-- باش بەت -->
+    <header>
+        <div class="logo"><i class="fa-solid fa-clapperboard"></i> كۆزنەك كىنوخانىسى</div>
+        <button class="search-btn" onclick="openSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </header>
 
     <div id="homeTab" class="tab-content active-tab">
+        <!-- Hero Slider (باش بەت سىلايدېرى) -->
         <div class="hero-slider-container" id="heroSliderContainer" style="display: none;">
             <div class="hero-slider-track" id="heroSliderTrack"></div>
             <div class="hero-dots" id="heroDotsContainer"></div>
@@ -524,7 +579,6 @@
                     <span id="detailMovieTag" style="color: var(--accent-color); font-weight: bold;"></span>
                 </div>
                 
-                <!-- 📥 تورسىز چۈشۈرۈش توپچىسى قوشۇلدى -->
                 <div id="offlineDownloadContainer" style="margin-top: 12px;"></div>
 
                 <div id="trailerBtnContainer" style="margin-top: 12px;"></div>
@@ -544,14 +598,14 @@
             </div>
 
             <div class="comments-section">
-                <div class="section-title" style="font-size: 14px; margin-bottom: 10px;">💬 پىكىر ۋە باھالار</div>
+                <div class="section-title" style="font-size: 14px; margin-bottom: 10px; border-bottom: none; padding: 0;">💬 پىكىر ۋە باھالار</div>
                 <input type="text" id="commentInputBox" class="comment-input" placeholder="پىكىرىڭىزنى يېزىڭ..." autocomplete="off">
                 <button type="button" class="action-btn" style="padding: 9px; font-size: 12px; margin-top: 0;" onclick="submitComment()">پىكىر يوللاش</button>
                 <div id="commentsListContainer" style="margin-top: 12px;"></div>
             </div>
 
             <div class="category-section" style="padding: 0; margin-top: 24px;">
-                <div class="section-title">🔥 تەۋسىيە كىنولەر</div>
+                <div class="section-title" style="border-bottom: none; padding: 0;">🔥 تەۋسىيە كىنولەر</div>
                 <div class="movie-grid" id="relatedMoviesGrid"></div>
             </div>
         </div>
@@ -559,21 +613,21 @@
 
     <div id="favTab" class="tab-content">
         <div class="category-section" style="margin-top: 12px;">
-            <div class="section-title" style="margin-bottom: 10px;">❤️ ياقتۇرغان مەزمۇنلىرىم</div>
+            <div class="section-title" style="margin-bottom: 15px; border-bottom: none; padding: 0;">❤️ ياقتۇرغان مەزمۇنلىرىم</div>
             <div class="movie-grid" id="favList"></div>
         </div>
     </div>
 
     <div id="historyTab" class="tab-content">
         <div class="category-section" style="margin-top: 12px;">
-            <div class="section-title" style="margin-bottom: 10px;">🕒 كۆرگەن فىلىملىرىم ۋە داۋاملاشتۇرۇش</div>
+            <div class="section-title" style="margin-bottom: 15px; border-bottom: none; padding: 0;">🕒 كۆرگەن فىلىملىرىم ۋە داۋاملاشتۇرۇش</div>
             <div class="movie-grid" id="historyList"></div>
         </div>
     </div>
 
     <div id="uploadTab" class="tab-content">
         <div class="page-box" id="uploadPageContent">
-            <div class="section-title" style="font-size: 16px; margin-bottom: 14px;">➕ يېڭى مەزمۇن قوشۇش</div>
+            <div class="section-title" style="font-size: 16px; margin-bottom: 14px; border-bottom: none; padding: 0;">➕ يېڭى مەزمۇن قوشۇش</div>
             <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
                 <div class="form-group">
                     <label>مەزمۇن تىپى</label>
@@ -687,13 +741,13 @@
                 </div>
 
                 <div id="adminPanelSection" style="display: none; margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 16px; text-align: right;">
-                    <div class="section-title" style="font-size: 14px; margin-bottom: 10px;">🖼️ باش بەت سىلايدېر قوشۇش</div>
+                    <div class="section-title" style="font-size: 14px; margin-bottom: 10px; border-bottom: none; padding: 0;">🖼️ باش بەت سىلايدېر قوشۇش</div>
                     <div class="form-group">
                         <select id="sliderMovieSelect" class="form-select"></select>
                         <button type="button" class="action-btn" style="background: #3498db; padding: 9px; font-size: 12px; margin-top: 6px;" onclick="addHeroSliderItem()">➕ باش بەتكە قوشۇش</button>
                     </div>
 
-                    <div class="section-title" style="font-size: 14px; margin: 20px 0 10px 0;">👥 تىزىملاتقان ئابونتلارنى باشقۇرۇش</div>
+                    <div class="section-title" style="font-size: 14px; margin: 20px 0 10px 0; border-bottom: none; padding: 0;">👥 تىزىملاتقان ئابونتلارنى باشقۇرۇش</div>
                     <div class="admin-users-list" id="adminUsersListContainer"></div>
                 </div>
 
@@ -704,7 +758,7 @@
 
     <div id="vipOpenTab" class="tab-content">
         <div class="page-box" style="max-width: 450px; text-align: right;">
-            <div class="section-title" style="font-size: 16px; margin-bottom: 12px; text-align: center;">👑 ئەزالىق ئېچىش مەركىزى</div>
+            <div class="section-title" style="font-size: 16px; margin-bottom: 12px; text-align: center; border-bottom: none; padding: 0; display: block;">👑 ئەزالىق ئېچىش مەركىزى</div>
             <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 18px; border-radius: 16px; line-height: 1.6; font-size: 13px;">
                 <p style="margin-bottom: 10px; font-weight: 600;">ھۆرمەتلىك ئەزا، ئايلىق ئەزالىق ئېچىش ئارقىلىق بارلىق قىسىملىق ۋە VIP كىنولەردىن بەھرىمەن بولالايسىز.</p>
                 <hr style="border: none; border-top: 1px solid var(--border-color); margin: 12px 0;">
@@ -732,7 +786,7 @@
                 </div>
             </div>
 
-            <div class="section-title">تەڭشەكلەر</div>
+            <div class="section-title" style="border-bottom: none; padding: 0; margin-bottom: 10px;">تەڭشەكلەر</div>
             <div class="settings-block-card">
                 <div class="settings-row-item" id="uploadMenuSettingItem" style="display: none;">
                     <div class="settings-row-right">
@@ -1141,13 +1195,15 @@
 
             slidesData.forEach((slideItem, idx) => {
                 const slide = document.createElement('div');
-                slide.className = 'hero-slide-item';
+                slide.className = `hero-slide-item ${idx === 0 ? 'active' : ''}`;
+                slide.style.backgroundImage = `url('${slideItem.poster}')`;
                 slide.innerHTML = `
-                    <img src="${slideItem.poster}" alt="${slideItem.title}">
                     <div class="hero-slide-overlay">
-                        <div class="hero-slide-title">🎬 ${slideItem.title}</div>
+                        <div class="hero-slide-title">${slideItem.title}</div>
                         <span class="hero-slide-badge">${getCategoryName(slideItem.type)}</span>
-                        ${currentUser && currentUser.role === 'admin' && slideItem.sKey ? `<button class="del-btn" onclick="event.stopPropagation(); deleteSliderItem('${slideItem.sKey}')" style="position:absolute; top:8px; left:8px;">✕</button>` : ''}
+                        <p style="font-size: 13px; color: #ccc; margin-bottom: 10px;">ئەڭ يېڭى ۋە سۈپەتلىك كۆرۈنۈش پەقەت بىزدە.</p>
+                        <button class="btn-watch" onclick="event.stopPropagation(); handleCardClick('${slideItem.id}')"><i class="fa-solid fa-play"></i> كۆرۈش</button>
+                        ${currentUser && currentUser.role === 'admin' && slideItem.sKey ? `<button class="del-btn" onclick="event.stopPropagation(); deleteSliderItem('${slideItem.sKey}')" style="position:absolute; top:10px; left:10px;">✕</button>` : ''}
                     </div>
                 `;
                 slide.onclick = () => handleCardClick(slideItem.id);
@@ -1439,7 +1495,7 @@
             document.getElementById('detailMovieViews').innerText = `👀 كۆرۈش سانى: ${item.views || 1}`;
 
             document.getElementById('trailerBtnContainer').innerHTML = item.trailer ? 
-                `<button class="action-btn" style="background:linear-gradient(135deg, #0984e3, #74b9ff); padding:9px; font-size:12px; margin:0;" onclick="playTrailer('${item.trailer}')">🎬 فىلىم ئېلانىنى كۆرۈش (Trailer)</button>` : '';
+                `<button class="action-btn" style="background:linear-gradient(135deg, #0984e3, #74b9ff); padding:9px; font-size:12px; margin:0;" onclick="playTrailer('${item.trailer}')"><i class="fa-solid fa-play"></i> فىلىم ئېلانىنى كۆرۈش (Trailer)</button>` : '';
 
             const episodeBarBox = document.getElementById('detailEpisodeBarContainer');
             episodeBarBox.innerHTML = '';
@@ -1474,7 +1530,6 @@
             let cleanUrl = url ? url.trim() : '';
             let playTargetUrl = cleanUrl;
 
-            // تەكشۈرۈش: بۇ فىلىم بۇرۇن تورسىز ساقلانغانمۇ؟
             const isDownloaded = await checkIsDownloaded(videoKey);
             if (isDownloaded) {
                 const offlineBlobUrl = await getOfflineVideoURL(videoKey);
@@ -1483,7 +1538,6 @@
                 }
             }
 
-            // چۈشۈرۈش توپچىسىنى قوشۇش
             if (cleanUrl && !cleanUrl.includes('youtube.com') && !cleanUrl.includes('youtu.be')) {
                 downloadContainer.innerHTML = `
                     <button class="action-btn" style="background:${isDownloaded ? '#2ed573' : '#e67e22'}; padding:9px; font-size:12px; margin:0;" onclick="saveVideoOffline('${videoKey}', '${cleanUrl}')">
