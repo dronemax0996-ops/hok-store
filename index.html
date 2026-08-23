@@ -18,6 +18,12 @@
     <!-- تېلېگرامما WebApp كۇتۇپخانىسى -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
+    <!-- 🎬 HLS.js (M3U8 ئېقىم كىنولار ئۈچۈن) -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <!-- 🎬 ArtPlayer.js كىنو قويغۇچىنىڭ ئەڭ يېڭى كۇتۇپخانىسى -->
+    <script src="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js"></script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -97,7 +103,7 @@
             min-height: 100vh;
         }
 
-        /* 👑 Header - Glass Bar */
+        /* 👑 Header */
         header {
             background: var(--nav-bg);
             backdrop-filter: var(--glass-blur);
@@ -390,7 +396,7 @@
             gap: 6px;
         }
 
-        /* 🚀 Horizontal Scroll Row for Trending Look */
+        /* 🚀 Horizontal Scroll Row */
         .movie-row-container {
             display: flex;
             gap: 14px;
@@ -467,9 +473,9 @@
             width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; color: #ff2a54; 
         }
 
-        /* 📽️ Detail Page */
+        /* 📽️ ArtPlayer Pro Video Player Container */
         #detailTab { min-height: 100vh; }
-        .detail-container { max-width: 780px; margin: 0 auto; padding: 16px; }
+        .detail-container { max-width: 820px; margin: 0 auto; padding: 16px; }
         .detail-back-btn {
             background: var(--surface-bg); 
             border: 1px solid var(--border-glow); 
@@ -478,11 +484,37 @@
             margin-bottom: 14px; display: inline-flex; align-items: center; gap: 8px;
         }
         
-        .detail-player-box {
-            width: 100%; aspect-ratio: 16/9; background: #000000; border-radius: 22px; overflow: hidden;
-            position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.7); border: 1px solid var(--border-glow);
+        .detail-player-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 15px 45px rgba(0,0,0,0.8), 0 0 25px rgba(255, 42, 84, 0.2);
+            border: 1px solid var(--border-glow);
+            background: #000000;
         }
-        .detail-player-box iframe, .detail-player-box video { width: 100%; height: 100%; border: none; background: #000000; }
+
+        .detail-player-box {
+            width: 100%;
+            height: 100%;
+            background: #000000;
+            position: relative;
+        }
+        .detail-player-box iframe, .detail-player-box video {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000000;
+            display: block;
+        }
+
+        /* ArtPlayer Custom Container */
+        .artplayer-app {
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 22px;
+        }
 
         .detail-info-box {
             background: var(--surface-card); 
@@ -638,7 +670,7 @@
             color: #ffffff; 
         }
 
-        /* 🚀 Modern Floating Capsule Bottom Nav */
+        /* 🚀 Floating Capsule Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 16px;
@@ -745,11 +777,15 @@
         <div id="homeSectionsContainer"></div>
     </div>
 
+    <!-- 📽️ Video Player Detail View -->
     <div id="detailTab" class="tab-content">
         <div class="detail-container">
             <button class="detail-back-btn" onclick="goBackToHome()">⬅️ قايتىش</button>
             
-            <div class="detail-player-box" id="detailPlayerContainer"></div>
+            <!-- ArtPlayer Cinema Frame -->
+            <div class="detail-player-wrapper">
+                <div class="detail-player-box" id="detailPlayerContainer"></div>
+            </div>
 
             <div class="detail-info-box">
                 <div class="detail-title" id="detailMovieTitle">فىلىم ئىسمى</div>
@@ -1050,7 +1086,7 @@
         </div>
     </div>
 
-    <!-- 🌟 Modern Floating Island Nav -->
+    <!-- 🌟 Floating Bottom Nav -->
     <div class="bottom-nav" id="bottomNavContainer">
         <button class="nav-item active" onclick="switchTab('homeTab', this)"><span>🏠</span><span>باش بەت</span></button>
         <button class="nav-item" onclick="switchTab('favTab', this)"><span>❤️</span><span>ياقتۇرغانلار</span></button>
@@ -1140,6 +1176,16 @@
         let sliderInterval = null;
         let touchStartX = 0;
         let touchEndX = 0;
+        let currentArtPlayerInstance = null;
+
+        function destroyCurrentPlayer() {
+            if (currentArtPlayerInstance && currentArtPlayerInstance.destroy) {
+                try {
+                    currentArtPlayerInstance.destroy(false);
+                } catch(e){}
+                currentArtPlayerInstance = null;
+            }
+        }
 
         function setPosterInputMode(mode) {
             currentPosterMode = mode;
@@ -1190,6 +1236,7 @@
         }
 
         function stopAllVideos() {
+            destroyCurrentPlayer();
             document.querySelectorAll('iframe').forEach(iframe => { 
                 iframe.src = ''; 
             });
@@ -1706,7 +1753,7 @@
             if(isSeries) {
                 let episodes = parseSeriesEpisodes(item.links);
                 if(episodes.length > 0) {
-                    setupVideoPlayer(episodes[0].url);
+                    setupVideoPlayer(episodes[0].url, item.poster);
                     let epBarHtml = `<div class="series-episode-bar-detail">`;
                     episodes.forEach((ep, idx) => {
                         epBarHtml += `<button class="episode-chip-det ${idx === 0 ? 'active' : ''}" onclick="changeDetailEpisode(this, '${ep.url}', ${idx})">${escapeHTML(ep.name)} ${idx === 0 ? '(ھەقسىز)' : ''}</button>`;
@@ -1714,7 +1761,7 @@
                     episodeBarBox.innerHTML = epBarHtml + `</div>`;
                 }
             } else {
-                setupVideoPlayer(item.link);
+                setupVideoPlayer(item.link, item.poster);
             }
 
             renderReactions(item.reactions || {});
@@ -1722,66 +1769,101 @@
             renderRelatedMovies(id);
         }
 
-        function setupVideoPlayer(vdoIdOrUrl) {
+        /* 🎬 ArtPlayer.js Full Featured Video Player Integration */
+        function setupVideoPlayer(vdoIdOrUrl, posterUrl = '') {
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
             if (!vdoIdOrUrl) {
-                playerBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;">ۋىدىيو ئۇلانمىسى تېپىلمىدى</div>';
+                playerBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:13px;">ۋىدىيو ئۇلانمىسى تېپىلمىدى</div>';
                 return;
             }
 
             let cleanVal = vdoIdOrUrl.trim();
 
-            // ئەگەر YouTube ئۇلانمىسى بولسا
+            // 1. YouTube Video Handler
             let ytId = extractYouTubeID(cleanVal);
             if (ytId) {
                 playerBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
                 return;
             }
 
-            // ئەگەر بىۋاسىتە MP4 / Video ھۆججىتى ياكى Archive Direct Download ئۇلانمىسى بولسا
+            // 2. Direct Video (MP4, HLS, M3U8, WEBM, or Archive Direct Download) -> ArtPlayer
             if (cleanVal.match(/\.(mp4|m3u8|webm|ogg|mov)($|\?)/i) || cleanVal.includes('/download/')) {
-                playerBox.innerHTML = `<video src="${cleanVal}" controls autoplay playsinline style="width:100%;height:100%;background:#000000;outline:none;" allowfullscreen></video>`;
+                playerBox.innerHTML = `<div id="artplayerBox" class="artplayer-app"></div>`;
+                if (window.Artplayer) {
+                    currentArtPlayerInstance = new Artplayer({
+                        container: '#artplayerBox',
+                        url: cleanVal,
+                        poster: posterUrl || '',
+                        theme: '#ff2a54',
+                        volume: 0.8,
+                        isLive: false,
+                        muted: false,
+                        autoplay: true,
+                        pip: true,
+                        autoSize: false,
+                        autoMini: false,
+                        screenshot: true,
+                        setting: true,
+                        loop: false,
+                        flip: true,
+                        playbackRate: true,
+                        aspectRatio: true,
+                        fullscreen: true,
+                        fullscreenWeb: true,
+                        miniProgressBar: true,
+                        mutex: true,
+                        backdrop: true,
+                        playsInline: true,
+                        autoPlayback: true,
+                        airplay: true,
+                        hotkey: true,
+                        customType: {
+                            m3u8: function (video, url, art) {
+                                if (window.Hls && Hls.isSupported()) {
+                                    if (art.hls) art.hls.destroy();
+                                    const hls = new Hls();
+                                    hls.loadSource(url);
+                                    hls.attachMedia(video);
+                                    art.hls = hls;
+                                    art.on('destroy', () => hls.destroy());
+                                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                                    video.src = url;
+                                } else {
+                                    art.notice.show = 'Unsupported format';
+                                }
+                            }
+                        }
+                    });
+                }
                 return;
             }
 
-            // ئەگەر Archive.org details ئۇلانمىسى بولسا ئاپتوماتىك embed غا ئايلاندۇرىدۇ
+            // 3. Archive.org Details -> Convert to Archive Embed
             if (cleanVal.includes('archive.org/details/')) {
                 let embedUrl = cleanVal.replace('archive.org/details/', 'archive.org/embed/');
-                playerBox.innerHTML = `<iframe src="${embedUrl}" style="border:0;width:100%;height:100%;background:#000;" allowfullscreen></iframe>`;
+                playerBox.innerHTML = `<iframe src="${embedUrl}" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
                 return;
             }
 
-            // ئەگەر Archive.org embed ئۇلانمىسى بولسا
+            // 4. Archive.org Embed Link
             if (cleanVal.includes('archive.org/embed/')) {
-                playerBox.innerHTML = `<iframe src="${cleanVal}" style="border:0;width:100%;height:100%;background:#000;" allowfullscreen></iframe>`;
+                playerBox.innerHTML = `<iframe src="${cleanVal}" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
                 return;
             }
 
-            // ئەگەر پەقەت Archive.org Video ID سىلا كىرگۈزۈلگەن بولسا
+            // 5. Archive.org Video ID only (e.g. "my_video_id")
             if (!cleanVal.startsWith('http://') && !cleanVal.startsWith('https://')) {
-                playerBox.innerHTML = `<iframe src="https://archive.org/embed/${cleanVal}" style="border:0;width:100%;height:100%;background:#000;" allowfullscreen></iframe>`;
+                playerBox.innerHTML = `<iframe src="https://archive.org/embed/${cleanVal}" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
                 return;
             }
 
-            // باشقا بارلىق iframe قويغۇچ ئۇلانمىلىرى ئۈچۈن
-            playerBox.innerHTML = `<iframe src="${cleanVal}" style="border:0;width:100%;height:100%;background:#000;" allowfullscreen></iframe>`;
+            // 6. Generic Video Embed
+            playerBox.innerHTML = `<iframe src="${cleanVal}" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
         }
 
         function playTrailer(trailerUrl) {
-            stopAllVideos();
-            const playerBox = document.getElementById('detailPlayerContainer');
-            let ytId = extractYouTubeID(trailerUrl);
-            if (ytId) {
-                playerBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
-            } else if (trailerUrl.includes('archive.org/details/')) {
-                let embedUrl = trailerUrl.replace('archive.org/details/', 'archive.org/embed/');
-                playerBox.innerHTML = `<iframe src="${embedUrl}" style="border:0;width:100%;height:100%;" allowfullscreen></iframe>`;
-            } else if (trailerUrl.match(/\.(mp4|webm)($|\?)/i)) {
-                playerBox.innerHTML = `<video src="${trailerUrl}" controls autoplay playsinline style="width:100%;height:100%;background:#000000;"></video>`;
-            } else {
-                playerBox.innerHTML = `<iframe src="${trailerUrl}" style="border:0;width:100%;height:100%;" allow="encrypted-media" allowfullscreen></iframe>`;
-            }
+            setupVideoPlayer(trailerUrl);
         }
 
         function rateMovie(type) {
@@ -2014,7 +2096,8 @@
 
             btnEl.closest('.series-episode-bar-detail').querySelectorAll('.episode-chip-det').forEach(b => b.classList.remove('active'));
             btnEl.classList.add('active');
-            setupVideoPlayer(url);
+            const item = allMovies[currentActiveMovieId];
+            setupVideoPlayer(url, item?.poster || '');
         }
 
         function renderRelatedMovies(currentId) {
