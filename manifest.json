@@ -1,16 +1,32 @@
 {
   "name": "كۆزنەك كىنوخانىسى",
-  "short_name": "كۆزنەك",
+  "short_name": "كۆزنەك كىنو",
   "description": "ئەڭ يېڭى كىنو ۋە فىلىملەر توپلىمى",
   "start_url": "/hok-store/",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#3b82f6",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "icon.png",
-      "sizes": "748x748",
-      "type": "image/png"
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot.png",
+      "sizes": "540x1130",
+      "type": "image/png",
+      "form_factor": "narrow"
     }
   ]
 }
