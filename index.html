@@ -384,11 +384,26 @@
             position: relative; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); border: 1px solid var(--border-color);
         }
         
+        /* 🎬 قويغۇچ ئۈچۈن قوش چېكىش رايونلىرى ۋە كۆرسەتكۈچ ئەپكەشلىرى */
+        .player-touch-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 5; display: grid; grid-template-columns: 1fr 1fr 1fr; pointer-events: none;
+        }
+        .player-touch-area { pointer-events: auto; height: 100%; }
+        
+        .player-feedback-popup {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0);
+            background: rgba(0, 0, 0, 0.8); color: #fff; padding: 12px 20px; border-radius: 30px;
+            font-size: 14px; font-weight: bold; z-index: 20; transition: transform 0.2s ease, opacity 0.2s ease;
+            opacity: 0; pointer-events: none; display: flex; align-items: center; gap: 8px; border: 1px solid rgba(255,255,255,0.15);
+        }
+        .player-feedback-popup.show { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+
         .player-loading-overlay {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(18, 18, 18, 0.9); display: flex; flex-direction: column;
             align-items: center; justify-content: center; color: #fff; font-size: 13px;
-            font-weight: 700; z-index: 10; gap: 10px; transition: opacity 0.3s ease;
+            font-weight: 700; z-index: 15; gap: 10px; transition: opacity 0.3s ease;
             backdrop-filter: blur(5px);
         }
         .player-loading-overlay.hidden { opacity: 0; pointer-events: none; }
@@ -561,6 +576,7 @@
 
         <div class="category-tabs">
             <button class="cat-chip active" onclick="filterCategory('all', this)">✨ بارلىق كىنولەر</button>
+            <button class="cat-chip" onclick="filterCategory('free', this)">🎁 ھەقسىز كىنولەر</button>
             <button class="cat-chip" onclick="filterCategory('movie', this)">🎬 كىنولەر</button>
             <button class="cat-chip" onclick="filterCategory('series', this)">📺 قىسىملىق</button>
             <button class="cat-chip" onclick="filterCategory('cartoon', this)">🧸 كارتون</button>
@@ -575,6 +591,8 @@
     <div id="detailTab" class="tab-content">
         <div class="detail-container">
             <button class="detail-back-btn" onclick="goBackToHome()">⬅️ قايتىش</button>
+            
+            <!-- 🎬 ئەڭ يېڭى ئىقتىدارلار قاچىلانغان قويغۇچ ساندۇقى -->
             <div class="detail-player-box" id="detailPlayerContainer">
                 <div id="playerLoadingOverlay" class="player-loading-overlay">
                     <div class="spinner"></div>
@@ -644,6 +662,7 @@
                 <div class="form-group">
                     <label>مەزمۇن تىپى</label>
                     <select id="contentType" class="form-select" onchange="toggleUploadInputs()">
+                        <option value="free">🎁 ھەقسىز كىنو (Free Movie)</option>
                         <option value="movie">كىنو (Movie)</option>
                         <option value="series">قىسىملىق كىنو (Series - 1-قىسىم ھەقسىز)</option>
                         <option value="cartoon">كارتون (Cartoon)</option>
@@ -709,7 +728,7 @@
                 </div>
 
                 <div id="seriesLinksGroup" class="form-group" style="display: none;">
-                    <label>📺 قىسىملارنى ئايرىم-ئايرىم قوشۇش</label>
+                    <label>📺 قىسىملىق مەزمۇنلارنى ئايرىم-ئايرىم قوشۇش</label>
                     <div id="dynamicEpisodesContainer" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px;"></div>
                     <button type="button" class="action-btn" style="background: #2ed573; padding: 9px; font-size: 12px; margin: 0;" onclick="addEpisodeInputRow()">➕ يېڭى قىسىم قوشۇش</button>
                 </div>
@@ -830,7 +849,7 @@
                         <div class="settings-icon-box">🎨</div>
                         <div class="settings-text-box">
                             <span class="settings-item-title">لايىھە ئۇسلۇبى (Theme)</span>
-                            <span class="settings-item-desc">قاراڭغۇ ياки يورۇق</span>
+                            <span class="settings-item-desc">قاراڭغۇ ياكى يورۇق</span>
                         </div>
                     </div>
                     <div class="theme-buttons-container">
@@ -1397,6 +1416,7 @@
                 else filteredKeys.forEach(id => grid.appendChild(createMovieCardElement(id, allMovies[id])));
             } else {
                 const categories = [
+                    { key: 'free', title: '🎁 ھەقسىز كىنولەر' },
                     { key: 'movie', title: '🎬 يېڭى كىنولەر' },
                     { key: 'series', title: '📺 قىسىملىق كىنولەر (1-قىسىم ھەقسىز)' },
                     { key: 'cartoon', title: '🧸 كارتونلار' },
@@ -1420,6 +1440,7 @@
 
         function getCategoryName(type) {
             switch(type) {
+                case 'free': return 'ھەقسىز كىنو';
                 case 'movie': return 'كىنو';
                 case 'series': return 'قىسىملىق كىنو';
                 case 'cartoon': return 'كارتون';
@@ -1586,12 +1607,12 @@
             if (cleanUrl && !cleanUrl.includes('youtube.com') && !cleanUrl.includes('youtu.be')) {
                 downloadContainer.innerHTML = `
                     <button class="action-btn" style="background:${isDownloaded ? '#2ed573' : '#e67e22'}; padding:9px; font-size:12px; margin:0;" onclick="saveVideoOffline('${videoKey}', '${cleanUrl}')">
-                        ${isDownloaded ? '✅ تورسىز ساقلانغان (قايتا چۈشۈرۈش)' : '📥 تورسىز كۆرۈش ئۈچۈن چۈшۈرۈش'}
+                        ${isDownloaded ? '✅ تورسىز ساقلانغان (قايتا چۈشۈرۈش)' : '📥 تورسىز كۆرۈش ئۈچۈن چۈشۈرۈش'}
                     </button>
                 `;
             }
 
-            setTimeout(() => hidePlayerLoading(), 800);
+            setTimeout(() => hidePlayerLoading(), 600);
 
             if (cleanUrl.includes('youtube.com') || cleanUrl.includes('youtu.be')) {
                 let vid = cleanUrl.includes('/shorts/') ? cleanUrl.split('/shorts/')[1].split('?')[0] :
@@ -1604,12 +1625,23 @@
                     </div>
                     <iframe src="https://www.youtube.com/embed/${vid}?autoplay=0&controls=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen onload="hidePlayerLoading()"></iframe>`;
             } else {
+                // 🎬 HTML5 Video قويغۇچ بىلەن يۇقىرى سۈرئەتلىك preload ۋە ოپتىمازاتسىيە قاچىلاندى
                 playerBox.innerHTML = `
                     <div id="playerLoadingOverlay" class="player-loading-overlay">
                         <div class="spinner"></div>
                         <span>(قويۇلىۋاتىدۇ...)</span>
                     </div>
-                    <video id="${videoKey}" playsinline controls><source src="${playTargetUrl}" type="video/mp4" /></video>`;
+                    <video id="${videoKey}" playsinline controls preload="auto">
+                        <source src="${playTargetUrl}" type="video/mp4" />
+                    </video>
+                    <div class="player-touch-layer">
+                        <div class="player-touch-area" id="touchAreaLeft" title="سولغا قوش چېكىش (-10سېكۇنت)"></div>
+                        <div class="player-touch-area" id="touchAreaCenter" title="ئوتتۇرىنى قويۇش/توختىتىش"></div>
+                        <div class="player-touch-area" id="touchAreaRight" title="ئوڭغا قوش چېكىش (+10سېكۇنت)"></div>
+                    </div>
+                    <div id="playerPopupMsg" class="player-feedback-popup"></div>
+                `;
+                
                 const videoEl = document.getElementById(videoKey);
                 if (videoEl) {
                     currentPlyrPlayer = new Plyr(videoEl, {
@@ -1617,7 +1649,7 @@
                     });
 
                     videoEl.oncanplay = () => hidePlayerLoading();
-                    setTimeout(() => hidePlayerLoading(), 1500);
+                    setTimeout(() => hidePlayerLoading(), 1200);
 
                     const timeKey = "video_time_" + (currentActiveMovieId || videoKey);
                     if (localStorage.getItem(timeKey)) {
@@ -1626,8 +1658,97 @@
                     videoEl.ontimeupdate = () => {
                         localStorage.setItem(timeKey, videoEl.currentTime);
                     };
+
+                    // 🎬 ئوڭ، سول ۋە ئوتتۇرا بۆلەكلەرنى قوش چېكىش (Double Tap) - يۆنىلىشلەر تۈزەلدى
+                    setupPlayerTouchGestures(videoEl);
+
+                    // 🎬 تېلېفون يانتۇ (Landscape) بولغاندا ئاپتوماتىك تولۇق ئېكران بولۇش سەزگۈسى
+                    setupAutoLandscapeFullscreen(videoEl);
                 }
             }
+        }
+
+        // 🎬 قوش چېكىش ۋە سېكۇنت يۆتكەش لوگىكىسى (ئوڭ = +10سېكۇنت، سول = -10سېكۇنت)
+        function setupPlayerTouchGestures(videoEl) {
+            let lastTapTime = 0;
+            const popup = document.getElementById('playerPopupMsg');
+
+            function showPopup(text, icon) {
+                if(!popup) return;
+                popup.innerHTML = `<i class="${icon}"></i> ${text}`;
+                popup.classList.add('show');
+                setTimeout(() => popup.classList.remove('show'), 600);
+            }
+
+            // سول تەرەپ (كەينىگە -10 سېكۇنت)
+            document.getElementById('touchAreaLeft').addEventListener('touchend', (e) => {
+                let now = new Date().getTime();
+                if (now - lastTapTime < 350) {
+                    videoEl.currentTime = Math.max(0, videoEl.currentTime - 10);
+                    showPopup('-10 سېكۇنت', 'fa-solid fa-rotate-left');
+                    e.preventDefault();
+                }
+                lastTapTime = now;
+            });
+            document.getElementById('touchAreaLeft').addEventListener('dblclick', () => {
+                videoEl.currentTime = Math.max(0, videoEl.currentTime - 10);
+                showPopup('-10 سېكۇنت', 'fa-solid fa-rotate-left');
+            });
+
+            // ئوتتۇرا تەرەپ (قويۇش / توختىتىش)
+            document.getElementById('touchAreaCenter').addEventListener('touchend', (e) => {
+                let now = new Date().getTime();
+                if (now - lastTapTime < 350) {
+                    if (videoEl.paused) { videoEl.play(); showPopup('قويۇلدى', 'fa-solid fa-play'); }
+                    else { videoEl.pause(); showPopup('توختىتىلدى', 'fa-solid fa-pause'); }
+                    e.preventDefault();
+                }
+                lastTapTime = now;
+            });
+            document.getElementById('touchAreaCenter').addEventListener('dblclick', () => {
+                if (videoEl.paused) { videoEl.play(); showPopup('قويۇلدى', 'fa-solid fa-play'); }
+                else { videoEl.pause(); showPopup('توختىتىلدى', 'fa-solid fa-pause'); }
+            });
+
+            // ئوڭ تەرەپ (ئالدىغا +10 سېكۇنت)
+            document.getElementById('touchAreaRight').addEventListener('touchend', (e) => {
+                let now = new Date().getTime();
+                if (now - lastTapTime < 350) {
+                    videoEl.currentTime = Math.min(videoEl.duration, videoEl.currentTime + 10);
+                    showPopup('+10 سېكۇنت', 'fa-solid fa-rotate-right');
+                    e.preventDefault();
+                }
+                lastTapTime = now;
+            });
+            document.getElementById('touchAreaRight').addEventListener('dblclick', () => {
+                videoEl.currentTime = Math.min(videoEl.duration, videoEl.currentTime + 10);
+                showPopup('+10 سېكۇنت', 'fa-solid fa-rotate-right');
+            });
+        }
+
+        // 🎬 تېلېفون يانتۇ ھالەتكە ئۆتكەندە ئاپتوماتىك Fullscreen بولۇش
+        function setupAutoLandscapeFullscreen(videoEl) {
+            const handleOrientationChange = () => {
+                const isLandscape = window.innerWidth > window.innerHeight;
+                const playerContainer = document.getElementById('detailPlayerContainer');
+                
+                if (isLandscape && playerContainer) {
+                    if (!document.fullscreenElement && currentPlyrPlayer) {
+                        try {
+                            if (currentPlyrPlayer.fullscreen) {
+                                currentPlyrPlayer.fullscreen.enter();
+                            }
+                        } catch(err) { console.log(err); }
+                    }
+                } else {
+                    if (document.fullscreenElement && document.fullscreenElement.contains(videoEl)) {
+                        try {
+                            if (document.exitFullscreen) document.exitFullscreen();
+                        } catch(err) { console.log(err); }
+                    }
+                }
+            };
+            window.addEventListener('resize', handleOrientationChange);
         }
 
         function playTrailer(trailerUrl) {
