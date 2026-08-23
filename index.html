@@ -54,16 +54,16 @@
     </script>
     <style>
         :root {
-            --bg-color: #121212;
-            --nav-bg: rgba(31, 31, 31, 0.9);
+            --bg-color: #0b0b0e;
+            --nav-bg: rgba(18, 18, 24, 0.85);
             --text-color: #ffffff;
-            --text-secondary: #a1a1aa;
-            --card-bg: #1f1f1f;
-            --border-color: #333333;
+            --text-secondary: #94a3b8;
+            --card-bg: #16161f;
+            --border-color: #272738;
             --accent-color: #e50914;
             --accent-hover: #f40612;
-            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            --backdrop: blur(12px);
+            --card-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+            --backdrop: blur(16px);
         }
 
         body.light-mode {
@@ -155,11 +155,13 @@
         }
 
         .hero-slide-overlay {
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.75);
             padding: 15px 20px;
-            border-radius: 8px;
+            border-radius: 12px;
             max-width: 85%;
             color: #fff;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .hero-slide-title {
@@ -185,7 +187,7 @@
             color: white;
             border: none;
             padding: 8px 16px;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 13px;
             font-weight: bold;
@@ -246,7 +248,7 @@
 
         #splashScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #121212;
+            background: #0b0b0e;
             z-index: 99999; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
             padding: 20px; transition: opacity 0.3s ease;
@@ -256,6 +258,7 @@
             width: 80px; height: 80px; background: var(--accent-color);
             border-radius: 20px; display: flex; align-items: center;
             justify-content: center; font-size: 40px; margin-bottom: 16px; color: #fff;
+            box-shadow: 0 10px 30px rgba(229, 9, 20, 0.4);
         }
         .splash-brand-text { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 10px; }
         .splash-brand-text span { color: var(--accent-color); }
@@ -330,7 +333,7 @@
 
         .movie-card {
             background-color: var(--card-bg);
-            border-radius: 6px;
+            border-radius: 10px;
             overflow: hidden;
             box-shadow: var(--card-shadow);
             position: relative;
@@ -340,7 +343,7 @@
             transition: transform 0.2s ease;
             border: 1px solid var(--border-color);
         }
-        .movie-card:hover { transform: scale(1.03); }
+        .movie-card:hover { transform: translateY(-4px); }
 
         .movie-poster-box {
             width: 100%; height: 200px; background: #1a1a1a; position: relative; overflow: hidden;
@@ -349,7 +352,7 @@
         .movie-poster-box img { width: 100%; height: 100%; object-fit: cover; }
 
         .movie-footer { display: flex; flex-direction: column; padding: 10px; flex-grow: 1; }
-        .movie-name { font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; text-align: center; }
+        .movie-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; text-align: center; }
         
         .resume-progress-badge {
             font-size: 10px; color: var(--accent-color); font-weight: 700;
@@ -377,8 +380,8 @@
         }
         
         .detail-player-box {
-            width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 18px; overflow: hidden;
-            position: relative; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 255, 255, 0.12);
+            width: 100%; aspect-ratio: 16/9; background: #000; border-radius: 16px; overflow: hidden;
+            position: relative; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7); border: 1px solid var(--border-color);
         }
         
         .player-loading-overlay {
@@ -415,10 +418,16 @@
         }
         .episode-chip-det.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
 
-        .rating-box { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-size: 13px; }
-        .stars-container { display: flex; gap: 4px; cursor: pointer; font-size: 16px; }
-        .star { color: #444; }
-        .star.active { color: #f1c40f; }
+        /* 👍👎 باھا بېرىش لايىھىسى */
+        .rating-box { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; font-size: 13px; background: rgba(255,255,255,0.02); padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .reaction-buttons { display: flex; gap: 10px; }
+        .react-btn {
+            background: var(--bg-color); border: 1px solid var(--border-color); color: var(--text-secondary);
+            padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;
+        }
+        .react-btn.active-like { background: rgba(46, 213, 115, 0.15); border-color: #2ed573; color: #2ed573; }
+        .react-btn.active-dislike { background: rgba(255, 71, 87, 0.15); border-color: #ff4757; color: #ff4757; }
 
         .comments-section {
             background: var(--card-bg); border: 1px solid var(--border-color);
@@ -557,7 +566,7 @@
             <button class="cat-chip" onclick="filterCategory('cartoon', this)">🧸 كارتون</button>
             <button class="cat-chip" onclick="filterCategory('cartoon_series', this)">🧸📺 قىسىملىق كارتۇن</button>
             <button class="cat-chip" onclick="filterCategory('short', this)">📱 قىسقا فىلىم</button>
-            <button class="cat-chip" onclick="filterCategory('top_rated', this)">⭐ يۇقىرى باھالىق</button>
+            <button class="cat-chip" onclick="filterCategory('top_rated', this)">👍 ئەڭ ياقتۇرۇلغان</button>
         </div>
 
         <div id="homeSectionsContainer"></div>
@@ -586,16 +595,17 @@
                 <div id="trailerBtnContainer" style="margin-top: 12px;"></div>
                 <div id="detailEpisodeBarContainer"></div>
 
+                <!-- 👍👎 باھا بېرىش بۆلىكى -->
                 <div class="rating-box">
-                    <span>باھا بېرىش:</span>
-                    <div class="stars-container" id="movieStarsRating">
-                        <span class="star" onclick="rateMovie(1)">⭐</span>
-                        <span class="star" onclick="rateMovie(2)">⭐</span>
-                        <span class="star" onclick="rateMovie(3)">⭐</span>
-                        <span class="star" onclick="rateMovie(4)">⭐</span>
-                        <span class="star" onclick="rateMovie(5)">⭐</span>
+                    <span>مەزمۇنغا باھا بېرىڭ:</span>
+                    <div class="reaction-buttons">
+                        <button class="react-btn" id="likeBtn" onclick="rateMovie('like')">
+                            👍 <span id="likeCount">0</span>
+                        </button>
+                        <button class="react-btn" id="dislikeBtn" onclick="rateMovie('dislike')">
+                            👎 <span id="dislikeCount">0</span>
+                        </button>
                     </div>
-                    <span id="avgRatingText" style="font-size: 11px; color: var(--text-secondary);">(0 / 5)</span>
                 </div>
             </div>
 
@@ -820,7 +830,7 @@
                         <div class="settings-icon-box">🎨</div>
                         <div class="settings-text-box">
                             <span class="settings-item-title">لايىھە ئۇسلۇبى (Theme)</span>
-                            <span class="settings-item-desc">قاراڭغۇ ياكى يورۇق</span>
+                            <span class="settings-item-desc">قاراڭغۇ ياки يورۇق</span>
                         </div>
                     </div>
                     <div class="theme-buttons-container">
@@ -1362,10 +1372,14 @@
             }
 
             if (currentFilter === 'top_rated') {
-                let ratedKeys = [...keys].sort((a, b) => calculateAverageRating(allMovies[b].ratings || {}) - calculateAverageRating(allMovies[a].ratings || {}));
+                let ratedKeys = [...keys].sort((a, b) => {
+                    const likesA = Object.keys(allMovies[a].reactions?.likes || {}).length;
+                    const likesB = Object.keys(allMovies[b].reactions?.likes || {}).length;
+                    return likesB - likesA;
+                });
                 let sectionDiv = document.createElement('div');
                 sectionDiv.className = 'category-section';
-                sectionDiv.innerHTML = `<div class="section-title">⭐ ئەڭ يۇقىرى باھالىق كىنولەر</div><div class="movie-grid" id="grid_top_rated"></div>`;
+                sectionDiv.innerHTML = `<div class="section-title">👍 ئەڭ ياقتۇرۇلغان كىنولەر</div><div class="movie-grid" id="grid_top_rated"></div>`;
                 container.appendChild(sectionDiv);
                 let grid = document.getElementById('grid_top_rated');
                 ratedKeys.forEach(id => grid.appendChild(createMovieCardElement(id, allMovies[id])));
@@ -1402,14 +1416,6 @@
                     }
                 });
             }
-        }
-
-        function calculateAverageRating(ratingsObj) {
-            const counts = Object.keys(ratingsObj).length;
-            if (counts === 0) return 0;
-            let sum = 0;
-            Object.values(ratingsObj).forEach(v => sum += v);
-            return sum / counts;
         }
 
         function getCategoryName(type) {
@@ -1554,7 +1560,7 @@
                 await setupPlayerWithOfflineCheck(item.link, id);
             }
 
-            renderStarsRating(item.ratings || {});
+            renderReactions(item.reactions || {});
             renderComments(item.comments || {});
             renderRelatedMovies(id);
         }
@@ -1629,33 +1635,64 @@
             setupPlayerWithOfflineCheck(trailerUrl, 'trailerVid');
         }
 
-        function rateMovie(score) {
+        function rateMovie(type) {
             if(!currentUser) {
                 alert('باھا بېرىش ئۈچۈن ھېساباتىڭىزغا كىرىڭ!');
                 switchTab('accountTab', document.querySelectorAll('.nav-item')[4]);
                 return;
             }
-            window.dbSet(window.dbRef(window.db, `movies/${currentActiveMovieId}/ratings/${currentUser.user}`), score).then(() => {
-                alert('باھايىڭىز ئۈچۈن رەھمەت!');
-                window.dbGet(window.dbRef(window.db, `movies/${currentActiveMovieId}`)).then(snap => {
-                    if(snap.exists()) {
-                        allMovies[currentActiveMovieId] = snap.val();
-                        renderStarsRating(snap.val().ratings || {});
+            const movieRef = window.dbRef(window.db, `movies/${currentActiveMovieId}/reactions`);
+            window.dbGet(movieRef).then(snap => {
+                let reactions = snap.val() || { likes: {}, dislikes: {} };
+                if(!reactions.likes) reactions.likes = {};
+                if(!reactions.dislikes) reactions.dislikes = {};
+
+                if (type === 'like') {
+                    if (reactions.likes[currentUser.user]) {
+                        delete reactions.likes[currentUser.user];
+                    } else {
+                        reactions.likes[currentUser.user] = true;
+                        delete reactions.dislikes[currentUser.user];
                     }
+                } else if (type === 'dislike') {
+                    if (reactions.dislikes[currentUser.user]) {
+                        delete reactions.dislikes[currentUser.user];
+                    } else {
+                        reactions.dislikes[currentUser.user] = true;
+                        delete reactions.likes[currentUser.user];
+                    }
+                }
+
+                window.dbSet(movieRef, reactions).then(() => {
+                    allMovies[currentActiveMovieId].reactions = reactions;
+                    renderReactions(reactions);
                 });
             });
         }
 
-        function renderStarsRating(ratingsObj) {
-            const usersCount = Object.keys(ratingsObj).length;
-            let totalScore = 0;
-            Object.values(ratingsObj).forEach(val => totalScore += val);
-            const avg = usersCount > 0 ? (totalScore / usersCount).toFixed(1) : 0;
-            document.getElementById('avgRatingText').innerText = `(${avg} / 5 - (${usersCount} ئابونت))`;
+        function renderReactions(reactionsObj) {
+            const likes = reactionsObj.likes || {};
+            const dislikes = reactionsObj.dislikes || {};
+            
+            const likeCount = Object.keys(likes).length;
+            const dislikeCount = Object.keys(dislikes).length;
 
-            document.querySelectorAll('#movieStarsRating .star').forEach((star, idx) => {
-                star.classList.toggle('active', currentUser && ratingsObj[currentUser.user] && idx < ratingsObj[currentUser.user]);
-            });
+            document.getElementById('likeCount').innerText = likeCount;
+            document.getElementById('dislikeCount').innerText = dislikeCount;
+
+            const likeBtn = document.getElementById('likeBtn');
+            const dislikeBtn = document.getElementById('dislikeBtn');
+
+            likeBtn.classList.remove('active-like');
+            dislikeBtn.classList.remove('active-dislike');
+
+            if (currentUser) {
+                if (likes[currentUser.user]) {
+                    likeBtn.classList.add('active-like');
+                } else if (dislikes[currentUser.user]) {
+                    dislikeBtn.classList.add('active-dislike');
+                }
+            }
         }
 
         function submitComment() {
