@@ -2,14 +2,14 @@
 <html lang="ug">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>كۆزنەك كىنوخانىسى - Koznak TV</title>
     
     <!-- 📱 PWABuilder ئۈچۈن زۆرۈر مېتا ۋە Manifest ئۇلانمىسى -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#121212">
+    <meta name="theme-color" content="#0a0a12">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Koznak TV">
 
     <!-- FontAwesome سىنبەلگىلىرى ئۈچۈن -->
@@ -50,81 +50,116 @@
     </script>
     <style>
         :root {
-            --bg-color: #0b0b0e;
-            --nav-bg: #121218;
-            --text-color: #ffffff;
+            --bg-color: #0a0a12;
+            --bg-gradient: radial-gradient(circle at 10% 10%, rgba(255, 42, 84, 0.12), transparent 40%), radial-gradient(circle at 90% 90%, rgba(0, 168, 255, 0.1), transparent 40%), #0a0a12;
+            --surface-bg: rgba(22, 22, 34, 0.75);
+            --surface-card: rgba(26, 26, 40, 0.85);
+            --nav-bg: rgba(16, 16, 26, 0.88);
+            --text-primary: #ffffff;
             --text-secondary: #94a3b8;
-            --card-bg: #16161f;
-            --border-color: #272738;
-            --accent-color: #e50914;
-            --accent-hover: #f40612;
-            --card-shadow: 0 10px 30px #000000;
+            --accent-glow: #ff2a54;
+            --accent-gradient: linear-gradient(135deg, #ff2a54 0%, #ff6200 100%);
+            --accent-blue-grad: linear-gradient(135deg, #0072ff 0%, #00c6ff 100%);
+            --border-glow: rgba(255, 255, 255, 0.1);
+            --border-active: rgba(255, 42, 84, 0.5);
+            --card-radius: 20px;
+            --pill-radius: 35px;
+            --glass-blur: blur(20px);
         }
 
         body.light-mode {
-            --bg-color: #f4f6f9;
-            --nav-bg: #ffffff;
-            --text-color: #212529;
-            --text-secondary: #6c757d;
-            --card-bg: #ffffff;
-            --border-color: #e2e8f0;
-            --accent-color: #e50914;
-            --accent-hover: #f40612;
-            --card-shadow: 0 6px 20px #00000010;
+            --bg-color: #f1f5f9;
+            --bg-gradient: radial-gradient(circle at 10% 10%, rgba(255, 42, 84, 0.08), transparent 40%), radial-gradient(circle at 90% 90%, rgba(0, 168, 255, 0.08), transparent 40%), #f1f5f9;
+            --surface-bg: rgba(255, 255, 255, 0.85);
+            --surface-card: #ffffff;
+            --nav-bg: rgba(255, 255, 255, 0.9);
+            --text-primary: #0f172a;
+            --text-secondary: #64748b;
+            --border-glow: rgba(0, 0, 0, 0.08);
+            --border-active: rgba(255, 42, 84, 0.4);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
 
         body {
+            background: var(--bg-gradient);
             background-color: var(--bg-color);
-            color: var(--text-color);
-            padding-bottom: 90px;
+            background-attachment: fixed;
+            color: var(--text-primary);
+            padding-bottom: 105px;
             direction: rtl;
+            min-height: 100vh;
         }
 
+        /* 👑 Header - Glass Bar */
         header {
-            background-color: var(--nav-bg);
-            padding: 15px 20px;
+            background: var(--nav-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            padding: 14px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border-glow);
             position: sticky;
             top: 0;
             z-index: 1000;
         }
 
         .logo {
-            font-size: 20px;
-            font-weight: bold;
-            color: var(--accent-color);
+            font-size: 19px;
+            font-weight: 900;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            text-shadow: 0 0 25px rgba(255, 42, 84, 0.4);
         }
+        .logo i { -webkit-text-fill-color: #ff2a54; }
 
-        .search-btn { font-size: 15px; color: var(--text-color); background: var(--card-bg); border: 1px solid var(--border-color); width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .search-btn { 
+            font-size: 14px; 
+            color: var(--text-primary); 
+            background: var(--surface-bg); 
+            border: 1px solid var(--border-glow); 
+            width: 40px; 
+            height: 40px; 
+            border-radius: 50%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .search-btn:active { transform: scale(0.9); }
 
+        /* 🎬 Hero Cinematic Billboard Slider */
         .hero-slider-container {
             position: relative;
-            width: 100%;
-            height: 350px;
+            width: calc(100% - 24px);
+            margin: 12px auto 16px auto;
+            height: 380px;
+            border-radius: 26px;
             overflow: hidden;
             background-color: #000000;
-            margin-bottom: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--border-glow);
         }
 
         .hero-slider-track {
             display: flex;
             width: 100%;
             height: 100%;
-            transition: transform 0.6s ease-in-out;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .hero-slide-item {
@@ -137,59 +172,70 @@
             background-position: center;
             display: flex;
             align-items: flex-end;
-            padding: 30px;
+            padding: 20px;
             flex-shrink: 0;
         }
 
+        .hero-slide-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.1) 20%, rgba(10,10,18,0.9) 100%);
+            z-index: 1;
+        }
+
         .hero-slide-overlay {
-            background: #121218cc;
-            padding: 18px 20px;
-            border-radius: 12px;
-            max-width: 88%;
-            color: #ffffff;
-            border: 1px solid var(--border-color);
-            backdrop-filter: blur(8px);
+            position: relative;
+            z-index: 2;
+            padding: 16px;
+            border-radius: 20px;
+            background: rgba(16, 16, 26, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            max-width: 95%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
         .hero-slide-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 6px;
+            font-size: 19px;
+            font-weight: 800;
+            margin-bottom: 4px;
             color: #ffffff;
         }
 
         .hero-slide-badge {
-            font-size: 11px;
-            background: var(--accent-color);
+            font-size: 10px;
+            background: var(--accent-gradient);
             color: #ffffff;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: var(--pill-radius);
+            font-weight: 700;
             display: inline-block;
             margin-bottom: 8px;
+            box-shadow: 0 4px 10px rgba(255, 42, 84, 0.4);
         }
 
         .btn-watch {
-            background-color: var(--accent-color);
+            background: var(--accent-gradient);
             color: #ffffff;
             border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
+            padding: 9px 22px;
+            border-radius: var(--pill-radius);
             cursor: pointer;
             font-size: 13px;
-            font-weight: bold;
+            font-weight: 800;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            box-shadow: 0 6px 20px rgba(255, 42, 84, 0.4);
+            transition: all 0.2s ease;
         }
-
-        .btn-watch:hover {
-            background-color: var(--accent-hover);
-        }
+        .btn-watch:active { transform: scale(0.95); }
 
         .hero-dots {
             position: absolute;
-            bottom: 10px;
+            bottom: 12px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -200,328 +246,477 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: #555555;
+            background: rgba(255, 255, 255, 0.3);
             cursor: pointer;
             transition: all 0.3s ease;
         }
         .hero-dot.active {
-            background: var(--accent-color);
-            width: 20px;
-            border-radius: 4px;
+            background: #ff2a54;
+            width: 24px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ff2a54;
         }
 
+        /* 🔔 Notification */
         #notificationBanner {
             position: fixed;
             top: 15px;
             left: 50%;
             transform: translateX(-50%) translateY(-100px);
-            background: var(--accent-color);
+            background: var(--accent-gradient);
             color: #ffffff;
-            padding: 10px 18px;
-            border-radius: 30px;
+            padding: 11px 22px;
+            border-radius: var(--pill-radius);
             font-size: 12px;
             font-weight: 700;
             z-index: 9999;
-            box-shadow: 0 10px 25px #000000;
+            box-shadow: 0 10px 30px rgba(255, 42, 84, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: transform 0.3s ease;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             max-width: 90%;
-            text-align: center;
         }
-        #notificationBanner.show {
-            transform: translateX(-50%) translateY(0);
-        }
+        #notificationBanner.show { transform: translateX(-50%) translateY(0); }
 
         #splashScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #0b0b0e;
+            background: #0a0a12;
             z-index: 99999; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            padding: 20px; transition: opacity 0.3s ease;
+            padding: 20px; transition: opacity 0.4s ease;
         }
         .splash-content { display: flex; flex-direction: column; align-items: center; text-align: center; }
         .splash-cinema-icon {
-            width: 80px; height: 80px; background: var(--accent-color);
-            border-radius: 20px; display: flex; align-items: center;
-            justify-content: center; font-size: 40px; margin-bottom: 16px; color: #ffffff;
-            box-shadow: 0 10px 30px #000000;
+            width: 85px; height: 85px; 
+            background: var(--accent-gradient);
+            border-radius: 26px; display: flex; align-items: center;
+            justify-content: center; font-size: 40px; margin-bottom: 20px; color: #ffffff;
+            box-shadow: 0 12px 35px rgba(255, 42, 84, 0.5);
         }
-        .splash-brand-text { font-size: 22px; font-weight: 800; color: #ffffff; margin-bottom: 10px; }
-        .splash-brand-text span { color: var(--accent-color); }
-        .splash-slogan-ug { font-size: 12px; color: #aaaaaa; }
+        .splash-brand-text { font-size: 24px; font-weight: 900; color: #ffffff; margin-bottom: 6px; }
+        .splash-slogan-ug { font-size: 13px; color: #94a3b8; }
 
+        /* 🔍 Search Modal */
         .search-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-color); z-index: 3000; padding: 20px; overflow-y: auto;
+            background: var(--nav-bg); 
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            z-index: 3000; padding: 24px 18px; overflow-y: auto;
         }
         .search-input {
-            width: 100%; padding: 12px 16px; font-size: 14px;
-            background-color: var(--card-bg); border: 1px solid var(--border-color);
-            color: var(--text-color); border-radius: 12px; margin-bottom: 12px; outline: none;
+            width: 100%; padding: 14px 20px; font-size: 14px;
+            background: var(--surface-bg); 
+            border: 1px solid var(--border-glow);
+            color: var(--text-primary); border-radius: var(--pill-radius); margin-bottom: 14px; outline: none;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
-        .close-search { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--accent-color); padding: 8px 16px; border-radius: 8px; font-size: 13px; cursor: pointer; margin-bottom: 12px; font-weight: bold; }
+        .search-input:focus { border-color: #ff2a54; }
+        .close-search { 
+            background: var(--surface-bg); 
+            border: 1px solid var(--border-glow); 
+            color: #ff2a54; 
+            padding: 8px 18px; border-radius: var(--pill-radius); font-size: 13px; cursor: pointer; margin-bottom: 14px; font-weight: 700; 
+        }
         
         .genre-chips-container {
-            display: flex; gap: 6px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 12px; scrollbar-width: none;
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 14px; scrollbar-width: none;
         }
         .genre-chips-container::-webkit-scrollbar { display: none; }
         .genre-chip {
-            background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-secondary);
-            padding: 6px 12px; border-radius: 16px; font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap;
+            background: var(--surface-bg); 
+            border: 1px solid var(--border-glow); 
+            color: var(--text-secondary);
+            padding: 8px 16px; border-radius: var(--pill-radius); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;
+            transition: all 0.2s ease;
         }
-        .genre-chip.active { background: var(--accent-color); color: #ffffff; border-color: var(--accent-color); }
+        .genre-chip.active { 
+            background: var(--accent-gradient); 
+            color: #ffffff; 
+            border-color: transparent; 
+            box-shadow: 0 4px 15px rgba(255, 42, 84, 0.4);
+        }
 
         .search-results { display: flex; flex-direction: column; gap: 10px; }
         .search-item {
-            display: flex; background: var(--card-bg); border-radius: 10px;
+            display: flex; 
+            background: var(--surface-card); 
+            border-radius: 16px;
             overflow: hidden; cursor: pointer; align-items: center;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border-glow);
+            transition: transform 0.2s ease;
         }
-        .search-item-title { padding: 10px 14px; font-size: 13px; font-weight: 600; width: 100%; }
+        .search-item:active { transform: scale(0.98); }
+        .search-item-title { padding: 12px 16px; font-size: 13px; font-weight: 700; width: 100%; }
 
         .tab-content { display: none; }
         .tab-content.active-tab { display: block; }
 
+        /* 🔘 Top Category Navigation Chips */
         .category-tabs {
-            display: flex; gap: 8px; padding: 10px 20px;
+            display: flex; gap: 10px; padding: 10px 18px;
             overflow-x: auto; white-space: nowrap; scrollbar-width: none;
         }
         .category-tabs::-webkit-scrollbar { display: none; }
 
         .cat-chip {
-            background-color: var(--card-bg); color: var(--text-secondary);
-            border: 1px solid var(--border-color); padding: 8px 16px;
-            border-radius: 20px; font-size: 12px; cursor: pointer; font-weight: 600;
+            background: var(--surface-bg); 
+            color: var(--text-secondary);
+            border: 1px solid var(--border-glow); 
+            padding: 9px 18px;
+            border-radius: var(--pill-radius); font-size: 12px; cursor: pointer; font-weight: 700;
+            transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
         }
         .cat-chip.active {
-            background-color: var(--accent-color); color: #ffffff;
-            border-color: var(--accent-color); font-weight: 700;
+            background: var(--accent-gradient); 
+            color: #ffffff;
+            border-color: transparent; 
+            box-shadow: 0 4px 15px rgba(255, 42, 84, 0.4);
         }
 
-        .category-section { margin-top: 15px; padding: 0 20px; }
+        /* 🍿 Section Rails & Grids */
+        .category-section { margin-top: 18px; padding: 0 18px; }
+        .section-header-row {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+        }
         .section-title {
-            padding: 10px 0;
             font-size: 17px;
-            color: var(--text-color);
-            border-bottom: 2px solid var(--accent-color);
-            display: inline-block;
-            margin-bottom: 15px;
-            font-weight: bold;
+            color: var(--text-primary);
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
+        /* 🚀 Horizontal Scroll Row for Trending Look */
+        .movie-row-container {
+            display: flex;
+            gap: 14px;
+            overflow-x: auto;
+            padding: 4px 4px 16px 4px;
+            scroll-snap-type: x mandatory;
+            scrollbar-width: none;
+        }
+        .movie-row-container::-webkit-scrollbar { display: none; }
+        .movie-row-container .movie-card {
+            min-width: 135px;
+            max-width: 145px;
+            flex-shrink: 0;
+            scroll-snap-align: start;
+        }
+
+        /* Grid View */
         .movie-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+            gap: 14px;
             padding-bottom: 20px;
         }
 
+        /* 🎴 Movie Cards */
         .movie-card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
+            background: var(--surface-card);
+            border-radius: var(--card-radius);
             overflow: hidden;
-            box-shadow: var(--card-shadow);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
             position: relative;
             display: flex;
             flex-direction: column;
             cursor: pointer;
-            border: 1px solid var(--border-color);
-            transition: transform 0.2s ease;
+            border: 1px solid var(--border-glow);
+            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
         }
-        .movie-card:active { transform: scale(0.98); }
+        .movie-card:hover, .movie-card:active {
+            transform: translateY(-4px) scale(1.02);
+            border-color: var(--border-active);
+            box-shadow: 0 12px 30px rgba(255, 42, 84, 0.25);
+        }
 
         .movie-poster-box {
-            width: 100%; height: 200px; background: #1a1a1a; position: relative; overflow: hidden;
-            display: flex; align-items: center; justify-content: center; color: #555555; font-size: 28px;
+            width: 100%; height: 195px; background: rgba(0, 0, 0, 0.3); position: relative; overflow: hidden;
+            display: flex; align-items: center; justify-content: center; color: #555555; font-size: 30px;
         }
         .movie-poster-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        .movie-footer { display: flex; flex-direction: column; padding: 10px; flex-grow: 1; }
-        .movie-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; text-align: center; }
+        .movie-footer { display: flex; flex-direction: column; padding: 10px 12px; flex-grow: 1; }
+        .movie-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; text-align: center; }
         
         .movie-card-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+        
         .movie-tag {
-            position: absolute; top: 8px; right: 8px; background: var(--accent-color); color: #ffffff;
-            font-size: 9px; font-weight: 800; padding: 3px 8px; border-radius: 4px; z-index: 2;
+            position: absolute; top: 8px; right: 8px; 
+            background: var(--accent-gradient); 
+            color: #ffffff;
+            font-size: 9px; font-weight: 800; padding: 3px 9px; border-radius: var(--pill-radius); z-index: 2;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
 
         .card-actions { display: flex; align-items: center; gap: 6px; }
-        .fav-btn { background: var(--bg-color); border: 1px solid var(--border-color); width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; color: var(--text-secondary); }
-        .fav-btn.liked { color: var(--accent-color); border-color: var(--accent-color); background: #251214; }
-        .del-btn { background: #2a1215; border: 1px solid #ff4757; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; color: #ff4757; }
+        .fav-btn { 
+            background: var(--surface-bg); 
+            border: 1px solid var(--border-glow); 
+            width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; color: var(--text-secondary); 
+            transition: all 0.2s ease;
+        }
+        .fav-btn.liked { color: #ff2a54; border-color: rgba(255, 42, 84, 0.5); background: rgba(255, 42, 84, 0.15); }
+        .del-btn { 
+            background: rgba(255, 42, 84, 0.15); 
+            border: 1px solid rgba(255, 42, 84, 0.4); 
+            width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; color: #ff2a54; 
+        }
 
-        #detailTab { background-color: var(--bg-color); min-height: 100vh; }
-        .detail-container { max-width: 750px; margin: 0 auto; padding: 16px; }
+        /* 📽️ Detail Page */
+        #detailTab { min-height: 100vh; }
+        .detail-container { max-width: 780px; margin: 0 auto; padding: 16px; }
         .detail-back-btn {
-            background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-color);
-            padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: bold; cursor: pointer;
-            margin-bottom: 14px; display: inline-flex; align-items: center; gap: 6px;
+            background: var(--surface-bg); 
+            border: 1px solid var(--border-glow); 
+            color: var(--text-primary);
+            padding: 9px 20px; border-radius: var(--pill-radius); font-size: 13px; font-weight: 700; cursor: pointer;
+            margin-bottom: 14px; display: inline-flex; align-items: center; gap: 8px;
         }
         
         .detail-player-box {
-            width: 100%; aspect-ratio: 16/9; background: #000000; border-radius: 16px; overflow: hidden;
-            position: relative; box-shadow: 0 15px 35px #000000; border: 1px solid var(--border-color);
+            width: 100%; aspect-ratio: 16/9; background: #000000; border-radius: 22px; overflow: hidden;
+            position: relative; box-shadow: 0 15px 40px rgba(0,0,0,0.7); border: 1px solid var(--border-glow);
         }
         .detail-player-box iframe, .detail-player-box video { width: 100%; height: 100%; border: none; background: #000000; }
 
         .detail-info-box {
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 16px; padding: 18px; margin-top: 14px;
+            background: var(--surface-card); 
+            border: 1px solid var(--border-glow);
+            border-radius: 22px; padding: 18px; margin-top: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
-        .detail-title { font-size: 18px; font-weight: 900; margin-bottom: 8px; color: var(--text-color); }
+        .detail-title { font-size: 19px; font-weight: 900; margin-bottom: 8px; color: var(--text-primary); }
         .detail-meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; gap: 8px; }
 
         .series-episode-bar-detail {
-            display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; margin-top: 10px; scrollbar-width: none;
+            display: flex; gap: 8px; overflow-x: auto; padding: 12px 0; margin-top: 10px; scrollbar-width: none;
         }
         .series-episode-bar-detail::-webkit-scrollbar { display: none; }
         .episode-chip-det {
-            background: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color);
-            padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;
+            background: var(--surface-bg); 
+            color: var(--text-primary); 
+            border: 1px solid var(--border-glow);
+            padding: 9px 18px; border-radius: var(--pill-radius); font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;
         }
-        .episode-chip-det.active { background: var(--accent-color); color: #ffffff; border-color: var(--accent-color); }
+        .episode-chip-det.active { 
+            background: var(--accent-gradient); 
+            color: #ffffff; 
+            border-color: transparent; 
+            box-shadow: 0 4px 15px rgba(255, 42, 84, 0.4);
+        }
 
-        .rating-box { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; font-size: 13px; background: var(--bg-color); padding: 10px 14px; border-radius: 12px; border: 1px solid var(--border-color); }
+        .rating-box { 
+            display: flex; align-items: center; justify-content: space-between; margin-top: 16px; font-size: 13px; 
+            background: var(--surface-bg); 
+            padding: 12px 18px; border-radius: 16px; border: 1px solid var(--border-glow); 
+        }
         .reaction-buttons { display: flex; gap: 10px; }
         .react-btn {
-            background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-secondary);
-            padding: 6px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+            background: var(--surface-card); 
+            border: 1px solid var(--border-glow); 
+            color: var(--text-secondary);
+            padding: 7px 18px; border-radius: var(--pill-radius); font-size: 13px; font-weight: 700; cursor: pointer;
             display: inline-flex; align-items: center; gap: 6px;
         }
-        .react-btn.active-like { background: #112d1b; border-color: #2ed573; color: #2ed573; }
-        .react-btn.active-dislike { background: #2e1216; border-color: #ff4757; color: #ff4757; }
+        .react-btn.active-like { background: rgba(46, 213, 115, 0.2); border-color: #2ed573; color: #2ed573; }
+        .react-btn.active-dislike { background: rgba(255, 71, 87, 0.2); border-color: #ff4757; color: #ff4757; }
 
+        /* 💬 Comments Section */
         .comments-section {
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            border-radius: 16px; padding: 18px; margin-top: 14px;
+            background: var(--surface-card); 
+            border: 1px solid var(--border-glow);
+            border-radius: 22px; padding: 18px; margin-top: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .emoji-quick-bar {
-            display: flex; gap: 8px; overflow-x: auto; padding: 6px 0; margin-bottom: 8px; scrollbar-width: none;
+            display: flex; gap: 8px; overflow-x: auto; padding: 6px 0; margin-bottom: 10px; scrollbar-width: none;
         }
         .emoji-quick-bar::-webkit-scrollbar { display: none; }
         .emoji-btn {
-            background: var(--bg-color); border: 1px solid var(--border-color);
-            border-radius: 10px; font-size: 16px; padding: 4px 10px; cursor: pointer;
+            background: var(--surface-bg); 
+            border: 1px solid var(--border-glow);
+            border-radius: var(--pill-radius); font-size: 16px; padding: 6px 14px; cursor: pointer;
         }
         
-        .comment-input-wrapper { position: relative; width: 100%; margin-bottom: 8px; }
+        .comment-input-wrapper { position: relative; width: 100%; margin-bottom: 10px; }
         .comment-input {
-            width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border-color);
-            background: var(--bg-color); color: var(--text-color); outline: none; font-size: 13px; resize: none;
+            width: 100%; padding: 12px 18px; border-radius: 16px; 
+            border: 1px solid var(--border-glow);
+            background: var(--surface-bg); 
+            color: var(--text-primary); outline: none; font-size: 13px; resize: none;
         }
         
-        .comment-item { display: flex; gap: 12px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border-color); font-size: 12px; }
+        .comment-item { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--border-glow); font-size: 13px; }
         .comment-item:last-child { border-bottom: none; }
-        .comment-avatar { width: 36px; height: 36px; border-radius: 50%; background: #222222; overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; border: 1px solid var(--border-color); }
+        .comment-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--surface-bg); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; border: 1px solid var(--border-glow); }
         .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .comment-content-box { display: flex; flex-direction: column; width: 100%; }
-        .comment-user { font-weight: 700; color: var(--accent-color); margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
-        .comment-time { font-weight: normal; font-size: 10px; color: var(--text-secondary); margin-right: 6px; }
-        .comment-text-body { color: var(--text-color); line-height: 1.5; font-size: 13px; word-break: break-word; }
+        .comment-user { font-weight: 700; color: #ff2a54; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .comment-time { font-weight: normal; font-size: 10px; color: var(--text-secondary); margin-right: 8px; }
+        .comment-text-body { color: var(--text-primary); line-height: 1.5; font-size: 13px; word-break: break-word; }
         
-        .comment-actions-bar { display: flex; align-items: center; gap: 14px; margin-top: 6px; }
-        .comment-action-link { background: none; border: none; font-size: 11px; color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-weight: 600; }
+        .comment-actions-bar { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
+        .comment-action-link { background: none; border: none; font-size: 11px; color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-weight: 700; }
         .comment-action-link.liked { color: #ff4757; }
 
-        .page-box { padding: 16px; max-width: 600px; margin: 0 auto; }
-        .form-group { margin-bottom: 14px; }
-        .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 600; }
+        /* Forms & Buttons */
+        .page-box { padding: 18px; max-width: 600px; margin: 0 auto; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 700; }
         .form-input, .form-select {
-            width: 100%; padding: 12px 14px; background-color: var(--card-bg);
-            border: 1px solid var(--border-color); color: var(--text-color); border-radius: 12px; font-size: 13px; outline: none;
+            width: 100%; padding: 13px 18px; 
+            background: var(--surface-bg);
+            border: 1px solid var(--border-glow); 
+            color: var(--text-primary); border-radius: 16px; font-size: 13px; outline: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
+        .form-input:focus, .form-select:focus { border-color: #ff2a54; }
 
         .action-btn {
-            width: 100%; padding: 13px; background: var(--accent-color); color: #ffffff;
-            border: none; border-radius: 12px; font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 8px;
+            width: 100%; padding: 13px; 
+            background: var(--accent-gradient); 
+            color: #ffffff;
+            border: none; border-radius: var(--pill-radius); font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 8px;
+            box-shadow: 0 6px 20px rgba(255, 42, 84, 0.4);
+            transition: all 0.2s ease;
         }
+        .action-btn:active { transform: scale(0.98); }
 
+        /* ⚙️ Settings / Profile Page */
         .settings-page-wrapper { max-width: 480px; margin: 16px auto; padding: 0 16px; }
-        .user-profile-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 18px; padding: 20px; margin-bottom: 16px; text-align: center; }
-        .profile-top-row { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 14px; }
+        .user-profile-card { 
+            background: var(--surface-card); 
+            border: 1px solid var(--border-glow); 
+            border-radius: 24px; padding: 22px; margin-bottom: 16px; text-align: center; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        .profile-top-row { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 16px; }
         .profile-avatar-circle {
-            width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--accent-color);
-            background: #222222; display: flex; align-items: center; justify-content: center; font-size: 36px; overflow: hidden; cursor: pointer;
+            width: 86px; height: 86px; border-radius: 50%; border: 3px solid #ff2a54;
+            background: var(--surface-bg); display: flex; align-items: center; justify-content: center; font-size: 38px; overflow: hidden; cursor: pointer;
+            box-shadow: 0 6px 25px rgba(255, 42, 84, 0.4);
         }
         .profile-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
         .profile-buttons-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .profile-action-chip {
-            background: var(--bg-color); border: 1px solid var(--border-color); padding: 10px;
-            border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;
-            font-size: 12px; font-weight: 700; color: var(--text-color); cursor: pointer; text-decoration: none;
+            background: var(--surface-bg); border: 1px solid var(--border-glow); padding: 12px;
+            border-radius: var(--pill-radius); display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 12px; font-weight: 700; color: var(--text-primary); cursor: pointer; text-decoration: none;
         }
 
-        .settings-block-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 18px; padding: 4px 16px; }
-        .settings-row-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border-color); }
+        .settings-block-card { 
+            background: var(--surface-card); 
+            border: 1px solid var(--border-glow); 
+            border-radius: 24px; padding: 6px 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+        .settings-row-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border-glow); }
         .settings-row-item:last-child { border-bottom: none; }
         .settings-row-right { display: flex; align-items: center; gap: 12px; }
-        .settings-icon-box { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; background: var(--bg-color); border: 1px solid var(--border-color); }
+        .settings-icon-box { 
+            width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; 
+            background: var(--surface-bg); border: 1px solid var(--border-glow); 
+        }
         .settings-text-box { display: flex; flex-direction: column; gap: 2px; }
-        .settings-item-title { font-size: 13px; font-weight: 700; color: var(--text-color); }
+        .settings-item-title { font-size: 13px; font-weight: 700; color: var(--text-primary); }
         .settings-item-desc { font-size: 10px; color: var(--text-secondary); }
 
-        .theme-buttons-container { display: flex; background: var(--bg-color); border: 1px solid var(--border-color); padding: 3px; border-radius: 10px; gap: 3px; }
-        .theme-select-btn {
-            flex: 1; padding: 6px 10px; font-size: 11px; font-weight: 600;
-            color: var(--text-secondary); border-radius: 8px; cursor: pointer; background: transparent; border: none;
+        .theme-buttons-container { 
+            display: flex; background: var(--surface-bg); border: 1px solid var(--border-glow); padding: 4px; border-radius: var(--pill-radius); gap: 4px; 
         }
-        .theme-select-btn.active { background: var(--card-bg); color: var(--accent-color); font-weight: 700; }
+        .theme-select-btn {
+            flex: 1; padding: 6px 14px; font-size: 11px; font-weight: 700;
+            color: var(--text-secondary); border-radius: var(--pill-radius); cursor: pointer; background: transparent; border: none;
+        }
+        .theme-select-btn.active { 
+            background: var(--accent-gradient); 
+            color: #ffffff; 
+        }
 
+        /* 🚀 Modern Floating Capsule Bottom Nav */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; background-color: var(--nav-bg);
-            display: flex; justify-content: space-around; padding: 8px 0;
-            border-top: 1px solid var(--border-color); z-index: 1000;
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 480px;
+            background: var(--nav-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: var(--pill-radius);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 42, 84, 0.15);
+            z-index: 1000;
         }
         .nav-item {
             background: none; border: none; color: var(--text-secondary); font-size: 10px;
-            display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; font-weight: 500;
+            display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; font-weight: 700;
+            transition: all 0.2s ease;
         }
-        .nav-item.active { color: var(--accent-color); font-weight: 700; }
+        .nav-item.active { color: #ff2a54; transform: scale(1.05); }
         .nav-item span:first-child { font-size: 18px; }
 
         .admin-users-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
         .admin-user-card {
-            background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 14px; padding: 12px 16px;
+            background: var(--surface-bg); 
+            border: 1px solid var(--border-glow); 
+            border-radius: 16px; padding: 12px 16px;
             display: flex; justify-content: space-between; align-items: center; gap: 8px;
         }
         .admin-user-left-box { display: flex; align-items: center; gap: 10px; }
         .admin-user-avatar {
-            width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--accent-color);
-            background: #222222; display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 18px; flex-shrink: 0;
+            width: 40px; height: 40px; border-radius: 50%; border: 2px solid #ff2a54;
+            background: var(--surface-card); display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 18px; flex-shrink: 0;
         }
         .admin-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .admin-user-info { display: flex; flex-direction: column; gap: 2px; }
-        .admin-user-name { font-size: 13px; font-weight: 700; color: var(--text-color); }
+        .admin-user-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
         .admin-user-status { font-size: 10px; color: var(--text-secondary); }
         .admin-user-btns { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
-        .admin-mini-btn { padding: 5px 10px; border-radius: 6px; font-size: 10px; font-weight: 700; border: none; cursor: pointer; }
+        .admin-mini-btn { padding: 6px 12px; border-radius: var(--pill-radius); font-size: 10px; font-weight: 700; border: none; cursor: pointer; }
         .btn-vip-on { background: #2ed573; color: #ffffff; }
-        .btn-vip-plus { background: #1e90ff; color: #ffffff; }
+        .btn-vip-plus { background: #0072ff; color: #ffffff; }
         .btn-vip-off { background: #ffa502; color: #000000; }
         .btn-del-user { background: #ff4757; color: #ffffff; }
 
-        .auth-mode-switcher { display: flex; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 3px; margin-bottom: 16px; }
+        .auth-mode-switcher { 
+            display: flex; background: var(--surface-bg); 
+            border: 1px solid var(--border-glow); 
+            border-radius: var(--pill-radius); padding: 4px; margin-bottom: 16px; 
+        }
         .auth-switch-btn {
             flex: 1; padding: 8px; font-size: 12px; font-weight: 700; border: none;
-            background: transparent; color: var(--text-secondary); border-radius: 10px; cursor: pointer;
+            background: transparent; color: var(--text-secondary); border-radius: var(--pill-radius); cursor: pointer;
         }
-        .auth-switch-btn.active { background: var(--accent-color); color: #ffffff; }
+        .auth-switch-btn.active { 
+            background: var(--accent-gradient); 
+            color: #ffffff; 
+            box-shadow: 0 4px 15px rgba(255, 42, 84, 0.4);
+        }
     </style>
 </head>
 <body>
 
     <div id="notificationBanner">
-        <span>🎬 يېڭى مەزمۇن قوشۇلدى:</span>
+        <span>🎬 يېڭى فىلىم:</span>
         <span id="notifMovieTitle" style="text-decoration: underline; cursor: pointer;"></span>
     </div>
 
     <div id="splashScreen">
         <div class="splash-content">
             <div class="splash-cinema-icon"><i class="fa-solid fa-clapperboard"></i></div>
-            <div class="splash-brand-text">كۆزنەك <span>كىنوخانىسى</span></div>
-            <div class="splash-slogan-ug">كۆزنەك كىنوخانىسىغا كەلگىنىڭىزگە قارشى ئالىمىز!</div>
+            <div class="splash-brand-text">كۆزنەك كىنوخانىسى</div>
+            <div class="splash-slogan-ug">كۆزنەك كىنوخانىسىغا كەلگىنىڭىزگە قارشى ئالىمىز</div>
         </div>
     </div>
 
@@ -561,10 +756,10 @@
                 <div class="detail-meta-row">
                     <span id="detailMovieCategory">كاتېگورىيە</span>
                     <span id="detailMovieViews" style="font-size: 11px; color: var(--text-secondary);">👀 كۆرۈش سانى: 0</span>
-                    <span id="detailMovieTag" style="color: var(--accent-color); font-weight: bold;"></span>
+                    <span id="detailMovieTag" style="color: #ff2a54; font-weight: 800;"></span>
                 </div>
                 
-                <div id="trailerBtnContainer" style="margin-top: 12px;"></div>
+                <div id="trailerBtnContainer" style="margin-top: 14px;"></div>
                 <div id="detailEpisodeBarContainer"></div>
 
                 <div class="rating-box">
@@ -581,8 +776,8 @@
             </div>
 
             <div class="comments-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <div class="section-title" style="font-size: 14px; margin-bottom: 0; border-bottom: none; padding: 0;">💬 پىكىر ۋە باھالار</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div class="section-title" style="font-size: 15px; margin-bottom: 0;">💬 پىكىر ۋە باھالار</div>
                     <span id="commentsCountBadge" style="font-size: 11px; color: var(--text-secondary);">0 پىكىر</span>
                 </div>
 
@@ -600,35 +795,35 @@
                 <div class="comment-input-wrapper">
                     <textarea id="commentInputBox" class="comment-input" rows="2" placeholder="بۇ فىلىم ھەققىدە ئۆز پىكىرىڭىزنى قالدۇرۇڭ..."></textarea>
                 </div>
-                <button type="button" class="action-btn" style="padding: 10px; font-size: 13px; margin-top: 0;" onclick="submitComment()"><i class="fa-solid fa-paper-plane"></i> پىكىر يوللاش</button>
+                <button type="button" class="action-btn" style="padding: 11px; font-size: 13px; margin-top: 0;" onclick="submitComment()"><i class="fa-solid fa-paper-plane"></i> پىكىر يوللاش</button>
                 
-                <div id="commentsListContainer" style="margin-top: 14px;"></div>
+                <div id="commentsListContainer" style="margin-top: 16px;"></div>
             </div>
 
             <div class="category-section" style="padding: 0; margin-top: 24px;">
-                <div class="section-title" style="border-bottom: none; padding: 0;">🔥 تەۋسىيە كىنولەر</div>
+                <div class="section-title">🔥 تەۋسىيە كىنولەر</div>
                 <div class="movie-grid" id="relatedMoviesGrid"></div>
             </div>
         </div>
     </div>
 
     <div id="favTab" class="tab-content">
-        <div class="category-section" style="margin-top: 12px;">
-            <div class="section-title" style="margin-bottom: 15px; border-bottom: none; padding: 0;">❤️ ياقتۇرغان مەزمۇنلىرىم</div>
+        <div class="category-section" style="margin-top: 14px;">
+            <div class="section-title">❤️ ياقتۇرغان مەزمۇنلىرىم</div>
             <div class="movie-grid" id="favList"></div>
         </div>
     </div>
 
     <div id="historyTab" class="tab-content">
-        <div class="category-section" style="margin-top: 12px;">
-            <div class="section-title" style="margin-bottom: 15px; border-bottom: none; padding: 0;">🕒 كۆرگەن فىلىملىرىم</div>
+        <div class="category-section" style="margin-top: 14px;">
+            <div class="section-title">🕒 كۆرگەن فىلىملىرىم</div>
             <div class="movie-grid" id="historyList"></div>
         </div>
     </div>
 
     <div id="uploadTab" class="tab-content">
         <div class="page-box" id="uploadPageContent">
-            <div class="section-title" style="font-size: 16px; margin-bottom: 14px; border-bottom: none; padding: 0;">➕ يېڭى مەزمۇن قوشۇش (Archive)</div>
+            <div class="section-title" style="font-size: 17px; margin-bottom: 16px;">➕ يېڭى مەزمۇن قوشۇش (Archive)</div>
             <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
                 <div class="form-group">
                     <label>مەزمۇن تىپى</label>
@@ -663,8 +858,8 @@
                 <div class="form-group">
                     <label>🎬 تەشۋىقات رەسىمى (Poster Image)</label>
                     <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                        <button type="button" class="auth-switch-btn active" id="posterTypeUrlBtn" onclick="setPosterInputMode('url')" style="padding: 6px; font-size: 11px;">تور ئۇلانمىسى (URL)</button>
-                        <button type="button" class="auth-switch-btn" id="posterTypeFileBtn" onclick="setPosterInputMode('file')" style="padding: 6px; font-size: 11px;">تېلېفوندىن تاللاش</button>
+                        <button type="button" class="auth-switch-btn active" id="posterTypeUrlBtn" onclick="setPosterInputMode('url')" style="padding: 7px; font-size: 11px;">تور ئۇلانمىسى (URL)</button>
+                        <button type="button" class="auth-switch-btn" id="posterTypeFileBtn" onclick="setPosterInputMode('file')" style="padding: 7px; font-size: 11px;">تېلېفوندىن تاللاش</button>
                     </div>
 
                     <div id="posterUrlBox">
@@ -676,7 +871,7 @@
                     </div>
 
                     <div id="posterPreviewContainer" style="margin-top: 10px; display: none; text-align: center;">
-                        <img id="posterPreviewImg" src="" alt="رەسىم" style="max-height: 120px; border-radius: 10px; border: 1px solid var(--border-color); object-fit: cover;">
+                        <img id="posterPreviewImg" src="" alt="رەسىم" style="max-height: 130px; border-radius: 16px; border: 1px solid var(--border-glow); object-fit: cover;">
                     </div>
                 </div>
                 
@@ -701,7 +896,7 @@
                 <div id="seriesLinksGroup" class="form-group" style="display: none;">
                     <label>📺 قىسىملىق Archive.org ئۇلانما / ID لار</label>
                     <div id="dynamicEpisodesContainer" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px;"></div>
-                    <button type="button" class="action-btn" style="background: #2ed573; padding: 9px; font-size: 12px; margin: 0;" onclick="addEpisodeInputRow()">➕ يېڭى قىسىم قوشۇش</button>
+                    <button type="button" class="action-btn" style="background: #2ed573; color: #ffffff; padding: 10px; font-size: 12px; margin: 0;" onclick="addEpisodeInputRow()">➕ يېڭى قىسىم قوشۇش</button>
                 </div>
 
                 <button type="submit" class="action-btn">مەزمۇننى يوللاش</button>
@@ -711,20 +906,20 @@
 
     <div id="accountTab" class="tab-content">
         <div class="page-box" style="text-align: center;">
-            <div style="display: flex; flex-direction: column; align-items: center; margin-top: 8px; margin-bottom: 16px;">
+            <div style="display: flex; flex-direction: column; align-items: center; margin-top: 10px; margin-bottom: 16px;">
                 <div class="profile-avatar-circle" id="mainAccountAvatarBox" onclick="document.getElementById('phoneImageInput').click()" title="رەسىمنى ئۆزگەرتىش">👤</div>
                 <input type="file" id="phoneImageInput" accept="image/*" style="display: none;" onchange="handlePhoneImageSelected(event)">
-                <span style="font-size: 11px; color: var(--text-secondary); margin-top: 6px;">رەسىمنى ئۆزگەرتىش ئۈچۈن سۈرەتنى بېسىڭ</span>
+                <span style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">رەسىمنى ئۆزگەرتىش ئۈچۈن سۈرەتنى بېسىڭ</span>
             </div>
 
-            <h3 id="accountTitle" style="margin-top: 4px; font-size: 16px;">ھېساباتقا كىرىش / تىزىملىتىش</h3>
+            <h3 id="accountTitle" style="margin-top: 4px; font-size: 17px;">ھېساباتقا كىرىش / تىزىملىتىش</h3>
             
-            <div id="authModeSwitch" class="auth-mode-switcher" style="margin-top: 12px;">
+            <div id="authModeSwitch" class="auth-mode-switcher" style="margin-top: 14px;">
                 <button type="button" class="auth-switch-btn active" id="switchToLoginBtn" onclick="setAuthMode('login')">كىرىش</button>
                 <button type="button" class="auth-switch-btn" id="switchToRegisterBtn" onclick="setAuthMode('register')">تىزىملىتىش</button>
             </div>
 
-            <div id="loginFormSection" style="margin-top: 12px; text-align: right;">
+            <div id="loginFormSection" style="margin-top: 14px; text-align: right;">
                 <div class="form-group">
                     <label>ئابونت ئىسمى (Username)</label>
                     <input type="text" id="loginUser" class="form-input" placeholder="ئىسمىڭىزنى كىرگۈزۈڭ" autocomplete="off">
@@ -736,7 +931,7 @@
                 <button type="button" class="action-btn" onclick="handleLogin()">كىرىش</button>
             </div>
 
-            <div id="registerFormSection" style="display: none; margin-top: 12px; text-align: right;">
+            <div id="registerFormSection" style="display: none; margin-top: 14px; text-align: right;">
                 <div class="form-group">
                     <label>يېڭى ئابونت ئىسمى (Username)</label>
                     <input type="text" id="regUser" class="form-input" placeholder="ئىسمىڭىزنى يېزىڭ" autocomplete="off">
@@ -748,38 +943,38 @@
                 <button type="button" class="action-btn" style="background: #2ed573;" onclick="handleRegister()">يېڭى ھېسابات ئېچىش</button>
             </div>
 
-            <div id="userProfileView" style="display: none; margin-top: 16px; text-align: right;">
-                <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 14px; border-radius: 14px; margin-bottom: 12px;">
+            <div id="userProfileView" style="display: none; margin-top: 18px; text-align: right;">
+                <div style="background: var(--surface-card); border: 1px solid var(--border-glow); padding: 16px; border-radius: 20px; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span id="displayUsername" style="font-size: 15px; font-weight: 700; color: var(--accent-color);"></span>
-                        <span id="vipBadge" style="background:#555555; color:#ffffff; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:700;">ئادەتتىكى ئەزا</span>
+                        <span id="displayUsername" style="font-size: 16px; font-weight: 800; color: #ff2a54;"></span>
+                        <span id="vipBadge" style="background: var(--surface-bg); color: var(--text-primary); padding: 5px 12px; border-radius: var(--pill-radius); font-size: 11px; font-weight: 700; border: 1px solid var(--border-glow);">ئادەتتىكى ئەزا</span>
                     </div>
                 </div>
 
-                <div id="adminPanelSection" style="display: none; margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 16px; text-align: right;">
-                    <div class="section-title" style="font-size: 14px; margin-bottom: 10px; border-bottom: none; padding: 0;">🖼️ باش بەت سىلايدېر قوشۇش</div>
+                <div id="adminPanelSection" style="display: none; margin-top: 22px; border-top: 1px solid var(--border-glow); padding-top: 18px; text-align: right;">
+                    <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">🖼️ باش بەت سىلايدېر قوشۇش</div>
                     <div class="form-group">
                         <select id="sliderMovieSelect" class="form-select"></select>
-                        <button type="button" class="action-btn" style="background: #3498db; padding: 9px; font-size: 12px; margin-top: 6px;" onclick="addHeroSliderItem()">➕ باش بەتكە قوشۇش</button>
+                        <button type="button" class="action-btn" style="background: var(--accent-blue-grad); padding: 10px; font-size: 12px; margin-top: 8px;" onclick="addHeroSliderItem()">➕ باش بەتكە قوشۇش</button>
                     </div>
 
-                    <div class="section-title" style="font-size: 14px; margin: 20px 0 10px 0; border-bottom: none; padding: 0;">👥 ئابونتلارنى باشقۇرۇش</div>
+                    <div class="section-title" style="font-size: 15px; margin: 24px 0 12px 0;">👥 ئابونتلارنى باشقۇرۇش</div>
                     <div class="admin-users-list" id="adminUsersListContainer"></div>
                 </div>
 
-                <button type="button" class="action-btn" style="background: #333333; margin-top: 16px;" onclick="handleLogout()">چېكىنىش (Log out)</button>
+                <button type="button" class="action-btn" style="background: var(--surface-bg); border: 1px solid var(--border-glow); margin-top: 18px;" onclick="handleLogout()">چېكىنىش (Log out)</button>
             </div>
         </div>
     </div>
 
     <div id="vipOpenTab" class="tab-content">
         <div class="page-box" style="max-width: 450px; text-align: right;">
-            <div class="section-title" style="font-size: 16px; margin-bottom: 12px; text-align: center; border-bottom: none; padding: 0; display: block;">👑 ئەزالىق ئېچىش مەركىزى</div>
-            <div style="background: var(--card-bg); border: 1px solid var(--border-color); padding: 18px; border-radius: 16px; line-height: 1.6; font-size: 13px;">
-                <p style="margin-bottom: 10px; font-weight: 600;">ھۆرمەتلىك ئەزا، ئايلىق ئەزالىق باھاسى: <span style="color: var(--accent-color); font-size: 16px; font-weight: 800;">4＄</span>.</p>
-                <hr style="border: none; border-top: 1px solid var(--border-color); margin: 12px 0;">
-                <p style="color: var(--text-secondary); font-size: 12px; margin-bottom: 12px;">👉 تېلېگرامما ئادرېسىمىز ئارقىلىق ئالاقىلىشىڭ:</p>
-                <a href="https://t.me/KOZNAK_USD" target="_blank" style="display: block; text-align: center; background: #0088cc; color: #ffffff; padding: 12px; border-radius: 10px; font-weight: bold; text-decoration: none; font-size: 13px;">
+            <div class="section-title" style="font-size: 17px; margin-bottom: 14px; text-align: center;">👑 ئەزالىق ئېچىش مەركىزى</div>
+            <div style="background: var(--surface-card); border: 1px solid var(--border-glow); box-shadow: 0 12px 35px rgba(0,0,0,0.5); padding: 24px; border-radius: 24px; line-height: 1.6; font-size: 13px;">
+                <p style="margin-bottom: 12px; font-weight: 700;">ھۆرمەتلىك ئەزا، ئايلىق ئەزالىق باھاسى: <span style="color: #ff2a54; font-size: 20px; font-weight: 900;">4＄</span></p>
+                <hr style="border: none; border-top: 1px solid var(--border-glow); margin: 14px 0;">
+                <p style="color: var(--text-secondary); font-size: 12px; margin-bottom: 14px;">👉 تېلېگرامما ئادرېسىمىز ئارقىلىق ئالاقىلىشىڭ:</p>
+                <a href="https://t.me/KOZNAK_USD" target="_blank" style="display: block; text-align: center; background: linear-gradient(135deg, #0088cc, #00b4d8); color: #ffffff; padding: 13px; border-radius: var(--pill-radius); font-weight: 800; text-decoration: none; font-size: 13px; box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);">
                     💬 Telegram دا ئالاقىلىشىش (@KOZNAK_USD)
                 </a>
             </div>
@@ -792,8 +987,8 @@
                 <div class="profile-top-row">
                     <div class="profile-avatar-circle" id="settingsAvatarBox">👤</div>
                     <div class="profile-meta-info">
-                        <span class="profile-username-txt" id="settingsProfileName" style="font-weight: 800; font-size: 15px;">مېھمان ئابونت</span><br>
-                        <span class="profile-role-txt" id="settingsProfileDesc" style="font-size: 11px; color: var(--text-secondary);">تېخىمۇ كۆپ ئىقتىدار ئۈچۈن كىرىڭ</span>
+                        <span class="profile-username-txt" id="settingsProfileName" style="font-weight: 800; font-size: 16px;">مېھمان ئابونت</span><br>
+                        <span class="profile-role-txt" id="settingsProfileDesc" style="font-size: 12px; color: var(--text-secondary);">تېخىمۇ كۆپ ئىقتىدار ئۈچۈن كىرىڭ</span>
                     </div>
                 </div>
                 <div class="profile-buttons-row">
@@ -802,7 +997,7 @@
                 </div>
             </div>
 
-            <div class="section-title" style="border-bottom: none; padding: 0; margin-bottom: 10px;">تەڭشەكلەر</div>
+            <div class="section-title" style="margin-bottom: 12px;">تەڭشەكلەر</div>
             <div class="settings-block-card">
                 <div class="settings-row-item" id="uploadMenuSettingItem" style="display: none;">
                     <div class="settings-row-right">
@@ -812,7 +1007,7 @@
                             <span class="settings-item-desc">كىنو يوللاش</span>
                         </div>
                     </div>
-                    <button type="button" class="action-btn" style="width: auto; padding: 5px 12px; font-size: 12px; margin: 0;" onclick="switchTab('uploadTab')">ئېچىش</button>
+                    <button type="button" class="action-btn" style="width: auto; padding: 7px 16px; font-size: 12px; margin: 0;" onclick="switchTab('uploadTab')">ئېچىش</button>
                 </div>
 
                 <div class="settings-row-item">
@@ -838,7 +1033,7 @@
                             <span class="settings-item-desc">ۋاقىت خاتىرىسىنى ئۆچۈرۈش</span>
                         </div>
                     </div>
-                    <button type="button" class="action-btn" style="width: auto; padding: 5px 10px; font-size: 11px; margin: 0; background: #e67e22;" onclick="clearWatchHistory()">تازىلاش</button>
+                    <button type="button" class="action-btn" style="width: auto; padding: 7px 14px; font-size: 11px; margin: 0; background: #e67e22;" onclick="clearWatchHistory()">تازىلاش</button>
                 </div>
 
                 <div class="settings-row-item" onclick="window.open('https://t.me/koznak_tv', '_blank')" style="cursor: pointer;">
@@ -855,6 +1050,7 @@
         </div>
     </div>
 
+    <!-- 🌟 Modern Floating Island Nav -->
     <div class="bottom-nav" id="bottomNavContainer">
         <button class="nav-item active" onclick="switchTab('homeTab', this)"><span>🏠</span><span>باش بەت</span></button>
         <button class="nav-item" onclick="switchTab('favTab', this)"><span>❤️</span><span>ياقتۇرغانلار</span></button>
@@ -1211,7 +1407,7 @@
                     <div class="hero-slide-overlay">
                         <div class="hero-slide-title">${escapeHTML(slideItem.title)}</div>
                         <span class="hero-slide-badge">${escapeHTML(getCategoryName(slideItem.type))}</span>
-                        <p style="font-size: 13px; color: #aaaaaa; margin-bottom: 10px;">ئەڭ يېڭى ۋە سۈپەتلىك كۆرۈنۈش پەقەت بىزدە.</p>
+                        <p style="font-size: 12px; color: #cbd5e1; margin-bottom: 10px;">ئەڭ يېڭى ۋە يۇقىرى سۈپەتلىك تاللانما فىلىملەر.</p>
                         <button class="btn-watch" onclick="event.stopPropagation(); handleCardClick('${slideItem.id}')"><i class="fa-solid fa-play"></i> كۆرۈش</button>
                         ${currentUser && currentUser.role === 'admin' && slideItem.sKey ? `<button class="del-btn" onclick="event.stopPropagation(); deleteSliderItem('${slideItem.sKey}')" style="position:absolute; top:10px; left:10px;">✕</button>` : ''}
                     </div>
@@ -1338,7 +1534,7 @@
                 });
                 let sectionDiv = document.createElement('div');
                 sectionDiv.className = 'category-section';
-                sectionDiv.innerHTML = `<div class="section-title">👍 ئەڭ ياقتۇرۇلغان كىنولەر</div><div class="movie-grid" id="grid_top_rated"></div>`;
+                sectionDiv.innerHTML = `<div class="section-header-row"><div class="section-title">👍 ئەڭ ياقتۇرۇلغان كىنولەر</div></div><div class="movie-grid" id="grid_top_rated"></div>`;
                 container.appendChild(sectionDiv);
                 let grid = document.getElementById('grid_top_rated');
                 ratedKeys.forEach(id => grid.appendChild(createMovieCardElement(id, allMovies[id])));
@@ -1349,7 +1545,7 @@
                 let filteredKeys = keys.filter(id => allMovies[id].type === currentFilter);
                 let sectionDiv = document.createElement('div');
                 sectionDiv.className = 'category-section';
-                sectionDiv.innerHTML = `<div class="section-title">📂 ${getCategoryName(currentFilter)}</div><div class="movie-grid" id="grid_${currentFilter}"></div>`;
+                sectionDiv.innerHTML = `<div class="section-header-row"><div class="section-title">📂 ${getCategoryName(currentFilter)}</div></div><div class="movie-grid" id="grid_${currentFilter}"></div>`;
                 container.appendChild(sectionDiv);
                 let grid = document.getElementById(`grid_${currentFilter}`);
                 if (filteredKeys.length === 0) grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 20px;">مەزمۇن يوق</div>';
@@ -1369,10 +1565,16 @@
                     if (catKeys.length > 0) {
                         let sectionDiv = document.createElement('div');
                         sectionDiv.className = 'category-section';
-                        sectionDiv.innerHTML = `<div class="section-title">${cat.title}</div><div class="movie-grid" id="grid_${cat.key}"></div>`;
+                        sectionDiv.innerHTML = `
+                            <div class="section-header-row">
+                                <div class="section-title">${cat.title}</div>
+                                <span style="font-size: 11px; color: #ff2a54; font-weight: 700; cursor: pointer;" onclick="filterCategory('${cat.key}')">ھەممىسى ❯</span>
+                            </div>
+                            <div class="movie-row-container" id="row_${cat.key}"></div>
+                        `;
                         container.appendChild(sectionDiv);
-                        let grid = document.getElementById(`grid_${cat.key}`);
-                        catKeys.forEach(id => grid.appendChild(createMovieCardElement(id, allMovies[id])));
+                        let row = document.getElementById(`row_${cat.key}`);
+                        catKeys.forEach(id => row.appendChild(createMovieCardElement(id, allMovies[id])));
                     }
                 });
             }
@@ -1495,7 +1697,7 @@
             document.getElementById('detailMovieViews').innerText = `👀 كۆرۈش سانى: ${item.views || 1}`;
 
             document.getElementById('trailerBtnContainer').innerHTML = item.trailer ? 
-                `<button class="action-btn" style="background:#0984e3; padding:9px; font-size:12px; margin:0;" onclick="playTrailer('${item.trailer}')"><i class="fa-solid fa-play"></i> فىلىم ئېلانىنى كۆرۈش (Trailer)</button>` : '';
+                `<button class="action-btn" style="background:var(--accent-blue-grad); padding:10px; font-size:12px; margin:0;" onclick="playTrailer('${item.trailer}')"><i class="fa-solid fa-play"></i> فىلىم ئېلانىنى كۆرۈش (Trailer)</button>` : '';
 
             const episodeBarBox = document.getElementById('detailEpisodeBarContainer');
             episodeBarBox.innerHTML = '';
@@ -1524,7 +1726,7 @@
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
             if (!vdoIdOrUrl) {
-                playerBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#aaa;">ۋىدىيو ئۇلانمىسى تېپىلمىدى</div>';
+                playerBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;">ۋىدىيو ئۇلانمىسى تېپىلمىدى</div>';
                 return;
             }
 
@@ -1756,10 +1958,10 @@
                             <div class="reply-item">
                                 <div class="reply-avatar">${rep.avatar ? `<img src="${rep.avatar}">` : '👤'}</div>
                                 <div style="display:flex; flex-direction:column; width:100%;">
-                                    <div style="font-weight:700; color:var(--accent-color); font-size:11px;">
+                                    <div style="font-weight:700; color:#ff2a54; font-size:11px;">
                                         ${escapeHTML(rep.user)} <span style="font-weight:normal; color:var(--text-secondary); font-size:9px;">(${formatRelativeTime(rep.timestamp)})</span>
                                     </div>
-                                    <div style="font-size:12px; color:var(--text-color); margin-top:2px;">${escapeHTML(rep.text)}</div>
+                                    <div style="font-size:12px; color:var(--text-primary); margin-top:2px;">${escapeHTML(rep.text)}</div>
                                 </div>
                             </div>
                         `;
@@ -1787,9 +1989,9 @@
                             </button>
                         </div>
 
-                        <div class="reply-input-box" id="replyBox_${k}">
-                            <input type="text" id="replyInput_${k}" class="form-input" placeholder="جاۋابىڭىز..." style="padding:7px 10px; font-size:11px;" autocomplete="off">
-                            <button type="button" class="action-btn" style="width:auto; padding:6px 12px; font-size:11px; margin:0;" onclick="submitReply('${k}')">يوللاش</button>
+                        <div class="reply-input-box" id="replyBox_${k}" style="display:none; gap:6px; margin-top:8px;">
+                            <input type="text" id="replyInput_${k}" class="form-input" placeholder="جاۋابىڭىز..." style="padding:8px 12px; font-size:11px;" autocomplete="off">
+                            <button type="button" class="action-btn" style="width:auto; padding:8px 16px; font-size:11px; margin:0;" onclick="submitReply('${k}')">يوللاش</button>
                         </div>
 
                         ${repliesHtml}
@@ -1949,7 +2151,7 @@
             }
 
             const movieId = 'movie_' + Date.now();
-            window.dbSet(window.dbRef(window.db, 'movies/' + movieId), {
+            window.dbSet(window.dbRef(window.db, `movies/${movieId}`), {
                 type, genre, title, poster,
                 trailer: document.getElementById('contentTrailer').value.trim(),
                 tag: document.getElementById('contentTag').value,
@@ -1993,10 +2195,10 @@
                 const d = document.createElement('div');
                 d.className = 'search-item';
                 d.innerHTML = `
-                    <div style="width:45px; height:60px; background:#111111; flex-shrink:0;">
+                    <div style="width:48px; height:64px; background:rgba(0,0,0,0.3); flex-shrink:0;">
                         <img src="${item.poster || ''}" style="width:100%; height:100%; object-fit:cover;">
                     </div>
-                    <div class="search-item-title">${escapeHTML(item.title)} <br><span style="font-size:10px; color:var(--accent-color);">${escapeHTML(item.genre || '')}</span></div>
+                    <div class="search-item-title">${escapeHTML(item.title)} <br><span style="font-size:11px; color:#ff2a54;">${escapeHTML(item.genre || '')}</span></div>
                 `;
                 d.onclick = () => { closeSearch(); handleCardClick(id); };
                 container.appendChild(d);
