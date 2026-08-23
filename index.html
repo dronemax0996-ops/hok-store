@@ -243,7 +243,13 @@
             background: #0b0b0e;
             z-index: 99999; display: flex; flex-direction: column;
             align-items: center; justify-content: center;
-            padding: 20px; transition: opacity 0.3s ease;
+            padding: 20px; transition: opacity 0.4s ease, visibility 0.4s ease;
+            animation: autoHideSplash 1.2s forwards;
+            pointer-events: none;
+        }
+        @keyframes autoHideSplash {
+            0%, 75% { opacity: 1; visibility: visible; }
+            100% { opacity: 0; visibility: hidden; display: none; }
         }
         .splash-content { display: flex; flex-direction: column; align-items: center; text-align: center; }
         .splash-cinema-icon {
@@ -2106,7 +2112,6 @@
                     name = cleanLine.substring(0, colonIdx).trim();
                     url = cleanLine.substring(colonIdx + 1).trim();
                 }
-                
                 return { name, url };
             }).filter(e => e && e.url);
         }
@@ -2285,14 +2290,22 @@
             }
         }
 
+        function hideSplash() {
+            const splash = document.getElementById('splashScreen');
+            if(splash) { 
+                splash.style.opacity = '0'; 
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                }, 300); 
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(hideSplash, 300);
+        });
+
         window.addEventListener('load', () => {
-            setTimeout(() => {
-                const splash = document.getElementById('splashScreen');
-                if(splash) { 
-                    splash.style.opacity = '0'; 
-                    setTimeout(() => splash.style.display = 'none', 300); 
-                }
-            }, 600);
+            hideSplash();
             setTheme(localStorage.getItem('koznak_theme') || 'dark');
             if(localStorage.getItem('koznak_user')) {
                 try { 
