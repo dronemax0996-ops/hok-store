@@ -763,6 +763,11 @@
             <div class="hero-dots" id="heroDotsContainer"></div>
         </div>
 
+        <!-- 📢 يېڭى قوشۇلغان باش بەت مېڭىپ تۇرىدىغان خەت -->
+        <div id="homeScrollingWrapper" style="display: none; background: var(--surface-bg); border: 1px solid var(--border-glow); border-radius: var(--pill-radius); padding: 8px 15px; margin: 0 12px 14px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <marquee id="homeScrollingText" scrollamount="5" style="font-size: 13px; font-weight: 700; color: #ff2a54; vertical-align: middle;"></marquee>
+        </div>
+
         <div class="category-tabs">
             <button class="cat-chip active" onclick="filterCategory('all', this)">✨ بارلىق كىنولەر</button>
             <button class="cat-chip" onclick="filterCategory('free', this)">🎁 ھەقسىز كىنولەر</button>
@@ -988,7 +993,27 @@
                 </div>
 
                 <div id="adminPanelSection" style="display: none; margin-top: 22px; border-top: 1px solid var(--border-glow); padding-top: 18px; text-align: right;">
-                    <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">🖼️ باش بەت سىلايدېر قوشۇش</div>
+                    
+                    <!-- 📢 يېڭى قوشۇلغان ئومۇمىي تەڭشەكلەر (VIP باھاسى ۋە مېڭىپ تۇرىدىغان خەت) -->
+                    <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">⚙️ ئومۇمىي تەڭشەكلەر</div>
+                    
+                    <div class="form-group">
+                        <label>ئەزالىق باھاسى (VIP Price)</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="adminVipPrice" class="form-input" placeholder="مەسىلەن: 4$" autocomplete="off">
+                            <button type="button" class="action-btn" style="width: auto; padding: 10px 16px; margin: 0; background: #2ed573;" onclick="updateAdminSettings('vipPrice')">ساقلاش</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>باش بەت ئۇقتۇرۇش خېتى (Scrolling Text)</label>
+                        <div style="display: flex; gap: 8px;">
+                            <input type="text" id="adminScrollingText" class="form-input" placeholder="تەشۋىقات ياكى ئۇقتۇرۇش خېتى..." autocomplete="off">
+                            <button type="button" class="action-btn" style="width: auto; padding: 10px 16px; margin: 0; background: #2ed573;" onclick="updateAdminSettings('scrollingText')">ساقلاش</button>
+                        </div>
+                    </div>
+
+                    <div class="section-title" style="font-size: 15px; margin: 24px 0 12px 0;">🖼️ باش بەت سىلايدېر قوشۇش</div>
                     <div class="form-group">
                         <select id="sliderMovieSelect" class="form-select"></select>
                         <button type="button" class="action-btn" style="background: var(--accent-blue-grad); padding: 10px; font-size: 12px; margin-top: 8px;" onclick="addHeroSliderItem()">➕ باش بەتكە قوشۇش</button>
@@ -1007,7 +1032,8 @@
         <div class="page-box" style="max-width: 450px; text-align: right;">
             <div class="section-title" style="font-size: 17px; margin-bottom: 14px; text-align: center;">👑 ئەزالىق ئېچىش مەركىزى</div>
             <div style="background: var(--surface-card); border: 1px solid var(--border-glow); box-shadow: 0 12px 35px rgba(0,0,0,0.5); padding: 24px; border-radius: 24px; line-height: 1.6; font-size: 13px;">
-                <p style="margin-bottom: 12px; font-weight: 700;">ھۆرمەتلىك ئەزا، ئايلىق ئەزالىق باھاسى: <span style="color: #ff2a54; font-size: 20px; font-weight: 900;">4＄</span></p>
+                <!-- 📢 يېڭىلانغان VIP باھا كۆرسىتىش رايونى -->
+                <p style="margin-bottom: 12px; font-weight: 700;">ھۆرمەتلىك ئەزا، ئايلىق ئەزالىق باھاسى: <span id="displayVipPrice" style="color: #ff2a54; font-size: 20px; font-weight: 900;">4＄</span></p>
                 <hr style="border: none; border-top: 1px solid var(--border-glow); margin: 14px 0;">
                 <p style="color: var(--text-secondary); font-size: 12px; margin-bottom: 14px;">👉 تېلېگرامما ئادرېسىمىز ئارقىلىق ئالاقىلىشىڭ:</p>
                 <a href="https://t.me/KOZNAK_USD" target="_blank" style="display: block; text-align: center; background: linear-gradient(135deg, #0088cc, #00b4d8); color: #ffffff; padding: 13px; border-radius: var(--pill-radius); font-weight: 800; text-decoration: none; font-size: 13px; box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);">
@@ -1355,6 +1381,23 @@
             }
         }
 
+        // 📢 يېڭى قوشۇلغان باشقۇرۇش تەڭشەكلىرىنى ساقلاش فۇنكسىيەسى
+        window.updateAdminSettings = function(type) {
+            if (!currentUser || currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
+            
+            let val = '';
+            if (type === 'vipPrice') {
+                val = document.getElementById('adminVipPrice').value.trim();
+                if (!val) return alert('باھانى كىرگۈزۈڭ!');
+            } else if (type === 'scrollingText') {
+                val = document.getElementById('adminScrollingText').value.trim();
+            }
+
+            window.dbSet(window.dbRef(window.db, `settings/${type}`), val)
+                .then(() => alert('تەڭشەك مۇۋەپپەقىيەتلىك ساقلاندى!'))
+                .catch(() => alert('ساقلاشتا خاتالىق كۆرۈلدى!'));
+        };
+
         window.initFirebaseApp = function() {
             const moviesRef = window.dbRef(window.db, 'movies');
             window.dbOnValue(moviesRef, (snapshot) => {
@@ -1382,6 +1425,33 @@
                     updateUIAfterLogin();
                 }
                 renderAdminUsersList();
+            });
+
+            // 📢 يېڭى قوشۇلغان ئومۇمىي تەڭشەكلەرنى ئوقۇش (VIP باھا ۋە ئۇقتۇرۇش خېتى)
+            const settingsRef = window.dbRef(window.db, 'settings');
+            window.dbOnValue(settingsRef, (snapshot) => {
+                const settings = snapshot.val() || {};
+                
+                // VIP باھاسىنى يېڭىلاش
+                const vipPrice = settings.vipPrice || '4＄';
+                const displayPriceEl = document.getElementById('displayVipPrice');
+                if (displayPriceEl) displayPriceEl.innerText = vipPrice;
+                const adminPriceEl = document.getElementById('adminVipPrice');
+                if (adminPriceEl) adminPriceEl.value = vipPrice;
+
+                // مېڭىپ تۇرىدىغان خەتنى يېڭىلاش
+                const scrollingText = settings.scrollingText || '';
+                const scrollWrapper = document.getElementById('homeScrollingWrapper');
+                const scrollTextEl = document.getElementById('homeScrollingText');
+                const adminTextEl = document.getElementById('adminScrollingText');
+                if (adminTextEl) adminTextEl.value = scrollingText;
+                
+                if (scrollingText.trim() !== '') {
+                    scrollTextEl.innerText = scrollingText;
+                    scrollWrapper.style.display = 'block';
+                } else {
+                    scrollWrapper.style.display = 'none';
+                }
             });
 
             checkTelegramAuth();
