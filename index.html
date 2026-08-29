@@ -1639,7 +1639,7 @@
             const keys = Object.keys(allMovies).sort((a, b) => (allMovies[b].createdAt || 0) - (allMovies[a].createdAt || 0));
 
             if (keys.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 40px;">مەزمۇن تېپىلمىدى</div>';
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 40px;">قوشۇلىۋاتىدۇ سەل ساقلاڭ...</div>';
                 return;
             }
 
@@ -1665,7 +1665,7 @@
                 sectionDiv.innerHTML = `<div class="section-header-row"><div class="section-title">📂 ${getCategoryName(currentFilter)}</div></div><div class="movie-grid" id="grid_${currentFilter}"></div>`;
                 container.appendChild(sectionDiv);
                 let grid = document.getElementById(`grid_${currentFilter}`);
-                if (filteredKeys.length === 0) grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 20px;">مەزمۇن يوق</div>';
+                if (filteredKeys.length === 0) grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 20px;">قوشۇلىۋاتىدۇ سەل ساقلاڭ...</div>';
                 else filteredKeys.forEach(id => grid.appendChild(createMovieCardElement(id, allMovies[id])));
             } else {
                 const categories = [
@@ -1750,7 +1750,7 @@
             if(!histGrid) return;
             histGrid.innerHTML = '';
             if(historyList.length === 0) {
-                histGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 40px;">كۆرگەن مەزمۇن يوق</div>';
+                histGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 40px;">قوشۇلىۋاتىدۇ سەل ساقلاڭ...</div>';
                 return;
             }
             historyList.forEach(id => {
@@ -1925,33 +1925,60 @@
                         }
                     });
 
-                    // 🌟 قوش چىكىپ ئالدى-كەينىگە سۈرۈش ئىقتىدارى (PC / تېلېفونغا ئورتاق)
+                    // 🌟 قوش چىكىپ ئالدى-كەينىگە سۈرۈش ۋە ئوڭ تەرەپتىن يورۇقلۇق تەڭشەش ئىقتىدارى
                     let lastTap = 0;
-                    const handleDoubleTap = (clientX, e) => {
-                        const rect = currentArtPlayerInstance.template.$video.getBoundingClientRect();
-                        const clickX = clientX - rect.left;
-                        if (clickX > rect.width / 2) {
-                            currentArtPlayerInstance.forward = 15;
-                            currentArtPlayerInstance.notice.show = '⏩ 15 سېكۇنت ئالدىغا';
-                        } else {
-                            currentArtPlayerInstance.backward = 15;
-                            currentArtPlayerInstance.notice.show = '⏪ 15 سېكۇنت كەينىگە';
-                        }
-                    };
-
-                    currentArtPlayerInstance.on('dblclick', (e) => {
-                        handleDoubleTap(e.clientX, e);
-                    });
+                    let startY = 0;
+                    let startX = 0;
+                    let isRightSideTouch = false;
+                    let currentBrightness = 1.0;
 
                     currentArtPlayerInstance.template.$video.addEventListener('touchstart', (e) => {
+                        const touch = e.touches[0];
+                        startX = touch.clientX;
+                        startY = touch.clientY;
+                        
+                        const rect = currentArtPlayerInstance.template.$video.getBoundingClientRect();
+                        const clickX = startX - rect.left;
+                        isRightSideTouch = clickX > (rect.width / 2); // ئېكراننىڭ ئوڭ تەرىپىدە ئىكەنلىكىنى تەكشۈرۈش
+
                         const currentTime = new Date().getTime();
                         const tapLength = currentTime - lastTap;
+                        
+                        // قوش چېكىش تەكشۈرۈش
                         if (tapLength < 300 && tapLength > 0) {
-                            e.preventDefault(); // يانفوندا كۆزنەكنىڭ چوڭىيىپ كېتىشىنىڭ ئالدىنى ئالىدۇ
-                            handleDoubleTap(e.touches[0].clientX, e);
+                            e.preventDefault(); 
+                            if (isRightSideTouch) {
+                                currentArtPlayerInstance.forward = 15;
+                                currentArtPlayerInstance.notice.show = '⏩ 15 سېكۇنت ئالدىغا';
+                            } else {
+                                currentArtPlayerInstance.backward = 15;
+                                currentArtPlayerInstance.notice.show = '⏪ 15 سېكۇنت كەينىگە';
+                            }
                         }
                         lastTap = currentTime;
-                    });
+                    }, { passive: false });
+
+                    currentArtPlayerInstance.template.$video.addEventListener('touchmove', (e) => {
+                        if (!isRightSideTouch) return;
+                        
+                        const touch = e.touches[0];
+                        const deltaY = startY - touch.clientY; // ئۆستىگە سىيرىسا مۇسبەت (يورۇقلۇق ئاشىدۇ)
+                        
+                        if (Math.abs(deltaY) > 2) {
+                            let newBrightness = currentBrightness + (deltaY * 0.008); 
+                            newBrightness = Math.max(0.2, Math.min(newBrightness, 2.0)); // 0.2 دىن 2.0 گىچە چەكلىمە
+                            
+                            currentArtPlayerInstance.template.$video.style.filter = `brightness(${newBrightness})`;
+                            
+                            // 10% دىن 100% گىچە كۆرسىتىش
+                            let displayPercent = Math.round((newBrightness / 2.0) * 100);
+                            currentArtPlayerInstance.notice.show = `☀️ يورۇقلۇق: ${displayPercent}%`;
+                            
+                            currentBrightness = newBrightness;
+                            startY = touch.clientY;
+                            e.preventDefault();
+                        }
+                    }, { passive: false });
                 }
                 return;
             }
@@ -2235,7 +2262,7 @@
             if(!favGrid) return;
             favGrid.innerHTML = '';
             if(favorites.length === 0) {
-                favGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 40px;">مەزمۇن يوق</div>';
+                favGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 40px;">قوشۇلىۋاتىدۇ سەل ساقلاڭ...</div>';
                 return;
             }
             favorites.forEach(id => { 
@@ -2386,7 +2413,7 @@
             });
 
             if(filteredIds.length === 0) {
-                container.innerHTML = '<div style="text-align:center; color:var(--text-secondary); padding:20px; font-size:12px;">مەزمۇن تېپىلمىدى</div>';
+                container.innerHTML = '<div style="text-align:center; color:var(--text-secondary); padding:20px; font-size:12px;">قوشۇلىۋاتىدۇ سەل ساقلاڭ...</div>';
                 return;
             }
 
