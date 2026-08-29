@@ -1888,11 +1888,30 @@
                         autoPlayback: true,
                         airplay: true,
                         hotkey: true,
+                        
+                        // 🌟 --- يېڭى قوشۇلغان كەسپىي قويغۇچ تەڭشەكلىرى ---
+                        lock: true,             // ئېكراننى تىك ياكى توغرىسىغا قۇلۇپلاش كۇنۇپكىسى
+                        fastForward: true,      // ئېكراننى بېسىپ تۇرغاندا سۈرئەتنى تېزلىتىش ۋە سىيرىش
+                        autoOrientation: true,  // يانفوننى ئايلاندۇرغاندا ئاپتوماتىك ئايلىنىش
+                        // 🌟 ------------------------------------------------
+
                         customType: {
                             m3u8: function (video, url, art) {
                                 if (window.Hls && Hls.isSupported()) {
                                     if (art.hls) art.hls.destroy();
-                                    const hls = new Hls();
+                                    
+                                    // 🌟 تور ئاجىز بولسىمۇ راۋان قويۇلۇش ئۈچۈن HLS تەڭشىكى
+                                    const hls = new Hls({
+                                        maxBufferLength: 60,
+                                        maxMaxBufferLength: 120,
+                                        capLevelToPlayerSize: true, 
+                                        manifestLoadingMaxRetry: 10,
+                                        levelLoadingMaxRetry: 10,
+                                        fragLoadingMaxRetry: 10,
+                                        fragLoadingTimeOut: 30000,
+                                        startLevel: -1 // ئاپتوماتىك سۈپەت
+                                    });
+                                    
                                     hls.loadSource(url);
                                     hls.attachMedia(video);
                                     art.hls = hls;
@@ -1904,6 +1923,34 @@
                                 }
                             }
                         }
+                    });
+
+                    // 🌟 قوش چىكىپ ئالدى-كەينىگە سۈرۈش ئىقتىدارى (PC / تېلېفونغا ئورتاق)
+                    let lastTap = 0;
+                    const handleDoubleTap = (clientX, e) => {
+                        const rect = currentArtPlayerInstance.template.$video.getBoundingClientRect();
+                        const clickX = clientX - rect.left;
+                        if (clickX > rect.width / 2) {
+                            currentArtPlayerInstance.forward = 15;
+                            currentArtPlayerInstance.notice.show = '⏩ 15 سېكۇنت ئالدىغا';
+                        } else {
+                            currentArtPlayerInstance.backward = 15;
+                            currentArtPlayerInstance.notice.show = '⏪ 15 سېكۇنت كەينىگە';
+                        }
+                    };
+
+                    currentArtPlayerInstance.on('dblclick', (e) => {
+                        handleDoubleTap(e.clientX, e);
+                    });
+
+                    currentArtPlayerInstance.template.$video.addEventListener('touchstart', (e) => {
+                        const currentTime = new Date().getTime();
+                        const tapLength = currentTime - lastTap;
+                        if (tapLength < 300 && tapLength > 0) {
+                            e.preventDefault(); // يانفوندا كۆزنەكنىڭ چوڭىيىپ كېتىشىنىڭ ئالدىنى ئالىدۇ
+                            handleDoubleTap(e.touches[0].clientX, e);
+                        }
+                        lastTap = currentTime;
                     });
                 }
                 return;
