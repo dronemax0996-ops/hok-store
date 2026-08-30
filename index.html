@@ -735,6 +735,22 @@
             color: #ffffff; 
             box-shadow: 0 4px 15px rgba(255, 42, 84, 0.4);
         }
+
+        /* 🌟 Telegram Embed Player Custom Style (فىلىمنى تېخىمۇ چوڭ ۋە پاكىز كۆرسىتىش ئۈچۈن) */
+        .telegram-embed-box {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: #000;
+            overflow: hidden;
+        }
+        .telegram-embed-box iframe {
+            width: 100%;
+            height: 115% !important;
+            margin-top: -8% !important;
+            border: none;
+            background: #000;
+        }
     </style>
 </head>
 <body>
@@ -1849,13 +1865,17 @@
                 return;
             }
 
-            // 2. Telegram Post Link Handler (e.g., https://t.me/koznaktv/2)
+            // 2. Telegram Post Link Handler (Clean & Focused on Video)
             if (cleanVal.includes('t.me/')) {
                 let parts = cleanVal.split('/');
                 let postId = parts[parts.length - 1];
                 let channelName = parts[parts.length - 2];
                 if (postId && channelName) {
-                    playerBox.innerHTML = `<iframe src="https://t.me/${channelName}/${postId}?embed=1&dark=1" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+                    playerBox.innerHTML = `
+                        <div class="telegram-embed-box">
+                            <iframe src="https://t.me/${channelName}/${postId}?embed=1&dark=1&transparent=1" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    `;
                     return;
                 }
             }
