@@ -763,7 +763,6 @@
             <div class="hero-dots" id="heroDotsContainer"></div>
         </div>
 
-        <!-- 📢 يېڭى قوشۇلغان باش بەت مېڭىپ تۇرىدىغان خەت -->
         <div id="homeScrollingWrapper" style="display: none; background: var(--surface-bg); border: 1px solid var(--border-glow); border-radius: var(--pill-radius); padding: 8px 15px; margin: 0 12px 14px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
             <marquee id="homeScrollingText" scrollamount="5" style="font-size: 13px; font-weight: 700; color: #ff2a54; vertical-align: middle;"></marquee>
         </div>
@@ -787,7 +786,6 @@
         <div class="detail-container">
             <button class="detail-back-btn" onclick="goBackToHome()">⬅️ قايتىش</button>
             
-            <!-- ArtPlayer Cinema Frame -->
             <div class="detail-player-wrapper">
                 <div class="detail-player-box" id="detailPlayerContainer"></div>
             </div>
@@ -864,7 +862,7 @@
 
     <div id="uploadTab" class="tab-content">
         <div class="page-box" id="uploadPageContent">
-            <div class="section-title" style="font-size: 17px; margin-bottom: 16px;">➕ يېڭى مەزمۇن قوشۇش (Archive)</div>
+            <div class="section-title" style="font-size: 17px; margin-bottom: 16px;">➕ يېڭى مەزمۇن قوشۇش (Archive / Telegram)</div>
             <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
                 <div class="form-group">
                     <label>مەزمۇن تىپى</label>
@@ -930,12 +928,12 @@
                 </div>
                 
                 <div id="singleLinkGroup" class="form-group">
-                    <label>📼 Archive.org ۋىدىيو ئۇلانمىسى ياكى ID</label>
-                    <input type="text" id="contentLink" class="form-input" placeholder="مەسىلەن: https://archive.org/details/... ياكى Video ID" autocomplete="off">
+                    <label>📼 Archive.org ياكى تېلېگرامما (t.me/koznaktv/2) ئۇلانمىسى</label>
+                    <input type="text" id="contentLink" class="form-input" placeholder="مەسىلەن: https://t.me/koznaktv/2 ياكى Archive ID" autocomplete="off">
                 </div>
 
                 <div id="seriesLinksGroup" class="form-group" style="display: none;">
-                    <label>📺 قىسىملىق Archive.org ئۇلانما / ID لار</label>
+                    <label>📺 قىسىملىق ئۇلانما / ID لار (Archive ياكى Telegram)</label>
                     <div id="dynamicEpisodesContainer" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px;"></div>
                     <button type="button" class="action-btn" style="background: #2ed573; color: #ffffff; padding: 10px; font-size: 12px; margin: 0;" onclick="addEpisodeInputRow()">➕ يېڭى قىسىم قوشۇش</button>
                 </div>
@@ -993,8 +991,6 @@
                 </div>
 
                 <div id="adminPanelSection" style="display: none; margin-top: 22px; border-top: 1px solid var(--border-glow); padding-top: 18px; text-align: right;">
-                    
-                    <!-- 📢 يېڭى قوشۇلغان ئومۇمىي تەڭشەكلەر (VIP باھاسى ۋە مېڭىپ تۇرىدىغان خەت) -->
                     <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">⚙️ ئومۇمىي تەڭشەكلەر</div>
                     
                     <div class="form-group">
@@ -1032,7 +1028,6 @@
         <div class="page-box" style="max-width: 450px; text-align: right;">
             <div class="section-title" style="font-size: 17px; margin-bottom: 14px; text-align: center;">👑 ئەزالىق ئېچىش مەركىزى</div>
             <div style="background: var(--surface-card); border: 1px solid var(--border-glow); box-shadow: 0 12px 35px rgba(0,0,0,0.5); padding: 24px; border-radius: 24px; line-height: 1.6; font-size: 13px;">
-                <!-- 📢 يېڭىلانغان VIP باھا كۆرسىتىش رايونى -->
                 <p style="margin-bottom: 12px; font-weight: 700;">ھۆرمەتلىك ئەزا، ئايلىق ئەزالىق باھاسى: <span id="displayVipPrice" style="color: #ff2a54; font-size: 20px; font-weight: 900;">4＄</span></p>
                 <hr style="border: none; border-top: 1px solid var(--border-glow); margin: 14px 0;">
                 <p style="color: var(--text-secondary); font-size: 12px; margin-bottom: 14px;">👉 تېلېگرامما ئادرېسىمىز ئارقىلىق ئالاقىلىشىڭ:</p>
@@ -1356,7 +1351,7 @@
             row.style.cssText = "display: flex; gap: 6px; align-items: center;";
             row.innerHTML = `
                 <input type="text" class="form-input ep-name-input" placeholder="قىسىم ئاتى" value="${escapeHTML(defaultName || count + '-قىسىم')}" style="flex: 1;" autocomplete="off">
-                <input type="text" class="form-input ep-url-input" placeholder="Archive.org ئۇلانمىسى ياكى ID" style="flex: 2.5;" autocomplete="off">
+                <input type="text" class="form-input ep-url-input" placeholder="Archive ياكى Telegram (t.me/...) ئۇلانمىسى" style="flex: 2.5;" autocomplete="off">
                 <button type="button" class="del-btn" onclick="this.parentElement.remove()" style="width: 36px; height: 36px; flex-shrink: 0;">✕</button>
             `;
             container.appendChild(row);
@@ -1381,7 +1376,6 @@
             }
         }
 
-        // 📢 يېڭى قوشۇلغان باشقۇرۇش تەڭشەكلىرىنى ساقلاش فۇنكسىيەسى
         window.updateAdminSettings = function(type) {
             if (!currentUser || currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
             
@@ -1427,19 +1421,16 @@
                 renderAdminUsersList();
             });
 
-            // 📢 يېڭى قوشۇلغان ئومۇمىي تەڭشەكلەرنى ئوقۇش (VIP باھا ۋە ئۇقتۇرۇش خېتى)
             const settingsRef = window.dbRef(window.db, 'settings');
             window.dbOnValue(settingsRef, (snapshot) => {
                 const settings = snapshot.val() || {};
                 
-                // VIP باھاسىنى يېڭىلاش
                 const vipPrice = settings.vipPrice || '4＄';
                 const displayPriceEl = document.getElementById('displayVipPrice');
                 if (displayPriceEl) displayPriceEl.innerText = vipPrice;
                 const adminPriceEl = document.getElementById('adminVipPrice');
                 if (adminPriceEl) adminPriceEl.value = vipPrice;
 
-                // مېڭىپ تۇرىدىغان خەتنى يېڭىلاش
                 const scrollingText = settings.scrollingText || '';
                 const scrollWrapper = document.getElementById('homeScrollingWrapper');
                 const scrollTextEl = document.getElementById('homeScrollingText');
@@ -1839,7 +1830,7 @@
             renderRelatedMovies(id);
         }
 
-        /* 🎬 ArtPlayer.js Full Featured Video Player Integration */
+        /* 🎬 Professional Video Player & Telegram Public Channel Handler */
         function setupVideoPlayer(vdoIdOrUrl, posterUrl = '') {
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
@@ -1850,14 +1841,24 @@
 
             let cleanVal = vdoIdOrUrl.trim();
 
-            // 1. YouTube Video Handler
+            // 1. Telegram Public Channel Link Handler (e.g., https://t.me/koznaktv/2)
+            if (cleanVal.includes('t.me/')) {
+                let parts = cleanVal.split('t.me/');
+                let pathPart = parts[1] || '';
+                if (pathPart.includes('/')) {
+                    playerBox.innerHTML = `<script async src="https://telegram.org/js/telegram-widget.js?22" data-telegram-post="${pathPart}" data-width="100%"></script>`;
+                    return;
+                }
+            }
+
+            // 2. YouTube Video Handler
             let ytId = extractYouTubeID(cleanVal);
             if (ytId) {
                 playerBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
                 return;
             }
 
-            // 2. Direct Video (MP4, HLS, M3U8, WEBM, or Archive Direct Download) -> ArtPlayer
+            // 3. Direct Video (MP4, HLS, M3U8, WEBM, Archive.org download) -> ArtPlayer
             if (cleanVal.match(/\.(mp4|m3u8|webm|ogg|mov)($|\?)/i) || cleanVal.includes('/download/')) {
                 playerBox.innerHTML = `<div id="artplayerBox" class="artplayer-app"></div>`;
                 if (window.Artplayer) {
@@ -1888,19 +1889,13 @@
                         autoPlayback: true,
                         airplay: true,
                         hotkey: true,
-                        
-                        // 🌟 --- يېڭى قوشۇلغان كەسپىي قويغۇچ تەڭشەكلىرى ---
-                        lock: true,             // ئېكراننى تىك ياكى توغرىسىغا قۇلۇپلاش كۇنۇپكىسى
-                        fastForward: true,      // ئېكراننى بېسىپ تۇرغاندا سۈرئەتنى تېزلىتىش ۋە سىيرىش
-                        autoOrientation: true,  // يانفوننى ئايلاندۇرغاندا ئاپتوماتىك ئايلىنىش
-                        // 🌟 ------------------------------------------------
-
+                        lock: true,
+                        fastForward: true,
+                        autoOrientation: true,
                         customType: {
                             m3u8: function (video, url, art) {
                                 if (window.Hls && Hls.isSupported()) {
                                     if (art.hls) art.hls.destroy();
-                                    
-                                    // 🌟 تور ئاجىز بولسىمۇ راۋان قويۇلۇش ئۈچۈن HLS تەڭشىكى
                                     const hls = new Hls({
                                         maxBufferLength: 60,
                                         maxMaxBufferLength: 120,
@@ -1909,9 +1904,8 @@
                                         levelLoadingMaxRetry: 10,
                                         fragLoadingMaxRetry: 10,
                                         fragLoadingTimeOut: 30000,
-                                        startLevel: -1 // ئاپتوماتىك سۈپەت
+                                        startLevel: -1
                                     });
-                                    
                                     hls.loadSource(url);
                                     hls.attachMedia(video);
                                     art.hls = hls;
@@ -1925,26 +1919,19 @@
                         }
                     });
 
-                    // 🌟 قوش چىكىپ ئالدى-كەينىگە سۈرۈش ۋە ئوڭ تەرەپتىن يورۇقلۇق تەڭشەش ئىقتىدارى
                     let lastTap = 0;
                     let startY = 0;
-                    let startX = 0;
                     let isRightSideTouch = false;
                     let currentBrightness = 1.0;
 
                     currentArtPlayerInstance.template.$video.addEventListener('touchstart', (e) => {
                         const touch = e.touches[0];
-                        startX = touch.clientX;
                         startY = touch.clientY;
-                        
                         const rect = currentArtPlayerInstance.template.$video.getBoundingClientRect();
-                        const clickX = startX - rect.left;
-                        isRightSideTouch = clickX > (rect.width / 2); // ئېكراننىڭ ئوڭ تەرىپىدە ئىكەنلىكىنى تەكشۈرۈش
+                        isRightSideTouch = (touch.clientX - rect.left) > (rect.width / 2);
 
                         const currentTime = new Date().getTime();
                         const tapLength = currentTime - lastTap;
-                        
-                        // قوش چېكىش تەكشۈرۈش
                         if (tapLength < 300 && tapLength > 0) {
                             e.preventDefault(); 
                             if (isRightSideTouch) {
@@ -1960,20 +1947,13 @@
 
                     currentArtPlayerInstance.template.$video.addEventListener('touchmove', (e) => {
                         if (!isRightSideTouch) return;
-                        
                         const touch = e.touches[0];
-                        const deltaY = startY - touch.clientY; // ئۆستىگە سىيرىسا مۇسبەت (يورۇقلۇق ئاشىدۇ)
-                        
+                        const deltaY = startY - touch.clientY;
                         if (Math.abs(deltaY) > 2) {
                             let newBrightness = currentBrightness + (deltaY * 0.008); 
-                            newBrightness = Math.max(0.2, Math.min(newBrightness, 2.0)); // 0.2 دىن 2.0 گىچە چەكلىمە
-                            
+                            newBrightness = Math.max(0.2, Math.min(newBrightness, 2.0));
                             currentArtPlayerInstance.template.$video.style.filter = `brightness(${newBrightness})`;
-                            
-                            // 10% دىن 100% گىچە كۆرسىتىش
-                            let displayPercent = Math.round((newBrightness / 2.0) * 100);
-                            currentArtPlayerInstance.notice.show = `☀️ يورۇقلۇق: ${displayPercent}%`;
-                            
+                            currentArtPlayerInstance.notice.show = `☀️ يورۇقلۇق: ${Math.round((newBrightness / 2.0) * 100)}%`;
                             currentBrightness = newBrightness;
                             startY = touch.clientY;
                             e.preventDefault();
@@ -1983,26 +1963,23 @@
                 return;
             }
 
-            // 3. Archive.org Details -> Convert to Archive Embed
+            // 4. Archive.org Details / Embed Support (هرگز يوغالمايدۇ)
             if (cleanVal.includes('archive.org/details/')) {
                 let embedUrl = cleanVal.replace('archive.org/details/', 'archive.org/embed/');
                 playerBox.innerHTML = `<iframe src="${embedUrl}" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
                 return;
             }
 
-            // 4. Archive.org Embed Link
             if (cleanVal.includes('archive.org/embed/')) {
                 playerBox.innerHTML = `<iframe src="${cleanVal}" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
                 return;
             }
 
-            // 5. Archive.org Video ID only (e.g. "my_video_id")
             if (!cleanVal.startsWith('http://') && !cleanVal.startsWith('https://')) {
                 playerBox.innerHTML = `<iframe src="https://archive.org/embed/${cleanVal}" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
                 return;
             }
 
-            // 6. Generic Video Embed
             playerBox.innerHTML = `<iframe src="${cleanVal}" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
         }
 
