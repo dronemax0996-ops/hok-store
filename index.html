@@ -469,11 +469,11 @@
             position: relative;
         }
 
-        /* ✅ object-fit: cover ئارقىلىق ئېكراننى تولۇق ۋە مۇكەممەل قاپلاش */
+        /* ✅ object-fit: fill ئارقىلىق ئېكراننىڭ ھەممە يېرىنى تولۇق تولدۇرۇش */
         .native-cinema-video {
             width: 100% !important;
             height: 100% !important;
-            object-fit: cover !important;
+            object-fit: fill !important;
             background: #000000;
             display: block;
         }
@@ -481,7 +481,7 @@
         .detail-player-wrapper.is-fullscreen .native-cinema-video {
             width: 100vw !important;
             height: 100vh !important;
-            object-fit: cover !important;
+            object-fit: fill !important;
         }
 
         /* ⛶ سۇسلاشتۇرۇلغان كىچىك چوڭايتىش كۇنۇپكىسى */
@@ -1294,7 +1294,7 @@
             }
         }
 
-        // ⛶ پۈتۈن ئېكران قاڭقىش مېخانىزمى (ئېكراننى تولۇق 100vw/100vh قاپلاش ھەم يانتۇ قىلىش)
+        // ⛶ پۈتۈن ئېكران قاڭقىش مېخانىزمى (ئېكراننى تولۇق قاپلاش ھەم يانتۇ قىلىش)
         window.toggleCinemaFullscreen = function() {
             const wrapper = document.getElementById('cinemaPlayerWrapper');
             const fsBtn = document.getElementById('floatingFsBtn');
@@ -1841,7 +1841,7 @@
             renderRelatedMovies(id);
         }
 
-        // 🎬 قويغۇچ (ناچار تور شارائىتىدە ئەڭ تىز يۈكلىنىدىغان ھەم تولۇق ئېكراندا قارا بوشلۇق قالدۇرمايدىغان)
+        // 🎬 قويغۇچ (ناچار تور شارائىتىدە ئەڭ تىز يۈكلىنىدىغان ھەم پۈتۈن ئېكراندا object-fit: cover قىلىنگەن)
         function setupVideoPlayer(vdoIdOrUrl, posterUrl = '') {
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
