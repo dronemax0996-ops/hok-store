@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>كۆزنەك كىنوخانىسى - Koznak TV</title>
     
-    <!-- 📱 PWA Meta & Manifest -->
+    <!-- 📱 PWABuilder ئۈچۈن مېتا ۋە Manifest ئۇلانمىسى -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a0a12">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -18,8 +18,10 @@
     <!-- تېلېگرامما WebApp كۇتۇپخانىسى -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    <!-- 🎬 HLS.js & ArtPlayer.js -->
+    <!-- 🎬 HLS.js (M3U8 ئېقىم كىنولەر ئۈچۈن) -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+    <!-- 🎬 ArtPlayer.js كىنو قويغۇچىنىڭ ئەڭ يېڭى كۇتۇپخانىسى -->
     <script src="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js"></script>
 
     <script type="module">
@@ -764,8 +766,8 @@
         }
         .telegram-embed-box iframe {
             width: 100%;
-            height: 115% !important;
-            margin-top: -8% !important;
+            height: 118% !important;
+            margin-top: -9% !important;
             border: none;
             background: #000;
         }
@@ -1292,10 +1294,13 @@
         }
 
         function destroyCurrentPlayer() {
-            if (currentArtPlayerInstance && currentArtPlayerInstance.destroy) {
+            if (currentArtPlayerInstance) {
                 try {
-                    currentArtPlayerInstance.destroy(false);
-                } catch(e){}
+                    if (currentArtPlayerInstance.hls) {
+                        currentArtPlayerInstance.hls.destroy();
+                    }
+                    currentArtPlayerInstance.destroy(true);
+                } catch(e) {}
                 currentArtPlayerInstance = null;
             }
         }
@@ -1925,27 +1930,38 @@
             }
 
             let cleanVal = vdoIdOrUrl.trim();
+
+            // 1. YouTube ۋىدىيولىرى
             let ytId = extractYouTubeID(cleanVal);
             if (ytId) {
-                playerBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
+                playerBox.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1" style="width:100%;height:100%;border:none;" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
                 return;
             }
 
-            if (cleanVal.includes('t.me/')) {
-                let parts = cleanVal.split('/');
-                let postId = parts[parts.length - 1];
+            // 2. Telegram Embed سىنلىرى
+            if (cleanVal.includes('t.me/') && !cleanVal.match(/\.(mp4|m3u8)($|\?)/i)) {
+                let parts = cleanVal.replace('https://', '').replace('http://', '').split('/');
+                let postId = parts[parts.length - 1].split('?')[0];
                 let channelName = parts[parts.length - 2];
+                
                 if (postId && channelName) {
                     playerBox.innerHTML = `
                         <div class="telegram-embed-box">
-                            <iframe src="https://t.me/${channelName}/${postId}?embed=1&dark=1&transparent=1" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+                            <iframe src="https://t.me/${channelName}/${postId}?embed=1&dark=1&transparent=1" 
+                                    allow="autoplay; fullscreen; encrypted-media; picture-in-picture" 
+                                    allowfullscreen></iframe>
                         </div>
                     `;
                     return;
                 }
             }
 
-            if (cleanVal.match(/\.(mp4|m3u8|webm|ogg|mov)($|\?)/i) || cleanVal.includes('/download/')) {
+            // 3. M3U8 (HLS) ياكى بىۋاسىتە MP4 / WebM / OGG Streaming
+            const isStreamOrVideo = cleanVal.match(/\.(mp4|m3u8|webm|ogg|mov)($|\?)/i) || 
+                                    cleanVal.includes('/download/') || 
+                                    cleanVal.includes('.m3u8');
+
+            if (isStreamOrVideo) {
                 playerBox.innerHTML = `<div id="artplayerBox" class="artplayer-app"></div>`;
                 if (window.Artplayer) {
                     currentArtPlayerInstance = new Artplayer({
@@ -1953,13 +1969,13 @@
                         url: cleanVal,
                         poster: posterUrl || '',
                         theme: '#ff2a54',
-                        volume: 0.8,
+                        volume: 0.85,
                         isLive: false,
                         muted: false,
                         autoplay: true,
                         pip: true,
                         autoSize: false,
-                        autoMini: false,
+                        autoMini: true,
                         screenshot: true,
                         setting: true,
                         loop: false,
@@ -1978,17 +1994,50 @@
                         lock: true,
                         fastForward: true,
                         autoOrientation: true,
+                        icons: {
+                            loading: '<i class="fa-solid fa-spinner fa-spin" style="font-size:35px;color:#ff2a54;"></i>',
+                        },
                         customType: {
                             m3u8: function (video, url, art) {
                                 if (window.Hls && Hls.isSupported()) {
                                     if (art.hls) art.hls.destroy();
-                                    const hls = new Hls();
+                                    
+                                    const hls = new Hls({
+                                        enableWorker: true,
+                                        lowLatencyMode: true,
+                                        maxBufferLength: 30,
+                                        maxMaxBufferLength: 60,
+                                        maxBufferSize: 60 * 1000 * 1000,
+                                        startLevel: -1
+                                    });
+
                                     hls.loadSource(url);
                                     hls.attachMedia(video);
                                     art.hls = hls;
-                                    art.on('destroy', () => hls.destroy());
+
+                                    hls.on(Hls.Events.ERROR, function (event, data) {
+                                        if (data.fatal) {
+                                            switch (data.type) {
+                                                case Hls.ErrorTypes.NETWORK_ERROR:
+                                                    hls.startLoad();
+                                                    break;
+                                                case Hls.ErrorTypes.MEDIA_ERROR:
+                                                    hls.recoverMediaError();
+                                                    break;
+                                                default:
+                                                    hls.destroy();
+                                                    break;
+                                            }
+                                        }
+                                    });
+
+                                    art.on('destroy', () => {
+                                        if (art.hls) art.hls.destroy();
+                                    });
                                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                                     video.src = url;
+                                } else {
+                                    art.notice.show = 'بۇ تور كۆرگۈدە M3U8 قويغۇچنى قوللىمايدۇ';
                                 }
                             }
                         }
@@ -1997,9 +2046,10 @@
                 return;
             }
 
+            // 4. Archive.org سىنلىرى
             if (cleanVal.includes('archive.org/details/')) {
                 let embedUrl = cleanVal.replace('archive.org/details/', 'archive.org/embed/');
-                playerBox.innerHTML = `<iframe src="${embedUrl}" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+                playerBox.innerHTML = `<iframe src="${embedUrl}?autoplay=1" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
                 return;
             }
 
@@ -2008,8 +2058,9 @@
                 return;
             }
 
+            // 5. Archive Identifier ياكى ئادەتتىكى تاشقى Frame
             if (!cleanVal.startsWith('http://') && !cleanVal.startsWith('https://')) {
-                playerBox.innerHTML = `<iframe src="https://archive.org/embed/${cleanVal}" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+                playerBox.innerHTML = `<iframe src="https://archive.org/embed/${cleanVal}?autoplay=1" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
                 return;
             }
 
