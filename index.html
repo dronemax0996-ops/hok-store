@@ -14,6 +14,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!-- 🎬 ArtPlayer كۇتۇپخانىسى قوشۇلدى -->
+    <script src="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -435,7 +437,7 @@
             margin-bottom: 14px; display: inline-flex; align-items: center; gap: 8px;
         }
         
-        /* 🎬 Cinema Frame & Fullscreen Custom Controls */
+        /* 🎬 ArtPlayer ئاساس قىلىنغان مۇكەممەل ۋىدىيو كۆزنىكى */
         .detail-player-wrapper {
             position: relative;
             width: 100%;
@@ -447,7 +449,13 @@
             background: #000000;
         }
 
-        .detail-player-wrapper.is-fullscreen {
+        .artplayer-app {
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 22px;
+        }
+
+        .artplayer-app.art-fullscreen-web {
             position: fixed !important;
             top: 0 !important;
             left: 0 !important;
@@ -455,26 +463,6 @@
             height: 100vh !important;
             z-index: 9999999 !important;
             border-radius: 0 !important;
-            border: none !important;
-            background: #000000 !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .detail-player-box {
-            width: 100%;
-            height: 100%;
-            background: #000000;
-            position: relative;
-        }
-
-        .native-cinema-video {
-            width: 100% !important;
-            height: 100% !important;
-            object-fit: cover !important;
-            background: #000000;
-            display: block;
         }
 
         .detail-info-box {
@@ -730,11 +718,6 @@
             <div class="detail-player-wrapper" id="cinemaPlayerWrapper">
                 <div class="detail-player-box" id="detailPlayerContainer"></div>
             </div>
-
-            <!-- 🎬 فىلىم ئاستىدىكى چوڭ ئېكران كۇنۇپكىسى -->
-            <button type="button" class="action-btn" id="btnCinemaToggle" style="background: linear-gradient(135deg, #ff2a54, #ff6200); margin-top: 14px; font-size: 15px;" onclick="toggleCinemaFullscreen()">
-                <i class="fa-solid fa-expand"></i> ⛶ پۈتۈن ئېكراندا كۆرۈش
-            </button>
 
             <div class="detail-info-box">
                 <div class="detail-title" id="detailMovieTitle">فىلىم ئىسمى</div>
@@ -1109,8 +1092,7 @@
         let sliderInterval = null;
         let touchStartX = 0;
         let touchEndX = 0;
-        let currentHlsInstance = null;
-        let isCinemaFullscreen = false;
+        let currentArtPlayerInstance = null;
 
         window.startApp = function() {
             let tgUser = null;
@@ -1252,42 +1234,16 @@
         };
 
         function destroyCurrentPlayer() {
-            if (currentHlsInstance) {
+            if (currentArtPlayerInstance) {
                 try {
-                    currentHlsInstance.destroy();
+                    if (currentArtPlayerInstance.hls) {
+                        currentArtPlayerInstance.hls.destroy();
+                    }
+                    currentArtPlayerInstance.destroy(true);
                 } catch(e) {}
-                currentHlsInstance = null;
-            }
-            if (isCinemaFullscreen) {
-                toggleCinemaFullscreen();
+                currentArtPlayerInstance = null;
             }
         }
-
-        // ⛶ پۈتۈن ئېكران ۋە يانتۇ قىلىش مۇكەممەل مەشغۇلاتى
-        window.toggleCinemaFullscreen = function() {
-            const wrapper = document.getElementById('cinemaPlayerWrapper');
-            const fsBtn = document.getElementById('btnCinemaToggle');
-            const videoEl = document.getElementById('nativeVideoPlayer');
-            if (!wrapper) return;
-
-            isCinemaFullscreen = !isCinemaFullscreen;
-
-            if (isCinemaFullscreen) {
-                wrapper.classList.add('is-fullscreen');
-                if (videoEl) videoEl.style.objectFit = 'contain'; // تەرەپ نىسبىتىنى ساقلاپ تولۇق ئېكران قىلىش
-                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-compress"></i> ✕ كىچىكلىتىش';
-                if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock('landscape').catch(() => {});
-                }
-            } else {
-                wrapper.classList.remove('is-fullscreen');
-                if (videoEl) videoEl.style.objectFit = 'cover';
-                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i> ⛶ پۈتۈن ئېكراندا كۆرۈش';
-                if (screen.orientation && screen.orientation.unlock) {
-                    screen.orientation.unlock().catch(() => {});
-                }
-            }
-        };
 
         function setPosterInputMode(mode) {
             currentPosterMode = mode;
@@ -1810,18 +1766,14 @@
             renderRelatedMovies(id);
         }
 
-        // 🎬 مۇكەممەل قويغۇچ يادروسى (يانتۇ قىلغاندا سۈرەت تولۇق چىقىش ئۈچۈن contain قىلىندى)
+        // 🎬 ArtPlayer قوزغىتىش (ۋىدىيو ئىچىدىكى كونترول بالدىقىدا پۈتۈن ئېكران كۇنۇپكىسى بولىدۇ)
         function setupVideoPlayer(vdoIdOrUrl, posterUrl = '') {
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
-            const fsBtn = document.getElementById('btnCinemaToggle');
             if (!vdoIdOrUrl) {
                 playerBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:13px;">ۋىدىيو ئۇلانمىسى تېپىلمىدى</div>';
-                if (fsBtn) fsBtn.style.display = 'none';
                 return;
             }
-
-            if (fsBtn) fsBtn.style.display = 'inline-flex';
 
             let cleanVal = vdoIdOrUrl.trim();
 
@@ -1853,30 +1805,64 @@
                                     cleanVal.includes('.m3u8');
 
             if (isStreamOrVideo) {
-                playerBox.innerHTML = `
-                    <video id="nativeVideoPlayer" class="native-cinema-video" controls playsinline webkit-playsinline x5-playsinline poster="${posterUrl || ''}">
-                        تور كۆرگۈچىڭىز بۇ سىننى قوللىمايدۇ.
-                    </video>
-                `;
-                
-                const video = document.getElementById('nativeVideoPlayer');
-                
-                if (cleanVal.includes('.m3u8')) {
-                    if (window.Hls && Hls.isSupported()) {
-                        currentHlsInstance = new Hls({
-                            enableWorker: true,
-                            lowLatencyMode: true,
-                            maxBufferLength: 30
-                        });
-                        currentHlsInstance.loadSource(cleanVal);
-                        currentHlsInstance.attachMedia(video);
-                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                        video.src = cleanVal;
-                    }
-                } else {
-                    video.src = cleanVal;
+                playerBox.innerHTML = `<div id="artplayerBox" class="artplayer-app"></div>`;
+                if (window.Artplayer) {
+                    currentArtPlayerInstance = new Artplayer({
+                        container: '#artplayerBox',
+                        url: cleanVal,
+                        poster: posterUrl || '',
+                        theme: '#ff2a54',
+                        volume: 0.85,
+                        autoplay: true,
+                        pip: true,
+                        autoSize: false,
+                        autoMini: true,
+                        fullscreen: true,
+                        fullscreenWeb: true, // ✅ فىلىم كونترول بالدىقىدا تور پۈتۈن ئېكران كۇنۇپكىسى بولىدۇ
+                        autoOrientation: true, // ✅ تېلېفون يانتۇ بولسا ئاپتوماتىك يانتۇ قىلىدۇ
+                        lock: true,
+                        fastForward: true,
+                        playsInline: true,
+                        setting: true,
+                        flip: true,
+                        playbackRate: true,
+                        aspectRatio: true,
+                        icons: {
+                            loading: '<i class="fa-solid fa-spinner fa-spin" style="font-size:35px;color:#ff2a54;"></i>',
+                        },
+                        customType: {
+                            m3u8: function (video, url, art) {
+                                if (window.Hls && Hls.isSupported()) {
+                                    if (art.hls) art.hls.destroy();
+                                    const hls = new Hls({
+                                        enableWorker: true,
+                                        lowLatencyMode: true,
+                                        maxBufferLength: 30
+                                    });
+                                    hls.loadSource(url);
+                                    hls.attachMedia(video);
+                                    art.hls = hls;
+                                    art.on('destroy', () => { hls.destroy(); });
+                                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                                    video.src = url;
+                                }
+                            }
+                        }
+                    });
+
+                    // 📱 Web Fullscreen بولغاندا سۈرەتنى تولۇق تولدۇرۇش (Cover)
+                    currentArtPlayerInstance.on('fullscreenWeb', (state) => {
+                        const videoEl = currentArtPlayerInstance.video;
+                        if (videoEl) {
+                            videoEl.style.objectFit = state ? 'cover' : 'contain';
+                        }
+                        if (state && screen.orientation && screen.orientation.lock) {
+                            screen.orientation.lock('landscape').catch(() => {});
+                        } else if (!state && screen.orientation && screen.orientation.unlock) {
+                            screen.orientation.unlock().catch(() => {});
+                        }
+                    });
                 }
-                
                 return;
             }
 
