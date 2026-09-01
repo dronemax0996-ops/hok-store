@@ -25,7 +25,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCKRnqHKqCpj-xLPeG4sGRkHvFH4qginds",
@@ -53,11 +53,56 @@
         window.auth = auth;
         window.googleProvider = googleProvider;
         window.signInWithPopup = signInWithPopup;
+        window.signInWithRedirect = signInWithRedirect;
+        window.getRedirectResult = getRedirectResult;
         window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
         window.signInWithEmailAndPassword = signInWithEmailAndPassword;
         window.updateProfile = updateProfile;
         window.signOut = signOut;
         window.onAuthStateChanged = onAuthStateChanged;
+
+        // Firebase Auth نازارەتچىسى دەرھال قوزغىتىلىدۇ
+        window.onAuthStateChanged(auth, (firebaseUser) => {
+            if (firebaseUser) {
+                const email = firebaseUser.email || '';
+                const safeKey = email.replace(/[.@]/g, '_');
+                const displayName = firebaseUser.displayName || email.split('@')[0];
+                const photoURL = firebaseUser.photoURL || '';
+                const isAdmin = (email.toLowerCase() === 'nasrulla996@gmail.com');
+
+                currentUser = { 
+                    userKey: safeKey, 
+                    user: displayName, 
+                    email: email, 
+                    role: isAdmin ? 'admin' : 'user', 
+                    vip: isAdmin ? true : false, 
+                    vipExpire: null, 
+                    avatar: photoURL 
+                };
+
+                localStorage.setItem('koznak_user', JSON.stringify(currentUser));
+                if (window.updateUIAfterLogin) window.updateUIAfterLogin();
+
+                // Database دىن قوشۇمچە VIP ئۇچۇرى بولسا يېڭىلاش
+                const userRef = ref(db, 'users/' + safeKey);
+                get(userRef).then(snap => {
+                    if (snap.exists()) {
+                        const dbData = snap.val();
+                        currentUser.vip = isAdmin ? true : (dbData.vip || false);
+                        currentUser.vipExpire = dbData.vipExpire || null;
+                        currentUser.role = isAdmin ? 'admin' : (dbData.role || 'user');
+                        localStorage.setItem('koznak_user', JSON.stringify(currentUser));
+                        if (window.updateUIAfterLogin) window.updateUIAfterLogin();
+                    } else {
+                        set(userRef, currentUser);
+                    }
+                }).catch(() => {});
+            } else {
+                currentUser = null;
+                localStorage.removeItem('koznak_user');
+                if (window.updateUIAfterLogin) window.updateUIAfterLogin();
+            }
+        });
 
         if (window.initFirebaseApp) {
             window.initFirebaseApp();
@@ -1488,11 +1533,6 @@
             const usersRef = window.dbRef(window.db, 'users');
             window.dbOnValue(usersRef, (snapshot) => {
                 allUsers = snapshot.val() || {};
-                if(currentUser && currentUser.userKey !== 'nasrulla996_gmail_com' && allUsers[currentUser.userKey]) {
-                    currentUser = { ...allUsers[currentUser.userKey], userKey: currentUser.userKey };
-                    localStorage.setItem('koznak_user', JSON.stringify(currentUser));
-                    updateUIAfterLogin();
-                }
                 renderAdminUsersList();
             });
 
@@ -1518,78 +1558,15 @@
                     scrollWrapper.style.display = 'none';
                 }
             });
-
-            window.onAuthStateChanged(window.auth, (firebaseUser) => {
-                if (firebaseUser) {
-                    const email = firebaseUser.email || '';
-                    const safeKey = email.replace(/[.@]/g, '_');
-                    const displayName = firebaseUser.displayName || email.split('@')[0];
-                    const photoURL = firebaseUser.photoURL || '';
-                    const isAdmin = (email.toLowerCase() === 'nasrulla996@gmail.com');
-                    
-                    const userRef = window.dbRef(window.db, 'users/' + safeKey);
-                    window.dbGet(userRef).then(snap => {
-                        let existingData = snap.exists() ? snap.val() : null;
-                        
-                        currentUser = { 
-                            userKey: safeKey, 
-                            user: displayName, 
-                            email: email, 
-                            role: isAdmin ? 'admin' : (existingData?.role || 'user'), 
-                            vip: isAdmin ? true : (existingData?.vip || false), 
-                            vipExpire: existingData?.vipExpire || null, 
-                            avatar: photoURL 
-                        };
-                        
-                        localStorage.setItem('koznak_user', JSON.stringify(currentUser));
-                        updateUIAfterLogin();
-
-                        if (!existingData) {
-                            window.dbSet(userRef, currentUser);
-                        }
-                    });
-                } else {
-                    currentUser = null;
-                    localStorage.removeItem('koznak_user');
-                    updateUIAfterLogin();
-                }
-            });
         };
 
         function handleGoogleLogin() {
             window.signInWithPopup(window.auth, window.googleProvider)
-                .then((result) => {
-                    const user = result.user;
-                    const email = user.email || '';
-                    const safeKey = email.replace(/[.@]/g, '_');
-                    const displayName = user.displayName || email.split('@')[0];
-                    const photoURL = user.photoURL || '';
-                    const isAdmin = (email.toLowerCase() === 'nasrulla996@gmail.com');
-
-                    const userRef = window.dbRef(window.db, 'users/' + safeKey);
-                    window.dbGet(userRef).then(snap => {
-                        let existingData = snap.exists() ? snap.val() : null;
-                        
-                        currentUser = { 
-                            userKey: safeKey, 
-                            user: displayName, 
-                            email: email, 
-                            role: isAdmin ? 'admin' : (existingData?.role || 'user'), 
-                            vip: isAdmin ? true : (existingData?.vip || false), 
-                            vipExpire: existingData?.vipExpire || null, 
-                            avatar: photoURL 
-                        };
-                        
-                        localStorage.setItem('koznak_user', JSON.stringify(currentUser));
-                        updateUIAfterLogin();
-
-                        if (!existingData) {
-                            window.dbSet(userRef, currentUser);
-                        }
-                    });
-                })
                 .catch((error) => {
-                    alert('Google ئارقىلىق كىرىش خاتالىقى: ' + error.message);
+                    // ئەگەر Pop-up توسۇلۇپ قالسا Redirect ئارقىلىق كىرىدۇ
+                    window.signInWithRedirect(window.auth, window.googleProvider).catch(err => {
+                        alert('Google كىرىش خاتالىقى: ' + err.message);
+                    });
                 });
         }
 
@@ -2516,7 +2493,7 @@
             });
         }
 
-        function updateUIAfterLogin() {
+        window.updateUIAfterLogin = function() {
             const loginSection = document.getElementById('loginFormSection');
             const profileView = document.getElementById('userProfileView');
             const accTitle = document.getElementById('accountTitle');
@@ -2572,13 +2549,13 @@
             document.getElementById('adminPanelSection').style.display = isAdmin ? 'block' : 'none';
             
             renderMovies();
-        }
+        };
 
         function handleLogout() {
             window.signOut(window.auth).then(() => {
                 currentUser = null;
                 localStorage.removeItem('koznak_user');
-                updateUIAfterLogin();
+                window.updateUIAfterLogin();
             });
         }
 
@@ -2596,7 +2573,7 @@
             if(localStorage.getItem('koznak_user')) {
                 try { 
                     currentUser = JSON.parse(localStorage.getItem('koznak_user')); 
-                    updateUIAfterLogin(); 
+                    window.updateUIAfterLogin(); 
                 } catch(e){}
             }
 
