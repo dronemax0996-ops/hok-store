@@ -435,7 +435,7 @@
             margin-bottom: 14px; display: inline-flex; align-items: center; gap: 8px;
         }
         
-        /* 🎬 Cinema Frame & Floating Fullscreen Button (سۇسلاشتۇرۇلغان كىچىك كۇنۇپكا) */
+        /* 🎬 Cinema Frame & Fullscreen Custom Controls */
         .detail-player-wrapper {
             position: relative;
             width: 100%;
@@ -472,12 +472,12 @@
         .native-cinema-video {
             width: 100% !important;
             height: 100% !important;
-            object-fit: contain !important;
+            object-fit: cover !important;
             background: #000000;
             display: block;
         }
 
-        /* ⛶ سۇس, كىچىك ھەم فىلىمنى توسۇمايدىغان كۇنۇپكا */
+        /* ⛶ مەخسۇس سۇسلاشتۇرۇلغان كىچىك چوڭايتىش كۇنۇپكىسى */
         .floating-fs-btn {
             position: absolute;
             top: 10px;
@@ -754,7 +754,7 @@
             <button class="detail-back-btn" onclick="goBackToHome()">⬅️ قايتىش</button>
             
             <div class="detail-player-wrapper" id="cinemaPlayerWrapper">
-                <!-- ⛶ سۇسلاشتۇرۇلغان كىچىك چوڭايتىش/كىچىكلىتىش كۇنۇپكىسى -->
+                <!-- ⛶ سۇسلاشتۇرۇلغان كىچىك چوڭايتىش كۇنۇپكىسى -->
                 <button type="button" class="floating-fs-btn" id="floatingFsBtn" onclick="toggleCinemaFullscreen()">
                     <i class="fa-solid fa-expand"></i> چوڭايتىش
                 </button>
@@ -1835,7 +1835,7 @@
             renderRelatedMovies(id);
         }
 
-        // 🎬 قويغۇچ (سۇسلاشتۇرۇلغان كۇنۇپكا بىلەن 100% كاپالەتلىك ئىشلەيدۇ)
+        // 🎬 ناچار تور شارائىتىدە ئەڭ تىز قۇيۇلىدىغان قويغۇچ (Low Latency / Buffer Optimized)
         function setupVideoPlayer(vdoIdOrUrl, posterUrl = '') {
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
@@ -1879,7 +1879,7 @@
 
             if (isStreamOrVideo) {
                 playerBox.innerHTML = `
-                    <video id="nativeVideoPlayer" class="native-cinema-video" controls playsinline webkit-playsinline x5-playsinline poster="${posterUrl || ''}">
+                    <video id="nativeVideoPlayer" class="native-cinema-video" controls playsinline webkit-playsinline x5-playsinline preload="auto" poster="${posterUrl || ''}">
                         تور كۆرگۈچىڭىز بۇ سىننى قوللىمايدۇ.
                     </video>
                 `;
@@ -1891,7 +1891,14 @@
                         currentHlsInstance = new Hls({
                             enableWorker: true,
                             lowLatencyMode: true,
-                            maxBufferLength: 30
+                            backBufferLength: 90,
+                            maxBufferLength: 30,
+                            maxMaxBufferLength: 60,
+                            maxBufferSize: 60 * 1000 * 1000,
+                            liveSyncDurationCount: 3,
+                            fragLoadingTimeOut: 20000,
+                            manifestLoadingTimeOut: 20000,
+                            levelLoadingTimeOut: 20000
                         });
                         currentHlsInstance.loadSource(cleanVal);
                         currentHlsInstance.attachMedia(video);
