@@ -447,6 +447,7 @@
             background: #000000;
         }
 
+        /* ✅ پۈتۈن ئېكران قىلغاندا ئېكراننى تولۇق 100vw/100vh قاپلاش ھەم قارا بوشلۇقنى يوقىتىش */
         .detail-player-wrapper.is-fullscreen {
             position: fixed !important;
             top: 0 !important;
@@ -469,11 +470,17 @@
             position: relative;
         }
 
-        /* ✅ object-fit: fill ئارقىلىق پۈتۈن ئېكراننىڭ ھەممە يېرىنى تولۇق قاپلاش */
+        /* ✅ پۈتۈن ئېكراندا object-fit: cover ئارقىلىق تولۇق تولدۇرۇش */
+        .detail-player-wrapper.is-fullscreen .native-cinema-video {
+            width: 100vw !important;
+            height: 100vh !important;
+            object-fit: cover !important;
+        }
+
         .native-cinema-video {
             width: 100% !important;
             height: 100% !important;
-            object-fit: fill !important;
+            object-fit: cover !important;
             background: #000000;
             display: block;
         }
@@ -1036,7 +1043,7 @@
                         <div class="settings-icon-box">📢</div>
                         <div class="settings-text-box">
                             <span class="settings-item-title">رەسمىي تېلېگرامما قانىلى</span>
-                            <span class="settings-item-desc">يېڭى كىنەلەردىن خەۋەردار بولۇڭ</span>
+                            <span class="settings-item-desc">يېڭى كىنولەردىن خەۋەردار بولۇڭ</span>
                         </div>
                     </div>
                     <span style="font-size: 13px; color: var(--text-secondary);">🔗</span>
@@ -1835,7 +1842,7 @@
             renderRelatedMovies(id);
         }
 
-        // 🎬 قويغۇچ (ناچار تور شارائىتىگە قارشى ئەلالاشتۇرۇلغان)
+        // 🎬 قويغۇچ (ناچار تور شارائىتىدە ئەڭ تىز يۈكلىنىدىغان ھەم تولۇق ئېكراندا object-fit: cover قىلىنگەن)
         function setupVideoPlayer(vdoIdOrUrl, posterUrl = '') {
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
