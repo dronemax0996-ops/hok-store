@@ -5,23 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>كۆزنەك كىنوخانىسى - Koznak TV</title>
     
-    <!-- 📱 PWABuilder ئۈچۈن زۆرۈر مېتا ۋە Manifest ئۇلانمىسى -->
+    <!-- 📱 PWA Meta & Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a0a12">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Koznak TV">
 
-    <!-- FontAwesome سىنبەلگىلىرى ئۈچۈن -->
+    <!-- FontAwesome سىنبەلگىلىرى -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- تېلېگرامما WebApp كۇتۇپخانىسى -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    <!-- 🎬 HLS.js (M3U8 ئېقىم كىنولەر ئۈچۈن) -->
+    <!-- 🎬 HLS.js & ArtPlayer.js -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
-    <!-- 🎬 ArtPlayer.js كىنو قويغۇچىنىڭ ئەڭ يېڭى كۇتۇپخانىسى -->
     <script src="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js"></script>
 
     <script type="module">
@@ -115,7 +113,6 @@
             min-height: 100vh;
         }
 
-        /* 👑 Header */
         header {
             background: var(--nav-bg);
             backdrop-filter: var(--glass-blur);
@@ -160,7 +157,6 @@
         }
         .search-btn:active { transform: scale(0.9); }
 
-        /* 🎬 Hero Cinematic Billboard Slider */
         .hero-slider-container {
             position: relative;
             width: calc(100% - 24px);
@@ -275,7 +271,6 @@
             box-shadow: 0 0 10px #ff2a54;
         }
 
-        /* 🔔 Notification */
         #notificationBanner {
             position: fixed;
             top: 15px;
@@ -316,7 +311,6 @@
         .splash-brand-text { font-size: 24px; font-weight: 900; color: #ffffff; margin-bottom: 6px; }
         .splash-slogan-ug { font-size: 13px; color: #94a3b8; }
 
-        /* 🔍 Search Modal */
         .search-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--nav-bg); 
@@ -372,7 +366,6 @@
         .tab-content { display: none; }
         .tab-content.active-tab { display: block; }
 
-        /* 🔘 Top Category Navigation Chips */
         .category-tabs {
             display: flex; gap: 10px; padding: 10px 18px;
             overflow-x: auto; white-space: nowrap; scrollbar-width: none;
@@ -394,7 +387,6 @@
             box-shadow: 0 4px 15px rgba(255, 42, 84, 0.4);
         }
 
-        /* 🍿 Section Rails & Grids */
         .category-section { margin-top: 18px; padding: 0 18px; }
         .section-header-row {
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
@@ -408,7 +400,6 @@
             gap: 6px;
         }
 
-        /* 🚀 Horizontal Scroll Row */
         .movie-row-container {
             display: flex;
             gap: 14px;
@@ -425,7 +416,6 @@
             scroll-snap-align: start;
         }
 
-        /* Grid View */
         .movie-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
@@ -433,7 +423,6 @@
             padding-bottom: 20px;
         }
 
-        /* 🎴 Movie Cards */
         .movie-card {
             background: var(--surface-card);
             border-radius: var(--card-radius);
@@ -485,7 +474,6 @@
             width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; color: #ff4757; 
         }
 
-        /* 📽️ ArtPlayer Pro Video Player Container */
         #detailTab { min-height: 100vh; }
         .detail-container { max-width: 820px; margin: 0 auto; padding: 16px; }
         .detail-back-btn {
@@ -521,7 +509,6 @@
             display: block;
         }
 
-        /* ArtPlayer Custom Container */
         .artplayer-app {
             width: 100% !important;
             height: 100% !important;
@@ -570,7 +557,6 @@
         .react-btn.active-like { background: rgba(46, 213, 115, 0.2); border-color: #2ed573; color: #2ed573; }
         .react-btn.active-dislike { background: rgba(255, 71, 87, 0.2); border-color: #ff4757; color: #ff4757; }
 
-        /* 💬 Comments Section */
         .comments-section {
             background: var(--surface-card); 
             border: 1px solid var(--border-glow);
@@ -608,7 +594,36 @@
         .comment-action-link { background: none; border: none; font-size: 11px; color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-weight: 700; }
         .comment-action-link.liked { color: #ff4757; }
 
-        /* Forms & Buttons */
+        .replies-nested-container {
+            margin-top: 10px;
+            padding-right: 12px;
+            border-right: 2px solid var(--border-glow);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .reply-item {
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+            background: var(--surface-bg);
+            padding: 8px 12px;
+            border-radius: 12px;
+        }
+        .reply-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            background: var(--surface-card);
+            flex-shrink: 0;
+        }
+        .reply-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
         .page-box { padding: 18px; max-width: 600px; margin: 0 auto; }
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 700; text-align: right; }
@@ -640,7 +655,6 @@
         }
         .auth-switch-btn.active { background: var(--accent-gradient); color: #ffffff; box-shadow: 0 4px 15px rgba(255, 42, 84, 0.4); }
 
-        /* ⚙️ Settings / Profile Page */
         .settings-page-wrapper { max-width: 480px; margin: 16px auto; padding: 0 16px; }
         .user-profile-card { 
             background: var(--surface-card); 
@@ -691,7 +705,6 @@
             color: #ffffff; 
         }
 
-        /* 🚀 Floating Capsule Bottom Nav */
         .bottom-nav {
             position: fixed;
             bottom: 16px;
@@ -742,7 +755,6 @@
         .btn-vip-off { background: #ffa502; color: #000000; }
         .btn-del-user { background: #ff4757; color: #ffffff; }
 
-        /* 🌟 Telegram Embed Player Custom Style */
         .telegram-embed-box {
             width: 100%;
             height: 100%;
@@ -803,12 +815,10 @@
         <div id="homeSectionsContainer"></div>
     </div>
 
-    <!-- 📽️ Video Player Detail View -->
     <div id="detailTab" class="tab-content">
         <div class="detail-container">
             <button class="detail-back-btn" onclick="goBackToHome()">⬅️ قايتىش</button>
             
-            <!-- ArtPlayer Cinema Frame -->
             <div class="detail-player-wrapper">
                 <div class="detail-player-box" id="detailPlayerContainer"></div>
             </div>
@@ -980,7 +990,6 @@
                     <button type="button" class="auth-switch-btn" id="tabRegisterBtn" onclick="switchAuthMode('register')">ھېسابات قۇرۇش (Register)</button>
                 </div>
 
-                <!-- Email Login Form -->
                 <div id="emailLoginForm">
                     <div class="form-group">
                         <label>ئېلخەت ئادرېسى (Email)</label>
@@ -993,7 +1002,6 @@
                     <button type="button" class="action-btn" onclick="handleEmailLogin()">ئېلخەت بىلەن كىرىش</button>
                 </div>
 
-                <!-- Email Register Form -->
                 <div id="emailRegisterForm" style="display: none;">
                     <div class="form-group">
                         <label>ئىسمىڭىز (Name)</label>
@@ -1028,7 +1036,6 @@
                 </div>
 
                 <div id="adminPanelSection" style="display: none; margin-top: 22px; border-top: 1px solid var(--border-glow); padding-top: 18px; text-align: right;">
-                    
                     <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">⚙️ ئومۇمىي تەڭشەكلەر</div>
                     
                     <div class="form-group">
@@ -1145,7 +1152,6 @@
         </div>
     </div>
 
-    <!-- 🌟 Floating Bottom Nav -->
     <div class="bottom-nav" id="bottomNavContainer">
         <button class="nav-item active" onclick="switchTab('homeTab', this)"><span>🏠</span><span>باش بەت</span></button>
         <button class="nav-item" onclick="switchTab('favTab', this)"><span>❤️</span><span>ياقتۇرغانلار</span></button>
@@ -1511,45 +1517,42 @@
                 }
             });
 
-            window.getRedirectResult(window.auth).then((result) => {
-                if (result && result.user) {
-                    // Redirect successful
-                }
-            }).catch((error) => {
+            window.getRedirectResult(window.auth).catch((error) => {
                 console.log("Redirect login error:", error);
             });
 
             window.onAuthStateChanged(window.auth, (firebaseUser) => {
                 if (firebaseUser) {
-                    const email = firebaseUser.email;
+                    const email = firebaseUser.email || '';
                     const safeKey = email.replace(/[.@]/g, '_');
                     const displayName = firebaseUser.displayName || email.split('@')[0];
                     const photoURL = firebaseUser.photoURL || '';
-
-                    const isAdmin = (email === 'nasrulla996@gmail.com');
+                    const isAdmin = (email.toLowerCase() === 'nasrulla996@gmail.com');
                     
-                    currentUser = { 
-                        userKey: safeKey, 
-                        user: displayName, 
-                        email: email, 
-                        role: isAdmin ? 'admin' : 'user', 
-                        vip: isAdmin ? true : false, 
-                        vipExpire: null, 
-                        avatar: photoURL 
-                    };
-                    
-                    localStorage.setItem('koznak_user', JSON.stringify(currentUser));
-                    updateUIAfterLogin();
-
                     const userRef = window.dbRef(window.db, 'users/' + safeKey);
                     window.dbGet(userRef).then(snap => {
-                        if (!snap.exists()) {
+                        let existingData = snap.exists() ? snap.val() : null;
+                        
+                        currentUser = { 
+                            userKey: safeKey, 
+                            user: displayName, 
+                            email: email, 
+                            role: isAdmin ? 'admin' : (existingData?.role || 'user'), 
+                            vip: isAdmin ? true : (existingData?.vip || false), 
+                            vipExpire: existingData?.vipExpire || null, 
+                            avatar: photoURL 
+                        };
+                        
+                        localStorage.setItem('koznak_user', JSON.stringify(currentUser));
+                        updateUIAfterLogin();
+
+                        if (!existingData) {
                             window.dbSet(userRef, currentUser);
                         }
                     });
                 }
             });
-        }
+        };
 
         function handleGoogleLogin() {
             window.signInWithRedirect(window.auth, window.googleProvider).catch((error) => {
@@ -2489,44 +2492,15 @@
                     setTimeout(() => splash.style.display = 'none', 300); 
                 }
             }, 600);
+            
             setTheme(localStorage.getItem('koznak_theme') || 'dark');
+            
             if(localStorage.getItem('koznak_user')) {
                 try { 
                     currentUser = JSON.parse(localStorage.getItem('koznak_user')); 
                     updateUIAfterLogin(); 
                 } catch(e){}
             }
-
-            window.onAuthStateChanged(window.auth, (firebaseUser) => {
-                if (firebaseUser) {
-                    const email = firebaseUser.email;
-                    const safeKey = email.replace(/[.@]/g, '_');
-                    const displayName = firebaseUser.displayName || email.split('@')[0];
-                    const photoURL = firebaseUser.photoURL || '';
-
-                    const isAdmin = (email === 'nasrulla996@gmail.com');
-                    
-                    currentUser = { 
-                        userKey: safeKey, 
-                        user: displayName, 
-                        email: email, 
-                        role: isAdmin ? 'admin' : 'user', 
-                        vip: isAdmin ? true : false, 
-                        vipExpire: null, 
-                        avatar: photoURL 
-                    };
-                    
-                    localStorage.setItem('koznak_user', JSON.stringify(currentUser));
-                    updateUIAfterLogin();
-
-                    const userRef = window.dbRef(window.db, 'users/' + safeKey);
-                    window.dbGet(userRef).then(snap => {
-                        if (!snap.exists()) {
-                            window.dbSet(userRef, currentUser);
-                        }
-                    });
-                }
-            });
 
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
