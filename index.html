@@ -27,7 +27,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCKRnqHKqCpj-xLPeG4sGRkHvFH4qginds",
@@ -54,7 +54,8 @@
         window.dbOnValue = onValue;
         window.auth = auth;
         window.googleProvider = googleProvider;
-        window.signInWithPopup = signInWithPopup;
+        window.signInWithRedirect = signInWithRedirect;
+        window.getRedirectResult = getRedirectResult;
         window.signOut = signOut;
         window.onAuthStateChanged = onAuthStateChanged;
 
@@ -1414,6 +1415,15 @@
                 }
             });
 
+            // Handle Google Sign-In Redirect Result
+            window.getRedirectResult(window.auth).then((result) => {
+                if (result && result.user) {
+                    // Redirect successful
+                }
+            }).catch((error) => {
+                console.log("Redirect login error:", error);
+            });
+
             // Google Auth State Observer
             window.onAuthStateChanged(window.auth, (firebaseUser) => {
                 if (firebaseUser) {
@@ -1422,7 +1432,7 @@
                     const displayName = firebaseUser.displayName || email.split('@')[0];
                     const photoURL = firebaseUser.photoURL || '';
 
-                    if (email === 'nasrulla996@gmail.com') { // ئۆزىڭىزنىڭ ئاساسلىق گىمائىلىڭىزنى بۇ يەرگە يازسىڭىز بولىدۇ
+                    if (email === 'nasrulla996@gmail.com') { 
                         currentUser = { userKey: safeKey, user: displayName, email: email, role: 'admin', vip: true, vipExpire: null, avatar: photoURL };
                         localStorage.setItem('koznak_user', JSON.stringify(currentUser));
                         updateUIAfterLogin();
@@ -1444,12 +1454,9 @@
         }
 
         function handleGoogleLogin() {
-            window.signInWithPopup(window.auth, window.googleProvider)
-                .then((result) => {
-                    // Login successful
-                }).catch((error) => {
-                    alert('Google ئارقىلىق كىرىش مەغلۇپ بولدى: ' + error.message);
-                });
+            window.signInWithRedirect(window.auth, window.googleProvider).catch((error) => {
+                alert('Google ئارقىلىق كىرىش خاتالىقى: ' + error.message);
+            });
         }
 
         function renderHeroSliderSelectOptions() {
