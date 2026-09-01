@@ -435,11 +435,11 @@
             margin-bottom: 14px; display: inline-flex; align-items: center; gap: 8px;
         }
         
-        /* 🎬 Cinema Frame & Fullscreen Custom Controls */
+        /* 🎬 Cinema Frame & Fullscreen Custom Controls (پۈتۈن ئېكران مۇكەممەل ماسلىشىش) */
         .detail-player-wrapper {
             position: relative;
             width: 100%;
-            height: 230px;
+            aspect-ratio: 16/9;
             border-radius: 22px;
             overflow: hidden;
             box-shadow: 0 15px 45px rgba(0,0,0,0.8);
@@ -472,7 +472,7 @@
         .native-cinema-video {
             width: 100% !important;
             height: 100% !important;
-            object-fit: cover !important; /* قارا بوشلۇق قالدۇرماي تولۇق ئېكران قىلىش */
+            object-fit: cover !important; /* پۈتۈن ئېكراندا قارا بوشلۇق قالدۇرماي تولۇق تولدۇرۇش */
             background: #000000;
             display: block;
         }
@@ -1263,23 +1263,26 @@
             }
         }
 
-        // ⛶ پۈتۈن ئېكران قاڭقىش مېخانىزمى
+        // ⛶ پۈتۈن ئېكران قاڭقىش مېخانىزمى (object-fit: fill ئارقىلىق پۈتۈن ئېكراننى تولدۇرۇش)
         window.toggleCinemaFullscreen = function() {
             const wrapper = document.getElementById('cinemaPlayerWrapper');
             const fsBtn = document.getElementById('btnCinemaToggle');
+            const videoEl = document.getElementById('nativeVideoPlayer');
             if (!wrapper) return;
 
             isCinemaFullscreen = !isCinemaFullscreen;
 
             if (isCinemaFullscreen) {
                 wrapper.classList.add('is-fullscreen');
+                if (videoEl) videoEl.style.objectFit = 'fill'; // يانتۇ قىلغاندا ئېكراننى تولۇق تولدۇرۇش
                 if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-compress"></i> كىچىكلىتىش';
                 if (screen.orientation && screen.orientation.lock) {
                     screen.orientation.lock('landscape').catch(() => {});
                 }
             } else {
                 wrapper.classList.remove('is-fullscreen');
-                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i> ⛶ تولۇق ئېكران';
+                if (videoEl) videoEl.style.objectFit = 'cover';
+                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i> ⛶ پۈتۈن ئېكراندا كۆرۈش (يانتۇ قىلىش)';
                 if (screen.orientation && screen.orientation.unlock) {
                     screen.orientation.unlock().catch(() => {});
                 }
@@ -1642,7 +1645,7 @@
                     { key: 'series', title: '📺 قىسىملىق كىنولەر' },
                     { key: 'cartoon', title: '🧸 كارتونلار' },
                     { key: 'cartoon_series', title: '🧸📺 قىسىملىق كارتۇن' },
-                    { key: 'short', title: '📱 قىسقا فىلىم' }
+                    { key: 'short', title: '📱 قىسقا فىلىملەر' }
                 ];
 
                 categories.forEach(cat => {
