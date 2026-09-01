@@ -1610,6 +1610,12 @@
             if (window.Telegram && window.Telegram.WebApp) {
                 const tg = window.Telegram.WebApp;
                 tg.expand();
+                
+                // 📱 تېلېگرامما Mini App ئىچىدە تولۇق ئېكران ھالىتىنى تەلەپ قىلىش
+                if (tg.requestFullscreen) {
+                    try { tg.requestFullscreen(); } catch(e){}
+                }
+
                 const tgUser = tg.initDataUnsafe?.user;
                 if (tgUser) {
                     const telegramUsername = tgUser.username ? tgUser.username : `tg_${tgUser.id}`;
@@ -1914,7 +1920,7 @@
                         
                         lock: true,
                         fastForward: true,
-                        autoOrientation: true,
+                        autoOrientation: true, // 📱 تېلېفون يۆنىلىشىگە قاراپ ئاپتوماتىك يانتۇ بولۇش
 
                         customType: {
                             m3u8: function (video, url, art) {
@@ -1939,6 +1945,25 @@
                                 } else {
                                     art.notice.show = 'Unsupported format';
                                 }
+                            }
+                        }
+                    });
+
+                    // 📱 قايسى تەرەپكە يانتۇ قىلسا شۇ تەرەپكە ئاپتوماتىك يانتۇ بولۇش ۋە تولۇق ئېكران قىلىش مەخسۇس ئېغىزلىرى
+                    currentArtPlayerInstance.on('fullscreen', (isFullscreen) => {
+                        if (isFullscreen) {
+                            if (screen.orientation && screen.orientation.lock) {
+                                screen.orientation.lock('landscape').catch(() => {});
+                            }
+                            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.requestFullscreen) {
+                                try { window.Telegram.WebApp.requestFullscreen(); } catch(e){}
+                            }
+                        } else {
+                            if (screen.orientation && screen.orientation.unlock) {
+                                try { screen.orientation.unlock(); } catch(e){}
+                            }
+                            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.exitFullscreen) {
+                                try { window.Telegram.WebApp.exitFullscreen(); } catch(e){}
                             }
                         }
                     });
