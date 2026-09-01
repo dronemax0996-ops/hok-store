@@ -975,7 +975,6 @@
             <h3 id="accountTitle" style="margin-top: 4px; font-size: 18px; margin-bottom: 16px;">ھېساباتقا كىرىش ياكى قۇرۇش</h3>
             
             <div id="loginFormSection" style="margin-top: 10px;">
-                <!-- Login/Register mode tabs -->
                 <div class="auth-switch-tab-row">
                     <button type="button" class="auth-switch-btn active" id="tabLoginBtn" onclick="switchAuthMode('login')">كىرىش (Login)</button>
                     <button type="button" class="auth-switch-btn" id="tabRegisterBtn" onclick="switchAuthMode('register')">ھېسابات قۇرۇش (Register)</button>
@@ -985,11 +984,11 @@
                 <div id="emailLoginForm">
                     <div class="form-group">
                         <label>ئېلخەت ئادرېسى (Email)</label>
-                        <input type="email" id="loginEmail" class="form-input" placeholder="example@gmail.com" autocomplete="email">
+                        <input type="email" id="loginEmail" class="form-input" placeholder="nasrulla996@gmail.com" autocomplete="email">
                     </div>
                     <div class="form-group">
                         <label>پارول (Password)</label>
-                        <input type="password" id="loginPassword" class="form-input" placeholder="پارولىڭىزنى كىرگۈزۈڭ" autocomplete="current-password">
+                        <input type="password" id="loginPassword" class="form-input" placeholder="0996" autocomplete="current-password">
                     </div>
                     <button type="button" class="action-btn" onclick="handleEmailLogin()">ئېلخەت بىلەن كىرىش</button>
                 </div>
@@ -998,7 +997,7 @@
                 <div id="emailRegisterForm" style="display: none;">
                     <div class="form-group">
                         <label>ئىسمىڭىز (Name)</label>
-                        <input type="text" id="regName" class="form-input" placeholder="ئىسمىڭىزنى يېزىڭ" autocomplete="name">
+                        <input type="text" id="regName" class="form-input" placeholder="nasrulla" autocomplete="name">
                     </div>
                     <div class="form-group">
                         <label>ئېلخەت ئادرېسى (Email)</label>
@@ -1006,7 +1005,7 @@
                     </div>
                     <div class="form-group">
                         <label>پارول (Password)</label>
-                        <input type="password" id="regPassword" class="form-input" placeholder="پارول تاللاڭ (6 ھەرپتىن كۆپ)" autocomplete="new-password">
+                        <input type="password" id="regPassword" class="form-input" placeholder="0996" autocomplete="new-password">
                     </div>
                     <button type="button" class="action-btn" style="background: #2ed573;" onclick="handleEmailRegister()">يېڭى ھېسابات قۇرۇش</button>
                 </div>
@@ -1274,7 +1273,7 @@
             const email = document.getElementById('regEmail').value.trim();
             const pass = document.getElementById('regPassword').value.trim();
             if (!name || !email || !pass) return alert('ھەممە قاتارنى تولدۇرۇڭ!');
-            if (pass.length < 6) return alert('پارول كەم دېگەندە 6 ھەرپ بولۇشى كېرەك!');
+            if (pass.length < 4) return alert('پارول كەم دېگەندە 4 ھەرپ/رەقەم بولۇشى كېرەك!');
 
             window.createUserWithEmailAndPassword(window.auth, email, pass).then((userCredential) => {
                 const user = userCredential.user;
@@ -1481,7 +1480,7 @@
             const usersRef = window.dbRef(window.db, 'users');
             window.dbOnValue(usersRef, (snapshot) => {
                 allUsers = snapshot.val() || {};
-                if(currentUser && currentUser.userKey !== 'nasrulla' && allUsers[currentUser.userKey]) {
+                if(currentUser && currentUser.userKey !== 'nasrulla996_gmail_com' && allUsers[currentUser.userKey]) {
                     currentUser = { ...allUsers[currentUser.userKey], userKey: currentUser.userKey };
                     localStorage.setItem('koznak_user', JSON.stringify(currentUser));
                     updateUIAfterLogin();
@@ -2436,7 +2435,7 @@
             });
         }
 
-        function updateUIAfterLogin() {
+        function updateUIAfterLogin(firebaseUserObj = null) {
             if(!currentUser) return;
             document.getElementById('loginFormSection').style.display = 'none';
             document.getElementById('userProfileView').style.display = 'block';
@@ -2447,6 +2446,9 @@
             if(currentUser.avatar) {
                 document.getElementById('mainAccountAvatarBox').innerHTML = `<img src="${currentUser.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
                 document.getElementById('settingsAvatarBox').innerHTML = `<img src="${currentUser.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+            } else {
+                document.getElementById('mainAccountAvatarBox').innerHTML = `👤`;
+                document.getElementById('settingsAvatarBox').innerHTML = `👤`;
             }
 
             const isAdmin = currentUser.role === 'admin';
@@ -2490,6 +2492,38 @@
                     updateUIAfterLogin(); 
                 } catch(e){}
             }
+
+            window.onAuthStateChanged(window.auth, (firebaseUser) => {
+                if (firebaseUser) {
+                    const email = firebaseUser.email;
+                    const safeKey = email.replace(/[.@]/g, '_');
+                    const displayName = firebaseUser.displayName || email.split('@')[0];
+                    const photoURL = firebaseUser.photoURL || '';
+
+                    const isAdmin = (email === 'nasrulla996@gmail.com');
+                    
+                    currentUser = { 
+                        userKey: safeKey, 
+                        user: displayName, 
+                        email: email, 
+                        role: isAdmin ? 'admin' : 'user', 
+                        vip: isAdmin ? true : false, 
+                        vipExpire: null, 
+                        avatar: photoURL 
+                    };
+                    
+                    localStorage.setItem('koznak_user', JSON.stringify(currentUser));
+                    updateUIAfterLogin(firebaseUser);
+
+                    // Sync to Realtime Database
+                    const userRef = window.dbRef(window.db, 'users/' + safeKey);
+                    window.dbGet(userRef).then(snap => {
+                        if (!snap.exists()) {
+                            window.dbSet(userRef, currentUser);
+                        }
+                    });
+                }
+            });
 
             if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
