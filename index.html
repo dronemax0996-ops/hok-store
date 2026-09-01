@@ -1609,11 +1609,8 @@
         function checkTelegramAuth() {
             if (window.Telegram && window.Telegram.WebApp) {
                 const tg = window.Telegram.WebApp;
-                tg.expand();
-                
-                // 📱 تېلېگرامما Mini App ئىچىدە تولۇق ئېكران ھالىتىنى تەلەپ قىلىش
-                if (tg.requestFullscreen) {
-                    try { tg.requestFullscreen(); } catch(e){}
+                if (tg.expand) {
+                    try { tg.expand(); } catch(e){}
                 }
 
                 const tgUser = tg.initDataUnsafe?.user;
@@ -1920,7 +1917,7 @@
                         
                         lock: true,
                         fastForward: true,
-                        autoOrientation: true, // 📱 تېلېفون يۆنىلىشىگە قاراپ ئاپتوماتىك يانتۇ بولۇش
+                        autoOrientation: true, // 📱 تېلېفوننى يانتۇ قىلغاندا ئاپتوماتىك چوڭايتىش
 
                         customType: {
                             m3u8: function (video, url, art) {
@@ -1949,21 +1946,15 @@
                         }
                     });
 
-                    // 📱 قايسى تەرەپكە يانتۇ قىلسا شۇ تەرەپكە ئاپتوماتىك يانتۇ بولۇش ۋە تولۇق ئېكران قىلىش مەخسۇس ئېغىزلىرى
+                    // 📱 WebApp سىستېمىسىدىكى تولۇق ئېكران خاتالىقىنىڭ ئالدىنى ئېلىش ئۈچۈن بىخەتەر ۋە سىلىق تەڭشەش
                     currentArtPlayerInstance.on('fullscreen', (isFullscreen) => {
                         if (isFullscreen) {
                             if (screen.orientation && screen.orientation.lock) {
                                 screen.orientation.lock('landscape').catch(() => {});
                             }
-                            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.requestFullscreen) {
-                                try { window.Telegram.WebApp.requestFullscreen(); } catch(e){}
-                            }
                         } else {
                             if (screen.orientation && screen.orientation.unlock) {
                                 try { screen.orientation.unlock(); } catch(e){}
-                            }
-                            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.exitFullscreen) {
-                                try { window.Telegram.WebApp.exitFullscreen(); } catch(e){}
                             }
                         }
                     });
@@ -2516,69 +2507,69 @@
             document.getElementById('displayUsername').innerText = currentUser.user;
             document.getElementById('settingsProfileName').innerText = currentUser.user;
             
-            if(currentUser.avatar) {
+            If(currentUser.avatar) {
                 document.getElementById('mainAccountAvatarBox').innerHTML = `<img src="${currentUser.avatar}">`;
                 document.getElementById('settingsAvatarBox').innerHTML = `<img src="${currentUser.avatar}">`;
             }
 
-            const isAdmin = currentUser.role === 'admin';
-            const isVipActive = checkUserVipStatus(currentUser);
+            Const isAdmin = currentUser.role === 'admin';
+            Const isVipActive = checkUserVipStatus(currentUser);
 
-            let vipText = 'ئادەتتىكى ئەزا';
-            if (isAdmin) vipText = 'باشقۇرغۇچى';
-            else if (isVipActive) {
-                let remainingDays = Math.ceil((currentUser.vipExpire - Date.now()) / (1000 * 60 * 60 * 24));
-                if (remainingDays < 0) remainingDays = 0;
-                vipText = `👑 VIP ئەزا (قالدى: ${remainingDays} كۈن)`;
+            Let vipText = 'ئادەتتىكى ئەزا';
+            If (isAdmin) vipText = 'باشقۇرغۇچى';
+            Else if (isVipActive) {
+                Let remainingDays = Math.ceil((currentUser.vipExpire - Date.now()) / (1000 * 60 * 60 * 24));
+                If (remainingDays < 0) remainingDays = 0;
+                VipText = `👑 VIP ئەزا (قالدى: ${remainingDays} كۈن)`;
             }
 
-            document.getElementById('vipBadge').innerText = vipText;
-            document.getElementById('uploadMenuSettingItem').style.display = isAdmin ? 'flex' : 'none';
-            document.getElementById('navUploadBtn').style.display = isAdmin ? 'flex' : 'none';
-            document.getElementById('adminPanelSection').style.display = isAdmin ? 'block' : 'none';
-            renderMovies();
+            Document.getElementById('vipBadge').innerText = vipText;
+            Document.getElementById('uploadMenuSettingItem').style.display = isAdmin ? 'flex' : 'none';
+            Document.getElementById('navUploadBtn').style.display = isAdmin ? 'flex' : 'none';
+            Document.getElementById('adminPanelSection').style.display = isAdmin ? 'block' : 'none';
+            RenderMovies();
         }
 
-        function handleLogout() {
-            currentUser = null;
-            localStorage.removeItem('koznak_user');
-            location.reload();
+        Function handleLogout() {
+            CurrentUser = null;
+            LocalStorage.removeItem('koznak_user');
+            Location.reload();
         }
 
-        async function handlePhoneImageSelected(e) {
-            const file = e.target.files[0];
-            if(!file || !currentUser) return;
-            try {
-                const base64 = await compressImage(file, 250, 250, 0.8);
-                currentUser.avatar = base64;
-                localStorage.setItem('koznak_user', JSON.stringify(currentUser));
-                updateUIAfterLogin();
-                if(currentUser.user !== 'nasrulla') {
-                    window.dbSet(window.dbRef(window.db, 'users/' + currentUser.user + '/avatar'), base64);
+        Async function handlePhoneImageSelected(e) {
+            Const file = e.target.files[0];
+            If(!file || !currentUser) return;
+            Try {
+                Const base64 = await compressImage(file, 250, 250, 0.8);
+                CurrentUser.avatar = base64;
+                LocalStorage.setItem('koznak_user', JSON.stringify(currentUser));
+                UpdateUIAfterLogin();
+                If(currentUser.user !== 'nasrulla') {
+                    Window.dbSet(window.dbRef(window.db, 'users/' + currentUser.user + '/avatar'), base64);
                 }
             } catch(err) {
-                alert('سۈرەتنى يۈكلەشتە خاتالىق كۆرۈلدى');
+                Alert('سۈرەتنى يۈكلەشتە خاتالىق كۆرۈلدى');
             }
         }
 
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const splash = document.getElementById('splashScreen');
-                if(splash) { 
-                    splash.style.opacity = '0'; 
-                    setTimeout(() => splash.style.display = 'none', 300); 
+        Window.addEventListener('load', () => {
+            SetTimeout(() => {
+                Const splash = document.getElementById('splashScreen');
+                If(splash) { 
+                    Splash.style.opacity = '0'; 
+                    SetTimeout(() => splash.style.display = 'none', 300); 
                 }
             }, 600);
-            setTheme(localStorage.getItem('koznak_theme') || 'dark');
-            if(localStorage.getItem('koznak_user')) {
-                try { 
-                    currentUser = JSON.parse(localStorage.getItem('koznak_user')); 
-                    updateUIAfterLogin(); 
+            SetTheme(localStorage.getItem('koznak_theme') || 'dark');
+            If(localStorage.getItem('koznak_user')) {
+                Try { 
+                    CurrentUser = JSON.parse(localStorage.getItem('koznak_user')); 
+                    UpdateUIAfterLogin(); 
                 } catch(e){}
             }
 
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
+            If ('serviceWorker' in navigator) {
+                Navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
             }
         });
     </script>
