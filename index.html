@@ -5,22 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>كۆزنەك كىنوخانىسى - Koznak TV</title>
     
-    <!-- 📱 PWABuilder مېتا -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a0a12">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Koznak TV">
 
-    <!-- FontAwesome سىنبەلگىلىرى -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- 📱 تېلېگرامما WebApp كۇتۇپخانىسى -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-    <!-- 🎬 HLS.js & ArtPlayer.js -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -477,6 +470,7 @@
             margin-bottom: 14px; display: inline-flex; align-items: center; gap: 8px;
         }
         
+        /* 🎬 Cinema Frame (مۇكەممەل ۋىدىيو كۆزنىكى) */
         .detail-player-wrapper {
             position: relative;
             width: 100%;
@@ -486,6 +480,9 @@
             box-shadow: 0 15px 45px rgba(0,0,0,0.8), 0 0 25px rgba(255, 42, 84, 0.2);
             border: 1px solid var(--border-glow);
             background: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .detail-player-box {
@@ -493,38 +490,18 @@
             height: 100%;
             background: #000000;
             position: relative;
-        }
-        .detail-player-box iframe, .detail-player-box video {
-            width: 100% !important;
-            height: 100% !important;
-            border: none;
-            background: #000000;
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .artplayer-app {
-            width: 100% !important;
-            height: 100% !important;
-            border-radius: 22px;
-            background: #000000;
-        }
-
-        .artplayer-app video {
+        .native-cinema-video {
             width: 100% !important;
             height: 100% !important;
             object-fit: contain !important;
-        }
-
-        /* 📱 Web Fullscreen پەۋقۇلئاددە چوڭايتىش پاسونى */
-        .artplayer-app.art-fullscreen-web {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            z-index: 999999 !important;
-            border-radius: 0 !important;
-            background: #000000 !important;
+            background: #000000;
+            outline: none;
+            display: block;
         }
 
         .detail-info-box {
@@ -980,7 +957,6 @@
         </div>
     </div>
 
-    <!-- 👤 Telegram ئارخىپ ۋە باشقۇرۇش مەركىزى -->
     <div id="accountTab" class="tab-content">
         <div class="page-box" style="text-align: center;">
             <div style="display: flex; flex-direction: column; align-items: center; margin-top: 15px; margin-bottom: 20px;">
@@ -1201,7 +1177,7 @@
         let sliderInterval = null;
         let touchStartX = 0;
         let touchEndX = 0;
-        let currentArtPlayerInstance = null;
+        let currentHlsInstance = null;
 
         window.initTelegramAutoAuth = function() {
             let tgUser = null;
@@ -1353,14 +1329,11 @@
         };
 
         function destroyCurrentPlayer() {
-            if (currentArtPlayerInstance) {
+            if (currentHlsInstance) {
                 try {
-                    if (currentArtPlayerInstance.hls) {
-                        currentArtPlayerInstance.hls.destroy();
-                    }
-                    currentArtPlayerInstance.destroy(true);
+                    currentHlsInstance.destroy();
                 } catch(e) {}
-                currentArtPlayerInstance = null;
+                currentHlsInstance = null;
             }
         }
 
@@ -1885,6 +1858,7 @@
             renderRelatedMovies(id);
         }
 
+        // 🎬 دەرىجىدىن تاشقىرى مۇقىم ۋە سۈزۈك قويغۇچ يادروسى
         function setupVideoPlayer(vdoIdOrUrl, posterUrl = '') {
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
@@ -1895,12 +1869,14 @@
 
             let cleanVal = vdoIdOrUrl.trim();
 
+            // 1. YouTube
             let ytId = extractYouTubeID(cleanVal);
             if (ytId) {
                 playerBox.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1" style="width:100%;height:100%;border:none;" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
                 return;
             }
 
+            // 2. Telegram Embed سىنلىرى
             if (cleanVal.includes('t.me/') && !cleanVal.match(/\.(mp4|m3u8)($|\?)/i)) {
                 let parts = cleanVal.replace('https://', '').replace('http://', '').split('/');
                 let postId = parts[parts.length - 1].split('?')[0];
@@ -1918,99 +1894,40 @@
                 }
             }
 
+            // 3. M3U8 ياكى بىۋاسىتە MP4 / WebM / CDN
             const isStreamOrVideo = cleanVal.match(/\.(mp4|m3u8|webm|ogg|mov)($|\?)/i) || 
                                     cleanVal.includes('/download/') || 
                                     cleanVal.includes('.m3u8');
 
             if (isStreamOrVideo) {
-                playerBox.innerHTML = `<div id="artplayerBox" class="artplayer-app"></div>`;
-                if (window.Artplayer) {
-                    currentArtPlayerInstance = new Artplayer({
-                        container: '#artplayerBox',
-                        url: cleanVal,
-                        poster: posterUrl || '',
-                        theme: '#ff2a54',
-                        volume: 0.85,
-                        isLive: false,
-                        muted: false,
-                        autoplay: false,
-                        pip: true,
-                        autoSize: false,
-                        autoMini: true,
-                        fullscreen: false,
-                        fullscreenWeb: true,
-                        autoOrientation: true,
-                        lock: true,
-                        fastForward: true,
-                        playsInline: true,
-                        icons: {
-                            loading: '<i class="fa-solid fa-spinner fa-spin" style="font-size:35px;color:#ff2a54;"></i>',
-                        },
-                        customType: {
-                            m3u8: function (video, url, art) {
-                                if (window.Hls && Hls.isSupported()) {
-                                    if (art.hls) art.hls.destroy();
-                                    
-                                    const hls = new Hls({
-                                        enableWorker: true,
-                                        lowLatencyMode: true,
-                                        maxBufferLength: 30,
-                                        maxMaxBufferLength: 60,
-                                        maxBufferSize: 60 * 1000 * 1000,
-                                        startLevel: -1
-                                    });
-
-                                    hls.loadSource(url);
-                                    hls.attachMedia(video);
-                                    art.hls = hls;
-
-                                    hls.on(Hls.Events.ERROR, function (event, data) {
-                                        if (data.fatal) {
-                                            switch (data.type) {
-                                                case Hls.ErrorTypes.NETWORK_ERROR:
-                                                    hls.startLoad();
-                                                    break;
-                                                case Hls.ErrorTypes.MEDIA_ERROR:
-                                                    hls.recoverMediaError();
-                                                    break;
-                                                default:
-                                                    hls.destroy();
-                                                    break;
-                                            }
-                                        }
-                                    });
-
-                                    art.on('destroy', () => {
-                                        if (art.hls) art.hls.destroy();
-                                    });
-                                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                                    video.src = url;
-                                } else {
-                                    art.notice.show = 'بۇ تور كۆرگۈدە M3U8 قويغۇچنى قوللىمايدۇ';
-                                }
-                            }
-                        }
-                    });
-
-                    currentArtPlayerInstance.on('fullscreenWeb', (state) => {
-                        const wrapper = document.querySelector('.detail-player-wrapper');
-                        if (wrapper) {
-                            wrapper.style.zIndex = state ? '99999' : '1';
-                        }
-                        if (state) {
-                            if (screen.orientation && screen.orientation.lock) {
-                                screen.orientation.lock('landscape').catch(() => {});
-                            }
-                        } else {
-                            if (screen.orientation && screen.orientation.unlock) {
-                                screen.orientation.unlock().catch(() => {});
-                            }
-                        }
-                    });
+                playerBox.innerHTML = `
+                    <video id="nativeVideoPlayer" class="native-cinema-video" controls playsinline webkit-playsinline x5-playsinline poster="${posterUrl || ''}">
+                        تور كۆرگۈچىڭىز بۇ سىننى قوللىمايدۇ.
+                    </video>
+                `;
+                
+                const video = document.getElementById('nativeVideoPlayer');
+                
+                if (cleanVal.includes('.m3u8')) {
+                    if (window.Hls && Hls.isSupported()) {
+                        currentHlsInstance = new Hls({
+                            enableWorker: true,
+                            lowLatencyMode: true,
+                            maxBufferLength: 30
+                        });
+                        currentHlsInstance.loadSource(cleanVal);
+                        currentHlsInstance.attachMedia(video);
+                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                        video.src = cleanVal;
+                    }
+                } else {
+                    video.src = cleanVal;
                 }
+                
                 return;
             }
 
+            // 4. Archive.org
             if (cleanVal.includes('archive.org/details/')) {
                 let embedUrl = cleanVal.replace('archive.org/details/', 'archive.org/embed/');
                 playerBox.innerHTML = `<iframe src="${embedUrl}?autoplay=1" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
