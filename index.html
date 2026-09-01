@@ -27,6 +27,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCKRnqHKqCpj-xLPeG4sGRkHvFH4qginds",
@@ -41,6 +42,8 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
+        const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
 
         window.db = db;
         window.dbRef = ref;
@@ -49,6 +52,11 @@
         window.dbChild = child;
         window.dbRemove = remove;
         window.dbOnValue = onValue;
+        window.auth = auth;
+        window.googleProvider = googleProvider;
+        window.signInWithPopup = signInWithPopup;
+        window.signOut = signOut;
+        window.onAuthStateChanged = onAuthStateChanged;
 
         if (window.initFirebaseApp) {
             window.initFirebaseApp();
@@ -721,22 +729,7 @@
         .btn-vip-off { background: #ffa502; color: #000000; }
         .btn-del-user { background: #ff4757; color: #ffffff; }
 
-        .auth-mode-switcher { 
-            display: flex; background: var(--surface-bg); 
-            border: 1px solid var(--border-glow); 
-            border-radius: var(--pill-radius); padding: 4px; margin-bottom: 16px; 
-        }
-        .auth-switch-btn {
-            flex: 1; padding: 8px; font-size: 12px; font-weight: 700; border: none;
-            background: transparent; color: var(--text-secondary); border-radius: var(--pill-radius); cursor: pointer;
-        }
-        .auth-switch-btn.active { 
-            background: var(--accent-gradient); 
-            color: #ffffff; 
-            box-shadow: 0 4px 15px rgba(255, 42, 84, 0.4);
-        }
-
-        /* 🌟 Telegram Embed Player Custom Style (فىلىمنى تېخىمۇ چوڭ ۋە پاكىز كۆرسىتىش ئۈچۈن) */
+        /* 🌟 Telegram Embed Player Custom Style */
         .telegram-embed-box {
             width: 100%;
             height: 100%;
@@ -962,47 +955,25 @@
 
     <div id="accountTab" class="tab-content">
         <div class="page-box" style="text-align: center;">
-            <div style="display: flex; flex-direction: column; align-items: center; margin-top: 10px; margin-bottom: 16px;">
-                <div class="profile-avatar-circle" id="mainAccountAvatarBox" onclick="document.getElementById('phoneImageInput').click()" title="رەسىمنى ئۆزگەرتىش">👤</div>
-                <input type="file" id="phoneImageInput" accept="image/*" style="display: none;" onchange="handlePhoneImageSelected(event)">
-                <span style="font-size: 12px; color: var(--text-secondary); margin-top: 8px;">رەسىمنى ئۆزگەرتىش ئۈچۈن سۈرەتنى بېسىڭ</span>
+            <div style="display: flex; flex-direction: column; align-items: center; margin-top: 15px; margin-bottom: 20px;">
+                <div class="profile-avatar-circle" id="mainAccountAvatarBox">👤</div>
             </div>
 
-            <h3 id="accountTitle" style="margin-top: 4px; font-size: 17px;">ھېساباتقا كىرىش / تىزىملىتىش</h3>
+            <h3 id="accountTitle" style="margin-top: 4px; font-size: 18px; margin-bottom: 16px;">گوگىل ئارقىلىق كىرىش (Google Sign-In)</h3>
             
-            <div id="authModeSwitch" class="auth-mode-switcher" style="margin-top: 14px;">
-                <button type="button" class="auth-switch-btn active" id="switchToLoginBtn" onclick="setAuthMode('login')">كىرىش</button>
-                <button type="button" class="auth-switch-btn" id="switchToRegisterBtn" onclick="setAuthMode('register')">تىزىملىتىش</button>
-            </div>
-
-            <div id="loginFormSection" style="margin-top: 14px; text-align: right;">
-                <div class="form-group">
-                    <label>ئابونت ئىسمى (Username)</label>
-                    <input type="text" id="loginUser" class="form-input" placeholder="ئىسمىڭىزنى كىرگۈزۈڭ" autocomplete="off">
-                </div>
-                <div class="form-group">
-                    <label>مەخپىي نومۇر (Password)</label>
-                    <input type="password" id="loginPass" class="form-input" placeholder="پارولىڭىزنى كىرگۈزۈڭ" autocomplete="off">
-                </div>
-                <button type="button" class="action-btn" onclick="handleLogin()">كىرىش</button>
-            </div>
-
-            <div id="registerFormSection" style="display: none; margin-top: 14px; text-align: right;">
-                <div class="form-group">
-                    <label>يېڭى ئابونت ئىسمى (Username)</label>
-                    <input type="text" id="regUser" class="form-input" placeholder="ئىسمىڭىزنى يېزىڭ" autocomplete="off">
-                </div>
-                <div class="form-group">
-                    <label>مەخپىي نومۇر (Password)</label>
-                    <input type="password" id="regPass" class="form-input" placeholder="پارول تاللاڭ" autocomplete="off">
-                </div>
-                <button type="button" class="action-btn" style="background: #2ed573;" onclick="handleRegister()">يېڭى ھېسابات ئېچىش</button>
+            <div id="loginFormSection" style="margin-top: 10px;">
+                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5;">
+                    توربەتنىڭ بىخەتەرلىكى ۋە ئەزالىق سىستېمىسىنى قوغداش ئۈچۈن، پەقەت رەسمىي Google ھېساباتىڭىز بىلەنلا كىرەلەйсىز.
+                </p>
+                <button type="button" class="action-btn" style="background: #ffffff; color: #0f172a; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" onclick="handleGoogleLogin()">
+                    <i class="fa-brands fa-google" style="color: #ea4335;"></i> Google بىلەن كىرىش
+                </button>
             </div>
 
             <div id="userProfileView" style="display: none; margin-top: 18px; text-align: right;">
-                <div style="background: var(--surface-card); border: 1px solid var(--border-glow); padding: 16px; border-radius: 20px; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
+                <div style="background: var(--surface-card); border: 1px solid var(--border-glow); padding: 18px; border-radius: 20px; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span id="displayUsername" style="font-size: 16px; font-weight: 800; color: #ff2a54;"></span>
+                        <span id="displayUsername" style="font-size: 15px; font-weight: 800; color: #ff2a54;"></span>
                         <span id="vipBadge" style="background: var(--surface-bg); color: var(--text-primary); padding: 5px 12px; border-radius: var(--pill-radius); font-size: 11px; font-weight: 700; border: 1px solid var(--border-glow);">ئادەتتىكى ئەزا</span>
                     </div>
                 </div>
@@ -1375,25 +1346,6 @@
             container.appendChild(row);
         }
 
-        function setAuthMode(mode) {
-            const loginSec = document.getElementById('loginFormSection');
-            const regSec = document.getElementById('registerFormSection');
-            const loginBtn = document.getElementById('switchToLoginBtn');
-            const regBtn = document.getElementById('switchToRegisterBtn');
-
-            if(mode === 'login') {
-                loginSec.style.display = 'block';
-                regSec.style.display = 'none';
-                loginBtn.classList.add('active');
-                regBtn.classList.remove('active');
-            } else {
-                loginSec.style.display = 'none';
-                regSec.style.display = 'block';
-                regBtn.classList.add('active');
-                loginBtn.classList.remove('active');
-            }
-        }
-
         window.updateAdminSettings = function(type) {
             if (!currentUser || currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
             
@@ -1431,8 +1383,8 @@
             const usersRef = window.dbRef(window.db, 'users');
             window.dbOnValue(usersRef, (snapshot) => {
                 allUsers = snapshot.val() || {};
-                if(currentUser && currentUser.user !== 'nasrulla' && allUsers[currentUser.user]) {
-                    currentUser = { ...allUsers[currentUser.user], user: currentUser.user };
+                if(currentUser && currentUser.userKey !== 'nasrulla' && allUsers[currentUser.userKey]) {
+                    currentUser = { ...allUsers[currentUser.userKey], userKey: currentUser.userKey };
                     localStorage.setItem('koznak_user', JSON.stringify(currentUser));
                     updateUIAfterLogin();
                 }
@@ -1462,7 +1414,42 @@
                 }
             });
 
-            checkTelegramAuth();
+            // Google Auth State Observer
+            window.onAuthStateChanged(window.auth, (firebaseUser) => {
+                if (firebaseUser) {
+                    const email = firebaseUser.email;
+                    const safeKey = email.replace(/[.@]/g, '_');
+                    const displayName = firebaseUser.displayName || email.split('@')[0];
+                    const photoURL = firebaseUser.photoURL || '';
+
+                    if (email === 'nasrulla996@gmail.com') { // ئۆزىڭىزنىڭ ئاساسلىق گىمائىلىڭىزنى بۇ يەرگە يازسىڭىز بولىدۇ
+                        currentUser = { userKey: safeKey, user: displayName, email: email, role: 'admin', vip: true, vipExpire: null, avatar: photoURL };
+                        localStorage.setItem('koznak_user', JSON.stringify(currentUser));
+                        updateUIAfterLogin();
+                    } else {
+                        const userRef = window.dbRef(window.db, 'users/' + safeKey);
+                        window.dbGet(userRef).then(snap => {
+                            if (snap.exists()) {
+                                currentUser = { ...snap.val(), userKey: safeKey };
+                            } else {
+                                currentUser = { userKey: safeKey, user: displayName, email: email, role: 'user', vip: false, vipExpire: null, avatar: photoURL };
+                                window.dbSet(userRef, currentUser);
+                            }
+                            localStorage.setItem('koznak_user', JSON.stringify(currentUser));
+                            updateUIAfterLogin();
+                        });
+                    }
+                }
+            });
+        }
+
+        function handleGoogleLogin() {
+            window.signInWithPopup(window.auth, window.googleProvider)
+                .then((result) => {
+                    // Login successful
+                }).catch((error) => {
+                    alert('Google ئارقىلىق كىرىش مەغلۇپ بولدى: ' + error.message);
+                });
         }
 
         function renderHeroSliderSelectOptions() {
@@ -1604,35 +1591,6 @@
             titleSpan.onclick = () => { banner.classList.remove('show'); handleCardClick(movieId); };
             banner.classList.add('show');
             setTimeout(() => banner.classList.remove('show'), 5000);
-        }
-
-        function checkTelegramAuth() {
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
-                if (tg.expand) {
-                    try { tg.expand(); } catch(e){}
-                }
-
-                const tgUser = tg.initDataUnsafe?.user;
-                if (tgUser) {
-                    const telegramUsername = tgUser.username ? tgUser.username : `tg_${tgUser.id}`;
-                    const userRef = window.dbRef(window.db, 'users/' + telegramUsername);
-                    window.dbGet(userRef).then(snapshot => {
-                        if (snapshot.exists()) {
-                            currentUser = { ...snapshot.val(), user: telegramUsername };
-                            localStorage.setItem('koznak_user', JSON.stringify(currentUser));
-                            updateUIAfterLogin();
-                        } else {
-                            const newTgUser = { user: telegramUsername, pass: 'telegram_auth', role: 'user', vip: false, vipExpire: null, avatar: tgUser.photo_url || '' };
-                            window.dbSet(userRef, newTgUser).then(() => {
-                                currentUser = newTgUser;
-                                localStorage.setItem('koznak_user', JSON.stringify(currentUser));
-                                updateUIAfterLogin();
-                            });
-                        }
-                    });
-                }
-            }
         }
 
         function filterCategory(category, el) {
@@ -1917,7 +1875,7 @@
                         
                         lock: true,
                         fastForward: true,
-                        autoOrientation: true, // 📱 توربەت ۋەقوللاش قىلىدىغان كۆرۈنۈشلەردە ئاپتوماتىك چوڭايتىش
+                        autoOrientation: true,
 
                         customType: {
                             m3u8: function (video, url, art) {
@@ -2040,11 +1998,11 @@
                 if(!reactions.dislikes) reactions.dislikes = {};
 
                 if (type === 'like') {
-                    if (reactions.likes[currentUser.user]) delete reactions.likes[currentUser.user];
-                    else { reactions.likes[currentUser.user] = true; delete reactions.dislikes[currentUser.user]; }
+                    if (reactions.likes[currentUser.userKey]) delete reactions.likes[currentUser.userKey];
+                    else { reactions.likes[currentUser.userKey] = true; delete reactions.dislikes[currentUser.userKey]; }
                 } else if (type === 'dislike') {
-                    if (reactions.dislikes[currentUser.user]) delete reactions.dislikes[currentUser.user];
-                    else { reactions.dislikes[currentUser.user] = true; delete reactions.likes[currentUser.user]; }
+                    if (reactions.dislikes[currentUser.userKey]) delete reactions.dislikes[currentUser.userKey];
+                    else { reactions.dislikes[currentUser.userKey] = true; delete reactions.likes[currentUser.userKey]; }
                 }
 
                 window.dbSet(movieRef, reactions).then(() => {
@@ -2070,8 +2028,8 @@
             dislikeBtn.classList.remove('active-dislike');
 
             if (currentUser) {
-                if (likes[currentUser.user]) likeBtn.classList.add('active-like');
-                else if (dislikes[currentUser.user]) dislikeBtn.classList.add('active-dislike');
+                if (likes[currentUser.userKey]) likeBtn.classList.add('active-like');
+                else if (dislikes[currentUser.userKey]) dislikeBtn.classList.add('active-dislike');
             }
         }
 
@@ -2121,7 +2079,7 @@
 
         function toggleCommentLike(commentId) {
             if(!currentUser) return alert('يۈرەك قويۇش ئۈچۈن كىرىڭ!');
-            const commentRef = window.dbRef(window.db, `movies/${currentActiveMovieId}/comments/${commentId}/likes/${currentUser.user}`);
+            const commentRef = window.dbRef(window.db, `movies/${currentActiveMovieId}/comments/${commentId}/likes/${currentUser.userKey}`);
             window.dbGet(commentRef).then(snap => {
                 if(snap.exists()) window.dbRemove(commentRef).then(() => reloadCurrentComments());
                 else window.dbSet(commentRef, true).then(() => reloadCurrentComments());
@@ -2186,7 +2144,7 @@
                 const com = commentsObj[k];
                 const likesObj = com.likes || {};
                 const likesCount = Object.keys(likesObj).length;
-                const hasLiked = currentUser && likesObj[currentUser.user];
+                const hasLiked = currentUser && likesObj[currentUser.userKey];
                 const canDelete = currentUser && (currentUser.role === 'admin' || currentUser.user === com.user);
                 const timeText = formatRelativeTime(com.timestamp);
 
@@ -2291,9 +2249,9 @@
             const container = document.getElementById('adminUsersListContainer');
             if(!container) return;
             container.innerHTML = '';
-            Object.keys(allUsers).forEach(username => {
-                if(username === 'nasrulla') return;
-                const uData = allUsers[username];
+            Object.keys(allUsers).forEach(userKey => {
+                if(userKey === 'nasrulla996_gmail_com') return;
+                const uData = allUsers[userKey];
                 const isVip = checkUserVipStatus(uData);
                 
                 let remainingDays = 0;
@@ -2308,33 +2266,33 @@
                     <div class="admin-user-left-box">
                         <div class="admin-user-avatar">${uData.avatar ? `<img src="${uData.avatar}">` : '👤'}</div>
                         <div class="admin-user-info">
-                            <span class="admin-user-name">${escapeHTML(username)}</span>
+                            <span class="admin-user-name">${escapeHTML(uData.user || uData.email)}</span>
                             <span class="admin-user-status" style="color: ${isVip ? '#2ed573' : 'var(--text-secondary)'};">${isVip ? `👑 VIP (قالدى: ${remainingDays} كۈن)` : '👤 ئادەتتىكى'}</span>
                         </div>
                     </div>
                     <div class="admin-user-btns">
-                        ${isVip ? `<button class="admin-mini-btn btn-vip-plus" onclick="modifyVipTime('${username}', 30)">+1 ئاي</button><button class="admin-mini-btn btn-vip-off" onclick="setVipStatus('${username}', false)">توختىتىش</button>` : `<button class="admin-mini-btn btn-vip-on" onclick="modifyVipTime('${username}', 30)">VIP قىلىش</button>`}
-                        <button class="admin-mini-btn btn-del-user" onclick="deleteUserAccount('${username}')">✕</button>
+                        ${isVip ? `<button class="admin-mini-btn btn-vip-plus" onclick="modifyVipTime('${userKey}', 30)">+1 ئاي</button><button class="admin-mini-btn btn-vip-off" onclick="setVipStatus('${userKey}', false)">توختىتىش</button>` : `<button class="admin-mini-btn btn-vip-on" onclick="modifyVipTime('${userKey}', 30)">VIP قىلىش</button>`}
+                        <button class="admin-mini-btn btn-del-user" onclick="deleteUserAccount('${userKey}')">✕</button>
                     </div>
                 `;
                 container.appendChild(card);
             });
         }
 
-        function modifyVipTime(username, daysToAdd) {
-            const uData = allUsers[username] || {};
+        function modifyVipTime(userKey, daysToAdd) {
+            const uData = allUsers[userKey] || {};
             let baseTime = (uData.vip && uData.vipExpire && uData.vipExpire > Date.now()) ? uData.vipExpire : Date.now();
             let newExpire = baseTime + (daysToAdd * 86400000);
-            window.dbSet(window.dbRef(window.db, 'users/' + username), { ...uData, vip: true, vipExpire: newExpire }).then(() => alert('ۋاقىت ئۇزارتىلدى!'));
+            window.dbSet(window.dbRef(window.db, 'users/' + userKey), { ...uData, vip: true, vipExpire: newExpire }).then(() => alert('ۋاقىت ئۇزارتىلدى!'));
         }
 
-        function setVipStatus(username, status) {
-            const uData = allUsers[username] || {};
-            window.dbSet(window.dbRef(window.db, 'users/' + username), { ...uData, vip: status, vipExpire: status ? (Date.now() + 30 * 86400000) : null }).then(() => alert('ھالەت ئۆزگەرتىلدى!'));
+        function setVipStatus(userKey, status) {
+            const uData = allUsers[userKey] || {};
+            window.dbSet(window.dbRef(window.db, 'users/' + userKey), { ...uData, vip: status, vipExpire: status ? (Date.now() + 30 * 86400000) : null }).then(() => alert('ھالەت ئۆزگەرتىلدى!'));
         }
 
-        function deleteUserAccount(username) {
-            if(confirm('راستلا ئۆچۈرەمسىز؟')) window.dbRemove(window.dbRef(window.db, 'users/' + username));
+        function deleteUserAccount(userKey) {
+            if(confirm('راستلا ئۆچۈرەمسىز؟')) window.dbRemove(window.dbRef(window.db, 'users/' + userKey));
         }
 
         function toggleFavorite(id) {
@@ -2449,54 +2407,17 @@
             });
         }
 
-        function handleRegister() {
-            const user = document.getElementById('regUser').value.trim();
-            const pass = document.getElementById('regPass').value.trim();
-            if(!user || !pass) return alert('بۆشلۈكنى تولدۇرۇڭ!');
-            window.dbGet(window.dbRef(window.db, 'users/' + user)).then(snap => {
-                if(snap.exists()) alert('بۇ ئىسىم ئاللىقاچان بار!');
-                else {
-                    const newUser = { user, pass, role: 'user', vip: false, vipExpire: null, avatar: '' };
-                    window.dbSet(window.dbRef(window.db, 'users/' + user), newUser).then(() => {
-                        currentUser = newUser;
-                        localStorage.setItem('koznak_user', JSON.stringify(currentUser));
-                        updateUIAfterLogin();
-                    });
-                }
-            });
-        }
-
-        function handleLogin() {
-            const user = document.getElementById('loginUser').value.trim();
-            const pass = document.getElementById('loginPass').value.trim();
-            if(user.toLowerCase() === 'nasrulla' && btoa(pass) === 'MDk5Ng==') {
-                currentUser = { user: 'nasrulla', role: 'admin', vip: true, vipExpire: null, avatar: '' };
-                localStorage.setItem('koznak_user', JSON.stringify(currentUser));
-                updateUIAfterLogin();
-                return;
-            }
-            window.dbGet(window.dbRef(window.db, 'users/' + user)).then(snap => {
-                if(snap.exists() && snap.val().pass === pass) {
-                    currentUser = { ...snap.val(), user };
-                    localStorage.setItem('koznak_user', JSON.stringify(currentUser));
-                    updateUIAfterLogin();
-                } else alert('ئىسىم ياكى مەخپىي نومۇر خاتا!');
-            });
-        }
-
         function updateUIAfterLogin() {
             if(!currentUser) return;
             document.getElementById('loginFormSection').style.display = 'none';
-            document.getElementById('registerFormSection').style.display = 'none';
-            document.getElementById('authModeSwitch').style.display = 'none';
             document.getElementById('userProfileView').style.display = 'block';
             document.getElementById('accountTitle').innerText = 'خۇش كەپسىز, ' + currentUser.user;
-            document.getElementById('displayUsername').innerText = currentUser.user;
+            document.getElementById('displayUsername').innerText = currentUser.email;
             document.getElementById('settingsProfileName').innerText = currentUser.user;
             
             if(currentUser.avatar) {
-                document.getElementById('mainAccountAvatarBox').innerHTML = `<img src="${currentUser.avatar}">`;
-                document.getElementById('settingsAvatarBox').innerHTML = `<img src="${currentUser.avatar}">`;
+                document.getElementById('mainAccountAvatarBox').innerHTML = `<img src="${currentUser.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+                document.getElementById('settingsAvatarBox').innerHTML = `<img src="${currentUser.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
             }
 
             const isAdmin = currentUser.role === 'admin';
@@ -2518,25 +2439,11 @@
         }
 
         function handleLogout() {
-            currentUser = null;
-            localStorage.removeItem('koznak_user');
-            location.reload();
-        }
-
-        async function handlePhoneImageSelected(e) {
-            const file = e.target.files[0];
-            if(!file || !currentUser) return;
-            try {
-                const base64 = await compressImage(file, 250, 250, 0.8);
-                currentUser.avatar = base64;
-                localStorage.setItem('koznak_user', JSON.stringify(currentUser));
-                updateUIAfterLogin();
-                if(currentUser.user !== 'nasrulla') {
-                    window.dbSet(window.dbRef(window.db, 'users/' + currentUser.user + '/avatar'), base64);
-                }
-            } catch(err) {
-                alert('سۈرەتنى يۈكلەشتە خاتالىق كۆرۈلدى');
-            }
+            window.signOut(window.auth).then(() => {
+                currentUser = null;
+                localStorage.removeItem('koznak_user');
+                location.reload();
+            });
         }
 
         window.addEventListener('load', () => {
@@ -2547,7 +2454,7 @@
                     setTimeout(() => splash.style.display = 'none', 300); 
                 }
             }, 600);
-            setTheme(localStorage.getItem('koznak_theme')  || 'dark');
+            setTheme(localStorage.getItem('koznak_theme') || 'dark');
             if(localStorage.getItem('koznak_user')) {
                 try { 
                     currentUser = JSON.parse(localStorage.getItem('koznak_user')); 
