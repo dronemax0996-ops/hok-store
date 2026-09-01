@@ -488,7 +488,7 @@
             left: 0 !important;
             width: 100vw !important;
             height: 100vh !important;
-            z-index: 999999 !important;
+            z-index: 9999999 !important;
             border-radius: 0 !important;
             aspect-ratio: auto !important;
             border: none !important;
@@ -513,24 +513,24 @@
             display: block;
         }
 
+        /* ⛶ مەخسۇس ئېكران ئۈستىدىكى قاڭقىش كۇنۇپكىسى */
         .custom-fs-btn {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: rgba(16, 16, 26, 0.75);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: #ffffff;
-            padding: 8px 14px;
-            border-radius: var(--pill-radius);
-            font-size: 11px;
-            font-weight: 800;
-            cursor: pointer;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            position: absolute !important;
+            top: 14px !important;
+            left: 14px !important;
+            background: rgba(255, 42, 84, 0.9) !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.4) !important;
+            padding: 8px 16px !important;
+            border-radius: 30px !important;
+            font-size: 12px !important;
+            font-weight: 800 !important;
+            cursor: pointer !important;
+            z-index: 99999 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8) !important;
         }
 
         .detail-info-box {
@@ -830,9 +830,14 @@
             <button class="detail-back-btn" onclick="goBackToHome()">⬅️ قايتىش</button>
             
             <div class="detail-player-wrapper" id="cinemaPlayerWrapper">
-                <button class="custom-fs-btn" id="cinemaFullscreenBtn" onclick="toggleCinemaFullscreen()"><i class="fa-solid fa-expand"></i> تولۇق ئېكران</button>
+                <button type="button" class="custom-fs-btn" id="cinemaFullscreenBtn" onclick="toggleCinemaFullscreen()"><i class="fa-solid fa-expand"></i> ⛶ چوڭ ئېكران</button>
                 <div class="detail-player-box" id="detailPlayerContainer"></div>
             </div>
+
+            <!-- 🎬 مەخسۇس ئېكران ئاستىدىكى چوڭايتىش قوشۇمچە كۇنۇپكىسى -->
+            <button type="button" class="action-btn" style="background: linear-gradient(135deg, #0072ff, #00c6ff); margin-top: 10px;" onclick="toggleCinemaFullscreen()">
+                <i class="fa-solid fa-expand"></i> ⛶ پۈتۈن ئېكراندا كۆرۈش (يانتۇ قىلىش)
+            </button>
 
             <div class="detail-info-box">
                 <div class="detail-title" id="detailMovieTitle">فىلىم ئىسمى</div>
@@ -1383,7 +1388,7 @@
                 }
             } else {
                 wrapper.classList.remove('is-fullscreen');
-                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i> تولۇق ئېكران';
+                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i> ⛶ چوڭ ئېكران';
                 if (screen.orientation && screen.orientation.unlock) {
                     screen.orientation.unlock().catch(() => {});
                 }
