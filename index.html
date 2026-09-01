@@ -18,7 +18,7 @@
     <!-- تېلېگرامما WebApp كۇتۇپخانىسى -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    <!-- 🎬 HLS.js (M3U8 ئېقىم كىنولار ئۈچۈن) -->
+    <!-- 🎬 HLS.js (M3U8 ئېقىم كىنولەر ئۈچۈن) -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <!-- 🎬 ArtPlayer.js كىنو قويغۇچىنىڭ ئەڭ يېڭى كۇتۇپخانىسى -->
@@ -1526,23 +1526,27 @@
                     const displayName = firebaseUser.displayName || email.split('@')[0];
                     const photoURL = firebaseUser.photoURL || '';
 
-                    if (email === 'nasrulla996@gmail.com') { 
-                        currentUser = { userKey: safeKey, user: displayName, email: email, role: 'admin', vip: true, vipExpire: null, avatar: photoURL };
-                        localStorage.setItem('koznak_user', JSON.stringify(currentUser));
-                        updateUIAfterLogin();
-                    } else {
-                        const userRef = window.dbRef(window.db, 'users/' + safeKey);
-                        window.dbGet(userRef).then(snap => {
-                            if (snap.exists()) {
-                                currentUser = { ...snap.val(), userKey: safeKey, user: snap.val().user || displayName, avatar: snap.val().avatar || photoURL };
-                            } else {
-                                currentUser = { userKey: safeKey, user: displayName, email: email, role: 'user', vip: false, vipExpire: null, avatar: photoURL };
-                                window.dbSet(userRef, currentUser);
-                            }
-                            localStorage.setItem('koznak_user', JSON.stringify(currentUser));
-                            updateUIAfterLogin();
-                        });
-                    }
+                    const isAdmin = (email === 'nasrulla996@gmail.com');
+                    
+                    currentUser = { 
+                        userKey: safeKey, 
+                        user: displayName, 
+                        email: email, 
+                        role: isAdmin ? 'admin' : 'user', 
+                        vip: isAdmin ? true : false, 
+                        vipExpire: null, 
+                        avatar: photoURL 
+                    };
+                    
+                    localStorage.setItem('koznak_user', JSON.stringify(currentUser));
+                    updateUIAfterLogin();
+
+                    const userRef = window.dbRef(window.db, 'users/' + safeKey);
+                    window.dbGet(userRef).then(snap => {
+                        if (!snap.exists()) {
+                            window.dbSet(userRef, currentUser);
+                        }
+                    });
                 }
             });
         }
@@ -2435,7 +2439,7 @@
             });
         }
 
-        function updateUIAfterLogin(firebaseUserObj = null) {
+        function updateUIAfterLogin() {
             if(!currentUser) return;
             document.getElementById('loginFormSection').style.display = 'none';
             document.getElementById('userProfileView').style.display = 'block';
@@ -2513,9 +2517,8 @@
                     };
                     
                     localStorage.setItem('koznak_user', JSON.stringify(currentUser));
-                    updateUIAfterLogin(firebaseUser);
+                    updateUIAfterLogin();
 
-                    // Sync to Realtime Database
                     const userRef = window.dbRef(window.db, 'users/' + safeKey);
                     window.dbGet(userRef).then(snap => {
                         if (!snap.exists()) {
