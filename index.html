@@ -27,7 +27,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, child, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-        import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCKRnqHKqCpj-xLPeG4sGRkHvFH4qginds",
@@ -56,6 +56,9 @@
         window.googleProvider = googleProvider;
         window.signInWithRedirect = signInWithRedirect;
         window.getRedirectResult = getRedirectResult;
+        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
+        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+        window.updateProfile = updateProfile;
         window.signOut = signOut;
         window.onAuthStateChanged = onAuthStateChanged;
 
@@ -608,13 +611,14 @@
         /* Forms & Buttons */
         .page-box { padding: 18px; max-width: 600px; margin: 0 auto; }
         .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 700; }
+        .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 700; text-align: right; }
         .form-input, .form-select {
             width: 100%; padding: 13px 18px; 
             background: var(--surface-bg);
             border: 1px solid var(--border-glow); 
             color: var(--text-primary); border-radius: 16px; font-size: 13px; outline: none;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            text-align: right;
         }
         .form-input:focus, .form-select:focus { border-color: #ff2a54; }
 
@@ -627,6 +631,14 @@
             transition: all 0.2s ease;
         }
         .action-btn:active { transform: scale(0.98); }
+
+        .auth-switch-tab-row {
+            display: flex; background: var(--surface-bg); border: 1px solid var(--border-glow); padding: 4px; border-radius: var(--pill-radius); gap: 4px; margin-bottom: 16px;
+        }
+        .auth-switch-btn {
+            flex: 1; padding: 10px; font-size: 12px; font-weight: 700; color: var(--text-secondary); border-radius: var(--pill-radius); cursor: pointer; background: transparent; border: none; text-align: center;
+        }
+        .auth-switch-btn.active { background: var(--accent-gradient); color: #ffffff; box-shadow: 0 4px 15px rgba(255, 42, 84, 0.4); }
 
         /* ⚙️ Settings / Profile Page */
         .settings-page-wrapper { max-width: 480px; margin: 16px auto; padding: 0 16px; }
@@ -663,7 +675,7 @@
             width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; 
             background: var(--surface-bg); border: 1px solid var(--border-glow); 
         }
-        .settings-text-box { display: flex; flex-direction: column; gap: 2px; }
+        .settings-text-box { display: flex; flex-direction: column; gap: 2px; text-align: right; }
         .settings-item-title { font-size: 13px; font-weight: 700; color: var(--text-primary); }
         .settings-item-desc { font-size: 10px; color: var(--text-secondary); }
 
@@ -720,7 +732,7 @@
             background: var(--surface-card); display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 18px; flex-shrink: 0;
         }
         .admin-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .admin-user-info { display: flex; flex-direction: column; gap: 2px; }
+        .admin-user-info { display: flex; flex-direction: column; gap: 2px; text-align: right; }
         .admin-user-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
         .admin-user-status { font-size: 10px; color: var(--text-secondary); }
         .admin-user-btns { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
@@ -960,12 +972,49 @@
                 <div class="profile-avatar-circle" id="mainAccountAvatarBox">👤</div>
             </div>
 
-            <h3 id="accountTitle" style="margin-top: 4px; font-size: 18px; margin-bottom: 16px;">گوگىل ئارقىلىق كىرىش (Google Sign-In)</h3>
+            <h3 id="accountTitle" style="margin-top: 4px; font-size: 18px; margin-bottom: 16px;">ھېساباتقا كىرىش ياكى قۇرۇش</h3>
             
             <div id="loginFormSection" style="margin-top: 10px;">
-                <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5;">
-                    توربەتنىڭ بىخەتەرلىكى ۋە ئەزالىق سىستېمىسىنى قوغداش ئۈچۈن، پەقەت رەسمىي Google ھېساباتىڭىز بىلەنلا كىرەلەйсىز.
-                </p>
+                <!-- Login/Register mode tabs -->
+                <div class="auth-switch-tab-row">
+                    <button type="button" class="auth-switch-btn active" id="tabLoginBtn" onclick="switchAuthMode('login')">كىرىش (Login)</button>
+                    <button type="button" class="auth-switch-btn" id="tabRegisterBtn" onclick="switchAuthMode('register')">ھېسابات قۇرۇش (Register)</button>
+                </div>
+
+                <!-- Email Login Form -->
+                <div id="emailLoginForm">
+                    <div class="form-group">
+                        <label>ئېلخەت ئادرېسى (Email)</label>
+                        <input type="email" id="loginEmail" class="form-input" placeholder="example@gmail.com" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label>پارول (Password)</label>
+                        <input type="password" id="loginPassword" class="form-input" placeholder="پارولىڭىزنى كىرگۈزۈڭ" autocomplete="current-password">
+                    </div>
+                    <button type="button" class="action-btn" onclick="handleEmailLogin()">ئېلخەت بىلەن كىرىش</button>
+                </div>
+
+                <!-- Email Register Form -->
+                <div id="emailRegisterForm" style="display: none;">
+                    <div class="form-group">
+                        <label>ئىسمىڭىز (Name)</label>
+                        <input type="text" id="regName" class="form-input" placeholder="ئىسمىڭىزنى يېزىڭ" autocomplete="name">
+                    </div>
+                    <div class="form-group">
+                        <label>ئېلخەت ئادرېسى (Email)</label>
+                        <input type="email" id="regEmail" class="form-input" placeholder="example@gmail.com" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label>پارول (Password)</label>
+                        <input type="password" id="regPassword" class="form-input" placeholder="پارول تاللاڭ (6 ھەرپتىن كۆپ)" autocomplete="new-password">
+                    </div>
+                    <button type="button" class="action-btn" style="background: #2ed573;" onclick="handleEmailRegister()">يېڭى ھېسابات قۇرۇش</button>
+                </div>
+
+                <div style="margin: 20px 0; border-top: 1px solid var(--border-glow); position: relative;">
+                    <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--bg-color); padding: 0 10px; font-size: 11px; color: var(--text-secondary);">ياكى</span>
+                </div>
+
                 <button type="button" class="action-btn" style="background: #ffffff; color: #0f172a; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" onclick="handleGoogleLogin()">
                     <i class="fa-brands fa-google" style="color: #ea4335;"></i> Google بىلەن كىرىش
                 </button>
@@ -1188,6 +1237,54 @@
         let touchStartX = 0;
         let touchEndX = 0;
         let currentArtPlayerInstance = null;
+
+        function switchAuthMode(mode) {
+            const loginForm = document.getElementById('emailLoginForm');
+            const regForm = document.getElementById('emailRegisterForm');
+            const btnLogin = document.getElementById('tabLoginBtn');
+            const btnReg = document.getElementById('tabRegisterBtn');
+
+            if (mode === 'login') {
+                loginForm.style.display = 'block';
+                regForm.style.display = 'none';
+                btnLogin.classList.add('active');
+                btnReg.classList.remove('active');
+            } else {
+                loginForm.style.display = 'none';
+                regForm.style.display = 'block';
+                btnReg.classList.add('active');
+                btnLogin.classList.remove('active');
+            }
+        }
+
+        function handleEmailLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const pass = document.getElementById('loginPassword').value.trim();
+            if (!email || !pass) return alert('ئېلخەت ۋە پارولنى تولۇق كىرگۈزۈڭ!');
+
+            window.signInWithEmailAndPassword(window.auth, email, pass).then((userCredential) => {
+                alert('مۇۋەپپەقىيەتلىك كىردىڭىز!');
+            }).catch((error) => {
+                alert('كىرىش خاتالىقى: ' + error.message);
+            });
+        }
+
+        function handleEmailRegister() {
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const pass = document.getElementById('regPassword').value.trim();
+            if (!name || !email || !pass) return alert('ھەممە قاتارنى تولدۇرۇڭ!');
+            if (pass.length < 6) return alert('پارول كەم دېگەندە 6 ھەرپ بولۇشى كېرەك!');
+
+            window.createUserWithEmailAndPassword(window.auth, email, pass).then((userCredential) => {
+                const user = userCredential.user;
+                return window.updateProfile(user, { displayName: name }).then(() => {
+                    alert('ھېسابات مۇۋەپپەقىيەتلىك قۇرۇلدى!');
+                });
+            }).catch((error) => {
+                alert('ھېسابات قۇرۇش خاتالىقى: ' + error.message);
+            });
+        }
 
         function destroyCurrentPlayer() {
             if (currentArtPlayerInstance && currentArtPlayerInstance.destroy) {
@@ -1415,7 +1512,6 @@
                 }
             });
 
-            // Handle Google Sign-In Redirect Result
             window.getRedirectResult(window.auth).then((result) => {
                 if (result && result.user) {
                     // Redirect successful
@@ -1424,7 +1520,6 @@
                 console.log("Redirect login error:", error);
             });
 
-            // Google Auth State Observer
             window.onAuthStateChanged(window.auth, (firebaseUser) => {
                 if (firebaseUser) {
                     const email = firebaseUser.email;
@@ -1815,7 +1910,6 @@
             renderRelatedMovies(id);
         }
 
-        /* 🎬 ArtPlayer.js & Telegram / Archive Video Player Integration */
         function setupVideoPlayer(vdoIdOrUrl, posterUrl = '') {
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
@@ -1825,15 +1919,12 @@
             }
 
             let cleanVal = vdoIdOrUrl.trim();
-
-            // 1. YouTube Video Handler
             let ytId = extractYouTubeID(cleanVal);
             if (ytId) {
                 playerBox.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}?autoplay=1" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
                 return;
             }
 
-            // 2. Telegram Post Link Handler (Clean & Focused on Video)
             if (cleanVal.includes('t.me/')) {
                 let parts = cleanVal.split('/');
                 let postId = parts[parts.length - 1];
@@ -1848,7 +1939,6 @@
                 }
             }
 
-            // 3. Direct Video (MP4, HLS, M3U8, WEBM, or Archive Direct Download) -> ArtPlayer
             if (cleanVal.match(/\.(mp4|m3u8|webm|ogg|mov)($|\?)/i) || cleanVal.includes('/download/')) {
                 playerBox.innerHTML = `<div id="artplayerBox" class="artplayer-app"></div>`;
                 if (window.Artplayer) {
@@ -1879,112 +1969,44 @@
                         autoPlayback: true,
                         airplay: true,
                         hotkey: true,
-                        
                         lock: true,
                         fastForward: true,
                         autoOrientation: true,
-
                         customType: {
                             m3u8: function (video, url, art) {
                                 if (window.Hls && Hls.isSupported()) {
                                     if (art.hls) art.hls.destroy();
-                                    const hls = new Hls({
-                                        maxBufferLength: 60,
-                                        maxMaxBufferLength: 120,
-                                        capLevelToPlayerSize: true, 
-                                        manifestLoadingMaxRetry: 10,
-                                        levelLoadingMaxRetry: 10,
-                                        fragLoadingMaxRetry: 10,
-                                        fragLoadingTimeOut: 30000,
-                                        startLevel: -1
-                                    });
+                                    const hls = new Hls();
                                     hls.loadSource(url);
                                     hls.attachMedia(video);
                                     art.hls = hls;
                                     art.on('destroy', () => hls.destroy());
                                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
                                     video.src = url;
-                                } else {
-                                    art.notice.show = 'Unsupported format';
                                 }
                             }
                         }
                     });
-
-                    let lastTap = 0;
-                    let startY = 0;
-                    let startX = 0;
-                    let isRightSideTouch = false;
-                    let currentBrightness = 1.0;
-
-                    currentArtPlayerInstance.template.$video.addEventListener('touchstart', (e) => {
-                        const touch = e.touches[0];
-                        startX = touch.clientX;
-                        startY = touch.clientY;
-                        
-                        const rect = currentArtPlayerInstance.template.$video.getBoundingClientRect();
-                        const clickX = startX - rect.left;
-                        isRightSideTouch = clickX > (rect.width / 2);
-
-                        const currentTime = new Date().getTime();
-                        const tapLength = currentTime - lastTap;
-                        
-                        if (tapLength < 300 && tapLength > 0) {
-                            e.preventDefault(); 
-                            if (isRightSideTouch) {
-                                currentArtPlayerInstance.forward = 15;
-                                currentArtPlayerInstance.notice.show = '⏩ 15 سېكۇنت ئالدىغا';
-                            } else {
-                                currentArtPlayerInstance.backward = 15;
-                                currentArtPlayerInstance.notice.show = '⏪ 15 سېكۇنت كەينىگە';
-                            }
-                        }
-                        lastTap = currentTime;
-                    }, { passive: false });
-
-                    currentArtPlayerInstance.template.$video.addEventListener('touchmove', (e) => {
-                        if (!isRightSideTouch) return;
-                        
-                        const touch = e.touches[0];
-                        const deltaY = startY - touch.clientY;
-                        
-                        if (Math.abs(deltaY) > 2) {
-                            let newBrightness = currentBrightness + (deltaY * 0.008); 
-                            newBrightness = Math.max(0.2, Math.min(newBrightness, 2.0));
-                            
-                            currentArtPlayerInstance.template.$video.style.filter = `brightness(${newBrightness})`;
-                            let displayPercent = Math.round((newBrightness / 2.0) * 100);
-                            currentArtPlayerInstance.notice.show = `☀️ يورۇقلۇق: ${displayPercent}%`;
-                            
-                            currentBrightness = newBrightness;
-                            startY = touch.clientY;
-                            e.preventDefault();
-                        }
-                    }, { passive: false });
                 }
                 return;
             }
 
-            // 4. Archive.org Details -> Convert to Archive Embed
             if (cleanVal.includes('archive.org/details/')) {
                 let embedUrl = cleanVal.replace('archive.org/details/', 'archive.org/embed/');
                 playerBox.innerHTML = `<iframe src="${embedUrl}" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
                 return;
             }
 
-            // 5. Archive.org Embed Link
             if (cleanVal.includes('archive.org/embed/')) {
                 playerBox.innerHTML = `<iframe src="${cleanVal}" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
                 return;
             }
 
-            // 6. Archive.org Video ID only
             if (!cleanVal.startsWith('http://') && !cleanVal.startsWith('https://')) {
                 playerBox.innerHTML = `<iframe src="https://archive.org/embed/${cleanVal}" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
                 return;
             }
 
-            // 7. Generic Video Embed
             playerBox.innerHTML = `<iframe src="${cleanVal}" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
         }
 
