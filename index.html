@@ -40,8 +40,8 @@
         window.dbRemove = remove;
         window.dbOnValue = onValue;
 
-        if (window.initTelegramAutoAuth) {
-            window.initTelegramAutoAuth();
+        if (window.startApp) {
+            window.startApp();
         }
     </script>
     <style>
@@ -138,10 +138,8 @@
             align-items: center; 
             justify-content: center; 
             cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .search-btn:active { transform: scale(0.9); }
 
         .hero-slider-container {
             position: relative;
@@ -191,10 +189,8 @@
             border-radius: 20px;
             background: rgba(16, 16, 26, 0.65);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.12);
             max-width: 95%;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         }
 
         .hero-slide-title {
@@ -213,7 +209,6 @@
             font-weight: 700;
             display: inline-block;
             margin-bottom: 8px;
-            box-shadow: 0 4px 10px rgba(255, 42, 84, 0.4);
         }
 
         .btn-watch {
@@ -228,10 +223,7 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            box-shadow: 0 6px 20px rgba(255, 42, 84, 0.4);
-            transition: all 0.2s ease;
         }
-        .btn-watch:active { transform: scale(0.95); }
 
         .hero-dots {
             position: absolute;
@@ -248,13 +240,11 @@
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.3);
             cursor: pointer;
-            transition: all 0.3s ease;
         }
         .hero-dot.active {
             background: #ff2a54;
             width: 24px;
             border-radius: 10px;
-            box-shadow: 0 0 10px #ff2a54;
         }
 
         #notificationBanner {
@@ -270,7 +260,6 @@
             font-weight: 700;
             z-index: 9999;
             box-shadow: 0 10px 30px rgba(255, 42, 84, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.3);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -286,13 +275,11 @@
             align-items: center; justify-content: center;
             padding: 20px; transition: opacity 0.4s ease;
         }
-        .splash-content { display: flex; flex-direction: column; align-items: center; text-align: center; }
         .splash-cinema-icon {
             width: 85px; height: 85px; 
             background: var(--accent-gradient);
             border-radius: 26px; display: flex; align-items: center;
             justify-content: center; font-size: 40px; margin-bottom: 20px; color: #ffffff;
-            box-shadow: 0 12px 35px rgba(255, 42, 84, 0.5);
         }
         .splash-brand-text { font-size: 24px; font-weight: 900; color: #ffffff; margin-bottom: 6px; }
         .splash-slogan-ug { font-size: 13px; color: #94a3b8; }
@@ -301,7 +288,6 @@
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--nav-bg); 
             backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
             z-index: 3000; padding: 24px 18px; overflow-y: auto;
         }
         .search-input {
@@ -309,9 +295,7 @@
             background: var(--surface-bg); 
             border: 1px solid var(--border-glow);
             color: var(--text-primary); border-radius: var(--pill-radius); margin-bottom: 14px; outline: none;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
-        .search-input:focus { border-color: #ff2a54; }
         .close-search { 
             background: var(--surface-bg); 
             border: 1px solid var(--border-glow); 
@@ -322,19 +306,16 @@
         .genre-chips-container {
             display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 14px; scrollbar-width: none;
         }
-        .genre-chips-container::-webkit-scrollbar { display: none; }
         .genre-chip {
             background: var(--surface-bg); 
             border: 1px solid var(--border-glow); 
             color: var(--text-secondary);
             padding: 8px 16px; border-radius: var(--pill-radius); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;
-            transition: all 0.2s ease;
         }
         .genre-chip.active { 
             background: var(--accent-gradient); 
             color: #ffffff; 
             border-color: transparent; 
-            box-shadow: 0 4px 15px rgba(255, 42, 84, 0.4);
         }
 
         .search-results { display: flex; flex-direction: column; gap: 10px; }
@@ -344,9 +325,7 @@
             border-radius: 16px;
             overflow: hidden; cursor: pointer; align-items: center;
             border: 1px solid var(--border-glow);
-            transition: transform 0.2s ease;
         }
-        .search-item:active { transform: scale(0.98); }
         .search-item-title { padding: 12px 16px; font-size: 13px; font-weight: 700; width: 100%; }
 
         .tab-content { display: none; }
@@ -356,21 +335,17 @@
             display: flex; gap: 10px; padding: 10px 18px;
             overflow-x: auto; white-space: nowrap; scrollbar-width: none;
         }
-        .category-tabs::-webkit-scrollbar { display: none; }
-
         .cat-chip {
             background: var(--surface-bg); 
             color: var(--text-secondary);
             border: 1px solid var(--border-glow); 
             padding: 9px 18px;
             border-radius: var(--pill-radius); font-size: 12px; cursor: pointer; font-weight: 700;
-            transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
         }
         .cat-chip.active {
             background: var(--accent-gradient); 
             color: #ffffff;
             border-color: transparent; 
-            box-shadow: 0 4px 15px rgba(255, 42, 84, 0.4);
         }
 
         .category-section { margin-top: 18px; padding: 0 18px; }
@@ -391,15 +366,12 @@
             gap: 14px;
             overflow-x: auto;
             padding: 4px 4px 16px 4px;
-            scroll-snap-type: x mandatory;
             scrollbar-width: none;
         }
-        .movie-row-container::-webkit-scrollbar { display: none; }
         .movie-row-container .movie-card {
             min-width: 135px;
             max-width: 145px;
             flex-shrink: 0;
-            scroll-snap-align: start;
         }
 
         .movie-grid {
@@ -419,12 +391,6 @@
             flex-direction: column;
             cursor: pointer;
             border: 1px solid var(--border-glow);
-            transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.3s ease;
-        }
-        .movie-card:hover, .movie-card:active {
-            transform: translateY(-4px) scale(1.02);
-            border-color: var(--border-active);
-            box-shadow: 0 12px 30px rgba(255, 42, 84, 0.25);
         }
 
         .movie-poster-box {
@@ -443,7 +409,6 @@
             background: var(--accent-gradient); 
             color: #ffffff;
             font-size: 9px; font-weight: 800; padding: 3px 9px; border-radius: var(--pill-radius); z-index: 2;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
 
         .card-actions { display: flex; align-items: center; gap: 6px; }
@@ -451,7 +416,6 @@
             background: var(--surface-bg); 
             border: 1px solid var(--border-glow); 
             width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; color: var(--text-secondary); 
-            transition: all 0.2s ease;
         }
         .fav-btn.liked { color: #ff2a54; border-color: rgba(255, 42, 84, 0.5); background: rgba(255, 42, 84, 0.15); }
         .del-btn { 
@@ -474,10 +438,10 @@
         .detail-player-wrapper {
             position: relative;
             width: 100%;
-            aspect-ratio: 16/9;
+            height: 220px;
             border-radius: 22px;
             overflow: hidden;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.8), 0 0 25px rgba(255, 42, 84, 0.2);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.8);
             border: 1px solid var(--border-glow);
             background: #000000;
         }
@@ -490,7 +454,6 @@
             height: 100vh !important;
             z-index: 9999999 !important;
             border-radius: 0 !important;
-            aspect-ratio: auto !important;
             border: none !important;
         }
 
@@ -499,9 +462,6 @@
             height: 100%;
             background: #000000;
             position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .native-cinema-video {
@@ -509,35 +469,13 @@
             height: 100% !important;
             object-fit: contain !important;
             background: #000000;
-            outline: none;
             display: block;
-        }
-
-        /* ⛶ مەخسۇس ئېكران ئۈستىدىكى قاڭقىش كۇنۇپكىسى */
-        .custom-fs-btn {
-            position: absolute !important;
-            top: 14px !important;
-            left: 14px !important;
-            background: rgba(255, 42, 84, 0.9) !important;
-            color: #ffffff !important;
-            border: 1px solid rgba(255, 255, 255, 0.4) !important;
-            padding: 8px 16px !important;
-            border-radius: 30px !important;
-            font-size: 12px !important;
-            font-weight: 800 !important;
-            cursor: pointer !important;
-            z-index: 99999 !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 6px !important;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8) !important;
         }
 
         .detail-info-box {
             background: var(--surface-card); 
             border: 1px solid var(--border-glow);
             border-radius: 22px; padding: 18px; margin-top: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .detail-title { font-size: 19px; font-weight: 900; margin-bottom: 8px; color: var(--text-primary); }
         .detail-meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; gap: 8px; }
@@ -545,7 +483,6 @@
         .series-episode-bar-detail {
             display: flex; gap: 8px; overflow-x: auto; padding: 12px 0; margin-top: 10px; scrollbar-width: none;
         }
-        .series-episode-bar-detail::-webkit-scrollbar { display: none; }
         .episode-chip-det {
             background: var(--surface-bg); 
             color: var(--text-primary); 
@@ -556,7 +493,6 @@
             background: var(--accent-gradient); 
             color: #ffffff; 
             border-color: transparent; 
-            box-shadow: 0 4px 15px rgba(255, 42, 84, 0.4);
         }
 
         .rating-box { 
@@ -579,12 +515,10 @@
             background: var(--surface-card); 
             border: 1px solid var(--border-glow);
             border-radius: 22px; padding: 18px; margin-top: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .emoji-quick-bar {
             display: flex; gap: 8px; overflow-x: auto; padding: 6px 0; margin-bottom: 10px; scrollbar-width: none;
         }
-        .emoji-quick-bar::-webkit-scrollbar { display: none; }
         .emoji-btn {
             background: var(--surface-bg); 
             border: 1px solid var(--border-glow);
@@ -600,7 +534,6 @@
         }
         
         .comment-item { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--border-glow); font-size: 13px; }
-        .comment-item:last-child { border-bottom: none; }
         .comment-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--surface-bg); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; border: 1px solid var(--border-glow); }
         .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .comment-content-box { display: flex; flex-direction: column; width: 100%; }
@@ -612,36 +545,6 @@
         .comment-action-link { background: none; border: none; font-size: 11px; color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-weight: 700; }
         .comment-action-link.liked { color: #ff4757; }
 
-        .replies-nested-container {
-            margin-top: 10px;
-            padding-right: 12px;
-            border-right: 2px solid var(--border-glow);
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .reply-item {
-            display: flex;
-            gap: 8px;
-            align-items: flex-start;
-            background: var(--surface-bg);
-            padding: 8px 12px;
-            border-radius: 12px;
-        }
-        .reply-avatar {
-            width: 28px;
-            height: 28px;
-            border-radius: 50%;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            background: var(--surface-card);
-            flex-shrink: 0;
-        }
-        .reply-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
         .page-box { padding: 18px; max-width: 600px; margin: 0 auto; }
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 700; text-align: right; }
@@ -650,10 +553,8 @@
             background: var(--surface-bg);
             border: 1px solid var(--border-glow); 
             color: var(--text-primary); border-radius: 16px; font-size: 13px; outline: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             text-align: right;
         }
-        .form-input:focus, .form-select:focus { border-color: #ff2a54; }
 
         .action-btn {
             width: 100%; padding: 13px; 
@@ -661,22 +562,18 @@
             color: #ffffff;
             border: none; border-radius: var(--pill-radius); font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 8px;
             box-shadow: 0 6px 20px rgba(255, 42, 84, 0.4);
-            transition: all 0.2s ease;
         }
-        .action-btn:active { transform: scale(0.98); }
 
         .settings-page-wrapper { max-width: 480px; margin: 16px auto; padding: 0 16px; }
         .user-profile-card { 
             background: var(--surface-card); 
             border: 1px solid var(--border-glow); 
             border-radius: 24px; padding: 22px; margin-bottom: 16px; text-align: center; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
         .profile-top-row { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 16px; }
         .profile-avatar-circle {
             width: 86px; height: 86px; border-radius: 50%; border: 3px solid #ff2a54;
-            background: var(--surface-bg); display: flex; align-items: center; justify-content: center; font-size: 38px; overflow: hidden; cursor: pointer;
-            box-shadow: 0 6px 25px rgba(255, 42, 84, 0.4);
+            background: var(--surface-bg); display: flex; align-items: center; justify-content: center; font-size: 38px; overflow: hidden;
         }
         .profile-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
         .profile-buttons-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -690,10 +587,8 @@
             background: var(--surface-card); 
             border: 1px solid var(--border-glow); 
             border-radius: 24px; padding: 6px 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
         }
         .settings-row-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border-glow); }
-        .settings-row-item:last-child { border-bottom: none; }
         .settings-row-right { display: flex; align-items: center; gap: 12px; }
         .settings-icon-box { 
             width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; 
@@ -724,20 +619,18 @@
             max-width: 480px;
             background: var(--nav-bg);
             backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
             display: flex;
             justify-content: space-around;
             align-items: center;
             padding: 8px 12px;
             border-radius: var(--pill-radius);
             border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 20px rgba(255, 42, 84, 0.15);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
             z-index: 1000;
         }
         .nav-item {
             background: none; border: none; color: var(--text-secondary); font-size: 10px;
             display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; font-weight: 700;
-            transition: all 0.2s ease;
         }
         .nav-item.active { color: #ff2a54; transform: scale(1.05); }
         .nav-item span:first-child { font-size: 18px; }
@@ -807,7 +700,7 @@
             <div class="hero-dots" id="heroDotsContainer"></div>
         </div>
 
-        <div id="homeScrollingWrapper" style="display: none; background: var(--surface-bg); border: 1px solid var(--border-glow); border-radius: var(--pill-radius); padding: 8px 15px; margin: 0 12px 14px 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+        <div id="homeScrollingWrapper" style="display: none; background: var(--surface-bg); border: 1px solid var(--border-glow); border-radius: var(--pill-radius); padding: 8px 15px; margin: 0 12px 14px 12px;">
             <marquee id="homeScrollingText" scrollamount="5" style="font-size: 13px; font-weight: 700; color: #ff2a54; vertical-align: middle;"></marquee>
         </div>
 
@@ -830,13 +723,12 @@
             <button class="detail-back-btn" onclick="goBackToHome()">⬅️ قايتىش</button>
             
             <div class="detail-player-wrapper" id="cinemaPlayerWrapper">
-                <button type="button" class="custom-fs-btn" id="cinemaFullscreenBtn" onclick="toggleCinemaFullscreen()"><i class="fa-solid fa-expand"></i> ⛶ چوڭ ئېكران</button>
                 <div class="detail-player-box" id="detailPlayerContainer"></div>
             </div>
 
-            <!-- 🎬 مەخسۇس ئېكران ئاستىدىكى چوڭايتىش قوشۇمچە كۇنۇپكىسى -->
-            <button type="button" class="action-btn" style="background: linear-gradient(135deg, #0072ff, #00c6ff); margin-top: 10px;" onclick="toggleCinemaFullscreen()">
-                <i class="fa-solid fa-expand"></i> ⛶ پۈتۈن ئېكراندا كۆرۈش (يانتۇ قىلىش)
+            <!-- ⛶ چوڭ ئېكران قىلىش كۇنۇپكىسى -->
+            <button type="button" class="action-btn" id="btnCinemaToggle" style="background: linear-gradient(135deg, #ff2a54, #ff6200); margin-top: 12px;" onclick="toggleCinemaFullscreen()">
+                <i class="fa-solid fa-expand"></i> ⛶ چوڭ ئېكراندا كۆرۈش
             </button>
 
             <div class="detail-info-box">
@@ -992,6 +884,7 @@
         </div>
     </div>
 
+    <!-- 👤 Telegram ئارخىپ بۆلىكى -->
     <div id="accountTab" class="tab-content">
         <div class="page-box" style="text-align: center;">
             <div style="display: flex; flex-direction: column; align-items: center; margin-top: 15px; margin-bottom: 20px;">
@@ -1047,7 +940,7 @@
                 <p style="margin-bottom: 12px; font-weight: 700;">ھۆرمەتلىك ئەزا، ئايلىق ئەزالىق باھاسى: <span id="displayVipPrice" style="color: #ff2a54; font-size: 20px; font-weight: 900;">4＄</span></p>
                 <hr style="border: none; border-top: 1px solid var(--border-glow); margin: 14px 0;">
                 <p style="color: var(--text-secondary); font-size: 12px; margin-bottom: 14px;">👉 تېلېگرامما ئادرېسىمىز ئارقىلىق ئالاقىلىشىڭ:</p>
-                <a href="https://t.me/KOZNAK_USD" target="_blank" style="display: block; text-align: center; background: linear-gradient(135deg, #0088cc, #00b4d8); color: #ffffff; padding: 13px; border-radius: var(--pill-radius); font-weight: 800; text-decoration: none; font-size: 13px; box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);">
+                <a href="https://t.me/KOZNAK_USD" target="_blank" style="display: block; text-align: center; background: linear-gradient(135deg, #0088cc, #00b4d8); color: #ffffff; padding: 13px; border-radius: var(--pill-radius); font-weight: 800; text-decoration: none; font-size: 13px;">
                     💬 Telegram دا ئالاقىلىشىش (@KOZNAK_USD)
                 </a>
             </div>
@@ -1215,18 +1108,18 @@
         let currentHlsInstance = null;
         let isCinemaFullscreen = false;
 
-        window.initTelegramAutoAuth = function() {
+        window.startApp = function() {
             let tgUser = null;
             if (window.Telegram && window.Telegram.WebApp) {
                 const tg = window.Telegram.WebApp;
-                tg.ready();
-                tg.expand();
-
-                if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
-                if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
-
-                if (tg.setHeaderColor) tg.setHeaderColor('#0a0a12');
-                if (tg.setBackgroundColor) tg.setBackgroundColor('#0a0a12');
+                try {
+                    tg.ready();
+                    tg.expand();
+                    if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
+                    if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+                    if (tg.setHeaderColor) tg.setHeaderColor('#0a0a12');
+                    if (tg.setBackgroundColor) tg.setBackgroundColor('#0a0a12');
+                } catch(e){}
 
                 if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
                     tgUser = tg.initDataUnsafe.user;
@@ -1270,10 +1163,7 @@
                 }).catch(() => {});
             }
 
-            initFirebaseRealtime();
-        };
-
-        function initFirebaseRealtime() {
+            // Realtime Firebase سانلىق مەلۇماتلىرىنى بىراقلا قوزغىتىش
             const moviesRef = window.dbRef(window.db, 'movies');
             window.dbOnValue(moviesRef, (snapshot) => {
                 allMovies = snapshot.val() || {};
@@ -1319,7 +1209,7 @@
                     scrollWrapper.style.display = 'none';
                 }
             });
-        }
+        };
 
         window.updateUIAfterLogin = function() {
             const accTitle = document.getElementById('accountTitle');
@@ -1375,23 +1265,17 @@
         // ⛶ مەخسۇس پۈتۈن ئېكران / يانتۇ تەڭشىگۈچ
         window.toggleCinemaFullscreen = function() {
             const wrapper = document.getElementById('cinemaPlayerWrapper');
-            const fsBtn = document.getElementById('cinemaFullscreenBtn');
+            const fsBtn = document.getElementById('btnCinemaToggle');
             if (!wrapper) return;
 
             isCinemaFullscreen = !isCinemaFullscreen;
 
             if (isCinemaFullscreen) {
                 wrapper.classList.add('is-fullscreen');
-                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-compress"></i> كىچىكلىتىش';
-                if (screen.orientation && screen.orientation.lock) {
-                    screen.orientation.lock('landscape').catch(() => {});
-                }
+                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-compress"></i> ئەسلى ھالەتكە قايتىش';
             } else {
                 wrapper.classList.remove('is-fullscreen');
-                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i> ⛶ چوڭ ئېكران';
-                if (screen.orientation && screen.orientation.unlock) {
-                    screen.orientation.unlock().catch(() => {});
-                }
+                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i> ⛶ چوڭ ئېكراندا كۆرۈش';
             }
         };
 
@@ -1916,18 +1800,14 @@
             renderRelatedMovies(id);
         }
 
-        // 🎬 دەرىجىدىن تاشقىرى مۇقىم ۋە سۈزۈك قويغۇچ يادروسى
+        // 🎬 دەرىجىدىن تاشقىرى مۇقىم قويغۇچ يادروسى
         function setupVideoPlayer(vdoIdOrUrl, posterUrl = '') {
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
-            const fsBtn = document.getElementById('cinemaFullscreenBtn');
             if (!vdoIdOrUrl) {
                 playerBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:13px;">ۋىدىيو ئۇلانمىسى تېپىلمىدى</div>';
-                if (fsBtn) fsBtn.style.display = 'none';
                 return;
             }
-
-            if (fsBtn) fsBtn.style.display = 'flex';
 
             let cleanVal = vdoIdOrUrl.trim();
 
