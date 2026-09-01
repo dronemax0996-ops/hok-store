@@ -469,11 +469,11 @@
             position: relative;
         }
 
-        /* ✅ object-fit: cover ئارقىلىق پۈتۈن ئېكراننى تولۇق تولدۇرۇش */
+        /* ✅ object-fit: fill ئارقىلىق پۈتۈن ئېكراننىڭ ھەممە يېرىنى تولۇق قاپلاش */
         .native-cinema-video {
             width: 100% !important;
             height: 100% !important;
-            object-fit: cover !important;
+            object-fit: fill !important;
             background: #000000;
             display: block;
         }
@@ -1036,7 +1036,7 @@
                         <div class="settings-icon-box">📢</div>
                         <div class="settings-text-box">
                             <span class="settings-item-title">رەسمىي تېلېگرامما قانىلى</span>
-                            <span class="settings-item-desc">يېڭى كىنەردىن خەۋەردار بولۇڭ</span>
+                            <span class="settings-item-desc">يېڭى كىنەلەردىن خەۋەردار بولۇڭ</span>
                         </div>
                     </div>
                     <span style="font-size: 13px; color: var(--text-secondary);">🔗</span>
@@ -1288,7 +1288,7 @@
             }
         }
 
-        // ⛶ پۈتۈن ئېكران قاڭقىش مېخانىزمى (پۈتۈن ئېكراندا قارا بوشلۇق قالدۇرمايدىغان قىلىش)
+        // ⛶ پۈتۈن ئېكران قاڭقىش مېخانىزمى (object-fit: cover ئارقىلىق پۈتۈن ئېكراننى تولۇق تولدۇرۇش)
         window.toggleCinemaFullscreen = function() {
             const wrapper = document.getElementById('cinemaPlayerWrapper');
             const fsBtn = document.getElementById('floatingFsBtn');
@@ -1299,7 +1299,7 @@
 
             if (isCinemaFullscreen) {
                 wrapper.classList.add('is-fullscreen');
-                if (videoEl) videoEl.style.objectFit = 'cover'; // ✅ پۈتۈن ئېكراندا ئېكراننى تولۇق تولدۇرىدۇ
+                if (videoEl) videoEl.style.objectFit = 'cover';
                 if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-compress"></i> كىچىكلىتىش';
                 if (screen.orientation && screen.orientation.lock) {
                     screen.orientation.lock('landscape').catch(() => {});
@@ -1835,7 +1835,7 @@
             renderRelatedMovies(id);
         }
 
-        // 🎬 قويغۇچ (ناچار تور شارائىتىدە ئەڭ تىز يۈكلىنىدىغان ۋە object-fit: cover قىلىنگەن)
+        // 🎬 قويغۇچ (ناچار تور شارائىتىگە قارشى ئەلالاشتۇرۇلغان)
         function setupVideoPlayer(vdoIdOrUrl, posterUrl = '') {
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
