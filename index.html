@@ -5,21 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>كۆزنەك كىنوخانىسى - Koznak TV</title>
     
+    <!-- 📱 PWABuilder ئۈچۈن مېتا ۋە Manifest ئۇلانمىسى -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a0a12">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Koznak TV">
 
+    <!-- FontAwesome سىنبەلگىلىرى -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- 📱 تېلېگرامما WebApp كۇتۇپخانىسى -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- 🎬 HLS.js & ArtPlayer.js -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, child, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getDatabase, ref, set, get, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCKRnqHKqCpj-xLPeG4sGRkHvFH4qginds",
@@ -34,70 +39,16 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const auth = getAuth(app);
-        const googleProvider = new GoogleAuthProvider();
 
         window.db = db;
         window.dbRef = ref;
         window.dbSet = set;
         window.dbGet = get;
-        window.dbChild = child;
         window.dbRemove = remove;
         window.dbOnValue = onValue;
-        window.auth = auth;
-        window.googleProvider = googleProvider;
-        window.signInWithPopup = signInWithPopup;
-        window.signInWithRedirect = signInWithRedirect;
-        window.getRedirectResult = getRedirectResult;
-        window.createUserWithEmailAndPassword = createUserWithEmailAndPassword;
-        window.signInWithEmailAndPassword = signInWithEmailAndPassword;
-        window.updateProfile = updateProfile;
-        window.signOut = signOut;
-        window.onAuthStateChanged = onAuthStateChanged;
 
-        window.onAuthStateChanged(auth, (firebaseUser) => {
-            if (firebaseUser) {
-                const email = firebaseUser.email || '';
-                const safeKey = email.replace(/[.@]/g, '_');
-                const displayName = firebaseUser.displayName || email.split('@')[0];
-                const photoURL = firebaseUser.photoURL || '';
-                const isAdmin = (email.toLowerCase() === 'nasrulla996@gmail.com');
-
-                window.currentUser = { 
-                    userKey: safeKey, 
-                    user: displayName, 
-                    email: email, 
-                    role: isAdmin ? 'admin' : 'user', 
-                    vip: isAdmin ? true : false, 
-                    vipExpire: null, 
-                    avatar: photoURL 
-                };
-
-                localStorage.setItem('koznak_user', JSON.stringify(window.currentUser));
-                if (window.updateUIAfterLogin) window.updateUIAfterLogin();
-
-                const userRef = ref(db, 'users/' + safeKey);
-                get(userRef).then(snap => {
-                    if (snap.exists()) {
-                        const dbData = snap.val();
-                        window.currentUser.vip = isAdmin ? true : (dbData.vip || false);
-                        window.currentUser.vipExpire = dbData.vipExpire || null;
-                        window.currentUser.role = isAdmin ? 'admin' : (dbData.role || 'user');
-                        localStorage.setItem('koznak_user', JSON.stringify(window.currentUser));
-                        if (window.updateUIAfterLogin) window.updateUIAfterLogin();
-                    } else {
-                        set(userRef, window.currentUser);
-                    }
-                }).catch(() => {});
-            } else {
-                window.currentUser = null;
-                localStorage.removeItem('koznak_user');
-                if (window.updateUIAfterLogin) window.updateUIAfterLogin();
-            }
-        });
-
-        if (window.initFirebaseApp) {
-            window.initFirebaseApp();
+        if (window.initTelegramAutoAuth) {
+            window.initTelegramAutoAuth();
         }
     </script>
     <style>
@@ -558,7 +509,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .detail-title { font-size: 19px; font-weight: 900; margin-bottom: 8px; color: var(--text-primary); }
-        .detail-meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-secondary); flex-wrap: gap: 8px; }
+        .detail-meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; gap: 8px; }
 
         .series-episode-bar-detail {
             display: flex; gap: 8px; overflow-x: auto; padding: 12px 0; margin-top: 10px; scrollbar-width: none;
@@ -682,14 +633,6 @@
             transition: all 0.2s ease;
         }
         .action-btn:active { transform: scale(0.98); }
-
-        .auth-switch-tab-row {
-            display: flex; background: var(--surface-bg); border: 1px solid var(--border-glow); padding: 4px; border-radius: var(--pill-radius); gap: 4px; margin-bottom: 16px;
-        }
-        .auth-switch-btn {
-            flex: 1; padding: 10px; font-size: 12px; font-weight: 700; color: var(--text-secondary); border-radius: var(--pill-radius); cursor: pointer; background: transparent; border: none; text-align: center;
-        }
-        .auth-switch-btn.active { background: var(--accent-gradient); color: #ffffff; box-shadow: 0 4px 15px rgba(255, 42, 84, 0.4); }
 
         .settings-page-wrapper { max-width: 480px; margin: 16px auto; padding: 0 16px; }
         .user-profile-card { 
@@ -1012,58 +955,16 @@
         </div>
     </div>
 
+    <!-- 👤 Telegram ئارخىپ ۋە باشقۇرۇش مەركىزى -->
     <div id="accountTab" class="tab-content">
         <div class="page-box" style="text-align: center;">
             <div style="display: flex; flex-direction: column; align-items: center; margin-top: 15px; margin-bottom: 20px;">
                 <div class="profile-avatar-circle" id="mainAccountAvatarBox">👤</div>
             </div>
 
-            <h3 id="accountTitle" style="margin-top: 4px; font-size: 18px; margin-bottom: 16px;">ھېساباتقا كىرىش ياكى قۇرۇش</h3>
+            <h3 id="accountTitle" style="margin-top: 4px; font-size: 18px; margin-bottom: 16px;">تېلېگرامما ھېساباتىڭىز</h3>
             
-            <div id="loginFormSection" style="margin-top: 10px;">
-                <div class="auth-switch-tab-row">
-                    <button type="button" class="auth-switch-btn active" id="tabLoginBtn" onclick="switchAuthMode('login')">كىرىش (Login)</button>
-                    <button type="button" class="auth-switch-btn" id="tabRegisterBtn" onclick="switchAuthMode('register')">ھېسابات قۇرۇش (Register)</button>
-                </div>
-
-                <div id="emailLoginForm">
-                    <div class="form-group">
-                        <label>ئېلخەت ئادرېسى (Email)</label>
-                        <input type="email" id="loginEmail" class="form-input" placeholder="nasrulla996@gmail.com" autocomplete="email">
-                    </div>
-                    <div class="form-group">
-                        <label>پارول (Password)</label>
-                        <input type="password" id="loginPassword" class="form-input" placeholder="0996" autocomplete="current-password">
-                    </div>
-                    <button type="button" class="action-btn" onclick="handleEmailLogin()">ئېلخەت بىلەن كىرىش</button>
-                </div>
-
-                <div id="emailRegisterForm" style="display: none;">
-                    <div class="form-group">
-                        <label>ئىسمىڭىز (Name)</label>
-                        <input type="text" id="regName" class="form-input" placeholder="nasrulla" autocomplete="name">
-                    </div>
-                    <div class="form-group">
-                        <label>ئېلخەت ئادرېسى (Email)</label>
-                        <input type="email" id="regEmail" class="form-input" placeholder="example@gmail.com" autocomplete="email">
-                    </div>
-                    <div class="form-group">
-                        <label>پارول (Password)</label>
-                        <input type="password" id="regPassword" class="form-input" placeholder="0996" autocomplete="new-password">
-                    </div>
-                    <button type="button" class="action-btn" style="background: #2ed573;" onclick="handleEmailRegister()">يېڭى ھېسابات قۇرۇش</button>
-                </div>
-
-                <div style="margin: 20px 0; border-top: 1px solid var(--border-glow); position: relative;">
-                    <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: var(--bg-color); padding: 0 10px; font-size: 11px; color: var(--text-secondary);">ياكى</span>
-                </div>
-
-                <button type="button" class="action-btn" style="background: #ffffff; color: #0f172a; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 700; box-shadow: 0 4px 20px rgba(0,0,0,0.3);" onclick="handleGoogleLogin()">
-                    <i class="fa-brands fa-google" style="color: #ea4335;"></i> Google بىلەن كىرىش
-                </button>
-            </div>
-
-            <div id="userProfileView" style="display: none; margin-top: 18px; text-align: right;">
+            <div id="userProfileView" style="margin-top: 18px; text-align: right;">
                 <div style="background: var(--surface-card); border: 1px solid var(--border-glow); padding: 18px; border-radius: 20px; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span id="displayUsername" style="font-size: 15px; font-weight: 800; color: #ff2a54;"></span>
@@ -1099,8 +1000,6 @@
                     <div class="section-title" style="font-size: 15px; margin: 24px 0 12px 0;">👥 ئابونتلارنى باشقۇرۇش</div>
                     <div class="admin-users-list" id="adminUsersListContainer"></div>
                 </div>
-
-                <button type="button" class="action-btn" style="background: var(--surface-bg); border: 1px solid var(--border-glow); margin-top: 18px;" onclick="handleLogout()">چېكىنىش (Log out)</button>
             </div>
         </div>
     </div>
@@ -1125,8 +1024,8 @@
                 <div class="profile-top-row">
                     <div class="profile-avatar-circle" id="settingsAvatarBox">👤</div>
                     <div class="profile-meta-info">
-                        <span class="profile-username-txt" id="settingsProfileName" style="font-weight: 800; font-size: 16px;">مېھمان ئابونت</span><br>
-                        <span class="profile-role-txt" id="settingsProfileDesc" style="font-size: 12px; color: var(--text-secondary);">تېخىمۇ كۆپ ئىقتىدار ئۈچۈن كىرىڭ</span>
+                        <span class="profile-username-txt" id="settingsProfileName" style="font-weight: 800; font-size: 16px;">ئابونت</span><br>
+                        <span class="profile-role-txt" id="settingsProfileDesc" style="font-size: 12px; color: var(--text-secondary);">Telegram ئارقىلىق ئۇلاندى</span>
                     </div>
                 </div>
                 <div class="profile-buttons-row">
@@ -1279,53 +1178,144 @@
         let touchEndX = 0;
         let currentArtPlayerInstance = null;
 
-        function switchAuthMode(mode) {
-            const loginForm = document.getElementById('emailLoginForm');
-            const regForm = document.getElementById('emailRegisterForm');
-            const btnLogin = document.getElementById('tabLoginBtn');
-            const btnReg = document.getElementById('tabRegisterBtn');
-
-            if (mode === 'login') {
-                loginForm.style.display = 'block';
-                regForm.style.display = 'none';
-                btnLogin.classList.add('active');
-                btnReg.classList.remove('active');
-            } else {
-                loginForm.style.display = 'none';
-                regForm.style.display = 'block';
-                btnReg.classList.add('active');
-                btnLogin.classList.remove('active');
+        // 🚀 Telegram Mini App ئاپتوماتىك كىرىش ۋە تىزىملاش
+        window.initTelegramAutoAuth = function() {
+            let tgUser = null;
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+                tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+                window.Telegram.WebApp.ready();
+                window.Telegram.WebApp.expand();
             }
-        }
 
-        function handleEmailLogin() {
-            const email = document.getElementById('loginEmail').value.trim();
-            const pass = document.getElementById('loginPassword').value.trim();
-            if (!email || !pass) return alert('ئېلخەت ۋە پارولنى تولۇق كىرگۈزۈڭ!');
+            const tgId = tgUser ? tgUser.id : (localStorage.getItem('koznak_tg_guest_id') || ('guest_' + Math.floor(Math.random() * 899999 + 100000)));
+            localStorage.setItem('koznak_tg_guest_id', tgId);
 
-            window.signInWithEmailAndPassword(window.auth, email, pass).then((userCredential) => {
-                alert('مۇۋەپپەقىيەتلىك كىردىڭىز!');
-            }).catch((error) => {
-                alert('كىرىش خاتالىقى: ' + error.message);
+            const userKey = 'tg_' + tgId;
+            const displayName = tgUser ? (tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '')) : ('ئابونت ' + tgId.toString().slice(-4));
+            const username = tgUser && tgUser.username ? tgUser.username : '';
+            const photoURL = tgUser && tgUser.photo_url ? tgUser.photo_url : '';
+            
+            // باشقۇرغۇچى تەستىقلاش (Username ياكى ID)
+            const isAdmin = (username.toLowerCase() === 'koznak_usd' || username.toLowerCase() === 'hok_uyghur1' || String(tgId) === '6355883839');
+
+            window.currentUser = {
+                userKey: userKey,
+                user: displayName,
+                username: username,
+                role: isAdmin ? 'admin' : 'user',
+                vip: isAdmin ? true : false,
+                vipExpire: null,
+                avatar: photoURL
+            };
+
+            window.updateUIAfterLogin();
+
+            // Firebase Database قا ساقلاش ۋە ھالەتنى يېڭىلاش
+            if (window.db && window.dbRef && window.dbGet) {
+                const userRef = window.dbRef(window.db, 'users/' + userKey);
+                window.dbGet(userRef).then(snap => {
+                    if (snap.exists()) {
+                        const dbData = snap.val();
+                        window.currentUser.vip = isAdmin ? true : (dbData.vip || false);
+                        window.currentUser.vipExpire = dbData.vipExpire || null;
+                        window.currentUser.role = isAdmin ? 'admin' : (dbData.role || 'user');
+                        window.updateUIAfterLogin();
+                    } else {
+                        window.dbSet(userRef, window.currentUser);
+                    }
+                }).catch(() => {});
+            }
+
+            // Realtime سانلىق مەلۇماتلارنى قوزغىتىش
+            initFirebaseRealtime();
+        };
+
+        function initFirebaseRealtime() {
+            const moviesRef = window.dbRef(window.db, 'movies');
+            window.dbOnValue(moviesRef, (snapshot) => {
+                allMovies = snapshot.val() || {};
+                checkNewMovieNotification();
+                renderHeroSliderSelectOptions();
+                renderHeroSlider();
+                renderMovies();
+                renderFavorites();
+                renderHistory();
+            });
+
+            const slidersRef = window.dbRef(window.db, 'featuredSliders');
+            window.dbOnValue(slidersRef, (snapshot) => {
+                featuredSliders = snapshot.val() || {};
+                renderHeroSlider();
+            });
+
+            const usersRef = window.dbRef(window.db, 'users');
+            window.dbOnValue(usersRef, (snapshot) => {
+                allUsers = snapshot.val() || {};
+                renderAdminUsersList();
+            });
+
+            const settingsRef = window.dbRef(window.db, 'settings');
+            window.dbOnValue(settingsRef, (snapshot) => {
+                const settings = snapshot.val() || {};
+                const vipPrice = settings.vipPrice || '4＄';
+                const displayPriceEl = document.getElementById('displayVipPrice');
+                if (displayPriceEl) displayPriceEl.innerText = vipPrice;
+                const adminPriceEl = document.getElementById('adminVipPrice');
+                if (adminPriceEl) adminPriceEl.value = vipPrice;
+
+                const scrollingText = settings.scrollingText || '';
+                const scrollWrapper = document.getElementById('homeScrollingWrapper');
+                const scrollTextEl = document.getElementById('homeScrollingText');
+                const adminTextEl = document.getElementById('adminScrollingText');
+                if (adminTextEl) adminTextEl.value = scrollingText;
+                
+                if (scrollingText.trim() !== '') {
+                    scrollTextEl.innerText = scrollingText;
+                    scrollWrapper.style.display = 'block';
+                } else {
+                    scrollWrapper.style.display = 'none';
+                }
             });
         }
 
-        function handleEmailRegister() {
-            const name = document.getElementById('regName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const pass = document.getElementById('regPassword').value.trim();
-            if (!name || !email || !pass) return alert('ھەممە قاتارنى تولدۇرۇڭ!');
-            if (pass.length < 4) return alert('پارول كەم دېگەندە 4 ھەرپ/رەقەم بولۇشى كېرەك!');
+        window.updateUIAfterLogin = function() {
+            const accTitle = document.getElementById('accountTitle');
+            const avatarMain = document.getElementById('mainAccountAvatarBox');
+            const avatarSettings = document.getElementById('settingsAvatarBox');
+            const settingsName = document.getElementById('settingsProfileName');
+            const settingsDesc = document.getElementById('settingsProfileDesc');
 
-            window.createUserWithEmailAndPassword(window.auth, email, pass).then((userCredential) => {
-                const user = userCredential.user;
-                return window.updateProfile(user, { displayName: name }).then(() => {
-                    alert('ھېسابات مۇۋەپپەقىيەتلىك قۇرۇلدى!');
-                });
-            }).catch((error) => {
-                alert('ھېسابات قۇرۇش خاتالىقى: ' + error.message);
-            });
-        }
+            if (window.currentUser) {
+                if (accTitle) accTitle.innerText = 'خۇش كەپسىز, ' + window.currentUser.user;
+                document.getElementById('displayUsername').innerText = window.currentUser.username ? ('@' + window.currentUser.username) : window.currentUser.user;
+                if (settingsName) settingsName.innerText = window.currentUser.user;
+                if (settingsDesc) settingsDesc.innerText = window.currentUser.username ? ('@' + window.currentUser.username) : 'Telegram ئابونتى';
+                
+                const avatarHtml = window.currentUser.avatar 
+                    ? `<img src="${window.currentUser.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` 
+                    : '👤';
+                if (avatarMain) avatarMain.innerHTML = avatarHtml;
+                if (avatarSettings) avatarSettings.innerHTML = avatarHtml;
+
+                const isAdmin = window.currentUser.role === 'admin';
+                const isVipActive = checkUserVipStatus(window.currentUser);
+
+                let vipText = 'ئادەتتىكى ئەزا';
+                if (isAdmin) vipText = '👑 باشقۇرغۇچى';
+                else if (isVipActive) {
+                    let remainingDays = Math.ceil((window.currentUser.vipExpire - Date.now()) / (1000 * 60 * 60 * 24));
+                    if (remainingDays < 0) remainingDays = 0;
+                    vipText = `⭐ VIP ئەزا (قالدى: ${remainingDays} كۈن)`;
+                }
+
+                document.getElementById('vipBadge').innerText = vipText;
+                document.getElementById('uploadMenuSettingItem').style.display = isAdmin ? 'flex' : 'none';
+                document.getElementById('navUploadBtn').style.display = isAdmin ? 'flex' : 'none';
+                document.getElementById('adminPanelSection').style.display = isAdmin ? 'block' : 'none';
+                
+                renderMovies();
+            }
+        };
 
         function destroyCurrentPlayer() {
             if (currentArtPlayerInstance) {
@@ -1503,63 +1493,6 @@
                 .then(() => alert('تەڭشەك مۇۋەپپەقىيەتلىك ساقلاندى!'))
                 .catch(() => alert('ساقلاشتا خاتالىق كۆرۈلدى!'));
         };
-
-        window.initFirebaseApp = function() {
-            const moviesRef = window.dbRef(window.db, 'movies');
-            window.dbOnValue(moviesRef, (snapshot) => {
-                allMovies = snapshot.val() || {};
-                checkNewMovieNotification();
-                renderHeroSliderSelectOptions();
-                renderHeroSlider();
-                renderMovies();
-                renderFavorites();
-                renderHistory();
-            });
-
-            const slidersRef = window.dbRef(window.db, 'featuredSliders');
-            window.dbOnValue(slidersRef, (snapshot) => {
-                featuredSliders = snapshot.val() || {};
-                renderHeroSlider();
-            });
-
-            const usersRef = window.dbRef(window.db, 'users');
-            window.dbOnValue(usersRef, (snapshot) => {
-                allUsers = snapshot.val() || {};
-                renderAdminUsersList();
-            });
-
-            const settingsRef = window.dbRef(window.db, 'settings');
-            window.dbOnValue(settingsRef, (snapshot) => {
-                const settings = snapshot.val() || {};
-                const vipPrice = settings.vipPrice || '4＄';
-                const displayPriceEl = document.getElementById('displayVipPrice');
-                if (displayPriceEl) displayPriceEl.innerText = vipPrice;
-                const adminPriceEl = document.getElementById('adminVipPrice');
-                if (adminPriceEl) adminPriceEl.value = vipPrice;
-
-                const scrollingText = settings.scrollingText || '';
-                const scrollWrapper = document.getElementById('homeScrollingWrapper');
-                const scrollTextEl = document.getElementById('homeScrollingText');
-                const adminTextEl = document.getElementById('adminScrollingText');
-                if (adminTextEl) adminTextEl.value = scrollingText;
-                
-                if (scrollingText.trim() !== '') {
-                    scrollTextEl.innerText = scrollingText;
-                    scrollWrapper.style.display = 'block';
-                } else {
-                    scrollWrapper.style.display = 'none';
-                }
-            });
-        };
-
-        function handleGoogleLogin() {
-            window.signInWithPopup(window.auth, window.googleProvider)
-                .catch((error) => {
-                    window.signInWithRedirect(window.auth, window.googleProvider).catch(err => {
-                        alert('Google كىرىش خاتالىقى: ' + err.message);
-                    });
-                });
-        }
 
         function renderHeroSliderSelectOptions() {
             const selectEl = document.getElementById('sliderMovieSelect');
@@ -2063,11 +1996,7 @@
         }
 
         function rateMovie(type) {
-            if(!window.currentUser) {
-                alert('باھا بېرىش ئۈچۈن ھېساباتىڭىزغا كىرىڭ!');
-                switchTab('accountTab');
-                return;
-            }
+            if(!window.currentUser) return;
             const movieRef = window.dbRef(window.db, `movies/${currentActiveMovieId}/reactions`);
             window.dbGet(movieRef).then(snap => {
                 let reactions = snap.val() || { likes: {}, dislikes: {} };
@@ -2132,11 +2061,7 @@
         }
 
         function submitComment() {
-            if(!window.currentUser) {
-                alert('پىكىر قالدۇرۇش ئۈچۈن كىرىڭ!');
-                switchTab('accountTab');
-                return;
-            }
+            if(!window.currentUser) return;
             const commentText = document.getElementById('commentInputBox').value.trim();
             if(!commentText) return alert('پىكىر مەزمۇنىنى يېزىڭ!');
 
@@ -2155,7 +2080,7 @@
         }
 
         function toggleCommentLike(commentId) {
-            if(!window.currentUser) return alert('يۈرەك قويۇش ئۈچۈن كىرىڭ!');
+            if(!window.currentUser) return;
             const commentRef = window.dbRef(window.db, `movies/${currentActiveMovieId}/comments/${commentId}/likes/${window.currentUser.userKey}`);
             window.dbGet(commentRef).then(snap => {
                 if(snap.exists()) window.dbRemove(commentRef).then(() => reloadCurrentComments());
@@ -2170,7 +2095,7 @@
         }
 
         function submitReply(commentId) {
-            if (!window.currentUser) return alert('جاۋاب قايتۇرۇش ئۈچۈن كىرىڭ!');
+            if (!window.currentUser) return;
             const replyInput = document.getElementById('replyInput_' + commentId);
             const text = replyInput.value.trim();
             if (!text) return;
@@ -2327,7 +2252,6 @@
             if(!container) return;
             container.innerHTML = '';
             Object.keys(allUsers).forEach(userKey => {
-                if(userKey === 'nasrulla996_gmail_com') return;
                 const uData = allUsers[userKey];
                 const isVip = checkUserVipStatus(uData);
                 
@@ -2343,7 +2267,7 @@
                     <div class="admin-user-left-box">
                         <div class="admin-user-avatar">${uData.avatar ? `<img src="${uData.avatar}">` : '👤'}</div>
                         <div class="admin-user-info">
-                            <span class="admin-user-name">${escapeHTML(uData.user || uData.email)}</span>
+                            <span class="admin-user-name">${escapeHTML(uData.user || uData.username || 'ئابونت')}</span>
                             <span class="admin-user-status" style="color: ${isVip ? '#2ed573' : 'var(--text-secondary)'};">${isVip ? `👑 VIP (قالدى: ${remainingDays} كۈن)` : '👤 ئادەتتىكى'}</span>
                         </div>
                     </div>
@@ -2484,72 +2408,6 @@
             });
         }
 
-        window.updateUIAfterLogin = function() {
-            const loginSection = document.getElementById('loginFormSection');
-            const profileView = document.getElementById('userProfileView');
-            const accTitle = document.getElementById('accountTitle');
-            const avatarMain = document.getElementById('mainAccountAvatarBox');
-            const avatarSettings = document.getElementById('settingsAvatarBox');
-            const settingsName = document.getElementById('settingsProfileName');
-            const settingsDesc = document.getElementById('settingsProfileDesc');
-
-            if (!window.currentUser) {
-                if (loginSection) loginSection.style.display = 'block';
-                if (profileView) profileView.style.display = 'none';
-                if (accTitle) accTitle.innerText = 'ھېساباتقا كىرىش ياكى قۇرۇش';
-                if (avatarMain) avatarMain.innerHTML = '👤';
-                if (avatarSettings) avatarSettings.innerHTML = '👤';
-                if (settingsName) settingsName.innerText = 'مېھمان ئابونت';
-                if (settingsDesc) settingsDesc.innerText = 'تېخىمۇ كۆپ ئىقتىدار ئۈچۈن كىرىڭ';
-                
-                document.getElementById('uploadMenuSettingItem').style.display = 'none';
-                document.getElementById('navUploadBtn').style.display = 'none';
-                document.getElementById('adminPanelSection').style.display = 'none';
-                renderMovies();
-                return;
-            }
-
-            if (loginSection) loginSection.style.display = 'none';
-            if (profileView) profileView.style.display = 'block';
-            if (accTitle) accTitle.innerText = 'خۇش كەپسىز, ' + (window.currentUser.user || 'ئابونت');
-            
-            document.getElementById('displayUsername').innerText = window.currentUser.email || '';
-            if (settingsName) settingsName.innerText = window.currentUser.user || 'ئابونت';
-            if (settingsDesc) settingsDesc.innerText = window.currentUser.email || '';
-            
-            const avatarHtml = window.currentUser.avatar 
-                ? `<img src="${window.currentUser.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` 
-                : '👤';
-            if (avatarMain) avatarMain.innerHTML = avatarHtml;
-            if (avatarSettings) avatarSettings.innerHTML = avatarHtml;
-
-            const isAdmin = window.currentUser.role === 'admin';
-            const isVipActive = checkUserVipStatus(window.currentUser);
-
-            let vipText = 'ئادەتتىكى ئەزا';
-            if (isAdmin) vipText = '👑 باشقۇرغۇچى';
-            else if (isVipActive) {
-                let remainingDays = Math.ceil((window.currentUser.vipExpire - Date.now()) / (1000 * 60 * 60 * 24));
-                if (remainingDays < 0) remainingDays = 0;
-                vipText = `⭐ VIP ئەزا (قالدى: ${remainingDays} كۈن)`;
-            }
-
-            document.getElementById('vipBadge').innerText = vipText;
-            document.getElementById('uploadMenuSettingItem').style.display = isAdmin ? 'flex' : 'none';
-            document.getElementById('navUploadBtn').style.display = isAdmin ? 'flex' : 'none';
-            document.getElementById('adminPanelSection').style.display = isAdmin ? 'block' : 'none';
-            
-            renderMovies();
-        };
-
-        function handleLogout() {
-            window.signOut(window.auth).then(() => {
-                window.currentUser = null;
-                localStorage.removeItem('koznak_user');
-                window.updateUIAfterLogin();
-            });
-        }
-
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splashScreen');
@@ -2560,13 +2418,6 @@
             }, 600);
             
             setTheme(localStorage.getItem('koznak_theme') || 'dark');
-            
-            if(localStorage.getItem('koznak_user')) {
-                try { 
-                    window.currentUser = JSON.parse(localStorage.getItem('koznak_user')); 
-                    window.updateUIAfterLogin(); 
-                } catch(e){}
-            }
         });
     </script>
 </body>
