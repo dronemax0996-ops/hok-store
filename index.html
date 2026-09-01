@@ -1440,7 +1440,7 @@
                         const userRef = window.dbRef(window.db, 'users/' + safeKey);
                         window.dbGet(userRef).then(snap => {
                             if (snap.exists()) {
-                                currentUser = { ...snap.val(), userKey: safeKey };
+                                currentUser = { ...snap.val(), userKey: safeKey, user: snap.val().user || displayName, avatar: snap.val().avatar || photoURL };
                             } else {
                                 currentUser = { userKey: safeKey, user: displayName, email: email, role: 'user', vip: false, vipExpire: null, avatar: photoURL };
                                 window.dbSet(userRef, currentUser);
