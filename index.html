@@ -495,8 +495,8 @@
             position: relative;
         }
         .detail-player-box iframe, .detail-player-box video {
-            width: 100%;
-            height: 100%;
+            width: 100% !important;
+            height: 100% !important;
             border: none;
             background: #000000;
             display: block;
@@ -509,6 +509,13 @@
             background: #000000;
         }
 
+        .artplayer-app video {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: contain !important;
+        }
+
+        /* 📱 Web Fullscreen پەۋقۇلئاددە چوڭايتىش پاسونى */
         .artplayer-app.art-fullscreen-web {
             position: fixed !important;
             top: 0 !important;
@@ -517,6 +524,7 @@
             height: 100vh !important;
             z-index: 999999 !important;
             border-radius: 0 !important;
+            background: #000000 !important;
         }
 
         .detail-info-box {
