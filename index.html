@@ -12,8 +12,12 @@
     <meta name="apple-mobile-web-app-title" content="Koznak TV">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- 🎬 Video.js CSS -->
+    <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+    
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <!-- 🎬 Video.js JS -->
+    <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -435,7 +439,7 @@
             margin-bottom: 14px; display: inline-flex; align-items: center; gap: 8px;
         }
         
-        /* 🎬 Cinema Frame & Fullscreen Custom Controls */
+        /* 🎬 Video.js مۇكەممەل رامكىسى */
         .detail-player-wrapper {
             position: relative;
             width: 100%;
@@ -447,40 +451,14 @@
             background: #000000;
         }
 
-        .detail-player-wrapper.is-fullscreen {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            z-index: 9999999 !important;
-            border-radius: 0 !important;
-            border: none !important;
-            background: #000000 !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .detail-player-box {
-            width: 100%;
-            height: 100%;
-            background: #000000;
-            position: relative;
-        }
-
-        /* ✅ object-fit: cover ئارقىلىق ئېكراننىڭ ھەممە يېرىنى تولۇق تولدۇرۇش */
-        .native-cinema-video {
+        .video-js {
             width: 100% !important;
             height: 100% !important;
-            object-fit: cover !important;
-            background: #000000;
-            display: block;
+            border-radius: 22px;
+            background-color: #000000;
         }
 
-        .detail-player-wrapper.is-fullscreen .native-cinema-video {
-            width: 100vw !important;
-            height: 100vh !important;
+        .video-js .vjs-tech {
             object-fit: cover !important;
         }
 
@@ -761,7 +739,7 @@
             <button class="detail-back-btn" onclick="goBackToHome()">⬅️ قايتىش</button>
             
             <div class="detail-player-wrapper" id="cinemaPlayerWrapper">
-                <button type="button" class="floating-fs-btn" id="floatingFsBtn" onclick="toggleCinemaFullscreen()">
+                <button type="button" class="floating-fs-btn" id="floatingFsBtn" onclick="toggleVideoFullscreen()">
                     <i class="fa-solid fa-expand"></i> چوڭايتىش
                 </button>
                 <div class="detail-player-box" id="detailPlayerContainer"></div>
@@ -1283,11 +1261,11 @@
         };
 
         function destroyCurrentPlayer() {
-            if (currentHlsInstance) {
+            if (window.currentVideoPlayer) {
                 try {
-                    currentHlsInstance.destroy();
+                    window.currentVideoPlayer.dispose();
                 } catch(e) {}
-                currentHlsInstance = null;
+                window.currentVideoPlayer = null;
             }
             if (isCinemaFullscreen) {
                 toggleCinemaFullscreen();
@@ -1298,21 +1276,18 @@
         window.toggleCinemaFullscreen = function() {
             const wrapper = document.getElementById('cinemaPlayerWrapper');
             const fsBtn = document.getElementById('floatingFsBtn');
-            const videoEl = document.getElementById('nativeVideoPlayer');
             if (!wrapper) return;
 
             isCinemaFullscreen = !isCinemaFullscreen;
 
             if (isCinemaFullscreen) {
                 wrapper.classList.add('is-fullscreen');
-                if (videoEl) videoEl.style.objectFit = 'cover';
                 if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-compress"></i> كىچىكلىتىش';
                 if (screen.orientation && screen.orientation.lock) {
                     screen.orientation.lock('landscape').catch(() => {});
                 }
             } else {
                 wrapper.classList.remove('is-fullscreen');
-                if (videoEl) videoEl.style.objectFit = 'cover';
                 if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i> چوڭايتىش';
                 if (screen.orientation && screen.orientation.unlock) {
                     screen.orientation.unlock().catch(() => {});
@@ -1372,10 +1347,6 @@
             destroyCurrentPlayer();
             document.querySelectorAll('iframe').forEach(iframe => { 
                 iframe.src = ''; 
-            });
-            document.querySelectorAll('video').forEach(video => {
-                video.pause();
-                video.src = '';
             });
         }
 
@@ -1841,7 +1812,7 @@
             renderRelatedMovies(id);
         }
 
-        // 🎬 مۇكەممەل قويغۇچ يادروسى (قارا بوشلۇقسىز ۋە تىز يۈكلىنىدىغان)
+        // 🎬 Video.js قويغۇچ يادروسى (ناچار تور شارائىتىگە ئەلالاشتۇرۇلغان)
         function setupVideoPlayer(vdoIdOrUrl, posterUrl = '') {
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
@@ -1885,36 +1856,25 @@
 
             if (isStreamOrVideo) {
                 playerBox.innerHTML = `
-                    <video id="nativeVideoPlayer" class="native-cinema-video" controls playsinline webkit-playsinline x5-playsinline preload="auto" poster="${posterUrl || ''}">
+                    <video id="koznakVideoPlayer" class="video-js vjs-big-play-centered" controls preload="auto" poster="${posterUrl || ''}" data-setup='{}'>
+                        <source src="${cleanVal}" type="${cleanVal.includes('.m3u8') ? 'application/x-mpegURL' : 'video/mp4'}">
                         تور كۆرگۈچىڭىز بۇ سىننى قوللىمايدۇ.
                     </video>
                 `;
                 
-                const video = document.getElementById('nativeVideoPlayer');
-                
-                if (cleanVal.includes('.m3u8')) {
-                    if (window.Hls && Hls.isSupported()) {
-                        currentHlsInstance = new Hls({
-                            enableWorker: true,
-                            lowLatencyMode: true,
-                            backBufferLength: 90,
-                            maxBufferLength: 30,
-                            maxMaxBufferLength: 60,
-                            maxBufferSize: 60 * 1000 * 1000,
-                            liveSyncDurationCount: 3,
-                            fragLoadingTimeOut: 20000,
-                            manifestLoadingTimeOut: 20000,
-                            levelLoadingTimeOut: 20000
-                        });
-                        currentHlsInstance.loadSource(cleanVal);
-                        currentHlsInstance.attachMedia(video);
-                    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                        video.src = cleanVal;
+                window.currentVideoPlayer = videojs('koznakVideoPlayer', {
+                    fluid: true,
+                    responsive: true,
+                    playbackRates: [0.5, 1, 1.25, 1.5, 2],
+                    html5: {
+                        vhs: {
+                            overrideNative: true,
+                            smoothQualityChange: true,
+                            bandwidth: 500000
+                        }
                     }
-                } else {
-                    video.src = cleanVal;
-                }
-                
+                });
+
                 return;
             }
 
