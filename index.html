@@ -85,9 +85,10 @@
 
         html, body {
             width: 100%;
-            min-height: 100%;
+            min-height: 100vh;
+            overflow-y: auto !important;
             overflow-x: hidden;
-            overscroll-behavior-y: none;
+            -webkit-overflow-scrolling: touch;
         }
 
         body {
@@ -95,7 +96,7 @@
             background-color: var(--bg-color);
             background-attachment: fixed;
             color: var(--text-primary);
-            padding-bottom: 105px;
+            padding-bottom: 120px;
             direction: rtl;
         }
 
@@ -337,7 +338,7 @@
         }
         .cat-chip {
             background: var(--surface-bg); 
-            color: var(--text-secondary);
+            color: var(--text-secondary); 
             border: 1px solid var(--border-glow); 
             padding: 9px 18px;
             border-radius: var(--pill-radius); font-size: 12px; cursor: pointer; font-weight: 700;
@@ -438,7 +439,7 @@
         .detail-player-wrapper {
             position: relative;
             width: 100%;
-            height: 220px;
+            height: 230px;
             border-radius: 22px;
             overflow: hidden;
             box-shadow: 0 15px 45px rgba(0,0,0,0.8);
@@ -455,6 +456,10 @@
             z-index: 9999999 !important;
             border-radius: 0 !important;
             border: none !important;
+            background: #000000 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .detail-player-box {
@@ -472,10 +477,36 @@
             display: block;
         }
 
+        /* ⛶ فىلىم ئاستىدىكى تەڭشەكلەر قاتارىدا ئورۇنلاشقان كىچىك, نەپىس تولۇق ئېكران كۇنۇپكىسى */
+        .player-bottom-controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            gap: 10px;
+        }
+
+        .compact-fs-btn {
+            background: var(--surface-bg);
+            border: 1px solid var(--border-glow);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: var(--pill-radius);
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .compact-fs-btn:active { transform: scale(0.95); background: var(--accent-gradient); color: #fff; }
+
         .detail-info-box {
             background: var(--surface-card); 
             border: 1px solid var(--border-glow);
-            border-radius: 22px; padding: 18px; margin-top: 16px;
+            border-radius: 22px; padding: 18px; margin-top: 12px;
         }
         .detail-title { font-size: 19px; font-weight: 900; margin-bottom: 8px; color: var(--text-primary); }
         .detail-meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; gap: 8px; }
@@ -726,10 +757,13 @@
                 <div class="detail-player-box" id="detailPlayerContainer"></div>
             </div>
 
-            <!-- ⛶ چوڭ ئېكران قىلىش كۇنۇپكىسى -->
-            <button type="button" class="action-btn" id="btnCinemaToggle" style="background: linear-gradient(135deg, #ff2a54, #ff6200); margin-top: 12px;" onclick="toggleCinemaFullscreen()">
-                <i class="fa-solid fa-expand"></i> ⛶ چوڭ ئېكراندا كۆرۈش
-            </button>
+            <!-- 🎬 فىلىم ئاستىدىكى تەڭشەكلەر قاتارىدا ئورۇنلاشقان كىچىك، نەپىس تولۇق ئېكران كۇنۇپكىسى -->
+            <div class="player-bottom-controls-row">
+                <span style="font-size: 12px; color: var(--text-secondary);">📺 قويغۇچ تەڭشىكى</span>
+                <button type="button" class="compact-fs-btn" id="btnCinemaToggle" onclick="toggleCinemaFullscreen()">
+                    <i class="fa-solid fa-expand"></i> ⛶ پۈتۈن ئېكران
+                </button>
+            </div>
 
             <div class="detail-info-box">
                 <div class="detail-title" id="detailMovieTitle">فىلىم ئىسمى</div>
@@ -884,7 +918,6 @@
         </div>
     </div>
 
-    <!-- 👤 Telegram ئارخىپ بۆلىكى -->
     <div id="accountTab" class="tab-content">
         <div class="page-box" style="text-align: center;">
             <div style="display: flex; flex-direction: column; align-items: center; margin-top: 15px; margin-bottom: 20px;">
@@ -1115,8 +1148,6 @@
                 try {
                     tg.ready();
                     tg.expand();
-                    if (tg.enableClosingConfirmation) tg.enableClosingConfirmation();
-                    if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
                     if (tg.setHeaderColor) tg.setHeaderColor('#0a0a12');
                     if (tg.setBackgroundColor) tg.setBackgroundColor('#0a0a12');
                 } catch(e){}
@@ -1163,7 +1194,6 @@
                 }).catch(() => {});
             }
 
-            // Realtime Firebase سانلىق مەلۇماتلىرىنى بىراقلا قوزغىتىش
             const moviesRef = window.dbRef(window.db, 'movies');
             window.dbOnValue(moviesRef, (snapshot) => {
                 allMovies = snapshot.val() || {};
@@ -1262,7 +1292,7 @@
             }
         }
 
-        // ⛶ مەخسۇس پۈتۈن ئېكران / يانتۇ تەڭشىگۈچ
+        // ⛶ پۈتۈن ئېكران قاڭقىش مېخانىزمى
         window.toggleCinemaFullscreen = function() {
             const wrapper = document.getElementById('cinemaPlayerWrapper');
             const fsBtn = document.getElementById('btnCinemaToggle');
@@ -1272,10 +1302,16 @@
 
             if (isCinemaFullscreen) {
                 wrapper.classList.add('is-fullscreen');
-                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-compress"></i> ئەسلى ھالەتكە قايتىش';
+                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-compress"></i> ✕ كىچىكلىتىش';
+                if (screen.orientation && screen.orientation.lock) {
+                    screen.orientation.lock('landscape').catch(() => {});
+                }
             } else {
                 wrapper.classList.remove('is-fullscreen');
-                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i> ⛶ چوڭ ئېكراندا كۆرۈش';
+                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-expand"></i> ⛶ پۈتۈن ئېكران';
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock().catch(() => {});
+                }
             }
         };
 
@@ -1635,7 +1671,7 @@
                     { key: 'series', title: '📺 قىسىملىق كىنولەر' },
                     { key: 'cartoon', title: '🧸 كارتونلار' },
                     { key: 'cartoon_series', title: '🧸📺 قىسىملىق كارتۇن' },
-                    { key: 'short', title: '📱 قىسقا فىلىملەر' }
+                    { key: 'short', title: '📱 قىسقا فىلىم' }
                 ];
 
                 categories.forEach(cat => {
@@ -1800,25 +1836,27 @@
             renderRelatedMovies(id);
         }
 
-        // 🎬 دەرىجىدىن تاشقىرى مۇقىم قويغۇچ يادروسى
+        // 🎬 دەرىجىدىن تاشقىرى قويغۇچ يادروسى
         function setupVideoPlayer(vdoIdOrUrl, posterUrl = '') {
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
+            const fsBtn = document.getElementById('btnCinemaToggle');
             if (!vdoIdOrUrl) {
                 playerBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:13px;">ۋىدىيو ئۇلانمىسى تېپىلمىدى</div>';
+                if (fsBtn) fsBtn.style.display = 'none';
                 return;
             }
 
+            if (fsBtn) fsBtn.style.display = 'inline-flex';
+
             let cleanVal = vdoIdOrUrl.trim();
 
-            // 1. YouTube
             let ytId = extractYouTubeID(cleanVal);
             if (ytId) {
                 playerBox.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1" style="width:100%;height:100%;border:none;" allow="autoplay; encrypted-media; fullscreen" allowfullscreen></iframe>`;
                 return;
             }
 
-            // 2. Telegram Embed سىنلىرى
             if (cleanVal.includes('t.me/') && !cleanVal.match(/\.(mp4|m3u8)($|\?)/i)) {
                 let parts = cleanVal.replace('https://', '').replace('http://', '').split('/');
                 let postId = parts[parts.length - 1].split('?')[0];
@@ -1836,7 +1874,6 @@
                 }
             }
 
-            // 3. M3U8 ياكى بىۋاسىتە MP4 / WebM / CDN
             const isStreamOrVideo = cleanVal.match(/\.(mp4|m3u8|webm|ogg|mov)($|\?)/i) || 
                                     cleanVal.includes('/download/') || 
                                     cleanVal.includes('.m3u8');
@@ -1869,7 +1906,6 @@
                 return;
             }
 
-            // 4. Archive.org
             if (cleanVal.includes('archive.org/details/')) {
                 let embedUrl = cleanVal.replace('archive.org/details/', 'archive.org/embed/');
                 playerBox.innerHTML = `<iframe src="${embedUrl}?autoplay=1" style="border:0;width:100%;height:100%;background:#000;" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
