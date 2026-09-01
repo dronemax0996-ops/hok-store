@@ -5,20 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>كۆزنەك كىنوخانىسى - Koznak TV</title>
     
-    <!-- 📱 PWA Meta & Manifest -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0a0a12">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Koznak TV">
 
-    <!-- FontAwesome سىنبەلگىلىرى -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- تېلېگرامما WebApp كۇتۇپخانىسى -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-    <!-- 🎬 HLS.js & ArtPlayer.js -->
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js"></script>
 
@@ -61,7 +55,6 @@
         window.signOut = signOut;
         window.onAuthStateChanged = onAuthStateChanged;
 
-        // Firebase Auth نازارەتچىسى دەرھال قوزغىتىلىدۇ
         window.onAuthStateChanged(auth, (firebaseUser) => {
             if (firebaseUser) {
                 const email = firebaseUser.email || '';
@@ -70,7 +63,7 @@
                 const photoURL = firebaseUser.photoURL || '';
                 const isAdmin = (email.toLowerCase() === 'nasrulla996@gmail.com');
 
-                currentUser = { 
+                window.currentUser = { 
                     userKey: safeKey, 
                     user: displayName, 
                     email: email, 
@@ -80,25 +73,24 @@
                     avatar: photoURL 
                 };
 
-                localStorage.setItem('koznak_user', JSON.stringify(currentUser));
+                localStorage.setItem('koznak_user', JSON.stringify(window.currentUser));
                 if (window.updateUIAfterLogin) window.updateUIAfterLogin();
 
-                // Database دىن قوشۇمچە VIP ئۇچۇرى بولسا يېڭىلاش
                 const userRef = ref(db, 'users/' + safeKey);
                 get(userRef).then(snap => {
                     if (snap.exists()) {
                         const dbData = snap.val();
-                        currentUser.vip = isAdmin ? true : (dbData.vip || false);
-                        currentUser.vipExpire = dbData.vipExpire || null;
-                        currentUser.role = isAdmin ? 'admin' : (dbData.role || 'user');
-                        localStorage.setItem('koznak_user', JSON.stringify(currentUser));
+                        window.currentUser.vip = isAdmin ? true : (dbData.vip || false);
+                        window.currentUser.vipExpire = dbData.vipExpire || null;
+                        window.currentUser.role = isAdmin ? 'admin' : (dbData.role || 'user');
+                        localStorage.setItem('koznak_user', JSON.stringify(window.currentUser));
                         if (window.updateUIAfterLogin) window.updateUIAfterLogin();
                     } else {
-                        set(userRef, currentUser);
+                        set(userRef, window.currentUser);
                     }
                 }).catch(() => {});
             } else {
-                currentUser = null;
+                window.currentUser = null;
                 localStorage.removeItem('koznak_user');
                 if (window.updateUIAfterLogin) window.updateUIAfterLogin();
             }
@@ -566,7 +558,7 @@
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .detail-title { font-size: 19px; font-weight: 900; margin-bottom: 8px; color: var(--text-primary); }
-        .detail-meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; gap: 8px; }
+        .detail-meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-secondary); flex-wrap: gap: 8px; }
 
         .series-episode-bar-detail {
             display: flex; gap: 8px; overflow-x: auto; padding: 12px 0; margin-top: 10px; scrollbar-width: none;
@@ -1273,7 +1265,7 @@
         let featuredSliders = {};
         let currentFilter = 'all';
         let currentSearchGenre = 'all';
-        let currentUser = null;
+        window.currentUser = null;
         let favorites = JSON.parse(localStorage.getItem('koznak_favs') || '[]');
         let historyList = JSON.parse(localStorage.getItem('koznak_history') || '[]');
         let currentActiveMovieId = null;
@@ -1497,7 +1489,7 @@
         }
 
         window.updateAdminSettings = function(type) {
-            if (!currentUser || currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
+            if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
             
             let val = '';
             if (type === 'vipPrice') {
@@ -1563,7 +1555,6 @@
         function handleGoogleLogin() {
             window.signInWithPopup(window.auth, window.googleProvider)
                 .catch((error) => {
-                    // ئەگەر Pop-up توسۇلۇپ قالسا Redirect ئارقىلىق كىرىدۇ
                     window.signInWithRedirect(window.auth, window.googleProvider).catch(err => {
                         alert('Google كىرىش خاتالىقى: ' + err.message);
                     });
@@ -1584,7 +1575,7 @@
         }
 
         function addHeroSliderItem() {
-            if(!currentUser || currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
+            if(!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
             const selectEl = document.getElementById('sliderMovieSelect');
             const movieId = selectEl.value;
             if(!movieId || !allMovies[movieId]) return alert('فىلىم تاللاڭ!');
@@ -1639,7 +1630,7 @@
                         <span class="hero-slide-badge">${escapeHTML(getCategoryName(slideItem.type))}</span>
                         <p style="font-size: 12px; color: #cbd5e1; margin-bottom: 10px;">ئەڭ يېڭى ۋە يۇقىرى سۈپەتلىك تاللانما فىلىملەر.</p>
                         <button class="btn-watch" onclick="event.stopPropagation(); handleCardClick('${slideItem.id}')"><i class="fa-solid fa-play"></i> كۆرۈش</button>
-                        ${currentUser && currentUser.role === 'admin' && slideItem.sKey ? `<button class="del-btn" onclick="event.stopPropagation(); deleteSliderItem('${slideItem.sKey}')" style="position:absolute; top:10px; left:10px;">✕</button>` : ''}
+                        ${window.currentUser && window.currentUser.role === 'admin' && slideItem.sKey ? `<button class="del-btn" onclick="event.stopPropagation(); deleteSliderItem('${slideItem.sKey}')" style="position:absolute; top:10px; left:10px;">✕</button>` : ''}
                     </div>
                 `;
                 slide.onclick = () => handleCardClick(slideItem.id);
@@ -1798,7 +1789,7 @@
 
         function createMovieCardElement(id, item) {
             const isFav = favorites.includes(id);
-            const isAdmin = currentUser && currentUser.role === 'admin';
+            const isAdmin = window.currentUser && window.currentUser.role === 'admin';
             const posterHtml = item.poster ? `<img src="${item.poster}" alt="${escapeHTML(item.title)}" loading="lazy">` : '🎬';
 
             const card = document.createElement('div');
@@ -1869,7 +1860,7 @@
             if(!item) return;
             addToHistory(id);
 
-            const isUserVipActive = currentUser && (currentUser.role === 'admin' || checkUserVipStatus(currentUser));
+            const isUserVipActive = window.currentUser && (window.currentUser.role === 'admin' || checkUserVipStatus(window.currentUser));
             if(item.tag === 'VIP' && (!item.type || !item.type.includes('series')) && !isUserVipActive) {
                 alert('بۇ فىلىم پەقەت VIP ئەزالار ئۈچۈنلا!');
                 switchTab('vipOpenTab');
@@ -2072,7 +2063,7 @@
         }
 
         function rateMovie(type) {
-            if(!currentUser) {
+            if(!window.currentUser) {
                 alert('باھا بېرىش ئۈچۈن ھېساباتىڭىزغا كىرىڭ!');
                 switchTab('accountTab');
                 return;
@@ -2084,11 +2075,11 @@
                 if(!reactions.dislikes) reactions.dislikes = {};
 
                 if (type === 'like') {
-                    if (reactions.likes[currentUser.userKey]) delete reactions.likes[currentUser.userKey];
-                    else { reactions.likes[currentUser.userKey] = true; delete reactions.dislikes[currentUser.userKey]; }
+                    if (reactions.likes[window.currentUser.userKey]) delete reactions.likes[window.currentUser.userKey];
+                    else { reactions.likes[window.currentUser.userKey] = true; delete reactions.dislikes[window.currentUser.userKey]; }
                 } else if (type === 'dislike') {
-                    if (reactions.dislikes[currentUser.userKey]) delete reactions.dislikes[currentUser.userKey];
-                    else { reactions.dislikes[currentUser.userKey] = true; delete reactions.likes[currentUser.userKey]; }
+                    if (reactions.dislikes[window.currentUser.userKey]) delete reactions.dislikes[window.currentUser.userKey];
+                    else { reactions.dislikes[window.currentUser.userKey] = true; delete reactions.likes[window.currentUser.userKey]; }
                 }
 
                 window.dbSet(movieRef, reactions).then(() => {
@@ -2113,9 +2104,9 @@
             likeBtn.classList.remove('active-like');
             dislikeBtn.classList.remove('active-dislike');
 
-            if (currentUser) {
-                if (likes[currentUser.userKey]) likeBtn.classList.add('active-like');
-                else if (dislikes[currentUser.userKey]) dislikeBtn.classList.add('active-dislike');
+            if (window.currentUser) {
+                if (likes[window.currentUser.userKey]) likeBtn.classList.add('active-like');
+                else if (dislikes[window.currentUser.userKey]) dislikeBtn.classList.add('active-dislike');
             }
         }
 
@@ -2141,7 +2132,7 @@
         }
 
         function submitComment() {
-            if(!currentUser) {
+            if(!window.currentUser) {
                 alert('پىكىر قالدۇرۇش ئۈچۈن كىرىڭ!');
                 switchTab('accountTab');
                 return;
@@ -2151,8 +2142,8 @@
 
             const commentId = 'com_' + Date.now();
             window.dbSet(window.dbRef(window.db, `movies/${currentActiveMovieId}/comments/${commentId}`), {
-                user: currentUser.user, 
-                avatar: currentUser.avatar || '', 
+                user: window.currentUser.user, 
+                avatar: window.currentUser.avatar || '', 
                 text: commentText, 
                 timestamp: Date.now(), 
                 likes: {},
@@ -2164,8 +2155,8 @@
         }
 
         function toggleCommentLike(commentId) {
-            if(!currentUser) return alert('يۈرەك قويۇش ئۈچۈن كىرىڭ!');
-            const commentRef = window.dbRef(window.db, `movies/${currentActiveMovieId}/comments/${commentId}/likes/${currentUser.userKey}`);
+            if(!window.currentUser) return alert('يۈرەك قويۇش ئۈچۈن كىرىڭ!');
+            const commentRef = window.dbRef(window.db, `movies/${currentActiveMovieId}/comments/${commentId}/likes/${window.currentUser.userKey}`);
             window.dbGet(commentRef).then(snap => {
                 if(snap.exists()) window.dbRemove(commentRef).then(() => reloadCurrentComments());
                 else window.dbSet(commentRef, true).then(() => reloadCurrentComments());
@@ -2179,15 +2170,15 @@
         }
 
         function submitReply(commentId) {
-            if (!currentUser) return alert('جاۋاب قايتۇرۇش ئۈچۈن كىرىڭ!');
+            if (!window.currentUser) return alert('جاۋاب قايتۇرۇش ئۈچۈن كىرىڭ!');
             const replyInput = document.getElementById('replyInput_' + commentId);
             const text = replyInput.value.trim();
             if (!text) return;
 
             const replyId = 'rep_' + Date.now();
             window.dbSet(window.dbRef(window.db, `movies/${currentActiveMovieId}/comments/${commentId}/replies/${replyId}`), {
-                user: currentUser.user,
-                avatar: currentUser.avatar || '',
+                user: window.currentUser.user,
+                avatar: window.currentUser.avatar || '',
                 text: text,
                 timestamp: Date.now()
             }).then(() => {
@@ -2197,7 +2188,7 @@
         }
 
         function deleteComment(commentId) {
-            if(!currentUser) return;
+            if(!window.currentUser) return;
             if(confirm('پىكىرنى ئۆچۈرەمسىز؟')) {
                 window.dbRemove(window.dbRef(window.db, `movies/${currentActiveMovieId}/comments/${commentId}`)).then(() => reloadCurrentComments());
             }
@@ -2230,8 +2221,8 @@
                 const com = commentsObj[k];
                 const likesObj = com.likes || {};
                 const likesCount = Object.keys(likesObj).length;
-                const hasLiked = currentUser && likesObj[currentUser.userKey];
-                const canDelete = currentUser && (currentUser.role === 'admin' || currentUser.user === com.user);
+                const hasLiked = window.currentUser && likesObj[window.currentUser.userKey];
+                const canDelete = window.currentUser && (window.currentUser.role === 'admin' || window.currentUser.user === com.user);
                 const timeText = formatRelativeTime(com.timestamp);
 
                 let repliesHtml = '';
@@ -2291,7 +2282,7 @@
         async function changeDetailEpisode(btnEl, url, episodeIndex) {
             if (episodeIndex > 0) {
                 const item = allMovies[currentActiveMovieId];
-                const isUserVipActive = currentUser && (currentUser.role === 'admin' || checkUserVipStatus(currentUser));
+                const isUserVipActive = window.currentUser && (window.currentUser.role === 'admin' || checkUserVipStatus(window.currentUser));
                 if (item && item.tag === 'VIP' && !isUserVipActive) {
                     alert('بۇ قىسىم VIP ئەزالار ئۈچۈنلا!');
                     switchTab('vipOpenTab');
@@ -2413,7 +2404,7 @@
 
         function handleUploadSubmit(e) {
             e.preventDefault();
-            if(!currentUser || currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
+            if(!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
 
             const type = document.getElementById('contentType').value;
             const genre = document.getElementById('contentGenre').value;
@@ -2502,7 +2493,7 @@
             const settingsName = document.getElementById('settingsProfileName');
             const settingsDesc = document.getElementById('settingsProfileDesc');
 
-            if (!currentUser) {
+            if (!window.currentUser) {
                 if (loginSection) loginSection.style.display = 'block';
                 if (profileView) profileView.style.display = 'none';
                 if (accTitle) accTitle.innerText = 'ھېساباتقا كىرىش ياكى قۇرۇش';
@@ -2520,25 +2511,25 @@
 
             if (loginSection) loginSection.style.display = 'none';
             if (profileView) profileView.style.display = 'block';
-            if (accTitle) accTitle.innerText = 'خۇش كەپسىز, ' + (currentUser.user || 'ئابونت');
+            if (accTitle) accTitle.innerText = 'خۇش كەپسىز, ' + (window.currentUser.user || 'ئابونت');
             
-            document.getElementById('displayUsername').innerText = currentUser.email || '';
-            if (settingsName) settingsName.innerText = currentUser.user || 'ئابونت';
-            if (settingsDesc) settingsDesc.innerText = currentUser.email || '';
+            document.getElementById('displayUsername').innerText = window.currentUser.email || '';
+            if (settingsName) settingsName.innerText = window.currentUser.user || 'ئابونت';
+            if (settingsDesc) settingsDesc.innerText = window.currentUser.email || '';
             
-            const avatarHtml = currentUser.avatar 
-                ? `<img src="${currentUser.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` 
+            const avatarHtml = window.currentUser.avatar 
+                ? `<img src="${window.currentUser.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` 
                 : '👤';
             if (avatarMain) avatarMain.innerHTML = avatarHtml;
             if (avatarSettings) avatarSettings.innerHTML = avatarHtml;
 
-            const isAdmin = currentUser.role === 'admin';
-            const isVipActive = checkUserVipStatus(currentUser);
+            const isAdmin = window.currentUser.role === 'admin';
+            const isVipActive = checkUserVipStatus(window.currentUser);
 
             let vipText = 'ئادەتتىكى ئەزا';
             if (isAdmin) vipText = '👑 باشقۇرغۇچى';
             else if (isVipActive) {
-                let remainingDays = Math.ceil((currentUser.vipExpire - Date.now()) / (1000 * 60 * 60 * 24));
+                let remainingDays = Math.ceil((window.currentUser.vipExpire - Date.now()) / (1000 * 60 * 60 * 24));
                 if (remainingDays < 0) remainingDays = 0;
                 vipText = `⭐ VIP ئەزا (قالدى: ${remainingDays} كۈن)`;
             }
@@ -2553,7 +2544,7 @@
 
         function handleLogout() {
             window.signOut(window.auth).then(() => {
-                currentUser = null;
+                window.currentUser = null;
                 localStorage.removeItem('koznak_user');
                 window.updateUIAfterLogin();
             });
@@ -2572,13 +2563,9 @@
             
             if(localStorage.getItem('koznak_user')) {
                 try { 
-                    currentUser = JSON.parse(localStorage.getItem('koznak_user')); 
+                    window.currentUser = JSON.parse(localStorage.getItem('koznak_user')); 
                     window.updateUIAfterLogin(); 
                 } catch(e){}
-            }
-
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
             }
         });
     </script>
