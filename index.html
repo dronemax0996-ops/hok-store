@@ -405,9 +405,9 @@
             border-color: transparent; 
         }
 
-        .category-section { margin-top: 16px; padding: 0 16px; }
+        .category-section { margin-top: 20px; padding: 0 16px; }
         .section-header-row {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
         }
         .section-title {
             font-size: 16px;
@@ -418,27 +418,47 @@
             gap: 6px;
         }
 
-        .movie-row-container {
-            display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            padding: 4px 4px 14px 4px;
-            scrollbar-width: none;
-        }
-        .movie-row-container .movie-card {
-            min-width: 130px;
-            max-width: 140px;
-            flex-shrink: 0;
+        /* 🎬 ئوڭۇشلۇق ۋە ئىشەنچلىك مېڭىش رامكىسى (Continuous LTR / RTL Loop) */
+        .marquee-section-wrapper {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            padding: 4px 0 14px 0;
+            direction: ltr !important; /* مېڭىش كوئوردېناتى مۇقىم تۇرىدۇ */
         }
 
-        .movie-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        .marquee-track {
+            display: flex;
             gap: 12px;
-            padding-bottom: 20px;
+            width: max-content;
+            cursor: pointer;
+        }
+        .marquee-track:hover, .marquee-track:active {
+            animation-play-state: paused !important;
+        }
+
+        @keyframes scrollRightToLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        @keyframes scrollLeftToRight {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+        }
+
+        .marquee-dir-rtl {
+            animation: scrollRightToLeft 32s linear infinite;
+        }
+
+        .marquee-dir-ltr {
+            animation: scrollLeftToRight 32s linear infinite;
         }
 
         .movie-card {
+            min-width: 135px;
+            max-width: 145px;
+            flex-shrink: 0;
             background: var(--surface-card);
             border-radius: var(--card-radius);
             overflow: hidden;
@@ -448,6 +468,19 @@
             flex-direction: column;
             cursor: pointer;
             border: 1px solid var(--border-glow);
+            direction: rtl !important; /* كارتىنىڭ خېتى راۋان ئۇيغۇرچە تۇرىدۇ */
+            text-align: right;
+            transition: transform 0.2s;
+        }
+        .movie-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            padding-bottom: 20px;
         }
 
         .movie-poster-box {
@@ -650,51 +683,106 @@
             box-shadow: 0 6px 20px rgba(255, 42, 84, 0.4);
         }
 
-        .settings-page-wrapper { max-width: 480px; margin: 14px auto; padding: 0 14px; }
-        .user-profile-card { 
-            background: var(--surface-card); 
-            border: 1px solid var(--border-glow); 
-            border-radius: 22px; padding: 20px; margin-bottom: 14px; text-align: center; 
+        .settings-page-wrapper { max-width: 500px; margin: 14px auto; padding: 0 14px; }
+        
+        .user-profile-card-modern { 
+            background: linear-gradient(135deg, rgba(30, 24, 45, 0.85) 0%, rgba(20, 20, 32, 0.95) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.15); 
+            border-radius: 26px; padding: 24px 20px; margin-bottom: 16px; text-align: center; 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            position: relative;
         }
-        .profile-top-row { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 14px; }
-        .profile-avatar-circle {
-            width: 80px; height: 80px; border-radius: 50%; border: 3px solid #ff2a54;
-            background: var(--surface-bg); display: flex; align-items: center; justify-content: center; font-size: 34px; overflow: hidden;
-            cursor: pointer; position: relative;
+        .profile-top-avatar-box {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            margin: 0 auto 10px auto;
         }
-        .profile-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
-        .profile-buttons-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .profile-action-chip {
-            background: var(--surface-bg); border: 1px solid var(--border-glow); padding: 10px;
-            border-radius: var(--pill-radius); display: flex; align-items: center; justify-content: center; gap: 6px;
-            font-size: 12px; font-weight: 700; color: var(--text-primary); cursor: pointer; text-decoration: none;
+        .profile-avatar-glow {
+            width: 100%; height: 100%; border-radius: 50%; border: 3px solid #ff2a54;
+            background: var(--surface-bg); display: flex; align-items: center; justify-content: center; font-size: 40px; overflow: hidden;
+            box-shadow: 0 0 25px rgba(255, 42, 84, 0.4);
+            cursor: pointer;
+        }
+        .profile-avatar-glow img { width: 100%; height: 100%; object-fit: cover; }
+        .avatar-edit-tag {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            background: #ff2a54;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            border: 2px solid #0a0a12;
+            cursor: pointer;
         }
 
-        .settings-block-card { 
-            background: var(--surface-card); 
-            border: 1px solid var(--border-glow); 
-            border-radius: 22px; padding: 4px 18px; 
+        .profile-quick-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 16px 0 18px 0;
         }
-        .settings-row-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border-glow); }
-        .settings-row-right { display: flex; align-items: center; gap: 10px; }
-        .settings-icon-box { 
-            width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; 
-            background: var(--surface-bg); border: 1px solid var(--border-glow); 
+        .stat-card-item {
+            background: rgba(14, 14, 24, 0.6);
+            border: 1px solid var(--border-glow);
+            border-radius: 18px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
         }
-        .settings-text-box { display: flex; flex-direction: column; gap: 2px; text-align: right; }
-        .settings-item-title { font-size: 12px; font-weight: 700; color: var(--text-primary); }
-        .settings-item-desc { font-size: 10px; color: var(--text-secondary); }
 
-        .theme-buttons-container { 
-            display: flex; background: var(--surface-bg); border: 1px solid var(--border-glow); padding: 4px; border-radius: var(--pill-radius); gap: 4px; 
+        /* ⚙️ يېڭىچە نەپىس تەڭشەك بۆلەكلىرى */
+        .settings-group-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 22px;
+            padding: 6px 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
         }
-        .theme-select-btn {
-            flex: 1; padding: 5px 12px; font-size: 11px; font-weight: 700;
-            color: var(--text-secondary); border-radius: var(--pill-radius); cursor: pointer; background: transparent; border: none;
+        .settings-group-title {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 800;
+            margin: 14px 4px 6px 4px;
+            text-align: right;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .theme-select-btn.active { 
-            background: var(--accent-gradient); 
-            color: #ffffff; 
+        .settings-cell-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .settings-cell-row:last-child {
+            border-bottom: none;
+        }
+        .settings-cell-row:active {
+            opacity: 0.7;
+        }
+        .settings-icon-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glow);
         }
 
         .bottom-nav {
@@ -759,21 +847,6 @@
         .btn-vip-off { background: #ffa502; color: #000000; }
         .btn-del-user { background: #ff4757; color: #ffffff; }
 
-        .telegram-embed-box {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            background: #000;
-            overflow: hidden;
-        }
-        .telegram-embed-box iframe {
-            width: 100%;
-            height: 118% !important;
-            margin-top: -9% !important;
-            border: none;
-            background: #000;
-        }
-
         .uid-badge-box {
             display: inline-flex;
             align-items: center;
@@ -782,7 +855,7 @@
             border: 1px dashed #ff2a54;
             padding: 6px 14px;
             border-radius: var(--pill-radius);
-            margin: 8px 0 12px 0;
+            margin: 6px 0 10px 0;
             cursor: pointer;
             user-select: none;
         }
@@ -792,20 +865,10 @@
             border: 1px solid rgba(255, 215, 0, 0.35);
             border-radius: 26px;
             padding: 24px 20px;
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(255, 215, 0, 0.05);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
             text-align: center;
             position: relative;
             overflow: hidden;
-        }
-        .vip-luxury-card::before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            left: -50px;
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.2), transparent 70%);
-            pointer-events: none;
         }
         .vip-crown-icon {
             font-size: 38px;
@@ -851,13 +914,8 @@
             align-items: center;
             margin: 14px 0 16px 0;
             cursor: pointer;
-            transition: border-color 0.2s;
-        }
-        .vip-copy-box:hover {
-            border-color: #ffd700;
         }
 
-        /* 🖼️ پەقەت تېلېفوندىن ھۆججەت ئارقىلىق رەسىم تاللاش كۆزنىكى */
         .avatar-modal {
             display: none;
             position: fixed;
@@ -890,7 +948,6 @@
 </head>
 <body>
 
-    <!-- 🔒 ئۆزگىچە كىرىش ۋە يېڭى ھېسابات ئېچىش كۆزنىكى -->
     <div id="authOverlay">
         <div class="auth-card">
             <div class="splash-cinema-icon" style="margin: 0 auto 10px auto;"><i class="fa-solid fa-clapperboard"></i></div>
@@ -905,7 +962,6 @@
                 </button>
             </div>
 
-            <!-- 1. بار ھېساباتقا كىرىش ئورنى -->
             <div id="loginFormSection" style="text-align: right;">
                 <div class="form-group">
                     <label>ئەزا نامى ياكى كىملىك</label>
@@ -920,7 +976,6 @@
                 </button>
             </div>
 
-            <!-- 2. يېڭى ھېسابات ئېچىش ئورنى -->
             <div id="registerFormSection" style="display: none; text-align: right;">
                 <div class="form-group">
                     <label>يېڭى ئىسىم بەلگىلەش</label>
@@ -937,11 +992,10 @@
         </div>
     </div>
 
-    <!-- 🖼️ پەقەت تېلېفوندىن فايىل ئارقىلىق رەسىم تاللاش كۆزنىكى -->
     <div id="avatarModal" class="avatar-modal">
         <div class="avatar-modal-content">
             <h4 style="font-size: 16px; font-weight: 800; margin-bottom: 6px;">باش رەسىم يۈكلەش</h4>
-            <p style="font-size: 12px; color: var(--text-secondary);">تېلېفونىڭىزنىڭ ئالبومىدىن بىر رەسىم تاللاڭ</p>
+            <p style="font-size: 12px; color: var(--text-secondary);">تېلېفونىڭىزدىن رەسىم تاللاڭ</p>
             
             <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" onchange="handleAvatarFileSelected(event)">
             
@@ -991,12 +1045,11 @@
 
         <div class="category-tabs">
             <button class="cat-chip active" onclick="filterCategory('all', this)">✨ بارلىق كىنولار</button>
-            <button class="cat-chip" onclick="filterCategory('free', this)">🎁 ھەقسىز كىنولار</button>
             <button class="cat-chip" onclick="filterCategory('movie', this)">🎬 كىنولار</button>
             <button class="cat-chip" onclick="filterCategory('series', this)">📺 قىسىملىق</button>
             <button class="cat-chip" onclick="filterCategory('cartoon', this)">🧸 كارتونلار</button>
-            <button class="cat-chip" onclick="filterCategory('cartoon_series', this)">🧸📺 قىسىملىق كارتۇن</button>
             <button class="cat-chip" onclick="filterCategory('short', this)">📱 قىسقا فىلىم</button>
+            <button class="cat-chip" onclick="filterCategory('free', this)">🎁 ھەقسىز كىنولار</button>
             <button class="cat-chip" onclick="filterCategory('top_rated', this)">👍 ئەڭ ياقتۇرۇلغانلار</button>
         </div>
 
@@ -1089,12 +1142,12 @@
                 <div class="form-group">
                     <label>مەزمۇن تىپى</label>
                     <select id="contentType" class="form-select" onchange="toggleUploadInputs()">
-                        <option value="free">🎁 ھەقسىز كىنولار (Free Movie)</option>
                         <option value="movie">كىنولار (Movie)</option>
                         <option value="series">قىسىملىق كىنولار (Series - 1-قىسىم ھەقسىز)</option>
                         <option value="cartoon">كارتونلار (Cartoon)</option>
                         <option value="cartoon_series">قىسىملىق كارتۇن (Cartoon Series - 1-قىسىم ھەقسىز)</option>
                         <option value="short">قىسقا فىلىم (Short Film)</option>
+                        <option value="free">🎁 ھەقسىز كىنولار (Free Movie)</option>
                     </select>
                 </div>
                 
@@ -1153,66 +1206,70 @@
         </div>
     </div>
 
+    <!-- 👤 كۈچەيتىلگەن نەپىس ھېسابات بېتى -->
     <div id="accountTab" class="tab-content">
-        <div class="page-box" style="text-align: center;">
-            <div style="display: flex; flex-direction: column; align-items: center; margin-top: 15px; margin-bottom: 10px;">
-                <div class="profile-avatar-circle" id="mainAccountAvatarBox" onclick="openAvatarModal()" title="باش رەسىمنى ئۆزگەرتىش">👤</div>
-                <button type="button" onclick="openAvatarModal()" style="background:none; border:none; color:#ff2a54; font-size:11px; font-weight:800; cursor:pointer; margin-top:4px;">
-                    <i class="fa-solid fa-camera"></i> باش رەسىمنى ئۆزگەرتىش
+        <div class="settings-page-wrapper">
+            <div class="user-profile-card-modern">
+                <div class="profile-top-avatar-box">
+                    <div class="profile-avatar-glow" id="mainAccountAvatarBox" onclick="openAvatarModal()" title="باش رەسىمنى ئۆزگەرتىش">👤</div>
+                    <div class="avatar-edit-tag" onclick="openAvatarModal()"><i class="fa-solid fa-camera"></i></div>
+                </div>
+
+                <h3 id="accountTitle" style="font-size: 19px; font-weight: 900; margin-bottom: 4px;">ئابونت</h3>
+                
+                <div class="uid-badge-box" onclick="copyUserUID()" title="كۆچۈرۈۋېلىش ئۈچۈن بېسىڭ">
+                    <span style="font-size: 11px; color: var(--text-secondary);">شەخسىي UID:</span>
+                    <span id="displayUserUID" style="font-size: 15px; font-weight: 900; color: #ff2a54;">------</span>
+                    <i class="fa-regular fa-copy" style="font-size: 12px; color: #ff2a54;"></i>
+                </div>
+
+                <div class="profile-quick-stats">
+                    <div class="stat-card-item">
+                        <span style="font-size: 11px; color: var(--text-secondary);">ھېسابات نامى</span>
+                        <span id="displayUsername" style="font-size: 13px; font-weight: 800; color: #fff;">-</span>
+                    </div>
+                    <div class="stat-card-item">
+                        <span style="font-size: 11px; color: var(--text-secondary);">ئەزالىق سالاھىيىتى</span>
+                        <span id="vipBadge" style="font-size: 12px; font-weight: 800; color: #ffd700;">ئادەتتىكى ئەزا</span>
+                    </div>
+                </div>
+
+                <button type="button" class="action-btn" style="background: rgba(255, 71, 87, 0.2); border: 1px solid #ff4757; color: #ff4757; box-shadow: none; padding: 10px; font-size: 12px;" onclick="logoutUser()">
+                    <i class="fa-solid fa-arrow-right-from-bracket"></i> ھېساباتتىن چېكىنىش
                 </button>
             </div>
 
-            <h3 id="accountTitle" style="font-size: 17px; margin-bottom: 4px;">ھېساباتىڭىز</h3>
-            
-            <div class="uid-badge-box" onclick="copyUserUID()" title="كۆچۈرۈۋېلىش ئۈچۈن بېسىڭ">
-                <span style="font-size: 12px; color: var(--text-secondary);">خاس ID:</span>
-                <span id="displayUserUID" style="font-size: 15px; font-weight: 900; color: #ff2a54;">------</span>
-                <i class="fa-regular fa-copy" style="font-size: 13px; color: #ff2a54;"></i>
-            </div>
-            
-            <div id="userProfileView" style="text-align: right;">
-                <div style="background: var(--surface-card); border: 1px solid var(--border-glow); padding: 16px; border-radius: 18px; margin-bottom: 14px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span id="displayUsername" style="font-size: 14px; font-weight: 800; color: #ff2a54;"></span>
-                        <span id="vipBadge" style="background: var(--surface-bg); color: var(--text-primary); padding: 4px 10px; border-radius: var(--pill-radius); font-size: 11px; font-weight: 700; border: 1px solid var(--border-glow);">ئادەتتىكى ئەزا</span>
+            <div id="adminPanelSection" style="display: none; background: var(--surface-card); border: 1px solid var(--border-glow); border-radius: 24px; padding: 18px; margin-top: 14px; text-align: right;">
+                <div class="section-title" style="font-size: 15px; margin-bottom: 12px;"><i class="fa-solid fa-sliders"></i> باشقۇرغۇچى مەركىزى</div>
+                
+                <div class="form-group">
+                    <label>ئايلىق VIP ئەزالىق باھاسى</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="adminVipPrice" class="form-input" placeholder="مەسىلەن: 4$" autocomplete="off">
+                        <button type="button" class="action-btn" style="width: auto; padding: 10px 16px; margin: 0; background: #2ed573;" onclick="updateAdminSettings('vipPrice')">ساقلاش</button>
                     </div>
                 </div>
 
-                <button type="button" class="action-btn" style="background: #ff4757; margin-bottom: 14px;" onclick="logoutUser()">ھېساباتتىن چىقىش (Logout)</button>
-
-                <div id="adminPanelSection" style="display: none; margin-top: 20px; border-top: 1px solid var(--border-glow); padding-top: 16px; text-align: right;">
-                    <div class="section-title" style="font-size: 14px; margin-bottom: 10px;">⚙️ ئومۇمىي تەڭشەكلەر</div>
-                    
-                    <div class="form-group">
-                        <label>ئەزالىق باھاسى (VIP Price)</label>
-                        <div style="display: flex; gap: 8px;">
-                            <input type="text" id="adminVipPrice" class="form-input" placeholder="مەسىلەن: 4$" autocomplete="off">
-                            <button type="button" class="action-btn" style="width: auto; padding: 10px 16px; margin: 0; background: #2ed573;" onclick="updateAdminSettings('vipPrice')">ساقلاش</button>
-                        </div>
+                <div class="form-group">
+                    <label>باش بەت ئۇقتۇرۇش خېتى</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="adminScrollingText" class="form-input" placeholder="ئۇقتۇرۇش خېتى..." autocomplete="off">
+                        <button type="button" class="action-btn" style="width: auto; padding: 10px 16px; margin: 0; background: #2ed573;" onclick="updateAdminSettings('scrollingText')">ساقلاش</button>
                     </div>
-
-                    <div class="form-group">
-                        <label>باش بەت ئۇقتۇرۇش خېتى (Scrolling Text)</label>
-                        <div style="display: flex; gap: 8px;">
-                            <input type="text" id="adminScrollingText" class="form-input" placeholder="ئۇقتۇرۇش خېتى..." autocomplete="off">
-                            <button type="button" class="action-btn" style="width: auto; padding: 10px 16px; margin: 0; background: #2ed573;" onclick="updateAdminSettings('scrollingText')">ساقلاش</button>
-                        </div>
-                    </div>
-
-                    <div class="section-title" style="font-size: 14px; margin: 20px 0 10px 0;">🖼️ باش بەت سىلايدېر قوشۇش</div>
-                    <div class="form-group">
-                        <select id="sliderMovieSelect" class="form-select"></select>
-                        <button type="button" class="action-btn" style="background: var(--accent-blue-grad); padding: 10px; font-size: 12px; margin-top: 8px;" onclick="addHeroSliderItem()">➕ سىلايدېرغا قوشۇش</button>
-                    </div>
-
-                    <div class="section-title" style="font-size: 14px; margin: 20px 0 10px 0;">👥 ئابونتلارنى باشقۇرۇش</div>
-                    
-                    <div class="form-group" style="margin-bottom: 10px;">
-                        <input type="text" id="adminUserSearchInput" class="form-input" placeholder="🔍 ئىسىم ياكى 6 خانىلىق ID نومۇرىنى يېزىپ ئىزدەڭ..." oninput="renderAdminUsersList()" autocomplete="off">
-                    </div>
-
-                    <div class="admin-users-list" id="adminUsersListContainer"></div>
                 </div>
+
+                <div class="section-title" style="font-size: 14px; margin: 18px 0 10px 0;"><i class="fa-solid fa-images"></i> باش بەت سىلايدېرىغا كىنو قوشۇش</div>
+                <div class="form-group">
+                    <select id="sliderMovieSelect" class="form-select"></select>
+                    <button type="button" class="action-btn" style="background: var(--accent-blue-grad); padding: 10px; font-size: 12px; margin-top: 8px;" onclick="addHeroSliderItem()">➕ سىلايدېرغا قوشۇش</button>
+                </div>
+
+                <div class="section-title" style="font-size: 14px; margin: 18px 0 10px 0;"><i class="fa-solid fa-users"></i> ئەزا ئېچىش ۋە باشقۇرۇش</div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <input type="text" id="adminUserSearchInput" class="form-input" placeholder="🔍 ئىسىم ياكى 6 خانىلىق ID نومۇرى بويىچە ئىزدەڭ..." oninput="renderAdminUsersList()" autocomplete="off">
+                </div>
+
+                <div class="admin-users-list" id="adminUsersListContainer"></div>
             </div>
         </div>
     </div>
@@ -1262,82 +1319,90 @@
         </div>
     </div>
 
+    <!-- ⚙️ يېڭىچە ئۇسلۇبتا گۇرۇپپىلانغان سىستېما تەڭشەكلىرى -->
     <div id="settingsTab" class="tab-content">
         <div class="settings-page-wrapper">
-            <div class="user-profile-card">
-                <div class="profile-top-row">
-                    <div class="profile-avatar-circle" id="settingsAvatarBox" onclick="openAvatarModal()" title="باش رەسىمنى ئۆزگەرتىش">👤</div>
-                    <div class="profile-meta-info">
-                        <span class="profile-username-txt" id="settingsProfileName" style="font-weight: 800; font-size: 15px;">ئابونت</span><br>
-                        <span class="profile-role-txt" id="settingsProfileDesc" style="font-size: 11px; color: var(--text-secondary);">ھېسابات ئۇلانغان</span>
+            
+            <div class="settings-group-title"><i class="fa-solid fa-user-gear"></i> ھېسابات ۋە سۈرەت</div>
+            <div class="settings-group-card">
+                <div class="settings-cell-row" onclick="openAvatarModal()">
+                    <div style="display: flex; align-items: center; gap: 12px; text-align: right;">
+                        <div class="settings-icon-badge" style="color: #ff2a54;"><i class="fa-solid fa-camera-rotate"></i></div>
+                        <div>
+                            <div style="font-size: 13px; font-weight: 800; color: #fff;">باش رەسىمنى يېڭىلاش</div>
+                            <div style="font-size: 11px; color: var(--text-secondary);">تېلېفوندىن سۈرەت تاللاش</div>
+                        </div>
                     </div>
+                    <i class="fa-solid fa-chevron-left" style="font-size: 12px; color: var(--text-secondary);"></i>
                 </div>
-                <div class="profile-buttons-row">
-                    <div class="profile-action-chip" onclick="switchTab('accountTab')"><span>👤</span> ھېسابات</div>
-                    <div class="profile-action-chip" onclick="switchTab('vipOpenTab')"><span>⭐</span> ئەزالىق</div>
+                <div class="settings-cell-row" onclick="switchTab('accountTab')">
+                    <div style="display: flex; align-items: center; gap: 12px; text-align: right;">
+                        <div class="settings-icon-badge" style="color: #00c6ff;"><i class="fa-regular fa-id-badge"></i></div>
+                        <div>
+                            <div style="font-size: 13px; font-weight: 800; color: #fff;">شەخسىي ئۇچۇر ۋە ID</div>
+                            <div style="font-size: 11px; color: var(--text-secondary);">ئابونت تەپسىلاتلىرىنى كۆرۈش</div>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-left" style="font-size: 12px; color: var(--text-secondary);"></i>
                 </div>
             </div>
 
-            <div class="section-title" style="margin-bottom: 10px;">تەڭشەكلەر</div>
-            <div class="settings-block-card">
-                <div class="settings-row-item" onclick="openAvatarModal()" style="cursor: pointer;">
-                    <div class="settings-row-right">
-                        <div class="settings-icon-box">🖼️</div>
-                        <div class="settings-text-box">
-                            <span class="settings-item-title">باش رەسىمنى ئۆزگەرتىش</span>
-                            <span class="settings-item-desc">تېلېفوندىن رەسىم يۈكلەڭ</span>
+            <div class="settings-group-title"><i class="fa-solid fa-sliders"></i> كۆرۈنمە يۈز ۋە تۈرلەر</div>
+            <div class="settings-group-card">
+                <div class="settings-cell-row" style="cursor: default;">
+                    <div style="display: flex; align-items: center; gap: 12px; text-align: right;">
+                        <div class="settings-icon-badge" style="color: #ffd700;"><i class="fa-solid fa-circle-half-stroke"></i></div>
+                        <div>
+                            <div style="font-size: 13px; font-weight: 800; color: #fff;">كۆرۈنۈش رەڭگى (Theme)</div>
+                            <div style="font-size: 11px; color: var(--text-secondary);">قارا ياكى يورۇق ھالەت</div>
                         </div>
                     </div>
-                    <span style="font-size: 12px; color: var(--text-secondary);">❯</span>
-                </div>
-
-                <div class="settings-row-item" id="uploadMenuSettingItem" style="display: none;">
-                    <div class="settings-row-right">
-                        <div class="settings-icon-box">📂</div>
-                        <div class="settings-text-box">
-                            <span class="settings-item-title">يېڭى مەزمۇن قوشۇش</span>
-                            <span class="settings-item-desc">فىلىم ۋە سىن يوللاش</span>
-                        </div>
-                    </div>
-                    <button type="button" class="action-btn" style="width: auto; padding: 6px 14px; font-size: 11px; margin: 0;" onclick="switchTab('uploadTab')">ئېچىش</button>
-                </div>
-
-                <div class="settings-row-item">
-                    <div class="settings-row-right">
-                        <div class="settings-icon-box">🎨</div>
-                        <div class="settings-text-box">
-                            <span class="settings-item-title">لايىھە ئۇسلۇبى</span>
-                            <span class="settings-item-desc">قاراڭغۇ ياكى يورۇق</span>
-                        </div>
-                    </div>
-                    <div class="theme-buttons-container">
-                        <button class="theme-select-btn" id="darkThemeBtn" onclick="setTheme('dark')">قارا</button>
-                        <button class="theme-select-btn" id="lightThemeBtn" onclick="setTheme('light')">يورۇق</button>
-                        <button class="theme-select-btn" id="autoThemeBtn" onclick="setTheme('auto')">ئاپتوماتىك</button>
+                    <div style="display: flex; background: var(--surface-bg); border: 1px solid var(--border-glow); padding: 3px; border-radius: var(--pill-radius); gap: 3px;">
+                        <button type="button" class="theme-select-btn" id="darkThemeBtn" onclick="setTheme('dark')">قارا</button>
+                        <button type="button" class="theme-select-btn" id="lightThemeBtn" onclick="setTheme('light')">يورۇق</button>
+                        <button type="button" class="theme-select-btn" id="autoThemeBtn" onclick="setTheme('auto')">ئاپتو</button>
                     </div>
                 </div>
 
-                <div class="settings-row-item">
-                    <div class="settings-row-right">
-                        <div class="settings-icon-box">🧹</div>
-                        <div class="settings-text-box">
-                            <span class="settings-item-title">كۆرگەنلىرىمنى تازىلاش</span>
-                            <span class="settings-item-desc">خاتىرىنى يۇيۇش</span>
+                <div class="settings-cell-row" id="uploadMenuSettingItem" style="display: none;" onclick="switchTab('uploadTab')">
+                    <div style="display: flex; align-items: center; gap: 12px; text-align: right;">
+                        <div class="settings-icon-badge" style="color: #2ed573;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                        <div>
+                            <div style="font-size: 13px; font-weight: 800; color: #fff;">يېڭى مەزمۇن قوشۇش</div>
+                            <div style="font-size: 11px; color: var(--text-secondary);">كىنو ۋە فىلىملەرنى سىستېمىغا يۈكلەش</div>
                         </div>
                     </div>
-                    <button type="button" class="action-btn" style="width: auto; padding: 6px 12px; font-size: 11px; margin: 0; background: #e67e22;" onclick="clearWatchHistory()">تازىلاش</button>
+                    <i class="fa-solid fa-chevron-left" style="font-size: 12px; color: var(--text-secondary);"></i>
+                </div>
+            </div>
+
+            <div class="settings-group-title"><i class="fa-solid fa-shield-halved"></i> سىستېما ۋە ئالاقە</div>
+            <div class="settings-group-card">
+                <div class="settings-cell-row" onclick="clearWatchHistory()">
+                    <div style="display: flex; align-items: center; gap: 12px; text-align: right;">
+                        <div class="settings-icon-badge" style="color: #ffa502;"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                        <div>
+                            <div style="font-size: 13px; font-weight: 800; color: #fff;">كۆرۈش خاتىرىسىنى يۇيۇش</div>
+                            <div style="font-size: 11px; color: var(--text-secondary);">كۆرۈلگەن بارلىق كىنولارنى تىزىمدىن ئۆچۈرۈش</div>
+                        </div>
+                    </div>
+                    <button type="button" style="background: rgba(255, 165, 2, 0.15); border: 1px solid #ffa502; color: #ffa502; padding: 4px 10px; border-radius: var(--pill-radius); font-size: 11px; font-weight: 800; cursor: pointer;">تازىلاش</button>
                 </div>
 
-                <div class="settings-row-item" onclick="window.open('https://t.me/koznak_tv', '_blank')" style="cursor: pointer;">
-                    <div class="settings-row-right">
-                        <div class="settings-icon-box">📢</div>
-                        <div class="settings-text-box">
-                            <span class="settings-item-title">تېلېگرامما قانىلىمىز</span>
-                            <span class="settings-item-desc">يېڭى ئېلانلاردىن خەۋەردار بولۇڭ</span>
+                <div class="settings-cell-row" onclick="window.open('https://t.me/koznak_tv', '_blank')">
+                    <div style="display: flex; align-items: center; gap: 12px; text-align: right;">
+                        <div class="settings-icon-badge" style="color: #0088cc;"><i class="fa-brands fa-telegram"></i></div>
+                        <div>
+                            <div style="font-size: 13px; font-weight: 800; color: #fff;">رەسمىي ئالاقە قانىلى</div>
+                            <div style="font-size: 11px; color: var(--text-secondary);">@koznak_tv قانىلىغا قوشۇلۇش</div>
                         </div>
                     </div>
-                    <span style="font-size: 12px; color: var(--text-secondary);">🔗</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 12px; color: var(--text-secondary);"></i>
                 </div>
+            </div>
+
+            <div style="text-align: center; font-size: 11px; color: var(--text-secondary); margin-top: 10px;">
+                كۆزنەك كىنوخانىسى • Koznak TV v2.5
             </div>
         </div>
     </div>
@@ -1469,7 +1534,7 @@
                 navigator.clipboard.writeText(uidText).then(() => {
                     alert('ID نومۇرىڭىز نۇسخىلاندى: ' + uidText);
                 }).catch(() => {
-                    prompt('ID نومۇرىڭىزنى بۇ يەردىن كۆچۈرۈۋېلىڭ:', uidText);
+                    prompt('ID نومۇرىڭىزنى كۆچۈرۈۋېلىڭ:', uidText);
                 });
             } else {
                 prompt('ID نومۇرىڭىزنى بۇ يەردىن كۆچۈرۈۋېلىڭ:', uidText);
@@ -1515,7 +1580,7 @@
                 const localSessionId = localStorage.getItem('koznak_session_id');
 
                 if (dbSessionId && localSessionId && dbSessionId !== localSessionId) {
-                    alert('⚠️ دىققەت: بۇ ھېساباتقا باشقا بىر تېلېفوندىن كىرىلدى! بىخەتەرلىك ئۈچۈن ئالدىنقى سىستېمىدىن ئاپتوماتىك چىقىرىلدىڭىز.');
+                    alert('⚠️ بۇ ھېساباتقا باشقا بىر ئۈسكۈنىدىن كىرىلگەنلىكى ئۈچۈن سىستېمىدىن چىقىرىلدىڭىز!');
                     logoutUser(false);
                 }
             });
@@ -1810,7 +1875,7 @@
             const vipTabUID = document.getElementById('displayVipTabUID');
 
             if (window.currentUser) {
-                if (accTitle) accTitle.innerText = 'خۇش كەپسىز, ' + window.currentUser.user;
+                if (accTitle) accTitle.innerText = window.currentUser.user;
                 document.getElementById('displayUsername').innerText = window.currentUser.user;
                 if (settingsName) settingsName.innerText = window.currentUser.user;
                 if (settingsDesc) settingsDesc.innerText = 'ھېسابات ئۇلانغان';
@@ -2158,6 +2223,7 @@
             renderMovies();
         }
 
+        // 🎬 يېڭى كىنولار، قىسىملىق، كارتونلار ۋە ھەقسىز كىنولارنى ئۆزگىچە مېڭىش ھالىتى بىلەن تولۇق كۆرسىتىش
         function renderMovies() {
             const container = document.getElementById('homeSectionsContainer');
             if(!container) return;
@@ -2186,7 +2252,14 @@
             }
 
             if (currentFilter !== 'all') {
-                let filteredKeys = keys.filter(id => allMovies[id].type === currentFilter);
+                let filteredKeys = keys.filter(id => {
+                    const t = allMovies[id].type || '';
+                    if (currentFilter === 'cartoon') {
+                        return t === 'cartoon' || t === 'cartoon_series';
+                    }
+                    return t === currentFilter;
+                });
+
                 let sectionDiv = document.createElement('div');
                 sectionDiv.className = 'category-section';
                 sectionDiv.innerHTML = `<div class="section-header-row"><div class="section-title">📂 ${getCategoryName(currentFilter)}</div></div><div class="movie-grid" id="grid_${currentFilter}"></div>`;
@@ -2195,30 +2268,65 @@
                 if (filteredKeys.length === 0) grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 20px;">تېپىلمىدى...</div>';
                 else filteredKeys.forEach(id => grid.appendChild(createMovieCardElement(id, allMovies[id])));
             } else {
-                const categories = [
-                    { key: 'free', title: '🎁 ھەقسىز كىنولار' },
-                    { key: 'movie', title: '🎬 يېڭى كىنولار' },
-                    { key: 'series', title: '📺 قىسىملىق كىنولار' },
-                    { key: 'cartoon', title: '🧸 كارتونلار' },
-                    { key: 'cartoon_series', title: '🧸📺 قىسىملىق كارتۇن' },
-                    { key: 'short', title: '📱 قىسقا فىلىم' }
+                // تەرتىپ بويىچە مەزمۇنلارنى تەڭشەش
+                const configuredSections = [
+                    { 
+                        key: 'movie', 
+                        title: '🎬 يېڭى كىنولار', 
+                        dirClass: 'marquee-dir-ltr',
+                        match: (t) => t === 'movie' || !t
+                    },
+                    { 
+                        key: 'series', 
+                        title: '📺 قىسىملىق كىنولار', 
+                        dirClass: 'marquee-dir-rtl',
+                        match: (t) => t === 'series'
+                    },
+                    { 
+                        key: 'cartoon', 
+                        title: '🧸 كارتونلار', 
+                        dirClass: 'marquee-dir-ltr',
+                        match: (t) => t === 'cartoon' || t === 'cartoon_series'
+                    },
+                    { 
+                        key: 'short', 
+                        title: '📱 قىسقا فىلىملەر', 
+                        dirClass: 'marquee-dir-rtl',
+                        match: (t) => t === 'short'
+                    },
+                    { 
+                        key: 'free', 
+                        title: '🎁 ھەقسىز كىنولار', 
+                        dirClass: 'marquee-dir-rtl',
+                        match: (t) => t === 'free'
+                    }
                 ];
 
-                categories.forEach(cat => {
-                    let catKeys = keys.filter(id => allMovies[id].type === cat.key);
+                configuredSections.forEach(sec => {
+                    let catKeys = keys.filter(id => sec.match(allMovies[id].type));
                     if (catKeys.length > 0) {
                         let sectionDiv = document.createElement('div');
                         sectionDiv.className = 'category-section';
                         sectionDiv.innerHTML = `
                             <div class="section-header-row">
-                                <div class="section-title">${cat.title}</div>
-                                <span style="font-size: 11px; color: #ff2a54; font-weight: 700; cursor: pointer;" onclick="filterCategory('${cat.key}')">ھەممىسى ❯</span>
+                                <div class="section-title">${sec.title}</div>
+                                <span style="font-size: 11px; color: #ff2a54; font-weight: 700; cursor: pointer;" onclick="filterCategory('${sec.key}')">ھەممىسى ❯</span>
                             </div>
-                            <div class="movie-row-container" id="row_${cat.key}"></div>
+                            <div class="marquee-section-wrapper">
+                                <div class="marquee-track ${sec.dirClass}" id="marquee_${sec.key}"></div>
+                            </div>
                         `;
                         container.appendChild(sectionDiv);
-                        let row = document.getElementById(`row_${cat.key}`);
-                        catKeys.forEach(id => row.appendChild(createMovieCardElement(id, allMovies[id])));
+                        let track = document.getElementById(`marquee_${sec.key}`);
+
+                        // كارتىلارنى چەكسىز مېڭىش ئۇسۇلىدا ئۈزۈلمەس قىلىپ تولدۇرۇش
+                        let renderPool = [...catKeys];
+                        while (renderPool.length < 8) {
+                            renderPool = renderPool.concat(catKeys);
+                        }
+                        const finalPool = renderPool.concat(renderPool);
+
+                        finalPool.forEach(id => track.appendChild(createMovieCardElement(id, allMovies[id])));
                     }
                 });
             }
