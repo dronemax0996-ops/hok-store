@@ -12,7 +12,6 @@
     <meta name="apple-mobile-web-app-title" content="Koznak TV">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <script type="module">
@@ -122,36 +121,12 @@
             background: var(--surface-card);
             border: 1px solid var(--border-glow);
             border-radius: 28px;
-            padding: 28px 22px;
+            padding: 30px 24px;
             width: 100%;
             max-width: 400px;
             text-align: center;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             backdrop-filter: var(--glass-blur);
-        }
-        .auth-toggle-btns {
-            display: flex;
-            background: var(--surface-bg);
-            border: 1px solid var(--border-glow);
-            border-radius: var(--pill-radius);
-            padding: 4px;
-            margin-bottom: 18px;
-            gap: 4px;
-        }
-        .auth-toggle-btn {
-            flex: 1;
-            padding: 8px;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-secondary);
-            border: none;
-            background: transparent;
-            border-radius: var(--pill-radius);
-            cursor: pointer;
-        }
-        .auth-toggle-btn.active {
-            background: var(--accent-gradient);
-            color: #ffffff;
         }
 
         header {
@@ -771,27 +746,14 @@
 </head>
 <body>
 
+    <!-- 🔒 ئابونت كىرىش ۋە تىزىملىتىش ئېكرانى (پەقەت ئىسىم ۋە پارول) -->
     <div id="authOverlay">
         <div class="auth-card">
             <div class="splash-cinema-icon" style="margin: 0 auto 12px auto;"><i class="fa-solid fa-clapperboard"></i></div>
             <h2 style="font-size: 18px; font-weight: 900; margin-bottom: 6px; color: #ffffff;">كۆزنەك كىنوخانىسى</h2>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">داۋاملاشتۇرۇش ئۈچۈن ھېساباتىڭىز بىلەن كىرىڭ</p>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 18px;">كىرىش ياكى يېڭى ھېسابات ئېچىش</p>
             
-            <div class="auth-toggle-btns">
-                <button type="button" class="auth-toggle-btn active" id="tabBtnTg" onclick="switchAuthView('telegram')">Telegram ئارقىلىق</button>
-                <button type="button" class="auth-toggle-btn" id="tabBtnCustom" onclick="switchAuthView('custom')">ئىسىم & پارول</button>
-            </div>
-
-            <div id="authViewTg">
-                <div id="tgWidgetWrapper" style="min-height: 44px; display: flex; justify-content: center; align-items: center; margin: 10px 0;"></div>
-                
-                <button type="button" class="action-btn" style="background: linear-gradient(135deg, #0088cc, #00b4d8); margin-top: 10px;" onclick="triggerTelegramAppLogin()">
-                    <i class="fa-brands fa-telegram"></i> Telegram ئەپ ئارقىلىق دەلىللەپ كىرىش
-                </button>
-                <p style="font-size: 11px; color: var(--text-secondary); margin-top: 10px;">ئەگەر كۇنۇپكا چىقمىسا يۇقىرىدىكى Telegram ئەپ كۇنۇپكىسىنى بېسىڭ ياكى «ئىسىم & پارول» بۆلىكىنى تاللاڭ.</p>
-            </div>
-
-            <div id="authViewCustom" style="display: none; text-align: right;">
+            <div style="text-align: right;">
                 <div class="form-group">
                     <label>ئىسىم ياكى ئەزا نامى</label>
                     <input type="text" id="customUsernameInput" class="form-input" placeholder="مەسىلەن: ali_123" autocomplete="off">
@@ -800,11 +762,11 @@
                     <label>پارول</label>
                     <input type="password" id="customPasswordInput" class="form-input" placeholder="پارولىڭىزنى كىرگۈزۈڭ" autocomplete="off">
                 </div>
-                <div style="display: flex; gap: 8px; margin-top: 12px;">
-                    <button type="button" class="action-btn" style="flex: 1; margin: 0; padding: 10px;" onclick="handleCustomLogin()">كىرىش</button>
-                    <button type="button" class="action-btn" style="flex: 1; margin: 0; padding: 10px; background: #2ed573;" onclick="handleCustomRegister()">يېڭى تىزىملىتىش</button>
+                <div style="display: flex; gap: 8px; margin-top: 14px;">
+                    <button type="button" class="action-btn" style="flex: 1; margin: 0; padding: 11px;" onclick="handleCustomLogin()">كىرىش</button>
+                    <button type="button" class="action-btn" style="flex: 1; margin: 0; padding: 11px; background: #2ed573;" onclick="handleCustomRegister()">يېڭى ھېسابات ئېچىش</button>
                 </div>
-                <p style="font-size: 11px; color: var(--text-secondary); margin-top: 12px; text-align: center;">باشقا ئۈسكۈنىدە ئاچسىڭىز كونا ئۈسكۈنە ئاپتوماتىك چېكىنىدۇ.</p>
+                <p style="font-size: 11px; color: var(--text-secondary); margin-top: 14px; text-align: center;">باشقا تېلېفون ياكى ئۈسكۈنىدە كىرسىڭىز ئالدىنقىسى ئاپتوماتىك چېكىنىدۇ.</p>
             </div>
         </div>
     </div>
@@ -1209,25 +1171,6 @@
         let isCinemaFullscreen = false;
         let sessionListenerUnsubscribe = null;
 
-        window.switchAuthView = function(view) {
-            const btnTg = document.getElementById('tabBtnTg');
-            const btnCustom = document.getElementById('tabBtnCustom');
-            const viewTg = document.getElementById('authViewTg');
-            const viewCustom = document.getElementById('authViewCustom');
-
-            if (view === 'telegram') {
-                btnTg.classList.add('active');
-                btnCustom.classList.remove('active');
-                viewTg.style.display = 'block';
-                viewCustom.style.display = 'none';
-            } else {
-                btnCustom.classList.add('active');
-                btnTg.classList.remove('active');
-                viewCustom.style.display = 'block';
-                viewTg.style.display = 'none';
-            }
-        };
-
         function generateSessionId() {
             return 'sess_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
         }
@@ -1269,37 +1212,13 @@
             });
         }
 
-        window.triggerTelegramAppLogin = function() {
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
-                window.onTelegramAuth(window.Telegram.WebApp.initDataUnsafe.user);
-            } else {
-                const botUsername = 'koznaktv_bot';
-                window.open(`https://t.me/${botUsername}?start=login`, '_blank');
-                alert('تېلېگرامما ئېچىلغاندىن كېيىن سىستېمىغا كىرىش ئېلىپ بېرىلىدۇ. ياكى پۈتۈنلەي تېز بولسۇن دېسىڭىز «ئىسىم & پارول» بۆلىكى ئارقىلىق بىۋاسىتە كىرىڭ.');
-            }
-        };
-
-        function initTelegramWidget() {
-            const container = document.getElementById('tgWidgetWrapper');
-            if (!container) return;
-            container.innerHTML = '';
-            const script = document.createElement('script');
-            script.async = true;
-            script.src = 'https://telegram.org/js/telegram-widget.js?22';
-            script.setAttribute('data-telegram-login', 'koznaktv_bot');
-            script.setAttribute('data-size', 'large');
-            script.setAttribute('data-onauth', 'onTelegramAuth(user)');
-            script.setAttribute('data-request-access', 'write');
-            container.appendChild(script);
-        }
-
         window.handleCustomRegister = async function() {
             const username = document.getElementById('customUsernameInput').value.trim().toLowerCase();
             const password = document.getElementById('customPasswordInput').value.trim();
 
             if (!username || !password) return alert('ئىسىم ۋە پارولنى تولۇق كىرگۈزۈڭ!');
             if (username.length < 3) return alert('ئىسىم كەم دېگەندە 3 ھەرپ بولسۇن!');
-            if (password.length < 4) return alert('پارول ئەڭ ئاز 4 ھەرپ بولسۇن!');
+            if (password.length < 4) return alert('پارول كەم دېگەندە 4 ھەرپ بولسۇن!');
 
             const safeKey = 'usr_' + username.replace(/[^a-zA-Z0-9_]/g, '');
             if (!safeKey || safeKey === 'usr_') return alert('ئىسمىڭىزدا ئىنگلىزچە ھەرپ ياكى سان ئىشلىتىڭ!');
@@ -1307,7 +1226,7 @@
             try {
                 const userSnap = await window.dbGet(window.dbRef(window.db, 'users/' + safeKey));
                 if (userSnap.exists()) {
-                    return alert('بۇ ئىسىم ئاللىبۇرۇن بار! باشقا ئىسىم تاللاڭ ياكى كىرىش كۇنۇپكىسىنى بېسىڭ.');
+                    return alert('بۇ ئىسىم ئاللىبۇرۇن تىزىملاتقان! باشقا ئىسىم تاللاڭ ياكى كىرىش كۇنۇپكىسىنى بېسىڭ.');
                 }
 
                 const newSessionId = generateSessionId();
@@ -1349,7 +1268,7 @@
             try {
                 const userSnap = await window.dbGet(window.dbRef(window.db, 'users/' + safeKey));
                 if (!userSnap.exists()) {
-                    return alert('ھېسابات تېپىلمىدى!');
+                    return alert('ھېسابات تېپىلمىدى! ئىسىمنى توغرا كىرگۈزۈڭ ياكى يېڭى ھېسابات ئېچىڭ.');
                 }
 
                 const uData = userSnap.val();
@@ -1377,62 +1296,6 @@
             }
         };
 
-        window.onTelegramAuth = function(user) {
-            if (!user || !user.id) return;
-            const userKey = 'tg_' + user.id;
-            const displayName = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-            const username = user.username || '';
-            const photoURL = user.photo_url || '';
-            const isAdmin = (username.toLowerCase() === 'koznak_usd' || username.toLowerCase() === 'hok_uyghur1' || String(user.id) === '8612107028');
-            const newSessionId = generateSessionId();
-
-            window.currentUser = {
-                userKey: userKey,
-                uid: String(user.id).slice(-6),
-                user: displayName,
-                username: username,
-                role: isAdmin ? 'admin' : 'user',
-                vip: isAdmin ? true : false,
-                vipExpire: null,
-                avatar: photoURL,
-                currentSessionId: newSessionId,
-                authType: 'telegram'
-            };
-
-            localStorage.setItem('koznak_session_id', newSessionId);
-            saveAndInitUserSession(userKey);
-        };
-
-        function saveAndInitUserSession(userKey) {
-            if (window.db && window.dbRef && window.dbGet) {
-                const userRef = window.dbRef(window.db, 'users/' + userKey);
-                window.dbGet(userRef).then(snap => {
-                    if (snap.exists()) {
-                        const dbData = snap.val();
-                        const isAdmin = window.currentUser.role === 'admin';
-                        window.currentUser.vip = isAdmin ? true : (dbData.vip || false);
-                        window.currentUser.vipExpire = dbData.vipExpire || null;
-                        window.currentUser.role = isAdmin ? 'admin' : (dbData.role || 'user');
-                        window.currentUser.uid = dbData.uid || window.currentUser.uid;
-                        
-                        window.dbUpdate(userRef, {
-                            currentSessionId: window.currentUser.currentSessionId,
-                            uid: window.currentUser.uid,
-                            avatar: window.currentUser.avatar || dbData.avatar || '',
-                            lastLogin: Date.now()
-                        });
-                    } else {
-                        window.dbSet(userRef, window.currentUser);
-                    }
-                    finishUserLoginSession();
-                }).catch(() => {
-                    finishUserLoginSession();
-                });
-            } else {
-                finishUserLoginSession();
-            }
-        }
-
         function finishUserLoginSession() {
             localStorage.setItem('koznak_logged_user', JSON.stringify(window.currentUser));
             const overlay = document.getElementById('authOverlay');
@@ -1458,8 +1321,6 @@
         };
 
         window.startApp = function() {
-            initTelegramWidget();
-
             let loggedUser = null;
             try {
                 const savedUserStr = localStorage.getItem('koznak_logged_user');
@@ -1558,9 +1419,9 @@
 
             if (window.currentUser) {
                 if (accTitle) accTitle.innerText = 'خۇش كەپسىز, ' + window.currentUser.user;
-                document.getElementById('displayUsername').innerText = window.currentUser.username ? ('@' + window.currentUser.username) : window.currentUser.user;
+                document.getElementById('displayUsername').innerText = window.currentUser.user;
                 if (settingsName) settingsName.innerText = window.currentUser.user;
-                if (settingsDesc) settingsDesc.innerText = window.currentUser.authType === 'custom' ? 'ئىسىم-پارول ھېساباتى' : 'Telegram ئابونتى';
+                if (settingsDesc) settingsDesc.innerText = 'ھېسابات ئۇلانغان';
                 
                 const currentUID = window.currentUser.uid || '---';
                 if (uidDisplay) uidDisplay.innerText = currentUID;
