@@ -57,6 +57,7 @@
             --text-secondary: #94a3b8;
             --accent-glow: #ff2a54;
             --accent-gradient: linear-gradient(135deg, #ff2a54 0%, #ff6200 100%);
+            --accent-gold: linear-gradient(135deg, #ffd700 0%, #ff8800 100%);
             --accent-blue-grad: linear-gradient(135deg, #0072ff 0%, #00c6ff 100%);
             --border-glow: rgba(255, 255, 255, 0.12);
             --card-radius: 20px;
@@ -109,7 +110,9 @@
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: var(--bg-color);
+            background: rgba(10, 10, 18, 0.94);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             z-index: 999999;
             display: flex;
             align-items: center;
@@ -118,15 +121,41 @@
             overflow-y: auto;
         }
         .auth-card {
-            background: var(--surface-card);
-            border: 1px solid var(--border-glow);
-            border-radius: 28px;
-            padding: 30px 24px;
+            background: rgba(26, 26, 42, 0.92);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 30px;
+            padding: 30px 22px;
             width: 100%;
-            max-width: 400px;
+            max-width: 410px;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
-            backdrop-filter: var(--glass-blur);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
+            position: relative;
+        }
+        .auth-nav-pills {
+            display: flex;
+            background: rgba(18, 18, 28, 0.85);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--pill-radius);
+            padding: 5px;
+            margin: 20px 0 22px 0;
+            gap: 6px;
+        }
+        .auth-nav-pill {
+            flex: 1;
+            padding: 9px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-secondary);
+            border: none;
+            background: transparent;
+            border-radius: var(--pill-radius);
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .auth-nav-pill.active {
+            background: var(--accent-gradient);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(255, 42, 84, 0.35);
         }
 
         header {
@@ -604,12 +633,12 @@
 
         .page-box { padding: 16px; max-width: 600px; margin: 0 auto; }
         .form-group { margin-bottom: 14px; }
-        .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; font-weight: 700; text-align: right; }
+        .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 5px; font-weight: 700; text-align: right; }
         .form-input, .form-select {
             width: 100%; padding: 12px 16px; 
             background: var(--surface-bg);
             border: 1px solid var(--border-glow); 
-            color: var(--text-primary); border-radius: 14px; font-size: 12px; outline: none;
+            color: var(--text-primary); border-radius: 14px; font-size: 13px; outline: none;
             text-align: right;
         }
 
@@ -692,24 +721,39 @@
         .nav-item.active { color: #ff2a54; transform: scale(1.05); }
         .nav-item span:first-child { font-size: 17px; }
 
-        .admin-users-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+        /* 👥 باشقۇرغۇچى ئابونت كارتىسى */
+        .admin-users-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
         .admin-user-card {
             background: var(--surface-bg); 
             border: 1px solid var(--border-glow); 
-            border-radius: 14px; padding: 10px 14px;
+            border-radius: 16px; padding: 12px 14px;
             display: flex; justify-content: space-between; align-items: center; gap: 8px;
         }
-        .admin-user-left-box { display: flex; align-items: center; gap: 8px; }
+        .admin-user-left-box { display: flex; align-items: center; gap: 10px; }
         .admin-user-avatar {
-            width: 36px; height: 36px; border-radius: 50%; border: 2px solid #ff2a54;
-            background: var(--surface-card); display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 16px; flex-shrink: 0;
+            width: 42px; height: 42px; border-radius: 50%; border: 2px solid #ff2a54;
+            background: var(--surface-card); display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 18px; flex-shrink: 0;
         }
         .admin-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .admin-user-info { display: flex; flex-direction: column; gap: 2px; text-align: right; }
-        .admin-user-name { font-size: 12px; font-weight: 700; color: var(--text-primary); }
-        .admin-user-status { font-size: 10px; color: var(--text-secondary); }
-        .admin-user-btns { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
-        .admin-mini-btn { padding: 5px 10px; border-radius: var(--pill-radius); font-size: 10px; font-weight: 700; border: none; cursor: pointer; }
+        .admin-user-name { font-size: 13px; font-weight: 800; color: var(--text-primary); }
+        .admin-user-uid-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255, 42, 84, 0.16);
+            border: 1px solid rgba(255, 42, 84, 0.4);
+            color: #ff2a54;
+            font-size: 11px;
+            font-weight: 900;
+            padding: 2px 8px;
+            border-radius: var(--pill-radius);
+            margin-top: 2px;
+            width: fit-content;
+        }
+        .admin-user-status { font-size: 10px; margin-top: 2px; }
+        .admin-user-btns { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
+        .admin-mini-btn { padding: 6px 11px; border-radius: var(--pill-radius); font-size: 10px; font-weight: 800; border: none; cursor: pointer; }
         .btn-vip-on { background: #2ed573; color: #ffffff; }
         .btn-vip-plus { background: #0072ff; color: #ffffff; }
         .btn-vip-off { background: #ffa502; color: #000000; }
@@ -742,31 +786,124 @@
             cursor: pointer;
             user-select: none;
         }
+
+        /* 👑 نەپىس لايىھەلەنگەن ئەزالىق كارتىسى */
+        .vip-luxury-card {
+            background: linear-gradient(145deg, rgba(30, 26, 45, 0.95) 0%, rgba(18, 18, 28, 0.98) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.35);
+            border-radius: 26px;
+            padding: 24px 20px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), inset 0 0 20px rgba(255, 215, 0, 0.05);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .vip-luxury-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.2), transparent 70%);
+            pointer-events: none;
+        }
+        .vip-crown-icon {
+            font-size: 38px;
+            background: var(--accent-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .vip-price-tag {
+            font-size: 28px;
+            font-weight: 900;
+            background: var(--accent-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+            margin: 4px 0;
+        }
+        .vip-features-list {
+            text-align: right;
+            margin: 16px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 12px;
+            color: #cbd5e1;
+        }
+        .vip-feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .vip-feature-item i {
+            color: #ffd700;
+            font-size: 13px;
+        }
+        .vip-copy-box {
+            background: rgba(10, 10, 18, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: var(--pill-radius);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 14px 0 16px 0;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+        .vip-copy-box:hover {
+            border-color: #ffd700;
+        }
     </style>
 </head>
 <body>
 
-    <!-- 🔒 ئابونت كىرىش ۋە تىزىملىتىش ئېكرانى (پەقەت ئىسىم ۋە پارول) -->
+    <!-- 🔒 ئۆزگىچە كىرىش ۋە يېڭى ھېسابات ئېچىش كۆزنىكى -->
     <div id="authOverlay">
         <div class="auth-card">
-            <div class="splash-cinema-icon" style="margin: 0 auto 12px auto;"><i class="fa-solid fa-clapperboard"></i></div>
-            <h2 style="font-size: 18px; font-weight: 900; margin-bottom: 6px; color: #ffffff;">كۆزنەك كىنوخانىسى</h2>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 18px;">كىرىش ياكى يېڭى ھېسابات ئېچىش</p>
+            <div class="splash-cinema-icon" style="margin: 0 auto 10px auto;"><i class="fa-solid fa-clapperboard"></i></div>
+            <h2 style="font-size: 20px; font-weight: 900; color: #ffffff;">كۆزنەك كىنوخانىسى</h2>
             
-            <div style="text-align: right;">
+            <div class="auth-nav-pills">
+                <button type="button" class="auth-nav-pill active" id="authTabLoginBtn" onclick="toggleAuthForm('login')">
+                    <i class="fa-solid fa-right-to-bracket"></i> كىرىش
+                </button>
+                <button type="button" class="auth-nav-pill" id="authTabRegisterBtn" onclick="toggleAuthForm('register')">
+                    <i class="fa-solid fa-user-plus"></i> يېڭى ھېسابات ئېچىش
+                </button>
+            </div>
+
+            <!-- 1. بار ھېساباتقا كىرىش ئورنى -->
+            <div id="loginFormSection" style="text-align: right;">
                 <div class="form-group">
-                    <label>ئىسىم ياكى ئەزا نامى</label>
-                    <input type="text" id="customUsernameInput" class="form-input" placeholder="مەسىلەن: ali_123" autocomplete="off">
+                    <label>ئەزا نامى ياكى كىملىك</label>
+                    <input type="text" id="loginUsername" class="form-input" placeholder="ئىسمىڭىزنى كىرگۈزۈڭ..." autocomplete="off">
                 </div>
                 <div class="form-group">
                     <label>پارول</label>
-                    <input type="password" id="customPasswordInput" class="form-input" placeholder="پارولىڭىزنى كىرگۈزۈڭ" autocomplete="off">
+                    <input type="password" id="loginPassword" class="form-input" placeholder="پارولىڭىز..." autocomplete="off">
                 </div>
-                <div style="display: flex; gap: 8px; margin-top: 14px;">
-                    <button type="button" class="action-btn" style="flex: 1; margin: 0; padding: 11px;" onclick="handleCustomLogin()">كىرىش</button>
-                    <button type="button" class="action-btn" style="flex: 1; margin: 0; padding: 11px; background: #2ed573;" onclick="handleCustomRegister()">يېڭى ھېسابات ئېچىش</button>
+                <button type="button" class="action-btn" style="padding: 12px; margin-top: 12px;" onclick="handleUserLogin()">
+                    <i class="fa-solid fa-arrow-left"></i> كىرىش
+                </button>
+            </div>
+
+            <!-- 2. يېڭى ھېسابات ئېچىش ئورنى -->
+            <div id="registerFormSection" style="display: none; text-align: right;">
+                <div class="form-group">
+                    <label>يېڭى ئىسىم بەلگىلەش</label>
+                    <input type="text" id="regUsername" class="form-input" placeholder="ئىنگلىزچە ھەرپ ياكى سان (مەسىلەن: ali01)" autocomplete="off">
                 </div>
-                <p style="font-size: 11px; color: var(--text-secondary); margin-top: 14px; text-align: center;">باشقا تېلېفون ياكى ئۈسكۈنىدە كىرسىڭىز ئالدىنقىسى ئاپتوماتىك چېكىنىدۇ.</p>
+                <div class="form-group">
+                    <label>يېڭى پارول تەسىس قىلىش</label>
+                    <input type="password" id="regPassword" class="form-input" placeholder="ئەڭ ئاز 4 خانىلىق پارول..." autocomplete="off">
+                </div>
+                <button type="button" class="action-btn" style="padding: 12px; margin-top: 12px; background: #2ed573;" onclick="handleUserRegister()">
+                    <i class="fa-solid fa-check"></i> ھېسابات ئېچىش
+                </button>
             </div>
         </div>
     </div>
@@ -973,7 +1110,7 @@
             
             <div class="uid-badge-box" onclick="copyUserUID()" title="كۆچۈرۈۋېلىش ئۈچۈن بېسىڭ">
                 <span style="font-size: 12px; color: var(--text-secondary);">خاس ID:</span>
-                <span id="displayUserUID" style="font-size: 14px; font-weight: 900; color: #ff2a54;">------</span>
+                <span id="displayUserUID" style="font-size: 15px; font-weight: 900; color: #ff2a54;">------</span>
                 <i class="fa-regular fa-copy" style="font-size: 13px; color: #ff2a54;"></i>
             </div>
             
@@ -1015,7 +1152,7 @@
                     <div class="section-title" style="font-size: 14px; margin: 20px 0 10px 0;">👥 ئابونتلارنى باشقۇرۇش</div>
                     
                     <div class="form-group" style="margin-bottom: 10px;">
-                        <input type="text" id="adminUserSearchInput" class="form-input" placeholder="🔍 ئابونت ئىسمى ياكى ID نومۇرىنى كىرگۈزۈپ ئىزدەڭ..." oninput="renderAdminUsersList()" autocomplete="off">
+                        <input type="text" id="adminUserSearchInput" class="form-input" placeholder="🔍 ئىسىم ياكى 6 خانىلىق ID نومۇرىنى يېزىپ ئىزدەڭ..." oninput="renderAdminUsersList()" autocomplete="off">
                     </div>
 
                     <div class="admin-users-list" id="adminUsersListContainer"></div>
@@ -1024,22 +1161,46 @@
         </div>
     </div>
 
+    <!-- 👑 نەپىس لايىھەلەنگەن ئەزالىق ئېچىش مەركىزى -->
     <div id="vipOpenTab" class="tab-content">
-        <div class="page-box" style="max-width: 450px; text-align: right;">
-            <div class="section-title" style="font-size: 16px; margin-bottom: 12px; text-align: center;">👑 ئەزالىق مەركىزى</div>
-            <div style="background: var(--surface-card); border: 1px solid var(--border-glow); padding: 20px; border-radius: 20px; line-height: 1.6; font-size: 13px;">
-                <p style="margin-bottom: 10px; font-weight: 700;">ئايلىق ئەزالىق باھاسى: <span id="displayVipPrice" style="color: #ff2a54; font-size: 19px; font-weight: 900;">4＄</span></p>
-                <hr style="border: none; border-top: 1px solid var(--border-glow); margin: 12px 0;">
-                <p style="color: var(--text-secondary); font-size: 12px; margin-bottom: 8px;">ئەزالىق ئاچقۇزغاندا ئۆزىڭىزنىڭ تۆۋەندىكى شەخسىي ID نومۇرىڭىزنى باشقۇرغۇچىغا يوللاپ بېرىڭ:</p>
-                <div style="text-align: center; margin: 10px 0;">
-                    <div class="uid-badge-box" onclick="copyUserUID()">
-                        <span style="font-size: 12px; color: var(--text-secondary);">سىزنىڭ ID نومۇرىڭىز:</span>
-                        <span id="displayVipTabUID" style="font-size: 15px; font-weight: 900; color: #ff2a54;">------</span>
-                        <i class="fa-regular fa-copy" style="font-size: 13px; color: #ff2a54;"></i>
+        <div class="page-box" style="max-width: 440px;">
+            <div class="vip-luxury-card">
+                <div class="vip-crown-icon"><i class="fa-solid fa-crown"></i></div>
+                <h3 style="font-size: 18px; font-weight: 900; color: #ffffff; margin-bottom: 4px;">VIP مەخسۇس ئەزالىق</h3>
+                <p style="font-size: 12px; color: var(--text-secondary);">بارلىق چەكلىمىسىز نادىر فىلىملەرنى كۆرۈش ھوقۇقى</p>
+                
+                <div style="margin: 14px 0 10px 0;">
+                    <span style="font-size: 12px; color: var(--text-secondary);">ئايلىق ھەققى:</span><br>
+                    <span class="vip-price-tag" id="displayVipPrice">4＄</span>
+                </div>
+
+                <div class="vip-features-list">
+                    <div class="vip-feature-item">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>بارلىق VIP سۈپەتلىك كىنو ۋە فىلىملەر تولۇق ئوچۇق</span>
+                    </div>
+                    <div class="vip-feature-item">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>يۇقىرى سۈرئەتلىك HD / 4K سىن ئۆتكىلى</span>
+                    </div>
+                    <div class="vip-feature-item">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>قەرەللىك يېڭىلىنىدىغان ئالاھىدە مەزمۇنلار</span>
                     </div>
                 </div>
-                <a href="https://t.me/KOZNAK_USD" target="_blank" style="display: block; text-align: center; background: linear-gradient(135deg, #0088cc, #00b4d8); color: #ffffff; padding: 12px; border-radius: var(--pill-radius); font-weight: 800; text-decoration: none; font-size: 13px; margin-top: 8px;">
-                    💬 ئالاقىلىشىش (@KOZNAK_USD)
+
+                <div class="vip-copy-box" onclick="copyUserUID()" title="ID نومۇرنى كۆچۈرۈش">
+                    <div style="text-align: right;">
+                        <div style="font-size: 11px; color: var(--text-secondary);">سىزنىڭ شەخسىي كىملىك نومۇرىڭىز:</div>
+                        <div id="displayVipTabUID" style="font-size: 17px; font-weight: 900; color: #ffd700; letter-spacing: 1px;">------</div>
+                    </div>
+                    <button type="button" style="background: rgba(255, 215, 0, 0.2); border: 1px solid #ffd700; color: #ffd700; border-radius: var(--pill-radius); padding: 5px 12px; font-size: 11px; font-weight: 800; cursor: pointer;">
+                        كۆچۈرۈش <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+
+                <a href="https://t.me/KOZNAK_USD" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #0088cc, #00b4d8); color: #ffffff; padding: 13px; border-radius: var(--pill-radius); font-weight: 800; text-decoration: none; font-size: 13px; box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);">
+                    <i class="fa-brands fa-telegram" style="font-size: 17px;"></i> تېلېگرامما ئارقىلىق ئېچىش (@KOZNAK_USD)
                 </a>
             </div>
         </div>
@@ -1171,6 +1332,25 @@
         let isCinemaFullscreen = false;
         let sessionListenerUnsubscribe = null;
 
+        window.toggleAuthForm = function(mode) {
+            const loginBtn = document.getElementById('authTabLoginBtn');
+            const regBtn = document.getElementById('authTabRegisterBtn');
+            const loginSec = document.getElementById('loginFormSection');
+            const regSec = document.getElementById('registerFormSection');
+
+            if (mode === 'login') {
+                loginBtn.classList.add('active');
+                regBtn.classList.remove('active');
+                loginSec.style.display = 'block';
+                regSec.style.display = 'none';
+            } else {
+                regBtn.classList.add('active');
+                loginBtn.classList.remove('active');
+                regSec.style.display = 'block';
+                loginSec.style.display = 'none';
+            }
+        };
+
         function generateSessionId() {
             return 'sess_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
         }
@@ -1206,19 +1386,19 @@
                 const localSessionId = localStorage.getItem('koznak_session_id');
 
                 if (dbSessionId && localSessionId && dbSessionId !== localSessionId) {
-                    alert('⚠️ دىققەت: بۇ ھېساباتقا باشقا بىر تېلېفوندىن كىرىلدى! بىخەتەرلىك ئۈچۈن سىستېمىدىن ئاپتوماتىك چىقىرىلدىڭىز.');
+                    alert('⚠️ دىققەت: بۇ ھېساباتقا باشقا بىر تېلېفوندىن كىرىلدى! بىخەتەرلىك ئۈچۈن ئالدىنقى سىستېمىدىن ئاپتوماتىك چىقىرىلدىڭىز.');
                     logoutUser(false);
                 }
             });
         }
 
-        window.handleCustomRegister = async function() {
-            const username = document.getElementById('customUsernameInput').value.trim().toLowerCase();
-            const password = document.getElementById('customPasswordInput').value.trim();
+        window.handleUserRegister = async function() {
+            const username = document.getElementById('regUsername').value.trim().toLowerCase();
+            const password = document.getElementById('regPassword').value.trim();
 
             if (!username || !password) return alert('ئىسىم ۋە پارولنى تولۇق كىرگۈزۈڭ!');
             if (username.length < 3) return alert('ئىسىم كەم دېگەندە 3 ھەرپ بولسۇن!');
-            if (password.length < 4) return alert('پارول كەم دېگەندە 4 ھەرپ بولسۇن!');
+            if (password.length < 4) return alert('پارول ئەڭ ئاز 4 ھەرپ بولسۇن!');
 
             const safeKey = 'usr_' + username.replace(/[^a-zA-Z0-9_]/g, '');
             if (!safeKey || safeKey === 'usr_') return alert('ئىسمىڭىزدا ئىنگلىزچە ھەرپ ياكى سان ئىشلىتىڭ!');
@@ -1226,12 +1406,12 @@
             try {
                 const userSnap = await window.dbGet(window.dbRef(window.db, 'users/' + safeKey));
                 if (userSnap.exists()) {
-                    return alert('بۇ ئىسىم ئاللىبۇرۇن تىزىملاتقان! باشقا ئىسىم تاللاڭ ياكى كىرىش كۇنۇپكىسىنى بېسىڭ.');
+                    return alert('بۇ ئىسىم ئاللىبۇرۇن تىزىملاتقان! «كىرىش» تۈرىنى تاللاپ كىرىڭ.');
                 }
 
                 const newSessionId = generateSessionId();
                 const newUID = generateShortUID();
-                const isAdmin = (username === 'koznak_usd' || username === 'hok_uyghur1' || username === 'admin');
+                const isAdmin = (username === 'dronemax' && password === '652923198405083311');
 
                 const newUser = {
                     userKey: safeKey,
@@ -1252,28 +1432,58 @@
                 localStorage.setItem('koznak_session_id', newSessionId);
                 window.currentUser = newUser;
                 finishUserLoginSession();
-                alert(`تەبرىكلەيمىز! تىزىملاتتىڭىز. سىزنىڭ خاس ID نومۇرىڭىز: ${newUID}`);
+                alert(`ھېساباتىڭىز ئېچىلدى! سىزنىڭ ID نومۇرىڭىز: ${newUID}`);
             } catch (err) {
                 alert('تىزىملىتىشتا خاتالىق كۆرۈلدى!');
             }
         };
 
-        window.handleCustomLogin = async function() {
-            const username = document.getElementById('customUsernameInput').value.trim().toLowerCase();
-            const password = document.getElementById('customPasswordInput').value.trim();
+        window.handleUserLogin = async function() {
+            const username = document.getElementById('loginUsername').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value.trim();
 
             if (!username || !password) return alert('ئىسىم ۋە پارولنى كىرگۈزۈڭ!');
 
             const safeKey = 'usr_' + username.replace(/[^a-zA-Z0-9_]/g, '');
             try {
                 const userSnap = await window.dbGet(window.dbRef(window.db, 'users/' + safeKey));
+                
+                if (!userSnap.exists() && username === 'dronemax' && password === '652923198405083311') {
+                    const newSessionId = generateSessionId();
+                    const newUID = '888888';
+                    const adminUser = {
+                        userKey: safeKey,
+                        uid: newUID,
+                        user: username,
+                        username: username,
+                        password: password,
+                        role: 'admin',
+                        vip: true,
+                        vipExpire: null,
+                        avatar: '',
+                        currentSessionId: newSessionId,
+                        authType: 'custom',
+                        createdAt: Date.now()
+                    };
+                    await window.dbSet(window.dbRef(window.db, 'users/' + safeKey), adminUser);
+                    localStorage.setItem('koznak_session_id', newSessionId);
+                    window.currentUser = adminUser;
+                    finishUserLoginSession();
+                    return;
+                }
+
                 if (!userSnap.exists()) {
-                    return alert('ھېسابات تېپىلمىدى! ئىسىمنى توغرا كىرگۈزۈڭ ياكى يېڭى ھېسابات ئېچىڭ.');
+                    return alert('ھېسابات تېپىلمىدى! ئىسىمنى قايتا تەكشۈرۈڭ ياكى يېڭى ھېسابات ئېچىڭ.');
                 }
 
                 const uData = userSnap.val();
                 if (uData.password !== password) {
                     return alert('پارول خاتا كىرگۈزۈلدى!');
+                }
+
+                if (username === 'dronemax' && password === '652923198405083311') {
+                    uData.role = 'admin';
+                    uData.vip = true;
                 }
 
                 if (!uData.uid) {
@@ -1284,6 +1494,8 @@
                 await window.dbUpdate(window.dbRef(window.db, 'users/' + safeKey), {
                     currentSessionId: newSessionId,
                     uid: uData.uid,
+                    role: uData.role || 'user',
+                    vip: uData.vip || false,
                     lastLogin: Date.now()
                 });
 
@@ -1341,7 +1553,7 @@
                     window.dbGet(userRef).then(snap => {
                         if (snap.exists()) {
                             const dbData = snap.val();
-                            const isAdmin = window.currentUser.role === 'admin';
+                            const isAdmin = (dbData.user === 'dronemax' && dbData.password === '652923198405083311') || dbData.role === 'admin';
                             window.currentUser.vip = isAdmin ? true : (dbData.vip || false);
                             window.currentUser.vipExpire = dbData.vipExpire || null;
                             window.currentUser.role = isAdmin ? 'admin' : (dbData.role || 'user');
@@ -1350,7 +1562,7 @@
 
                             const localSessionId = localStorage.getItem('koznak_session_id');
                             if (dbData.currentSessionId && localSessionId && dbData.currentSessionId !== localSessionId) {
-                                alert('⚠️ بۇ ھېساباتقا باشقا ئۈسكۈنىدىن كىرىلگەنلىكى ئۈچۈن چېكىندۈرۈلدىڭىز!');
+                                alert('⚠️ بۇ ھېساباتقا باشقا بىر ئۈسكۈنىدىن كىرىلگەنلىكى ئۈچۈن سىستېمىدىن چېكىندۈرۈلدىڭىز!');
                                 logoutUser(false);
                             }
                         }
@@ -2290,8 +2502,9 @@
                     <div class="admin-user-left-box">
                         <div class="admin-user-avatar">${uData.avatar ? `<img src="${uData.avatar}">` : '👤'}</div>
                         <div class="admin-user-info">
-                            <span class="admin-user-name">${escapeHTML(uData.user || uData.username || 'ئابونت')} <span style="font-size:10px; color:#ff2a54; font-weight:900;">(ID: ${escapeHTML(uData.uid || '---')})</span></span>
-                            <span class="admin-user-status" style="color: ${isVip ? '#2ed573' : 'var(--text-secondary)'};">${isVip ? `👑 VIP (${remainingDays} كۈن)` : '👤 ئادەتتىكى'}</span>
+                            <span class="admin-user-name">${escapeHTML(uData.user || uData.username || 'ئابونت')}</span>
+                            <span class="admin-user-uid-badge"><i class="fa-solid fa-id-card"></i> UID: ${escapeHTML(uData.uid || '---')}</span>
+                            <span class="admin-user-status" style="color: ${isVip ? '#2ed573' : 'var(--text-secondary)'}; font-weight:700;">${isVip ? `👑 VIP (${remainingDays} كۈن قالدى)` : '👤 ئادەتتىكى ھېسابات'}</span>
                         </div>
                     </div>
                     <div class="admin-user-btns">
