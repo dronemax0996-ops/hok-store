@@ -100,6 +100,32 @@
             direction: rtl;
         }
 
+        /* 🔒 مەجبۇرىي كىرىش ئېكرانى (強制登入遮罩) */
+        #authOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg-color);
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .auth-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 30px;
+            padding: 35px 25px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            backdrop-filter: var(--glass-blur);
+        }
+
         header {
             background: var(--nav-bg);
             backdrop-filter: var(--glass-blur);
@@ -711,6 +737,24 @@
 </head>
 <body>
 
+    <!-- 🔒 مەجبۇرىي تېلېگرامما ئارقىلىق كىرىش ئېكرانى (بىۋاسىتە چىقىدۇ) -->
+    <div id="authOverlay">
+        <div class="auth-card">
+            <div class="splash-cinema-icon" style="margin: 0 auto 15px auto;"><i class="fa-solid fa-clapperboard"></i></div>
+            <h2 style="font-size: 20px; font-weight: 900; margin-bottom: 8px; color: #ffffff;">كۆزنەك كىنوخانىسىغا كېلىڭ</h2>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 22px;">فىلىملەرنى كۆرۈش ۋە پىكىر قالدۇرۇش ئۈچۈن تېلېگرامما ھېساباتىڭىز بىلەن كىرىڭ</p>
+            
+            <div id="telegramOverlayLoginBtn" style="display: flex; justify-content: center; min-height: 40px;">
+                <script async src="https://telegram.org/js/telegram-widget.js?22" 
+                        data-telegram-login="koznaktv_bot" 
+                        data-size="large" 
+                        data-onauth="onTelegramAuth(user)" 
+                        data-request-access="write">
+                </script>
+            </div>
+        </div>
+    </div>
+
     <div id="notificationBanner">
         <span>🎬 يېڭى فىلىم:</span>
         <span id="notifMovieTitle" style="text-decoration: underline; cursor: pointer;"></span>
@@ -923,18 +967,9 @@
                 <div class="profile-avatar-circle" id="mainAccountAvatarBox">👤</div>
             </div>
 
-            <h3 id="accountTitle" style="margin-top: 4px; font-size: 18px; margin-bottom: 16px;">كۆزنەك كىنوخانىسىغا كەلگىنىڭىزگە قارشى ئالىمىز</h3>
+            <h3 id="accountTitle" style="margin-top: 4px; font-size: 18px; margin-bottom: 16px;">تېلېگرامما ھېساباتىڭىز</h3>
             
-            <div id="telegramLoginContainer" style="margin: 20px auto; display: flex; justify-content: center;">
-                <script async src="https://telegram.org/js/telegram-widget.js?22" 
-                        data-telegram-login="koznaktv_bot" 
-                        data-size="large" 
-                        data-onauth="onTelegramAuth(user)" 
-                        data-request-access="write">
-                </script>
-            </div>
-
-            <div id="userProfileView" style="margin-top: 18px; text-align: right; display: none;">
+            <div id="userProfileView" style="margin-top: 18px; text-align: right;">
                 <div style="background: var(--surface-card); border: 1px solid var(--border-glow); padding: 18px; border-radius: 20px; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span id="displayUsername" style="font-size: 15px; font-weight: 800; color: #ff2a54;"></span>
@@ -942,7 +977,7 @@
                     </div>
                 </div>
 
-                <button type="button" class="action-btn" style="background: #ff4757; margin-bottom: 14px;" onclick="logoutUser()">چىقىش (Logout)</button>
+                <button type="button" class="action-btn" style="background: #ff4757; margin-bottom: 14px;" onclick="logoutUser()">ھېساباتتىن چىقىش (Logout)</button>
 
                 <div id="adminPanelSection" style="display: none; margin-top: 22px; border-top: 1px solid var(--border-glow); padding-top: 18px; text-align: right;">
                     <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">⚙️ ئومۇمىي تەڭشەكلەر</div>
@@ -1198,10 +1233,8 @@
 
         function finishUserLoginSession() {
             localStorage.setItem('koznak_logged_user', JSON.stringify(window.currentUser));
-            const loginContainer = document.getElementById('telegramLoginContainer');
-            if (loginContainer) loginContainer.style.display = 'none';
-            const profileView = document.getElementById('userProfileView');
-            if (profileView) profileView.style.display = 'block';
+            const overlay = document.getElementById('authOverlay');
+            if (overlay) overlay.style.display = 'none';
             window.updateUIAfterLogin();
         }
 
@@ -1242,10 +1275,8 @@
 
             if (loggedUser) {
                 window.currentUser = loggedUser;
-                const loginContainer = document.getElementById('telegramLoginContainer');
-                if (loginContainer) loginContainer.style.display = 'none';
-                const profileView = document.getElementById('userProfileView');
-                if (profileView) profileView.style.display = 'block';
+                const overlay = document.getElementById('authOverlay');
+                if (overlay) overlay.style.display = 'none';
                 window.updateUIAfterLogin();
 
                 if (window.db && window.dbRef && window.dbGet) {
@@ -1264,10 +1295,8 @@
                     }).catch(() => {});
                 }
             } else {
-                const loginContainer = document.getElementById('telegramLoginContainer');
-                if (loginContainer) loginContainer.style.display = 'flex';
-                const profileView = document.getElementById('userProfileView');
-                if (profileView) profileView.style.display = 'none';
+                const overlay = document.getElementById('authOverlay');
+                if (overlay) overlay.style.display = 'flex';
             }
 
             const moviesRef = window.dbRef(window.db, 'movies');
