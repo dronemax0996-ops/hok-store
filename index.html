@@ -1224,12 +1224,10 @@
         </div>
     </div>
 
-    <!-- ➕ يېڭى مەزمۇن قوشۇش بېتى (ژانىر باشقۇرۇش قوشۇلدى) -->
     <div id="uploadTab" class="tab-content">
         <div class="page-box" id="uploadPageContent">
             <div class="section-title" style="font-size: 16px; margin-bottom: 14px;">➕ يېڭى مەزمۇن قوشۇش</div>
             
-            <!-- 🎬 كىنو ژانىرلىرىنى باشقۇرۇش بۆلىكى (تەلەپ بويىچە مۇشۇ يەرگە يۆتكەلدى) -->
             <div id="adminGenreSection" style="display: none; background: var(--surface-card); border: 1px solid var(--border-glow); border-radius: 20px; padding: 16px; margin-bottom: 18px; text-align: right;">
                 <div class="section-title" style="font-size: 14px; margin-bottom: 10px;"><i class="fa-solid fa-tags"></i> كىنو ژانىىرلىرىنى باشقۇرۇش</div>
                 <div class="form-group" style="margin-bottom: 10px;">
@@ -1275,7 +1273,7 @@
                     </div>
                     <input type="hidden" id="contentPosterBase64" required>
                     <div id="uploadPosterPreviewContainer" style="display: none; text-align: center; margin-top: 8px;">
-                        <img id="uploadPosterPreviewImg" src="" alt="رەسىم" style="max-height: 140px; border-radius: 14px; border: 1px solid var(--border-glow); object-fit: cover;">
+                        <img id="uploadPosterPreviewImg" alt="رەسىم" style="max-height: 140px; border-radius: 14px; border: 1px solid var(--border-glow); object-fit: cover;">
                     </div>
                 </div>
                 
@@ -1308,7 +1306,6 @@
         </div>
     </div>
 
-    <!-- 👤 كۈچەيتىلگەن نەپىس ھېسابات بېتى -->
     <div id="accountTab" class="tab-content">
         <div class="settings-page-wrapper">
             <div class="user-profile-card-modern">
@@ -1344,7 +1341,6 @@
                     </div>
                 </div>
 
-                <!-- 👑 تەلەپ: ئەزا باشقۇرۇش ۋە ئىزدەش ئورنى باشقۇرغۇچىنىڭ ھېسابات بېتىگە ھۆججەت (كۇنۇپكا) شەكلىدە قوشۇلدى -->
                 <div id="adminAccountSection" style="display: none; margin-top: 18px; border-top: 1px solid var(--border-glow); padding-top: 14px; text-align: right;">
                     <div class="section-title" style="font-size: 14px; margin-bottom: 10px;"><i class="fa-solid fa-users-gear"></i> باشقۇرغۇچى: ئەزا باشقۇرۇش ۋە ئىزدەش</div>
                     <div class="form-group" style="margin-bottom: 10px;">
@@ -1360,7 +1356,6 @@
         </div>
     </div>
 
-    <!-- 👑 نەپىس لايىھەلەنگەن ئەزالىق ئېچىش مەركىزى -->
     <div id="vipOpenTab" class="tab-content">
         <div class="page-box" style="max-width: 440px;">
             <div class="vip-luxury-card">
@@ -1405,7 +1400,7 @@
         </div>
     </div>
 
-    <!-- ⚙️ تەڭشەك رايۇنى -->
+    <!-- ⚙️ تەڭشەك رايۇنى (بارلىق فىلىملەرنى ھەقسىز قىلىش كونترولى قوشۇلدى) -->
     <div id="settingsTab" class="tab-content">
         <div class="settings-page-wrapper">
             
@@ -1420,6 +1415,23 @@
                         </div>
                     </div>
                     <i class="fa-solid fa-chevron-left" style="font-size: 12px; color: var(--text-secondary);"></i>
+                </div>
+            </div>
+
+            <!-- 🎬 باشقۇرغۇچى ئۈچۈن بارلىق فىلىملەرنى بىرلا ۋاقىتتا ھەقسىز قىلىش تەڭشىكى -->
+            <div id="adminGlobalFreeSection" style="display: none;">
+                <div class="settings-group-title"><i class="fa-solid fa-shield-halved" style="color: #ff2a54;"></i> باشقۇرغۇچى: پۈتۈن فىلىم كونترولى</div>
+                <div class="settings-group-card">
+                    <div class="settings-cell-row" style="cursor: default;">
+                        <div style="display: flex; align-items: center; gap: 12px; text-align: right;">
+                            <div class="settings-icon-badge" style="color: #ff2a54;"><i class="fa-solid fa-gift"></i></div>
+                            <div>
+                                <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">بارلىق VIP فىلىملەرنى ھەقسىز قىلىش</div>
+                                <div style="font-size: 11px; color: var(--text-secondary);">ھەممە ئەزالارغا ۋاقىتلىق ھەقسىز ئېچىۋېتىش</div>
+                            </div>
+                        </div>
+                        <input type="checkbox" id="globalFreeToggle" onchange="toggleGlobalFreeMode(this)" style="width: 20px; height: 20px; cursor: pointer; accent-color: #ff2a54;">
+                    </div>
                 </div>
             </div>
 
@@ -1600,6 +1612,7 @@
         let allUsers = {};
         let featuredSliders = {};
         let allGenres = ['ھەرىكەتلىك (Action)', 'كومىدىيە (Comedy)', 'مۇھەببەت (Romance)', 'قورقۇنۇچلۇق (Horror)', 'تەۋەككۈلچىلىك (Adventure)', 'دراما (Drama)', 'پەن-تېخنىكا (Sci-Fi)'];
+        let isGlobalFreeEnabled = false;
         let currentFilter = 'all';
         let currentSearchGenre = 'all';
         window.currentUser = null;
@@ -2021,6 +2034,11 @@
                 const adminPriceEl = document.getElementById('adminVipPrice');
                 if (adminPriceEl) adminPriceEl.value = vipPrice;
 
+                isGlobalFreeEnabled = settings.globalFreeMode || false;
+                const freeToggle = document.getElementById('globalFreeToggle');
+                if (freeToggle) freeToggle.checked = isGlobalFreeEnabled;
+                renderMovies();
+
                 const scrollingText = settings.scrollingText || '';
                 const scrollWrapper = document.getElementById('homeScrollingWrapper');
                 const scrollTextEl = document.getElementById('homeScrollingText');
@@ -2033,6 +2051,17 @@
                 } else {
                     scrollWrapper.style.display = 'none';
                 }
+            });
+        };
+
+        window.toggleGlobalFreeMode = function(checkboxEl) {
+            if (!window.currentUser || window.currentUser.role !== 'admin') {
+                checkboxEl.checked = !checkboxEl.checked;
+                return alert('ھوقۇقىڭىز يوق!');
+            }
+            const val = checkboxEl.checked;
+            window.dbSet(window.dbRef(window.db, 'settings/globalFreeMode'), val).then(() => {
+                alert(val ? 'بارلىق فىلىملەر ۋاقىتلىق ھەقسىز قىلىندى!' : 'ئەسلىدىكى VIP ھالىتىگە قايتۇرۇلدى!');
             });
         };
 
@@ -2141,6 +2170,7 @@
                 document.getElementById('navUploadBtn').style.display = isAdmin ? 'flex' : 'none';
                 document.getElementById('adminGenreSection').style.display = isAdmin ? 'block' : 'none';
                 document.getElementById('adminAccountSection').style.display = isAdmin ? 'block' : 'none';
+                document.getElementById('adminGlobalFreeSection').style.display = isAdmin ? 'block' : 'none';
                 
                 renderMovies();
             }
@@ -2595,10 +2625,15 @@
             const isAdmin = window.currentUser && window.currentUser.role === 'admin';
             const posterHtml = item.poster ? `<img src="${item.poster}" alt="${escapeHTML(item.title)}" loading="lazy">` : '🎬';
 
+            let effectiveTag = item.tag;
+            if (isGlobalFreeEnabled && item.tag === 'VIP') {
+                effectiveTag = 'ھەقسىز';
+            }
+
             const card = document.createElement('div');
             card.className = 'movie-card';
             card.innerHTML = `
-                ${item.tag ? `<div class="movie-tag">${escapeHTML(item.tag)}</div>` : ''}
+                ${effectiveTag ? `<div class="movie-tag">${escapeHTML(effectiveTag)}</div>` : ''}
                 <div class="movie-poster-box">${posterHtml}</div>
                 <div class="movie-footer">
                     <div class="movie-name">${escapeHTML(item.title)}</div>
@@ -2653,6 +2688,7 @@
         }
 
         function checkUserVipStatus(userObj) {
+            if (isGlobalFreeEnabled) return true;
             if (!userObj) return false;
             if (userObj.role === 'admin') return true;
             if (!userObj.vip) return false;
@@ -2665,7 +2701,7 @@
             if(!item) return;
 
             const isUserVipActive = checkUserVipStatus(window.currentUser);
-            if(item.tag === 'VIP' && (!item.type || !item.type.includes('series')) && !isUserVipActive) {
+            if(item.tag === 'VIP' && !isGlobalFreeEnabled && (!item.type || !item.type.includes('series')) && !isUserVipActive) {
                 alert('بۇ فىلىم پەقەت VIP ئەزالار ئۈچۈنلا ئوچۇق!');
                 switchTab('vipOpenTab');
                 return;
@@ -2691,9 +2727,12 @@
             document.getElementById('detailTab').classList.add('active-tab');
             window.scrollTo(0, 0);
 
+            let effectiveTag = item.tag;
+            if (isGlobalFreeEnabled && item.tag === 'VIP') effectiveTag = 'ھەقسىز';
+
             document.getElementById('detailMovieTitle').innerText = item.title;
             document.getElementById('detailMovieCategory').innerText = `${getCategoryName(item.type)} • ${item.genre || 'ئادەتتىكى'}`;
-            document.getElementById('detailMovieTag').innerText = item.tag ? `بەلگە: ${item.tag}` : '';
+            document.getElementById('detailMovieTag').innerText = effectiveTag ? `بەلگە: ${effectiveTag}` : '';
             document.getElementById('detailMovieViews').innerText = `👀 كۆرۈش سانى: ${item.views || 1}`;
 
             document.getElementById('trailerBtnContainer').innerHTML = item.trailer ? 
@@ -2971,7 +3010,7 @@
         }
 
         async function changeDetailEpisode(btnEl, url, episodeIndex) {
-            if (episodeIndex > 0) {
+            if (episodeIndex > 0 && !isGlobalFreeEnabled) {
                 const item = allMovies[currentActiveMovieId];
                 const isUserVipActive = checkUserVipStatus(window.currentUser);
                 if (item && item.tag === 'VIP' && !isUserVipActive) {
