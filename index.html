@@ -434,7 +434,6 @@
             gap: 6px;
         }
 
-        /* 🎬 ئوڭۇشلۇق ۋە ئىشەنچلىك مېڭىش رامكىسى (Continuous LTR / RTL Loop) */
         .marquee-section-wrapper {
             position: relative;
             width: 100%;
@@ -525,8 +524,8 @@
         }
         .fav-btn.liked { color: #ff2a54; border-color: rgba(255, 42, 84, 0.5); background: rgba(255, 42, 84, 0.15); }
         .del-btn { 
-            background: rgba(255, 42, 84, 0.15); 
-            border: 1px solid rgba(255, 42, 84, 0.4); 
+            background: rgba(255, 71, 87, 0.15); 
+            border: 1px solid rgba(255, 71, 87, 0.4); 
             width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; color: #ff4757; 
         }
 
@@ -1225,9 +1224,23 @@
         </div>
     </div>
 
+    <!-- ➕ يېڭى مەزمۇن قوشۇش بېتى (ژانىر باشقۇرۇش قوشۇلدى) -->
     <div id="uploadTab" class="tab-content">
         <div class="page-box" id="uploadPageContent">
             <div class="section-title" style="font-size: 16px; margin-bottom: 14px;">➕ يېڭى مەزمۇن قوشۇش</div>
+            
+            <!-- 🎬 كىنو ژانىرلىرىنى باشقۇرۇش بۆلىكى (تەلەپ بويىچە مۇشۇ يەرگە يۆتكەلدى) -->
+            <div id="adminGenreSection" style="display: none; background: var(--surface-card); border: 1px solid var(--border-glow); border-radius: 20px; padding: 16px; margin-bottom: 18px; text-align: right;">
+                <div class="section-title" style="font-size: 14px; margin-bottom: 10px;"><i class="fa-solid fa-tags"></i> كىنو ژانىىرلىرىنى باشقۇرۇش</div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="newGenreInput" class="form-input" placeholder="يېڭى ژانىر ئىسمى (مەسىلەن: تارىخى)..." autocomplete="off">
+                        <button type="button" class="action-btn" style="width: auto; padding: 10px 16px; margin: 0; background: #2ed573;" onclick="addNewGenre()">➕ قوشۇش</button>
+                    </div>
+                </div>
+                <div id="adminGenresListContainer" style="display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow-y: auto;"></div>
+            </div>
+
             <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
                 <div class="form-group">
                     <label>مەزمۇن تىپى</label>
@@ -1244,13 +1257,7 @@
                 <div class="form-group">
                     <label>🎬 كىنو ژانىرى</label>
                     <select id="contentGenre" class="form-select">
-                        <option value="ھەرىكەتلىك (Action)">ھەرىكەتلىك (Action)</option>
-                        <option value="كومىدىيە (Comedy)">كومىدىيە (Comedy)</option>
-                        <option value="مۇھەببەت (Romance)">مۇھەببەت (Romance)</option>
-                        <option value="قورقۇنۇچلۇق (Horror)">قورقۇنۇچلۇق (Horror)</option>
-                        <option value="تەۋەككۈلچىلىك (Adventure)">تەۋەككۈلچىلىك (Adventure)</option>
-                        <option value="دراما (Drama)">دراما (Drama)</option>
-                        <option value="پەن-تېخنىكا (Sci-Fi)">پەن-تېخنىكا (Sci-Fi)</option>
+                        <!-- الدينامىك -->
                     </select>
                 </div>
 
@@ -1260,10 +1267,15 @@
                 </div>
 
                 <div class="form-group">
-                    <label>🎬 تەشۋىقات رەسىمى ئۇلانمىسى (Poster Image URL)</label>
-                    <input type="url" id="contentPoster" class="form-input" placeholder="https://... سۈرەت تور ئۇلانمىسىنى چاپلاڭ" autocomplete="off" oninput="previewPosterUrl(this.value)" required>
-                    <div id="posterPreviewContainer" style="margin-top: 10px; display: none; text-align: center;">
-                        <img id="posterPreviewImg" src="" alt="رەسىم" style="max-height: 140px; border-radius: 14px; border: 1px solid var(--border-glow); object-fit: cover;">
+                    <label>🎬 تەشۋىقات رەسىمى (تېلېفوندىن فەيىل تاللاش)</label>
+                    <input type="file" id="contentPosterFile" accept="image/*" style="display: none;" onchange="handlePosterFileSelected(event)">
+                    <div class="avatar-file-dropzone" onclick="document.getElementById('contentPosterFile').click()" style="margin: 4px 0 10px 0; padding: 14px;">
+                        <div style="font-size: 24px; margin-bottom: 4px; color: #ff2a54;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                        <span style="font-size: 12px; font-weight: 700;">رەسىم فەيىلى تاللاش</span>
+                    </div>
+                    <input type="hidden" id="contentPosterBase64" required>
+                    <div id="uploadPosterPreviewContainer" style="display: none; text-align: center; margin-top: 8px;">
+                        <img id="uploadPosterPreviewImg" src="" alt="رەسىم" style="max-height: 140px; border-radius: 14px; border: 1px solid var(--border-glow); object-fit: cover;">
                     </div>
                 </div>
                 
@@ -1324,7 +1336,6 @@
                     </div>
                 </div>
 
-                <!-- 👤 ئىسىمنى ئۆزگەرتىش بۆلىكى -->
                 <div class="form-group" style="text-align: right; margin-top: 14px;">
                     <label style="font-size: 11px; color: var(--text-secondary);">كۆرسىتىلىش ئىسمىنى ئۆزگەرتىش</label>
                     <div style="display: flex; gap: 8px;">
@@ -1333,42 +1344,18 @@
                     </div>
                 </div>
 
+                <!-- 👑 تەلەپ: ئەزا باشقۇرۇش ۋە ئىزدەش ئورنى باشقۇرغۇچىنىڭ ھېسابات بېتىگە ھۆججەت (كۇنۇپكا) شەكلىدە قوشۇلدى -->
+                <div id="adminAccountSection" style="display: none; margin-top: 18px; border-top: 1px solid var(--border-glow); padding-top: 14px; text-align: right;">
+                    <div class="section-title" style="font-size: 14px; margin-bottom: 10px;"><i class="fa-solid fa-users-gear"></i> باشقۇرغۇچى: ئەزا باشقۇرۇش ۋە ئىزدەش</div>
+                    <div class="form-group" style="margin-bottom: 10px;">
+                        <input type="text" id="adminUserSearchInput" class="form-input" placeholder="🔍 ئىسىم ياكى 6 خانىلىق ID نومۇرى بويىچە ئىزدەڭ..." oninput="renderAdminUsersList()" autocomplete="off">
+                    </div>
+                    <div class="admin-users-list" id="adminUsersListContainer"></div>
+                </div>
+
                 <button type="button" class="action-btn" style="background: rgba(255, 71, 87, 0.2); border: 1px solid #ff4757; color: #ff4757; box-shadow: none; padding: 10px; font-size: 12px; margin-top: 14px;" onclick="logoutUser()">
                     <i class="fa-solid fa-arrow-right-from-bracket"></i> ھېساباتتىن چېكىنىش
                 </button>
-            </div>
-
-            <div id="adminPanelSection" style="display: none; background: var(--surface-card); border: 1px solid var(--border-glow); border-radius: 24px; padding: 18px; margin-top: 14px; text-align: right;">
-                <div class="section-title" style="font-size: 15px; margin-bottom: 12px;"><i class="fa-solid fa-sliders"></i> باشقۇرغۇچى مەركىزى</div>
-                
-                <div class="form-group">
-                    <label>ئايلىق VIP ئەزالىق باھاسى</label>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" id="adminVipPrice" class="form-input" placeholder="مەسىلەن: 4$" autocomplete="off">
-                        <button type="button" class="action-btn" style="width: auto; padding: 10px 16px; margin: 0; background: #2ed573;" onclick="updateAdminSettings('vipPrice')">ساقلاش</button>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>باش بەت ئۇقتۇرۇش خېتى</label>
-                    <div style="display: flex; gap: 8px;">
-                        <input type="text" id="adminScrollingText" class="form-input" placeholder="ئۇقتۇرۇش خېتى..." autocomplete="off">
-                        <button type="button" class="action-btn" style="width: auto; padding: 10px 16px; margin: 0; background: #2ed573;" onclick="updateAdminSettings('scrollingText')">ساقلاش</button>
-                    </div>
-                </div>
-
-                <div class="section-title" style="font-size: 14px; margin: 18px 0 10px 0;"><i class="fa-solid fa-images"></i> باش بەت سىلايدېرىغا كىنو قوشۇش</div>
-                <div class="form-group">
-                    <select id="sliderMovieSelect" class="form-select"></select>
-                    <button type="button" class="action-btn" style="background: var(--accent-blue-grad); padding: 10px; font-size: 12px; margin-top: 8px;" onclick="addHeroSliderItem()">➕ سىلايدېرغا قوشۇش</button>
-                </div>
-
-                <div class="section-title" style="font-size: 14px; margin: 18px 0 10px 0;"><i class="fa-solid fa-users"></i> ئەزا ئېچىش ۋە باشقۇرۇش</div>
-                <div class="form-group" style="margin-bottom: 10px;">
-                    <input type="text" id="adminUserSearchInput" class="form-input" placeholder="🔍 ئىسىم ياكى 6 خانىلىق ID نومۇرى بويىچە ئىزدەڭ..." oninput="renderAdminUsersList()" autocomplete="off">
-                </div>
-
-                <div class="admin-users-list" id="adminUsersListContainer"></div>
             </div>
         </div>
     </div>
@@ -1418,9 +1405,24 @@
         </div>
     </div>
 
+    <!-- ⚙️ تەڭشەك رايۇنى -->
     <div id="settingsTab" class="tab-content">
         <div class="settings-page-wrapper">
             
+            <div class="settings-group-title"><i class="fa-solid fa-crown" style="color: #ffd700;"></i> ئەزالىق ۋە VIP مەركىزى</div>
+            <div class="settings-group-card">
+                <div class="settings-cell-row" onclick="switchTab('vipOpenTab')">
+                    <div style="display: flex; align-items: center; gap: 12px; text-align: right;">
+                        <div class="settings-icon-badge" style="color: #ffd700;"><i class="fa-solid fa-gem"></i></div>
+                        <div>
+                            <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">VIP ئەزالىق ئېچىش</div>
+                            <div style="font-size: 11px; color: var(--text-secondary);">بارلىق كىنولارنى چەكلىمىسىز كۆرۈش</div>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-left" style="font-size: 12px; color: var(--text-secondary);"></i>
+                </div>
+            </div>
+
             <div class="settings-group-title"><i class="fa-solid fa-user-gear"></i> ھېسابات ۋە سۈرەت</div>
             <div class="settings-group-card">
                 <div class="settings-cell-row" onclick="openAvatarModal()">
@@ -1516,7 +1518,7 @@
                 </div>
             </div>
 
-            <div style="text-align: center; font-size: 11px; color: var(--text-secondary); margin-top: 10px;">
+            <div style="text-align: center; font-size: 11px; color: var(--text-secondary); margin-top: 14px;">
                 كۆزنەك كىنوخانىسى • Koznak TV v2.5
             </div>
         </div>
@@ -1597,6 +1599,7 @@
         let allMovies = {};
         let allUsers = {};
         let featuredSliders = {};
+        let allGenres = ['ھەرىكەتلىك (Action)', 'كومىدىيە (Comedy)', 'مۇھەببەت (Romance)', 'قورقۇنۇچلۇق (Horror)', 'تەۋەككۈلچىلىك (Adventure)', 'دراما (Drama)', 'پەن-تېخنىكا (Sci-Fi)'];
         let currentFilter = 'all';
         let currentSearchGenre = 'all';
         window.currentUser = null;
@@ -1746,6 +1749,21 @@
                 alert('ساقلاشتا خاتالىق كۆرۈلدى!');
             }
         };
+
+        async function handlePosterFileSelected(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            try {
+                const base64 = await compressImage(file, 600, 850, 0.8);
+                document.getElementById('contentPosterBase64').value = base64;
+                const previewImg = document.getElementById('uploadPosterPreviewImg');
+                previewImg.src = base64;
+                document.getElementById('uploadPosterPreviewContainer').style.display = 'block';
+            } catch(e) {
+                alert('رەسىم فەيىلىنى يۈكلەشتە خاتالىق كۆرۈلدى!');
+            }
+        }
 
         window.updateUserNickname = async function() {
             if (!window.currentUser) return;
@@ -1971,6 +1989,17 @@
                 renderHistory();
             }, { onlyOnce: false });
 
+            const genresRef = window.dbRef(window.db, 'genresList');
+            window.dbOnValue(genresRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    allGenres = snapshot.val();
+                } else {
+                    window.dbSet(genresRef, allGenres);
+                }
+                renderGenreDropdowns();
+                renderAdminGenresList();
+            });
+
             const slidersRef = window.dbRef(window.db, 'featuredSliders');
             window.dbOnValue(slidersRef, (snapshot) => {
                 featuredSliders = snapshot.val() || {};
@@ -2006,6 +2035,66 @@
                 }
             });
         };
+
+        function renderGenreDropdowns() {
+            const selectEl = document.getElementById('contentGenre');
+            if (!selectEl) return;
+            selectEl.innerHTML = '';
+            allGenres.forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g;
+                opt.innerText = g;
+                selectEl.appendChild(opt);
+            });
+
+            const searchChips = document.getElementById('searchGenreChips');
+            if (searchChips) {
+                let chipsHtml = `<div class="genre-chip active" onclick="filterSearchByGenre('all', this)">ھەممىسى</div>`;
+                allGenres.forEach(g => {
+                    chipsHtml += `<div class="genre-chip" onclick="filterSearchByGenre('${g}', this)">${g}</div>`;
+                });
+                searchChips.innerHTML = chipsHtml;
+            }
+        }
+
+        window.addNewGenre = function() {
+            const input = document.getElementById('newGenreInput');
+            const val = input.value.trim();
+            if (!val) return alert('ژانىر ئىسمىنى كىرگۈزۈڭ!');
+            if (allGenres.includes(val)) return alert('بۇ ژانىر مەۋجۇت!');
+
+            allGenres.push(val);
+            window.dbSet(window.dbRef(window.db, 'genresList'), allGenres).then(() => {
+                input.value = '';
+                alert('يېڭى ژانىر قوشۇلدى!');
+            });
+        };
+
+        window.deleteGenre = function(index) {
+            if (allGenres.length <= 1) return alert('ئەڭ ئاز بولغاندا بىر ژانىر قېلىشى كېرەك!');
+            if (confirm('بۇ ژانىر ئۆچۈرۈلسۇنمۇ؟')) {
+                allGenres.splice(index, 1);
+                window.dbSet(window.dbRef(window.db, 'genresList'), allGenres).then(() => {
+                    alert('ژانىر ئۆچۈرۈلدى!');
+                });
+            }
+        };
+
+        function renderAdminGenresList() {
+            const container = document.getElementById('adminGenresListContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            allGenres.forEach((g, idx) => {
+                const row = document.createElement('div');
+                row.style.cssText = "display: flex; justify-content: space-between; align-items: center; background: var(--surface-bg); padding: 6px 12px; border-radius: 12px; border: 1px solid var(--border-glow); font-size: 12px;";
+                row.innerHTML = `
+                    <span>${escapeHTML(g)}</span>
+                    <button type="button" class="del-btn" style="width: 24px; height: 24px; font-size: 10px;" onclick="deleteGenre(${idx})">✕</button>
+                `;
+                container.appendChild(row);
+            });
+        }
 
         window.updateUIAfterLogin = function() {
             const accTitle = document.getElementById('accountTitle');
@@ -2050,7 +2139,8 @@
                 document.getElementById('vipBadge').innerText = vipText;
                 document.getElementById('uploadMenuSettingItem').style.display = isAdmin ? 'flex' : 'none';
                 document.getElementById('navUploadBtn').style.display = isAdmin ? 'flex' : 'none';
-                document.getElementById('adminPanelSection').style.display = isAdmin ? 'block' : 'none';
+                document.getElementById('adminGenreSection').style.display = isAdmin ? 'block' : 'none';
+                document.getElementById('adminAccountSection').style.display = isAdmin ? 'block' : 'none';
                 
                 renderMovies();
             }
@@ -2092,17 +2182,6 @@
                 }
             }
         };
-
-        function previewPosterUrl(url) {
-            const previewContainer = document.getElementById('posterPreviewContainer');
-            const previewImg = document.getElementById('posterPreviewImg');
-            if(url && url.trim().length > 5) {
-                previewImg.src = url.trim();
-                previewContainer.style.display = 'block';
-            } else {
-                previewContainer.style.display = 'none';
-            }
-        }
 
         function stopAllVideos() {
             destroyCurrentPlayer();
@@ -2168,7 +2247,7 @@
         }
 
         function clearWatchHistory() {
-            if(confirm('فىلىم كۆرۈش خاتىرىلىرى تازىلانسۇنمۇ؟')) {
+            if(confirm('فىلىم كۆرۈش خاتىرىسى تازىلانسۇنمۇ؟')) {
                 historyList = [];
                 localStorage.removeItem('koznak_history');
                 renderHistory();
@@ -3047,10 +3126,10 @@
             const type = document.getElementById('contentType').value;
             const genre = document.getElementById('contentGenre').value;
             const title = document.getElementById('contentTitle').value.trim();
-            const poster = document.getElementById('contentPoster').value.trim();
+            const poster = document.getElementById('contentPosterBase64').value.trim();
             
             if(!title) return alert('مەزمۇن نامىنى كىرگۈزۈڭ!');
-            if(!poster) return alert('سۈرەت ئۇلانمىسىنى تولۇق كىرگۈزۈڭ!');
+            if(!poster) return alert('تەشۋىقات رەسىمىنى تاللاڭ!');
 
             let episodesArr = [];
             if (type.includes('series')) {
@@ -3078,7 +3157,8 @@
             }).then(() => {
                 alert('فىلىم ساقلاندى!');
                 document.getElementById('uploadForm').reset();
-                document.getElementById('posterPreviewContainer').style.display = 'none';
+                document.getElementById('uploadPosterPreviewContainer').style.display = 'none';
+                document.getElementById('contentPosterBase64').value = '';
                 document.getElementById('dynamicEpisodesContainer').innerHTML = '';
                 switchTab('homeTab');
             });
