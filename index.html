@@ -435,7 +435,6 @@
             margin-bottom: 14px; display: inline-flex; align-items: center; gap: 8px;
         }
         
-        /* 🎬 Cinema Frame & Fullscreen Custom Controls */
         .detail-player-wrapper {
             position: relative;
             width: 100%;
@@ -483,7 +482,6 @@
             object-fit: cover !important;
         }
 
-        /* ⛶ سۇسلاشتۇرۇلغان كىچىك چوڭايتىش كۇنۇپكىسى */
         .floating-fs-btn {
             position: absolute;
             top: 10px;
@@ -925,15 +923,26 @@
                 <div class="profile-avatar-circle" id="mainAccountAvatarBox">👤</div>
             </div>
 
-            <h3 id="accountTitle" style="margin-top: 4px; font-size: 18px; margin-bottom: 16px;">تېلېگرامما ھېساباتىڭىز</h3>
+            <h3 id="accountTitle" style="margin-top: 4px; font-size: 18px; margin-bottom: 16px;">كۆزنەك كىنوخانىسىغا كەلگىنىڭىزگە قارشى ئالىمىز</h3>
             
-            <div id="userProfileView" style="margin-top: 18px; text-align: right;">
+            <div id="telegramLoginContainer" style="margin: 20px auto; display: flex; justify-content: center;">
+                <script async src="https://telegram.org/js/telegram-widget.js?22" 
+                        data-telegram-login="koznaktv_bot" 
+                        data-size="large" 
+                        data-onauth="onTelegramAuth(user)" 
+                        data-request-access="write">
+                </script>
+            </div>
+
+            <div id="userProfileView" style="margin-top: 18px; text-align: right; display: none;">
                 <div style="background: var(--surface-card); border: 1px solid var(--border-glow); padding: 18px; border-radius: 20px; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
                         <span id="displayUsername" style="font-size: 15px; font-weight: 800; color: #ff2a54;"></span>
                         <span id="vipBadge" style="background: var(--surface-bg); color: var(--text-primary); padding: 5px 12px; border-radius: var(--pill-radius); font-size: 11px; font-weight: 700; border: 1px solid var(--border-glow);">ئادەتتىكى ئەزا</span>
                     </div>
                 </div>
+
+                <button type="button" class="action-btn" style="background: #ff4757; margin-bottom: 14px;" onclick="logoutUser()">چىقىش (Logout)</button>
 
                 <div id="adminPanelSection" style="display: none; margin-top: 22px; border-top: 1px solid var(--border-glow); padding-top: 18px; text-align: right;">
                     <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">⚙️ ئومۇمىي تەڭشەكلەر</div>
@@ -1142,31 +1151,15 @@
         let currentHlsInstance = null;
         let isCinemaFullscreen = false;
 
-        window.startApp = function() {
-            let tgUser = null;
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
-                try {
-                    tg.ready();
-                    tg.expand();
-                    if (tg.setHeaderColor) tg.setHeaderColor('#0a0a12');
-                    if (tg.setBackgroundColor) tg.setBackgroundColor('#0a0a12');
-                } catch(e){}
-
-                if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                    tgUser = tg.initDataUnsafe.user;
-                }
-            }
-
-            const tgId = tgUser ? tgUser.id : (localStorage.getItem('koznak_tg_guest_id') || ('guest_' + Math.floor(Math.random() * 899999 + 100000)));
-            localStorage.setItem('koznak_tg_guest_id', tgId);
-
-            const userKey = 'tg_' + tgId;
-            const displayName = tgUser ? (tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '')) : ('ئابونت ' + tgId.toString().slice(-4));
-            const username = tgUser && tgUser.username ? tgUser.username : '';
-            const photoURL = tgUser && tgUser.photo_url ? tgUser.photo_url : '';
+        // Telegram Login Widget Authentication Handler
+        window.onTelegramAuth = function(user) {
+            if (!user || !user.id) return;
+            const userKey = 'tg_' + user.id;
+            const displayName = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            const username = user.username || '';
+            const photoURL = user.photo_url || '';
             
-            const isAdmin = (username.toLowerCase() === 'koznak_usd' || username.toLowerCase() === 'hok_uyghur1' || String(tgId) === '6355883839');
+            const isAdmin = (username.toLowerCase() === 'koznak_usd' || username.toLowerCase() === 'hok_uyghur1' || String(user.id) === '8612107028');
 
             window.currentUser = {
                 userKey: userKey,
@@ -1178,21 +1171,103 @@
                 avatar: photoURL
             };
 
-            window.updateUIAfterLogin();
+            saveAndInitUserSession(userKey);
+        };
 
+        function saveAndInitUserSession(userKey) {
             if (window.db && window.dbRef && window.dbGet) {
                 const userRef = window.dbRef(window.db, 'users/' + userKey);
                 window.dbGet(userRef).then(snap => {
                     if (snap.exists()) {
                         const dbData = snap.val();
+                        const isAdmin = window.currentUser.role === 'admin';
                         window.currentUser.vip = isAdmin ? true : (dbData.vip || false);
                         window.currentUser.vipExpire = dbData.vipExpire || null;
                         window.currentUser.role = isAdmin ? 'admin' : (dbData.role || 'user');
-                        window.updateUIAfterLogin();
                     } else {
                         window.dbSet(userRef, window.currentUser);
                     }
-                }).catch(() => {});
+                    finishUserLoginSession();
+                }).catch(() => {
+                    finishUserLoginSession();
+                });
+            } else {
+                finishUserLoginSession();
+            }
+        }
+
+        function finishUserLoginSession() {
+            localStorage.setItem('koznak_logged_user', JSON.stringify(window.currentUser));
+            const loginContainer = document.getElementById('telegramLoginContainer');
+            if (loginContainer) loginContainer.style.display = 'none';
+            const profileView = document.getElementById('userProfileView');
+            if (profileView) profileView.style.display = 'block';
+            window.updateUIAfterLogin();
+        }
+
+        window.logoutUser = function() {
+            localStorage.removeItem('koznak_logged_user');
+            window.currentUser = null;
+            location.reload();
+        };
+
+        window.startApp = function() {
+            let loggedUser = null;
+            try {
+                const savedUserStr = localStorage.getItem('koznak_logged_user');
+                if (savedUserStr) {
+                    loggedUser = JSON.parse(savedUserStr);
+                }
+            } catch(e) {}
+
+            if (!loggedUser && window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+                const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+                const tgId = tgUser.id;
+                const userKey = 'tg_' + tgId;
+                const displayName = tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '');
+                const username = tgUser.username || '';
+                const photoURL = tgUser.photo_url || '';
+                const isAdmin = (username.toLowerCase() === 'koznak_usd' || username.toLowerCase() === 'hok_uyghur1' || String(tgId) === '8612107028');
+
+                loggedUser = {
+                    userKey: userKey,
+                    user: displayName,
+                    username: username,
+                    role: isAdmin ? 'admin' : 'user',
+                    vip: isAdmin ? true : false,
+                    vipExpire: null,
+                    avatar: photoURL
+                };
+            }
+
+            if (loggedUser) {
+                window.currentUser = loggedUser;
+                const loginContainer = document.getElementById('telegramLoginContainer');
+                if (loginContainer) loginContainer.style.display = 'none';
+                const profileView = document.getElementById('userProfileView');
+                if (profileView) profileView.style.display = 'block';
+                window.updateUIAfterLogin();
+
+                if (window.db && window.dbRef && window.dbGet) {
+                    const userRef = window.dbRef(window.db, 'users/' + window.currentUser.userKey);
+                    window.dbGet(userRef).then(snap => {
+                        if (snap.exists()) {
+                            const dbData = snap.val();
+                            const isAdmin = window.currentUser.role === 'admin';
+                            window.currentUser.vip = isAdmin ? true : (dbData.vip || false);
+                            window.currentUser.vipExpire = dbData.vipExpire || null;
+                            window.currentUser.role = isAdmin ? 'admin' : (dbData.role || 'user');
+                            window.updateUIAfterLogin();
+                        } else {
+                            window.dbSet(userRef, window.currentUser);
+                        }
+                    }).catch(() => {});
+                }
+            } else {
+                const loginContainer = document.getElementById('telegramLoginContainer');
+                if (loginContainer) loginContainer.style.display = 'flex';
+                const profileView = document.getElementById('userProfileView');
+                if (profileView) profileView.style.display = 'none';
             }
 
             const moviesRef = window.dbRef(window.db, 'movies');
@@ -1293,7 +1368,6 @@
             }
         }
 
-        // ⛶ پۈتۈن ئېكران قاڭقىش مېخانىزمى
         window.toggleCinemaFullscreen = function() {
             const wrapper = document.getElementById('cinemaPlayerWrapper');
             const fsBtn = document.getElementById('floatingFsBtn');
@@ -1840,7 +1914,6 @@
             renderRelatedMovies(id);
         }
 
-        // 🎬 مۇكەممەل قويغۇچ يادروسى (100% كاپالەتلىك ۋە خەتەرسىز ئىشلەيدۇ)
         function setupVideoPlayer(vdoIdOrUrl, posterUrl = '') {
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
@@ -2197,7 +2270,6 @@
             if(!container) return;
             container.innerHTML = '';
             Object.keys(allUsers).forEach(userKey => {
-                if(userKey === 'nasrulla996_gmail_com') return;
                 const uData = allUsers[userKey];
                 const isVip = checkUserVipStatus(uData);
                 
