@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ug">
+<html lang="ug" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -17,7 +17,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, set, get, remove, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, get, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCKRnqHKqCpj-xLPeG4sGRkHvFH4qginds",
@@ -39,18 +39,21 @@
         window.dbGet = get;
         window.dbRemove = remove;
         window.dbOnValue = onValue;
+        window.dbUpdate = update;
 
         if (window.startApp) {
             window.startApp();
         }
     </script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700;900&display=swap');
+
         :root {
             --bg-color: #0a0a12;
             --bg-gradient: radial-gradient(circle at 10% 10%, rgba(255, 42, 84, 0.12), transparent 40%), radial-gradient(circle at 90% 90%, rgba(0, 168, 255, 0.1), transparent 40%), #0a0a12;
             --surface-bg: rgba(22, 22, 34, 0.75);
             --surface-card: rgba(26, 26, 40, 0.85);
-            --nav-bg: rgba(16, 16, 26, 0.88);
+            --nav-bg: rgba(16, 16, 26, 0.92);
             --text-primary: #ffffff;
             --text-secondary: #94a3b8;
             --accent-glow: #ff2a54;
@@ -61,14 +64,15 @@
             --card-radius: 20px;
             --pill-radius: 35px;
             --glass-blur: blur(20px);
+            --uyghur-font: 'ALKATIP Basma Tom', 'UKIJ Tuz Tom', 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
         }
 
         body.light-mode {
-            --bg-color: #f1f5f9;
-            --bg-gradient: radial-gradient(circle at 10% 10%, rgba(255, 42, 84, 0.08), transparent 40%), radial-gradient(circle at 90% 90%, rgba(0, 168, 255, 0.08), transparent 40%), #f1f5f9;
-            --surface-bg: rgba(255, 255, 255, 0.85);
+            --bg-color: #f8fafc;
+            --bg-gradient: radial-gradient(circle at 10% 10%, rgba(255, 42, 84, 0.08), transparent 40%), radial-gradient(circle at 90% 90%, rgba(0, 168, 255, 0.08), transparent 40%), #f8fafc;
+            --surface-bg: rgba(255, 255, 255, 0.88);
             --surface-card: #ffffff;
-            --nav-bg: rgba(255, 255, 255, 0.9);
+            --nav-bg: rgba(255, 255, 255, 0.92);
             --text-primary: #0f172a;
             --text-secondary: #64748b;
             --border-glow: rgba(0, 0, 0, 0.08);
@@ -79,7 +83,7 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: var(--uyghur-font);
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -89,6 +93,7 @@
             overflow-y: auto !important;
             overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
+            direction: rtl;
         }
 
         body {
@@ -96,11 +101,10 @@
             background-color: var(--bg-color);
             background-attachment: fixed;
             color: var(--text-primary);
-            padding-bottom: 120px;
-            direction: rtl;
+            padding-bottom: 110px;
+            line-height: 1.6;
         }
 
-        /* 🔒 مەجبۇرىي كىرىش ئېكرانى (強制登入遮罩) */
         #authOverlay {
             position: fixed;
             top: 0;
@@ -113,24 +117,49 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
+            overflow-y: auto;
         }
         .auth-card {
             background: var(--surface-card);
             border: 1px solid var(--border-glow);
-            border-radius: 30px;
-            padding: 35px 25px;
+            border-radius: 28px;
+            padding: 28px 22px;
             width: 100%;
             max-width: 400px;
             text-align: center;
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             backdrop-filter: var(--glass-blur);
         }
+        .auth-toggle-btns {
+            display: flex;
+            background: var(--surface-bg);
+            border: 1px solid var(--border-glow);
+            border-radius: var(--pill-radius);
+            padding: 4px;
+            margin-bottom: 18px;
+            gap: 4px;
+        }
+        .auth-toggle-btn {
+            flex: 1;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            border: none;
+            background: transparent;
+            border-radius: var(--pill-radius);
+            cursor: pointer;
+        }
+        .auth-toggle-btn.active {
+            background: var(--accent-gradient);
+            color: #ffffff;
+        }
 
         header {
             background: var(--nav-bg);
             backdrop-filter: var(--glass-blur);
             -webkit-backdrop-filter: var(--glass-blur);
-            padding: 14px 20px;
+            padding: 12px 18px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -141,7 +170,7 @@
         }
 
         .logo {
-            font-size: 19px;
+            font-size: 18px;
             font-weight: 900;
             background: var(--accent-gradient);
             -webkit-background-clip: text;
@@ -149,7 +178,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            text-shadow: 0 0 25px rgba(255, 42, 84, 0.4);
         }
         .logo i { -webkit-text-fill-color: #ff2a54; }
 
@@ -165,7 +193,6 @@
             align-items: center; 
             justify-content: center; 
             cursor: pointer; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         .hero-slider-container {
@@ -205,7 +232,7 @@
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0.1) 20%, rgba(10,10,18,0.9) 100%);
+            background: linear-gradient(180deg, rgba(0,0,0,0.1) 20%, rgba(10,10,18,0.95) 100%);
             z-index: 1;
         }
 
@@ -214,14 +241,14 @@
             z-index: 2;
             padding: 16px;
             border-radius: 20px;
-            background: rgba(16, 16, 26, 0.65);
+            background: rgba(16, 16, 26, 0.7);
             backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.12);
             max-width: 95%;
         }
 
         .hero-slide-title {
-            font-size: 19px;
+            font-size: 18px;
             font-weight: 800;
             margin-bottom: 4px;
             color: #ffffff;
@@ -242,7 +269,7 @@
             background: var(--accent-gradient);
             color: #ffffff;
             border: none;
-            padding: 9px 22px;
+            padding: 8px 20px;
             border-radius: var(--pill-radius);
             cursor: pointer;
             font-size: 13px;
@@ -281,7 +308,7 @@
             transform: translateX(-50%) translateY(-100px);
             background: var(--accent-gradient);
             color: #ffffff;
-            padding: 11px 22px;
+            padding: 10px 20px;
             border-radius: var(--pill-radius);
             font-size: 12px;
             font-weight: 700;
@@ -303,13 +330,13 @@
             padding: 20px; transition: opacity 0.4s ease;
         }
         .splash-cinema-icon {
-            width: 85px; height: 85px; 
+            width: 80px; height: 80px; 
             background: var(--accent-gradient);
-            border-radius: 26px; display: flex; align-items: center;
-            justify-content: center; font-size: 40px; margin-bottom: 20px; color: #ffffff;
+            border-radius: 24px; display: flex; align-items: center;
+            justify-content: center; font-size: 36px; margin-bottom: 18px; color: #ffffff;
         }
-        .splash-brand-text { font-size: 24px; font-weight: 900; color: #ffffff; margin-bottom: 6px; }
-        .splash-slogan-ug { font-size: 13px; color: #94a3b8; }
+        .splash-brand-text { font-size: 22px; font-weight: 900; color: #ffffff; margin-bottom: 6px; }
+        .splash-slogan-ug { font-size: 12px; color: #94a3b8; }
 
         .search-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -318,7 +345,7 @@
             z-index: 3000; padding: 24px 18px; overflow-y: auto;
         }
         .search-input {
-            width: 100%; padding: 14px 20px; font-size: 14px;
+            width: 100%; padding: 12px 18px; font-size: 14px;
             background: var(--surface-bg); 
             border: 1px solid var(--border-glow);
             color: var(--text-primary); border-radius: var(--pill-radius); margin-bottom: 14px; outline: none;
@@ -327,17 +354,17 @@
             background: var(--surface-bg); 
             border: 1px solid var(--border-glow); 
             color: #ff2a54; 
-            padding: 8px 18px; border-radius: var(--pill-radius); font-size: 13px; cursor: pointer; margin-bottom: 14px; font-weight: 700; 
+            padding: 8px 18px; border-radius: var(--pill-radius); font-size: 12px; cursor: pointer; margin-bottom: 14px; font-weight: 700; 
         }
         
         .genre-chips-container {
-            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 12px; margin-bottom: 14px; scrollbar-width: none;
+            display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 14px; scrollbar-width: none;
         }
         .genre-chip {
             background: var(--surface-bg); 
             border: 1px solid var(--border-glow); 
             color: var(--text-secondary);
-            padding: 8px 16px; border-radius: var(--pill-radius); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;
+            padding: 7px 14px; border-radius: var(--pill-radius); font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap;
         }
         .genre-chip.active { 
             background: var(--accent-gradient); 
@@ -359,14 +386,14 @@
         .tab-content.active-tab { display: block; }
 
         .category-tabs {
-            display: flex; gap: 10px; padding: 10px 18px;
+            display: flex; gap: 8px; padding: 10px 16px;
             overflow-x: auto; white-space: nowrap; scrollbar-width: none;
         }
         .cat-chip {
             background: var(--surface-bg); 
             color: var(--text-secondary); 
             border: 1px solid var(--border-glow); 
-            padding: 9px 18px;
+            padding: 8px 16px;
             border-radius: var(--pill-radius); font-size: 12px; cursor: pointer; font-weight: 700;
         }
         .cat-chip.active {
@@ -375,12 +402,12 @@
             border-color: transparent; 
         }
 
-        .category-section { margin-top: 18px; padding: 0 18px; }
+        .category-section { margin-top: 16px; padding: 0 16px; }
         .section-header-row {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;
         }
         .section-title {
-            font-size: 17px;
+            font-size: 16px;
             color: var(--text-primary);
             font-weight: 800;
             display: flex;
@@ -390,21 +417,21 @@
 
         .movie-row-container {
             display: flex;
-            gap: 14px;
+            gap: 12px;
             overflow-x: auto;
-            padding: 4px 4px 16px 4px;
+            padding: 4px 4px 14px 4px;
             scrollbar-width: none;
         }
         .movie-row-container .movie-card {
-            min-width: 135px;
-            max-width: 145px;
+            min-width: 130px;
+            max-width: 140px;
             flex-shrink: 0;
         }
 
         .movie-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
-            gap: 14px;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
             padding-bottom: 20px;
         }
 
@@ -421,12 +448,12 @@
         }
 
         .movie-poster-box {
-            width: 100%; height: 195px; background: rgba(0, 0, 0, 0.3); position: relative; overflow: hidden;
+            width: 100%; height: 185px; background: rgba(0, 0, 0, 0.3); position: relative; overflow: hidden;
             display: flex; align-items: center; justify-content: center; color: #555555; font-size: 30px;
         }
         .movie-poster-box img { width: 100%; height: 100%; object-fit: cover; }
 
-        .movie-footer { display: flex; flex-direction: column; padding: 10px 12px; flex-grow: 1; }
+        .movie-footer { display: flex; flex-direction: column; padding: 10px; flex-grow: 1; }
         .movie-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; text-align: center; }
         
         .movie-card-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
@@ -435,37 +462,37 @@
             position: absolute; top: 8px; right: 8px; 
             background: var(--accent-gradient); 
             color: #ffffff;
-            font-size: 9px; font-weight: 800; padding: 3px 9px; border-radius: var(--pill-radius); z-index: 2;
+            font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: var(--pill-radius); z-index: 2;
         }
 
         .card-actions { display: flex; align-items: center; gap: 6px; }
         .fav-btn { 
             background: var(--surface-bg); 
             border: 1px solid var(--border-glow); 
-            width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; color: var(--text-secondary); 
+            width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; color: var(--text-secondary); 
         }
         .fav-btn.liked { color: #ff2a54; border-color: rgba(255, 42, 84, 0.5); background: rgba(255, 42, 84, 0.15); }
         .del-btn { 
             background: rgba(255, 42, 84, 0.15); 
             border: 1px solid rgba(255, 42, 84, 0.4); 
-            width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; color: #ff4757; 
+            width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; cursor: pointer; color: #ff4757; 
         }
 
         #detailTab { min-height: 100vh; }
-        .detail-container { max-width: 820px; margin: 0 auto; padding: 16px; }
+        .detail-container { max-width: 820px; margin: 0 auto; padding: 14px; }
         .detail-back-btn {
             background: var(--surface-bg); 
             border: 1px solid var(--border-glow); 
             color: var(--text-primary);
-            padding: 9px 20px; border-radius: var(--pill-radius); font-size: 13px; font-weight: 700; cursor: pointer;
-            margin-bottom: 14px; display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 18px; border-radius: var(--pill-radius); font-size: 12px; font-weight: 700; cursor: pointer;
+            margin-bottom: 12px; display: inline-flex; align-items: center; gap: 8px;
         }
         
         .detail-player-wrapper {
             position: relative;
             width: 100%;
             aspect-ratio: 16/9;
-            border-radius: 22px;
+            border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 15px 45px rgba(0,0,0,0.8);
             border: 1px solid var(--border-glow);
@@ -505,50 +532,45 @@
         .detail-player-wrapper.is-fullscreen .native-cinema-video {
             width: 100vw !important;
             height: 100vh !important;
-            object-fit: cover !important;
+            object-fit: contain !important;
         }
 
         .floating-fs-btn {
             position: absolute;
             top: 10px;
             left: 10px;
-            background: rgba(10, 10, 18, 0.45);
+            background: rgba(10, 10, 18, 0.65);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            color: rgba(255, 255, 255, 0.85);
+            color: rgba(255, 255, 255, 0.9);
             border: 1px solid rgba(255, 255, 255, 0.15);
             padding: 5px 12px;
             border-radius: 20px;
             font-size: 11px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             z-index: 999999;
             display: flex;
             align-items: center;
-            gap: 5px;
-            transition: background 0.2s;
-        }
-        .floating-fs-btn:active {
-            background: rgba(255, 42, 84, 0.7);
-            color: #ffffff;
+            gap: 6px;
         }
 
         .detail-info-box {
             background: var(--surface-card); 
             border: 1px solid var(--border-glow);
-            border-radius: 22px; padding: 18px; margin-top: 16px;
+            border-radius: 20px; padding: 16px; margin-top: 14px;
         }
-        .detail-title { font-size: 19px; font-weight: 900; margin-bottom: 8px; color: var(--text-primary); }
+        .detail-title { font-size: 18px; font-weight: 900; margin-bottom: 6px; color: var(--text-primary); }
         .detail-meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; gap: 8px; }
 
         .series-episode-bar-detail {
-            display: flex; gap: 8px; overflow-x: auto; padding: 12px 0; margin-top: 10px; scrollbar-width: none;
+            display: flex; gap: 8px; overflow-x: auto; padding: 10px 0; margin-top: 8px; scrollbar-width: none;
         }
         .episode-chip-det {
             background: var(--surface-bg); 
             color: var(--text-primary); 
             border: 1px solid var(--border-glow);
-            padding: 9px 18px; border-radius: var(--pill-radius); font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;
+            padding: 8px 16px; border-radius: var(--pill-radius); font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;
         }
         .episode-chip-det.active { 
             background: var(--accent-gradient); 
@@ -557,16 +579,16 @@
         }
 
         .rating-box { 
-            display: flex; align-items: center; justify-content: space-between; margin-top: 16px; font-size: 13px; 
+            display: flex; align-items: center; justify-content: space-between; margin-top: 14px; font-size: 12px; 
             background: var(--surface-bg); 
-            padding: 12px 18px; border-radius: 16px; border: 1px solid var(--border-glow); 
+            padding: 10px 16px; border-radius: 16px; border: 1px solid var(--border-glow); 
         }
-        .reaction-buttons { display: flex; gap: 10px; }
+        .reaction-buttons { display: flex; gap: 8px; }
         .react-btn {
             background: var(--surface-card); 
             border: 1px solid var(--border-glow); 
             color: var(--text-secondary);
-            padding: 7px 18px; border-radius: var(--pill-radius); font-size: 13px; font-weight: 700; cursor: pointer;
+            padding: 6px 16px; border-radius: var(--pill-radius); font-size: 12px; font-weight: 700; cursor: pointer;
             display: inline-flex; align-items: center; gap: 6px;
         }
         .react-btn.active-like { background: rgba(46, 213, 115, 0.2); border-color: #2ed573; color: #2ed573; }
@@ -575,95 +597,95 @@
         .comments-section {
             background: var(--surface-card); 
             border: 1px solid var(--border-glow);
-            border-radius: 22px; padding: 18px; margin-top: 16px;
+            border-radius: 20px; padding: 16px; margin-top: 14px;
         }
         .emoji-quick-bar {
-            display: flex; gap: 8px; overflow-x: auto; padding: 6px 0; margin-bottom: 10px; scrollbar-width: none;
+            display: flex; gap: 6px; overflow-x: auto; padding: 4px 0; margin-bottom: 8px; scrollbar-width: none;
         }
         .emoji-btn {
             background: var(--surface-bg); 
             border: 1px solid var(--border-glow);
-            border-radius: var(--pill-radius); font-size: 16px; padding: 6px 14px; cursor: pointer;
+            border-radius: var(--pill-radius); font-size: 15px; padding: 5px 12px; cursor: pointer;
         }
         
-        .comment-input-wrapper { position: relative; width: 100%; margin-bottom: 10px; }
+        .comment-input-wrapper { position: relative; width: 100%; margin-bottom: 8px; }
         .comment-input {
-            width: 100%; padding: 12px 18px; border-radius: 16px; 
+            width: 100%; padding: 10px 16px; border-radius: 14px; 
             border: 1px solid var(--border-glow);
             background: var(--surface-bg); 
-            color: var(--text-primary); outline: none; font-size: 13px; resize: none;
+            color: var(--text-primary); outline: none; font-size: 12px; resize: none;
         }
         
-        .comment-item { display: flex; gap: 12px; align-items: flex-start; padding: 14px 0; border-bottom: 1px solid var(--border-glow); font-size: 13px; }
-        .comment-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--surface-bg); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 15px; flex-shrink: 0; border: 1px solid var(--border-glow); }
+        .comment-item { display: flex; gap: 10px; align-items: flex-start; padding: 12px 0; border-bottom: 1px solid var(--border-glow); font-size: 12px; }
+        .comment-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--surface-bg); overflow: hidden; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; border: 1px solid var(--border-glow); }
         .comment-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .comment-content-box { display: flex; flex-direction: column; width: 100%; }
-        .comment-user { font-weight: 700; color: #ff2a54; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
-        .comment-time { font-weight: normal; font-size: 10px; color: var(--text-secondary); margin-right: 8px; }
-        .comment-text-body { color: var(--text-primary); line-height: 1.5; font-size: 13px; word-break: break-word; }
+        .comment-user { font-weight: 700; color: #ff2a54; margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center; }
+        .comment-time { font-weight: normal; font-size: 10px; color: var(--text-secondary); margin-right: 6px; }
+        .comment-text-body { color: var(--text-primary); line-height: 1.5; font-size: 12px; word-break: break-word; }
         
-        .comment-actions-bar { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
-        .comment-action-link { background: none; border: none; font-size: 11px; color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; gap: 5px; font-weight: 700; }
+        .comment-actions-bar { display: flex; align-items: center; gap: 14px; margin-top: 6px; }
+        .comment-action-link { background: none; border: none; font-size: 11px; color: var(--text-secondary); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; font-weight: 700; }
         .comment-action-link.liked { color: #ff4757; }
 
-        .page-box { padding: 18px; max-width: 600px; margin: 0 auto; }
-        .form-group { margin-bottom: 16px; }
-        .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 700; text-align: right; }
+        .page-box { padding: 16px; max-width: 600px; margin: 0 auto; }
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; font-weight: 700; text-align: right; }
         .form-input, .form-select {
-            width: 100%; padding: 13px 18px; 
+            width: 100%; padding: 12px 16px; 
             background: var(--surface-bg);
             border: 1px solid var(--border-glow); 
-            color: var(--text-primary); border-radius: 16px; font-size: 13px; outline: none;
+            color: var(--text-primary); border-radius: 14px; font-size: 12px; outline: none;
             text-align: right;
         }
 
         .action-btn {
-            width: 100%; padding: 13px; 
+            width: 100%; padding: 12px; 
             background: var(--accent-gradient); 
             color: #ffffff;
-            border: none; border-radius: var(--pill-radius); font-size: 14px; font-weight: 800; cursor: pointer; margin-top: 8px;
+            border: none; border-radius: var(--pill-radius); font-size: 13px; font-weight: 800; cursor: pointer; margin-top: 6px;
             box-shadow: 0 6px 20px rgba(255, 42, 84, 0.4);
         }
 
-        .settings-page-wrapper { max-width: 480px; margin: 16px auto; padding: 0 16px; }
+        .settings-page-wrapper { max-width: 480px; margin: 14px auto; padding: 0 14px; }
         .user-profile-card { 
             background: var(--surface-card); 
             border: 1px solid var(--border-glow); 
-            border-radius: 24px; padding: 22px; margin-bottom: 16px; text-align: center; 
+            border-radius: 22px; padding: 20px; margin-bottom: 14px; text-align: center; 
         }
-        .profile-top-row { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .profile-top-row { display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 14px; }
         .profile-avatar-circle {
-            width: 86px; height: 86px; border-radius: 50%; border: 3px solid #ff2a54;
-            background: var(--surface-bg); display: flex; align-items: center; justify-content: center; font-size: 38px; overflow: hidden;
+            width: 80px; height: 80px; border-radius: 50%; border: 3px solid #ff2a54;
+            background: var(--surface-bg); display: flex; align-items: center; justify-content: center; font-size: 34px; overflow: hidden;
         }
         .profile-avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
         .profile-buttons-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .profile-action-chip {
-            background: var(--surface-bg); border: 1px solid var(--border-glow); padding: 12px;
-            border-radius: var(--pill-radius); display: flex; align-items: center; justify-content: center; gap: 8px;
+            background: var(--surface-bg); border: 1px solid var(--border-glow); padding: 10px;
+            border-radius: var(--pill-radius); display: flex; align-items: center; justify-content: center; gap: 6px;
             font-size: 12px; font-weight: 700; color: var(--text-primary); cursor: pointer; text-decoration: none;
         }
 
         .settings-block-card { 
             background: var(--surface-card); 
             border: 1px solid var(--border-glow); 
-            border-radius: 24px; padding: 6px 20px; 
+            border-radius: 22px; padding: 4px 18px; 
         }
-        .settings-row-item { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--border-glow); }
-        .settings-row-right { display: flex; align-items: center; gap: 12px; }
+        .settings-row-item { display: flex; justify-content: space-between; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--border-glow); }
+        .settings-row-right { display: flex; align-items: center; gap: 10px; }
         .settings-icon-box { 
-            width: 38px; height: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 16px; 
+            width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; 
             background: var(--surface-bg); border: 1px solid var(--border-glow); 
         }
         .settings-text-box { display: flex; flex-direction: column; gap: 2px; text-align: right; }
-        .settings-item-title { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+        .settings-item-title { font-size: 12px; font-weight: 700; color: var(--text-primary); }
         .settings-item-desc { font-size: 10px; color: var(--text-secondary); }
 
         .theme-buttons-container { 
             display: flex; background: var(--surface-bg); border: 1px solid var(--border-glow); padding: 4px; border-radius: var(--pill-radius); gap: 4px; 
         }
         .theme-select-btn {
-            flex: 1; padding: 6px 14px; font-size: 11px; font-weight: 700;
+            flex: 1; padding: 5px 12px; font-size: 11px; font-weight: 700;
             color: var(--text-secondary); border-radius: var(--pill-radius); cursor: pointer; background: transparent; border: none;
         }
         .theme-select-btn.active { 
@@ -673,17 +695,17 @@
 
         .bottom-nav {
             position: fixed;
-            bottom: 16px;
+            bottom: 14px;
             left: 50%;
             transform: translateX(-50%);
-            width: calc(100% - 32px);
+            width: calc(100% - 28px);
             max-width: 480px;
             background: var(--nav-bg);
             backdrop-filter: var(--glass-blur);
             display: flex;
             justify-content: space-around;
             align-items: center;
-            padding: 8px 12px;
+            padding: 8px 10px;
             border-radius: var(--pill-radius);
             border: 1px solid rgba(255, 255, 255, 0.12);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
@@ -691,29 +713,29 @@
         }
         .nav-item {
             background: none; border: none; color: var(--text-secondary); font-size: 10px;
-            display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; font-weight: 700;
+            display: flex; flex-direction: column; align-items: center; gap: 2px; cursor: pointer; font-weight: 700;
         }
         .nav-item.active { color: #ff2a54; transform: scale(1.05); }
-        .nav-item span:first-child { font-size: 18px; }
+        .nav-item span:first-child { font-size: 17px; }
 
-        .admin-users-list { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+        .admin-users-list { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
         .admin-user-card {
             background: var(--surface-bg); 
             border: 1px solid var(--border-glow); 
-            border-radius: 16px; padding: 12px 16px;
+            border-radius: 14px; padding: 10px 14px;
             display: flex; justify-content: space-between; align-items: center; gap: 8px;
         }
-        .admin-user-left-box { display: flex; align-items: center; gap: 10px; }
+        .admin-user-left-box { display: flex; align-items: center; gap: 8px; }
         .admin-user-avatar {
-            width: 40px; height: 40px; border-radius: 50%; border: 2px solid #ff2a54;
-            background: var(--surface-card); display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 18px; flex-shrink: 0;
+            width: 36px; height: 36px; border-radius: 50%; border: 2px solid #ff2a54;
+            background: var(--surface-card); display: flex; align-items: center; justify-content: center; overflow: hidden; font-size: 16px; flex-shrink: 0;
         }
         .admin-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .admin-user-info { display: flex; flex-direction: column; gap: 2px; text-align: right; }
-        .admin-user-name { font-size: 13px; font-weight: 700; color: var(--text-primary); }
+        .admin-user-name { font-size: 12px; font-weight: 700; color: var(--text-primary); }
         .admin-user-status { font-size: 10px; color: var(--text-secondary); }
-        .admin-user-btns { display: flex; gap: 5px; flex-wrap: wrap; justify-content: flex-end; }
-        .admin-mini-btn { padding: 6px 12px; border-radius: var(--pill-radius); font-size: 10px; font-weight: 700; border: none; cursor: pointer; }
+        .admin-user-btns { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+        .admin-mini-btn { padding: 5px 10px; border-radius: var(--pill-radius); font-size: 10px; font-weight: 700; border: none; cursor: pointer; }
         .btn-vip-on { background: #2ed573; color: #ffffff; }
         .btn-vip-plus { background: #0072ff; color: #ffffff; }
         .btn-vip-off { background: #ffa502; color: #000000; }
@@ -737,20 +759,46 @@
 </head>
 <body>
 
-    <!-- 🔒 مەجبۇرىي تېلېگرامما ئارقىلىق كىرىش ئېكرانى (بىۋاسىتە چىقىدۇ) -->
+    <!-- 🔒 ئابونت كىرىش ۋە تىزىملىتىش ئېكرانى -->
     <div id="authOverlay">
         <div class="auth-card">
-            <div class="splash-cinema-icon" style="margin: 0 auto 15px auto;"><i class="fa-solid fa-clapperboard"></i></div>
-            <h2 style="font-size: 20px; font-weight: 900; margin-bottom: 8px; color: #ffffff;">كۆزنەك كىنوخانىسىغا كېلىڭ</h2>
-            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 22px;">فىلىملەرنى كۆرۈش ۋە پىكىر قالدۇرۇش ئۈچۈن تېلېگرامما ھېساباتىڭىز بىلەن كىرىڭ</p>
+            <div class="splash-cinema-icon" style="margin: 0 auto 12px auto;"><i class="fa-solid fa-clapperboard"></i></div>
+            <h2 style="font-size: 18px; font-weight: 900; margin-bottom: 6px; color: #ffffff;">كۆزنەك كىنوخانىسى</h2>
+            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">داۋاملاشتۇرۇش ئۈچۈن ھېساباتىڭىز بىلەن كىرىڭ</p>
             
-            <div id="telegramOverlayLoginBtn" style="display: flex; justify-content: center; min-height: 40px;">
-                <script async src="https://telegram.org/js/telegram-widget.js?22" 
-                        data-telegram-login="koznaktv_bot" 
-                        data-size="large" 
-                        data-onauth="onTelegramAuth(user)" 
-                        data-request-access="write">
-                </script>
+            <div class="auth-toggle-btns">
+                <button type="button" class="auth-toggle-btn active" id="tabBtnTg" onclick="switchAuthView('telegram')">Telegram ئارقىلىق</button>
+                <button type="button" class="auth-toggle-btn" id="tabBtnCustom" onclick="switchAuthView('custom')">ئىسىم & پارول</button>
+            </div>
+
+            <!-- 1. Telegram ئارقىلىق كىرىش بۆلىكى -->
+            <div id="authViewTg">
+                <div style="min-height: 44px; display: flex; justify-content: center; align-items: center; margin: 15px 0;">
+                    <script async src="https://telegram.org/js/telegram-widget.js?22" 
+                            data-telegram-login="koznaktv_bot" 
+                            data-size="large" 
+                            data-onauth="onTelegramAuth(user)" 
+                            data-request-access="write">
+                    </script>
+                </div>
+                <p style="font-size: 11px; color: var(--text-secondary); margin-top: 10px;">Telegram كۇنۇپكىسى ئارقىلىق بىر كۇنۇپكا بىلەن تېز كىرەلەيسىز.</p>
+            </div>
+
+            <!-- 2. ئىسىم ۋە پارول ئارقىلىق كىرىش / تىزىملىتىش بۆلىكى -->
+            <div id="authViewCustom" style="display: none; text-align: right;">
+                <div class="form-group">
+                    <label>ئىسىم ياكى ئەزا نامى (ھەرپ ياكى سان)</label>
+                    <input type="text" id="customUsernameInput" class="form-input" placeholder="مەسىلەن: ali_123" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>پارول</label>
+                    <input type="password" id="customPasswordInput" class="form-input" placeholder="پارولىڭىزنى كىرگۈزۈڭ" autocomplete="off">
+                </div>
+                <div style="display: flex; gap: 8px; margin-top: 12px;">
+                    <button type="button" class="action-btn" style="flex: 1; margin: 0; padding: 10px;" onclick="handleCustomLogin()">كىرىش</button>
+                    <button type="button" class="action-btn" style="flex: 1; margin: 0; padding: 10px; background: #2ed573;" onclick="handleCustomRegister()">يېڭى تىزىملىتىش</button>
+                </div>
+                <p style="font-size: 11px; color: var(--text-secondary); margin-top: 12px; text-align: center;">باشقا ئۈسكۈنىدە ئاچسىڭىز ئالدىنقىسى ئاپتوماتىك چېكىنىدۇ.</p>
             </div>
         </div>
     </div>
@@ -761,10 +809,10 @@
     </div>
 
     <div id="splashScreen">
-        <div class="splash-content">
+        <div class="splash-content" style="text-align: center;">
             <div class="splash-cinema-icon"><i class="fa-solid fa-clapperboard"></i></div>
             <div class="splash-brand-text">كۆزنەك كىنوخانىسى</div>
-            <div class="splash-slogan-ug">كۆزنەك كىنوخانىسىغا كەلگىنىڭىزگە قارشى ئالىمىز</div>
+            <div class="splash-slogan-ug">يۇقىرى سۈپەتلىك تاللانما كىنو-فىلىملەر</div>
         </div>
     </div>
 
@@ -779,8 +827,8 @@
             <div class="hero-dots" id="heroDotsContainer"></div>
         </div>
 
-        <div id="homeScrollingWrapper" style="display: none; background: var(--surface-bg); border: 1px solid var(--border-glow); border-radius: var(--pill-radius); padding: 8px 15px; margin: 0 12px 14px 12px;">
-            <marquee id="homeScrollingText" scrollamount="5" style="font-size: 13px; font-weight: 700; color: #ff2a54; vertical-align: middle;"></marquee>
+        <div id="homeScrollingWrapper" style="display: none; background: var(--surface-bg); border: 1px solid var(--border-glow); border-radius: var(--pill-radius); padding: 6px 14px; margin: 0 12px 12px 12px;">
+            <marquee id="homeScrollingText" scrollamount="5" style="font-size: 12px; font-weight: 700; color: #ff2a54; vertical-align: middle;"></marquee>
         </div>
 
         <div class="category-tabs">
@@ -816,7 +864,7 @@
                     <span id="detailMovieTag" style="color: #ff2a54; font-weight: 800;"></span>
                 </div>
                 
-                <div id="trailerBtnContainer" style="margin-top: 14px;"></div>
+                <div id="trailerBtnContainer" style="margin-top: 12px;"></div>
                 <div id="detailEpisodeBarContainer"></div>
 
                 <div class="rating-box">
@@ -833,8 +881,8 @@
             </div>
 
             <div class="comments-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <div class="section-title" style="font-size: 15px; margin-bottom: 0;">💬 پىكىر ۋە باھالار</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div class="section-title" style="font-size: 14px; margin-bottom: 0;">💬 پىكىر ۋە باھالار</div>
                     <span id="commentsCountBadge" style="font-size: 11px; color: var(--text-secondary);">0 پىكىر</span>
                 </div>
 
@@ -845,19 +893,17 @@
                     <button type="button" class="emoji-btn" onclick="insertEmoji('😂')">😂</button>
                     <button type="button" class="emoji-btn" onclick="insertEmoji('👏')">👏</button>
                     <button type="button" class="emoji-btn" onclick="insertEmoji('😍')">😍</button>
-                    <button type="button" class="emoji-btn" onclick="insertEmoji('😢')">😢</button>
-                    <button type="button" class="emoji-btn" onclick="insertEmoji('🎬')">🎬</button>
                 </div>
 
                 <div class="comment-input-wrapper">
-                    <textarea id="commentInputBox" class="comment-input" rows="2" placeholder="بۇ فىلىم ھەققىدە ئۆز پىكىرىڭىزنى قالدۇرۇڭ..."></textarea>
+                    <textarea id="commentInputBox" class="comment-input" rows="2" placeholder="بۇ فىلىم ھەققىدە پىكىرىڭىزنى قالدۇرۇڭ..."></textarea>
                 </div>
-                <button type="button" class="action-btn" style="padding: 11px; font-size: 13px; margin-top: 0;" onclick="submitComment()"><i class="fa-solid fa-paper-plane"></i> پىكىر يوللاش</button>
+                <button type="button" class="action-btn" style="padding: 10px; font-size: 12px; margin-top: 0;" onclick="submitComment()"><i class="fa-solid fa-paper-plane"></i> پىكىر يوللاش</button>
                 
-                <div id="commentsListContainer" style="margin-top: 16px;"></div>
+                <div id="commentsListContainer" style="margin-top: 14px;"></div>
             </div>
 
-            <div class="category-section" style="padding: 0; margin-top: 24px;">
+            <div class="category-section" style="padding: 0; margin-top: 20px;">
                 <div class="section-title">🔥 تەۋسىيە كىنولەر</div>
                 <div class="movie-grid" id="relatedMoviesGrid"></div>
             </div>
@@ -880,7 +926,7 @@
 
     <div id="uploadTab" class="tab-content">
         <div class="page-box" id="uploadPageContent">
-            <div class="section-title" style="font-size: 17px; margin-bottom: 16px;">➕ يېڭى مەزمۇن قوشۇش (Archive & Telegram)</div>
+            <div class="section-title" style="font-size: 16px; margin-bottom: 14px;">➕ يېڭى مەزمۇن قوشۇش</div>
             <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
                 <div class="form-group">
                     <label>مەزمۇن تىپى</label>
@@ -913,22 +959,10 @@
                 </div>
 
                 <div class="form-group">
-                    <label>🎬 تەشۋىقات رەسىمى (Poster Image)</label>
-                    <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-                        <button type="button" class="auth-switch-btn active" id="posterTypeUrlBtn" onclick="setPosterInputMode('url')" style="padding: 7px; font-size: 11px;">تور ئۇلانمىسى (URL)</button>
-                        <button type="button" class="auth-switch-btn" id="posterTypeFileBtn" onclick="setPosterInputMode('file')" style="padding: 7px; font-size: 11px;">تېلېفوندىن تاللاش</button>
-                    </div>
-
-                    <div id="posterUrlBox">
-                        <input type="text" id="contentPoster" class="form-input" placeholder="https://... سۈرەت ئۇلانمىسى" autocomplete="off" oninput="previewPosterUrl(this.value)">
-                    </div>
-
-                    <div id="posterFileBox" style="display: none;">
-                        <input type="file" id="contentPosterFile" accept="image/*" class="form-input" style="padding: 8px;" onchange="handlePosterFileSelected(event)">
-                    </div>
-
+                    <label>🎬 تەشۋىقات رەسىمى ئۇلانمىسى (Poster Image URL)</label>
+                    <input type="url" id="contentPoster" class="form-input" placeholder="https://... سۈرەت تور ئۇلانمىسىنى چاپلاڭ" autocomplete="off" oninput="previewPosterUrl(this.value)" required>
                     <div id="posterPreviewContainer" style="margin-top: 10px; display: none; text-align: center;">
-                        <img id="posterPreviewImg" src="" alt="رەسىم" style="max-height: 130px; border-radius: 16px; border: 1px solid var(--border-glow); object-fit: cover;">
+                        <img id="posterPreviewImg" src="" alt="رەسىم" style="max-height: 140px; border-radius: 14px; border: 1px solid var(--border-glow); object-fit: cover;">
                     </div>
                 </div>
                 
@@ -956,31 +990,31 @@
                     <button type="button" class="action-btn" style="background: #2ed573; color: #ffffff; padding: 10px; font-size: 12px; margin: 0;" onclick="addEpisodeInputRow()">➕ يېڭى قىسىم قوشۇش</button>
                 </div>
 
-                <button type="submit" class="action-btn">مەزمۇننى يوللاش</button>
+                <button type="submit" class="action-btn">مەزمۇننى ساقلاش</button>
             </form>
         </div>
     </div>
 
     <div id="accountTab" class="tab-content">
         <div class="page-box" style="text-align: center;">
-            <div style="display: flex; flex-direction: column; align-items: center; margin-top: 15px; margin-bottom: 20px;">
+            <div style="display: flex; flex-direction: column; align-items: center; margin-top: 15px; margin-bottom: 15px;">
                 <div class="profile-avatar-circle" id="mainAccountAvatarBox">👤</div>
             </div>
 
-            <h3 id="accountTitle" style="margin-top: 4px; font-size: 18px; margin-bottom: 16px;">تېلېگرامما ھېساباتىڭىز</h3>
+            <h3 id="accountTitle" style="font-size: 17px; margin-bottom: 14px;">ھېساباتىڭىز</h3>
             
-            <div id="userProfileView" style="margin-top: 18px; text-align: right;">
-                <div style="background: var(--surface-card); border: 1px solid var(--border-glow); padding: 18px; border-radius: 20px; margin-bottom: 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.4);">
+            <div id="userProfileView" style="margin-top: 14px; text-align: right;">
+                <div style="background: var(--surface-card); border: 1px solid var(--border-glow); padding: 16px; border-radius: 18px; margin-bottom: 14px;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span id="displayUsername" style="font-size: 15px; font-weight: 800; color: #ff2a54;"></span>
-                        <span id="vipBadge" style="background: var(--surface-bg); color: var(--text-primary); padding: 5px 12px; border-radius: var(--pill-radius); font-size: 11px; font-weight: 700; border: 1px solid var(--border-glow);">ئادەتتىكى ئەزا</span>
+                        <span id="displayUsername" style="font-size: 14px; font-weight: 800; color: #ff2a54;"></span>
+                        <span id="vipBadge" style="background: var(--surface-bg); color: var(--text-primary); padding: 4px 10px; border-radius: var(--pill-radius); font-size: 11px; font-weight: 700; border: 1px solid var(--border-glow);">ئادەتتىكى ئەزا</span>
                     </div>
                 </div>
 
                 <button type="button" class="action-btn" style="background: #ff4757; margin-bottom: 14px;" onclick="logoutUser()">ھېساباتتىن چىقىش (Logout)</button>
 
-                <div id="adminPanelSection" style="display: none; margin-top: 22px; border-top: 1px solid var(--border-glow); padding-top: 18px; text-align: right;">
-                    <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">⚙️ ئومۇمىي تەڭشەكلەر</div>
+                <div id="adminPanelSection" style="display: none; margin-top: 20px; border-top: 1px solid var(--border-glow); padding-top: 16px; text-align: right;">
+                    <div class="section-title" style="font-size: 14px; margin-bottom: 10px;">⚙️ ئومۇمىي تەڭشەكلەر</div>
                     
                     <div class="form-group">
                         <label>ئەزالىق باھاسى (VIP Price)</label>
@@ -993,18 +1027,18 @@
                     <div class="form-group">
                         <label>باش بەت ئۇقتۇرۇش خېتى (Scrolling Text)</label>
                         <div style="display: flex; gap: 8px;">
-                            <input type="text" id="adminScrollingText" class="form-input" placeholder="تەشۋىقات ياكى ئۇقتۇرۇش خېتى..." autocomplete="off">
+                            <input type="text" id="adminScrollingText" class="form-input" placeholder="ئۇقتۇرۇش خېتى..." autocomplete="off">
                             <button type="button" class="action-btn" style="width: auto; padding: 10px 16px; margin: 0; background: #2ed573;" onclick="updateAdminSettings('scrollingText')">ساقلاش</button>
                         </div>
                     </div>
 
-                    <div class="section-title" style="font-size: 15px; margin: 24px 0 12px 0;">🖼️ باش بەت سىلايدېر قوشۇش</div>
+                    <div class="section-title" style="font-size: 14px; margin: 20px 0 10px 0;">🖼️ باش بەت سىلايدېر قوشۇش</div>
                     <div class="form-group">
                         <select id="sliderMovieSelect" class="form-select"></select>
-                        <button type="button" class="action-btn" style="background: var(--accent-blue-grad); padding: 10px; font-size: 12px; margin-top: 8px;" onclick="addHeroSliderItem()">➕ باش بەتكە قوشۇش</button>
+                        <button type="button" class="action-btn" style="background: var(--accent-blue-grad); padding: 10px; font-size: 12px; margin-top: 8px;" onclick="addHeroSliderItem()">➕ سىلايدېرغا قوشۇش</button>
                     </div>
 
-                    <div class="section-title" style="font-size: 15px; margin: 24px 0 12px 0;">👥 ئابونتلارنى باشقۇرۇش</div>
+                    <div class="section-title" style="font-size: 14px; margin: 20px 0 10px 0;">👥 ئابونتلارنى باشقۇرۇش</div>
                     <div class="admin-users-list" id="adminUsersListContainer"></div>
                 </div>
             </div>
@@ -1013,13 +1047,13 @@
 
     <div id="vipOpenTab" class="tab-content">
         <div class="page-box" style="max-width: 450px; text-align: right;">
-            <div class="section-title" style="font-size: 17px; margin-bottom: 14px; text-align: center;">👑 ئەزالىق ئېچىش مەركىزى</div>
-            <div style="background: var(--surface-card); border: 1px solid var(--border-glow); box-shadow: 0 12px 35px rgba(0,0,0,0.5); padding: 24px; border-radius: 24px; line-height: 1.6; font-size: 13px;">
-                <p style="margin-bottom: 12px; font-weight: 700;">ھۆرمەتلىك ئەزا، ئايلىق ئەزالىق باھاسى: <span id="displayVipPrice" style="color: #ff2a54; font-size: 20px; font-weight: 900;">4＄</span></p>
-                <hr style="border: none; border-top: 1px solid var(--border-glow); margin: 14px 0;">
-                <p style="color: var(--text-secondary); font-size: 12px; margin-bottom: 14px;">👉 تېلېگرامما ئادرېسىمىز ئارقىلىق ئالاقىلىشىڭ:</p>
-                <a href="https://t.me/KOZNAK_USD" target="_blank" style="display: block; text-align: center; background: linear-gradient(135deg, #0088cc, #00b4d8); color: #ffffff; padding: 13px; border-radius: var(--pill-radius); font-weight: 800; text-decoration: none; font-size: 13px;">
-                    💬 Telegram دا ئالاقىلىشىش (@KOZNAK_USD)
+            <div class="section-title" style="font-size: 16px; margin-bottom: 12px; text-align: center;">👑 ئەزالىق مەركىزى</div>
+            <div style="background: var(--surface-card); border: 1px solid var(--border-glow); padding: 20px; border-radius: 20px; line-height: 1.6; font-size: 13px;">
+                <p style="margin-bottom: 10px; font-weight: 700;">ئايلىق ئەزالىق باھاسى: <span id="displayVipPrice" style="color: #ff2a54; font-size: 19px; font-weight: 900;">4＄</span></p>
+                <hr style="border: none; border-top: 1px solid var(--border-glow); margin: 12px 0;">
+                <p style="color: var(--text-secondary); font-size: 12px; margin-bottom: 12px;">👉 رەسمىي تېلېگرامما ئادرېسىمىز بىلەن ئالاقىلىشىپ ئەزالىق ئېچىڭ:</p>
+                <a href="https://t.me/KOZNAK_USD" target="_blank" style="display: block; text-align: center; background: linear-gradient(135deg, #0088cc, #00b4d8); color: #ffffff; padding: 12px; border-radius: var(--pill-radius); font-weight: 800; text-decoration: none; font-size: 13px;">
+                    💬 ئالاقىلىشىش (@KOZNAK_USD)
                 </a>
             </div>
         </div>
@@ -1031,34 +1065,34 @@
                 <div class="profile-top-row">
                     <div class="profile-avatar-circle" id="settingsAvatarBox">👤</div>
                     <div class="profile-meta-info">
-                        <span class="profile-username-txt" id="settingsProfileName" style="font-weight: 800; font-size: 16px;">ئابونت</span><br>
-                        <span class="profile-role-txt" id="settingsProfileDesc" style="font-size: 12px; color: var(--text-secondary);">Telegram ئارقىلىق ئۇلاندى</span>
+                        <span class="profile-username-txt" id="settingsProfileName" style="font-weight: 800; font-size: 15px;">ئابونت</span><br>
+                        <span class="profile-role-txt" id="settingsProfileDesc" style="font-size: 11px; color: var(--text-secondary);">ھېسابات ئۇلانغان</span>
                     </div>
                 </div>
                 <div class="profile-buttons-row">
                     <div class="profile-action-chip" onclick="switchTab('accountTab')"><span>👤</span> ھېسابات</div>
-                    <div class="profile-action-chip" onclick="switchTab('vipOpenTab')"><span>⭐</span> ئەزالىق ئېچىش</div>
+                    <div class="profile-action-chip" onclick="switchTab('vipOpenTab')"><span>⭐</span> ئەزالىق</div>
                 </div>
             </div>
 
-            <div class="section-title" style="margin-bottom: 12px;">تەڭشەكلەر</div>
+            <div class="section-title" style="margin-bottom: 10px;">تەڭشەكلەر</div>
             <div class="settings-block-card">
                 <div class="settings-row-item" id="uploadMenuSettingItem" style="display: none;">
                     <div class="settings-row-right">
                         <div class="settings-icon-box">📂</div>
                         <div class="settings-text-box">
                             <span class="settings-item-title">يېڭى مەزمۇن قوشۇش</span>
-                            <span class="settings-item-desc">كىنو يوللاش</span>
+                            <span class="settings-item-desc">فىلىم ۋە سىن يوللاش</span>
                         </div>
                     </div>
-                    <button type="button" class="action-btn" style="width: auto; padding: 7px 16px; font-size: 12px; margin: 0;" onclick="switchTab('uploadTab')">ئېچىش</button>
+                    <button type="button" class="action-btn" style="width: auto; padding: 6px 14px; font-size: 11px; margin: 0;" onclick="switchTab('uploadTab')">ئېچىش</button>
                 </div>
 
                 <div class="settings-row-item">
                     <div class="settings-row-right">
                         <div class="settings-icon-box">🎨</div>
                         <div class="settings-text-box">
-                            <span class="settings-item-title">لايىھە ئۇسلۇبى (Theme)</span>
+                            <span class="settings-item-title">لايىھە ئۇسلۇبى</span>
                             <span class="settings-item-desc">قاراڭغۇ ياكى يورۇق</span>
                         </div>
                     </div>
@@ -1074,21 +1108,21 @@
                         <div class="settings-icon-box">🧹</div>
                         <div class="settings-text-box">
                             <span class="settings-item-title">كۆرگەنلىرىمنى تازىلاش</span>
-                            <span class="settings-item-desc">ۋاقىت خاتىرىسىنى ئۆچۈرۈش</span>
+                            <span class="settings-item-desc">خاتىرىنى يۇيۇش</span>
                         </div>
                     </div>
-                    <button type="button" class="action-btn" style="width: auto; padding: 7px 14px; font-size: 11px; margin: 0; background: #e67e22;" onclick="clearWatchHistory()">تازىلاش</button>
+                    <button type="button" class="action-btn" style="width: auto; padding: 6px 12px; font-size: 11px; margin: 0; background: #e67e22;" onclick="clearWatchHistory()">تازىلاش</button>
                 </div>
 
                 <div class="settings-row-item" onclick="window.open('https://t.me/koznak_tv', '_blank')" style="cursor: pointer;">
                     <div class="settings-row-right">
                         <div class="settings-icon-box">📢</div>
                         <div class="settings-text-box">
-                            <span class="settings-item-title">رەسمىي تېلېگرامما قانىلى</span>
-                            <span class="settings-item-desc">يېڭى كىنولەردىن خەۋەردار بولۇڭ</span>
+                            <span class="settings-item-title">تېلېگرامما قانىلىمىز</span>
+                            <span class="settings-item-desc">يېڭى ئېلانلاردىن خەۋەردار بولۇڭ</span>
                         </div>
                     </div>
-                    <span style="font-size: 13px; color: var(--text-secondary);">🔗</span>
+                    <span style="font-size: 12px; color: var(--text-secondary);">🔗</span>
                 </div>
             </div>
         </div>
@@ -1105,10 +1139,10 @@
 
     <div id="searchModal" class="search-modal">
         <button class="close-search" onclick="closeSearch()">تاقاش ✕</button>
-        <input type="text" id="searchInputBox" class="search-input" placeholder="كىنو ئىسمىنى كىرگۈزۈپ ئىزدەڭ..." oninput="handleSearchInput(event)">
+        <input type="text" id="searchInputBox" class="search-input" placeholder="فىلىم ئىسمىنى كىرگۈزۈڭ..." oninput="handleSearchInput(event)">
         
         <div class="genre-chips-container" id="searchGenreChips">
-            <div class="genre-chip active" onclick="filterSearchByGenre('all', this)">بارلىق ژانىرلار</div>
+            <div class="genre-chip active" onclick="filterSearchByGenre('all', this)">ھەممىسى</div>
             <div class="genre-chip" onclick="filterSearchByGenre('كومىدىيە', this)">😄 كومىدىيە</div>
             <div class="genre-chip" onclick="filterSearchByGenre('ھەرىكەتلىك', this)">🔥 ھەرىكەتلىك</div>
             <div class="genre-chip" onclick="filterSearchByGenre('مۇھەببەت', this)">❤️ مۇھەببەت</div>
@@ -1132,40 +1166,6 @@
                 .replace(/'/g, '&#039;');
         }
 
-        function compressImage(file, maxWidth = 800, maxHeight = 800, quality = 0.75) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        let width = img.width;
-                        let height = img.height;
-                        if (width > height) {
-                            if (width > maxWidth) {
-                                height = Math.round((height * maxWidth) / width);
-                                width = maxWidth;
-                            }
-                        } else {
-                            if (height > maxHeight) {
-                                width = Math.round((width * maxHeight) / height);
-                                height = maxHeight;
-                            }
-                        }
-                        const canvas = document.createElement('canvas');
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', quality));
-                    };
-                    img.onerror = (err) => reject(err);
-                };
-                reader.onerror = (err) => reject(err);
-            });
-        }
-
         let allMovies = {};
         let allUsers = {};
         let featuredSliders = {};
@@ -1177,24 +1177,147 @@
         let currentActiveMovieId = null;
         let searchTimeout = null;
         let lastNotifiedMovieId = localStorage.getItem('koznak_last_notif') || '';
-        let uploadedPosterData = '';
-        let currentPosterMode = 'url';
         let currentSlideIndex = 0;
         let sliderInterval = null;
         let touchStartX = 0;
         let touchEndX = 0;
         let currentHlsInstance = null;
         let isCinemaFullscreen = false;
+        let sessionListenerUnsubscribe = null;
 
-        // Telegram Login Widget Authentication Handler
+        // كىرىش كۆرۈنمە يۈزىنى ئالماشتۇرۇش (Telegram ياكى Custom)
+        window.switchAuthView = function(view) {
+            const btnTg = document.getElementById('tabBtnTg');
+            const btnCustom = document.getElementById('tabBtnCustom');
+            const viewTg = document.getElementById('authViewTg');
+            const viewCustom = document.getElementById('authViewCustom');
+
+            if (view === 'telegram') {
+                btnTg.classList.add('active');
+                btnCustom.classList.remove('active');
+                viewTg.style.display = 'block';
+                viewCustom.style.display = 'none';
+            } else {
+                btnCustom.classList.add('active');
+                btnTg.classList.remove('active');
+                viewCustom.style.display = 'block';
+                viewTg.style.display = 'none';
+            }
+        };
+
+        // ئۆز ئالدىغا بىردىنبىر Session ID ھاسىللاش
+        function generateSessionId() {
+            return 'sess_' + Date.now() + '_' + Math.random().toString(36).substring(2, 9);
+        }
+
+        // باشقا ئۈسكۈنىدە كىرىلگەندە ئاپتوماتىك چېكىندۈرۈش ئاڭلىغۇچىسى
+        function startSessionWatcher(userKey) {
+            if (!window.db || !window.dbRef || !window.dbOnValue) return;
+            const sessionRef = window.dbRef(window.db, `users/${userKey}/currentSessionId`);
+            
+            if (sessionListenerUnsubscribe) {
+                sessionListenerUnsubscribe();
+            }
+
+            sessionListenerUnsubscribe = window.dbOnValue(sessionRef, (snapshot) => {
+                const dbSessionId = snapshot.val();
+                const localSessionId = localStorage.getItem('koznak_session_id');
+
+                if (dbSessionId && localSessionId && dbSessionId !== localSessionId) {
+                    alert('⚠️ دىققەت: بۇ ھېساباتقا باشقا بىر ئۈسكۈنىدىن كىرىلدى! بىخەتەرلىك سەۋەبىدىن بۇ تېلېفوندىن ئاپتوماتىك چېكىندىڭىز.');
+                    logoutUser(false);
+                }
+            });
+        }
+
+        // 1. ئۆزى تىزىملىتىش (ئىسىم & پارول)
+        window.handleCustomRegister = async function() {
+            const username = document.getElementById('customUsernameInput').value.trim().toLowerCase();
+            const password = document.getElementById('customPasswordInput').value.trim();
+
+            if (!username || !password) return alert('ئىسىم ۋە پارولنى تولۇق كىرگۈزۈڭ!');
+            if (username.length < 3) return alert('ئىسىم ئەڭ ئاز بولغاندا 3 ھەرپ ياكى سان بولۇشى كېرەك!');
+            if (password.length < 4) return alert('پارول ئەڭ ئاز دېگەندە 4 ھەرپ بولسۇن!');
+
+            const safeKey = 'usr_' + username.replace(/[^a-zA-Z0-9_]/g, '');
+            if (!safeKey || safeKey === 'usr_') return alert('ئىسمىڭىزدا ئىنگلىزچە ھەرپ ياكى سان ئىشلىتىڭ!');
+
+            try {
+                const userSnap = await window.dbGet(window.dbRef(window.db, 'users/' + safeKey));
+                if (userSnap.exists()) {
+                    return alert('بۇ ئىسىم ئاللىبۇرۇن تىزىملىتىلغان! باشقا ئىسىم تاللاڭ ياكى «كىرىش» كۇنۇپكىسىنى بېسىڭ.');
+                }
+
+                const newSessionId = generateSessionId();
+                const isAdmin = (username === 'koznak_usd' || username === 'hok_uyghur1' || username === 'admin');
+
+                const newUser = {
+                    userKey: safeKey,
+                    user: username,
+                    username: username,
+                    password: password,
+                    role: isAdmin ? 'admin' : 'user',
+                    vip: isAdmin ? true : false,
+                    vipExpire: null,
+                    avatar: '',
+                    currentSessionId: newSessionId,
+                    authType: 'custom',
+                    createdAt: Date.now()
+                };
+
+                await window.dbSet(window.dbRef(window.db, 'users/' + safeKey), newUser);
+                localStorage.setItem('koznak_session_id', newSessionId);
+                window.currentUser = newUser;
+                finishUserLoginSession();
+                alert('تەبرىكلەيمىز، يېڭى ھېساباتىڭىز مۇۋەپپەقىيەتلىك تىزىملاندى!');
+            } catch (err) {
+                alert('تىزىملىتىشتا خاتالىق كۆرۈلدى، قايتا سىناڭ!');
+            }
+        };
+
+        // 2. ئۆزى كىرىش (ئىسىم & پارول)
+        window.handleCustomLogin = async function() {
+            const username = document.getElementById('customUsernameInput').value.trim().toLowerCase();
+            const password = document.getElementById('customPasswordInput').value.trim();
+
+            if (!username || !password) return alert('ئىسىم ۋە پارولنى كىرگۈزۈڭ!');
+
+            const safeKey = 'usr_' + username.replace(/[^a-zA-Z0-9_]/g, '');
+            try {
+                const userSnap = await window.dbGet(window.dbRef(window.db, 'users/' + safeKey));
+                if (!userSnap.exists()) {
+                    return alert('بۇنداق ھېسابات تېپىلمىدى! ئىسىمنى قايتا تەكشۈرۈڭ ياكى يېڭى تىزىملىتىڭ.');
+                }
+
+                const uData = userSnap.val();
+                if (uData.password !== password) {
+                    return alert('پارول خاتا كىرگۈزۈلدى!');
+                }
+
+                const newSessionId = generateSessionId();
+                await window.dbUpdate(window.dbRef(window.db, 'users/' + safeKey), {
+                    currentSessionId: newSessionId,
+                    lastLogin: Date.now()
+                });
+
+                localStorage.setItem('koznak_session_id', newSessionId);
+                uData.currentSessionId = newSessionId;
+                window.currentUser = uData;
+                finishUserLoginSession();
+            } catch (err) {
+                alert('كىرىشتە خاتالىق كۆرۈلدى!');
+            }
+        };
+
+        // 3. Telegram Login Widget Handler
         window.onTelegramAuth = function(user) {
             if (!user || !user.id) return;
             const userKey = 'tg_' + user.id;
             const displayName = user.first_name + (user.last_name ? ' ' + user.last_name : '');
             const username = user.username || '';
             const photoURL = user.photo_url || '';
-            
             const isAdmin = (username.toLowerCase() === 'koznak_usd' || username.toLowerCase() === 'hok_uyghur1' || String(user.id) === '8612107028');
+            const newSessionId = generateSessionId();
 
             window.currentUser = {
                 userKey: userKey,
@@ -1203,9 +1326,12 @@
                 role: isAdmin ? 'admin' : 'user',
                 vip: isAdmin ? true : false,
                 vipExpire: null,
-                avatar: photoURL
+                avatar: photoURL,
+                currentSessionId: newSessionId,
+                authType: 'telegram'
             };
 
+            localStorage.setItem('koznak_session_id', newSessionId);
             saveAndInitUserSession(userKey);
         };
 
@@ -1219,6 +1345,11 @@
                         window.currentUser.vip = isAdmin ? true : (dbData.vip || false);
                         window.currentUser.vipExpire = dbData.vipExpire || null;
                         window.currentUser.role = isAdmin ? 'admin' : (dbData.role || 'user');
+                        window.dbUpdate(userRef, {
+                            currentSessionId: window.currentUser.currentSessionId,
+                            avatar: window.currentUser.avatar || dbData.avatar || '',
+                            lastLogin: Date.now()
+                        });
                     } else {
                         window.dbSet(userRef, window.currentUser);
                     }
@@ -1236,12 +1367,23 @@
             const overlay = document.getElementById('authOverlay');
             if (overlay) overlay.style.display = 'none';
             window.updateUIAfterLogin();
+            startSessionWatcher(window.currentUser.userKey);
         }
 
-        window.logoutUser = function() {
+        window.logoutUser = function(refresh = true) {
+            if (sessionListenerUnsubscribe) {
+                sessionListenerUnsubscribe();
+            }
             localStorage.removeItem('koznak_logged_user');
+            localStorage.removeItem('koznak_session_id');
             window.currentUser = null;
-            location.reload();
+            if (refresh) {
+                location.reload();
+            } else {
+                const overlay = document.getElementById('authOverlay');
+                if (overlay) overlay.style.display = 'flex';
+                stopAllVideos();
+            }
         };
 
         window.startApp = function() {
@@ -1253,31 +1395,12 @@
                 }
             } catch(e) {}
 
-            if (!loggedUser && window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
-                const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-                const tgId = tgUser.id;
-                const userKey = 'tg_' + tgId;
-                const displayName = tgUser.first_name + (tgUser.last_name ? ' ' + tgUser.last_name : '');
-                const username = tgUser.username || '';
-                const photoURL = tgUser.photo_url || '';
-                const isAdmin = (username.toLowerCase() === 'koznak_usd' || username.toLowerCase() === 'hok_uyghur1' || String(tgId) === '8612107028');
-
-                loggedUser = {
-                    userKey: userKey,
-                    user: displayName,
-                    username: username,
-                    role: isAdmin ? 'admin' : 'user',
-                    vip: isAdmin ? true : false,
-                    vipExpire: null,
-                    avatar: photoURL
-                };
-            }
-
             if (loggedUser) {
                 window.currentUser = loggedUser;
                 const overlay = document.getElementById('authOverlay');
                 if (overlay) overlay.style.display = 'none';
                 window.updateUIAfterLogin();
+                startSessionWatcher(window.currentUser.userKey);
 
                 if (window.db && window.dbRef && window.dbGet) {
                     const userRef = window.dbRef(window.db, 'users/' + window.currentUser.userKey);
@@ -1289,8 +1412,12 @@
                             window.currentUser.vipExpire = dbData.vipExpire || null;
                             window.currentUser.role = isAdmin ? 'admin' : (dbData.role || 'user');
                             window.updateUIAfterLogin();
-                        } else {
-                            window.dbSet(userRef, window.currentUser);
+
+                            const localSessionId = localStorage.getItem('koznak_session_id');
+                            if (dbData.currentSessionId && localSessionId && dbData.currentSessionId !== localSessionId) {
+                                alert('⚠️ بۇ ھېساباتقا باشقا ئۈسكۈنىدىن كىرىلگەنلىكى ئۈچۈن سىستېمىدىن چېكىندۈرۈلدىڭىز!');
+                                logoutUser(false);
+                            }
                         }
                     }).catch(() => {});
                 }
@@ -1357,7 +1484,7 @@
                 if (accTitle) accTitle.innerText = 'خۇش كەپسىز, ' + window.currentUser.user;
                 document.getElementById('displayUsername').innerText = window.currentUser.username ? ('@' + window.currentUser.username) : window.currentUser.user;
                 if (settingsName) settingsName.innerText = window.currentUser.user;
-                if (settingsDesc) settingsDesc.innerText = window.currentUser.username ? ('@' + window.currentUser.username) : 'Telegram ئابونتى';
+                if (settingsDesc) settingsDesc.innerText = window.currentUser.authType === 'custom' ? 'ئىسىم-پارول ھېساباتى' : 'Telegram ئابونتى';
                 
                 const avatarHtml = window.currentUser.avatar 
                     ? `<img src="${window.currentUser.avatar}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">` 
@@ -1373,7 +1500,7 @@
                 else if (isVipActive) {
                     let remainingDays = Math.ceil((window.currentUser.vipExpire - Date.now()) / (1000 * 60 * 60 * 24));
                     if (remainingDays < 0) remainingDays = 0;
-                    vipText = `⭐ VIP ئەزا (قالدى: ${remainingDays} كۈن)`;
+                    vipText = `⭐ VIP ئەزا (${remainingDays} كۈن)`;
                 }
 
                 document.getElementById('vipBadge').innerText = vipText;
@@ -1407,8 +1534,8 @@
 
             if (isCinemaFullscreen) {
                 wrapper.classList.add('is-fullscreen');
-                if (videoEl) videoEl.style.objectFit = 'cover';
-                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-compress"></i> كىچىكلىتىش';
+                if (videoEl) videoEl.style.objectFit = 'contain';
+                if (fsBtn) fsBtn.innerHTML = '<i class="fa-solid fa-compress"></i> يېپىش';
                 if (screen.orientation && screen.orientation.lock) {
                     screen.orientation.lock('landscape').catch(() => {});
                 }
@@ -1422,51 +1549,14 @@
             }
         };
 
-        function setPosterInputMode(mode) {
-            currentPosterMode = mode;
-            const urlBox = document.getElementById('posterUrlBox');
-            const fileBox = document.getElementById('posterFileBox');
-            const btnUrl = document.getElementById('posterTypeUrlBtn');
-            const btnFile = document.getElementById('posterTypeFileBtn');
-
-            if(mode === 'url') {
-                urlBox.style.display = 'block';
-                fileBox.style.display = 'none';
-                btnUrl.classList.add('active');
-                btnFile.classList.remove('active');
-            } else {
-                urlBox.style.display = 'none';
-                fileBox.style.display = 'block';
-                btnFile.classList.add('active');
-                btnUrl.classList.remove('active');
-            }
-        }
-
         function previewPosterUrl(url) {
             const previewContainer = document.getElementById('posterPreviewContainer');
             const previewImg = document.getElementById('posterPreviewImg');
             if(url && url.trim().length > 5) {
                 previewImg.src = url.trim();
                 previewContainer.style.display = 'block';
-                uploadedPosterData = url.trim();
             } else {
                 previewContainer.style.display = 'none';
-                uploadedPosterData = '';
-            }
-        }
-
-        async function handlePosterFileSelected(e) {
-            const file = e.target.files[0];
-            if(!file) return;
-            try {
-                const base64 = await compressImage(file, 800, 800, 0.8);
-                uploadedPosterData = base64;
-                const previewContainer = document.getElementById('posterPreviewContainer');
-                const previewImg = document.getElementById('posterPreviewImg');
-                previewImg.src = base64;
-                previewContainer.style.display = 'block';
-            } catch(err) {
-                alert('رەسىمنى بىر تەرەپ قىلىشتا خاتالىق كۆرۈلدى');
             }
         }
 
@@ -1533,11 +1623,10 @@
         }
 
         function clearWatchHistory() {
-            if(confirm('كۆرگەن فىلىملىرىڭىزنىڭ خاتىرىسى تازىلسۇنمۇ؟')) {
+            if(confirm('فىلىم كۆرۈش خاتىرىلىرى تازىلانسۇنمۇ؟')) {
                 historyList = [];
                 localStorage.removeItem('koznak_history');
                 renderHistory();
-                alert('فىلىم كۆرۈش خاتىرىلىرى تازىلاندى!');
             }
         }
 
@@ -1566,7 +1655,7 @@
             row.innerHTML = `
                 <input type="text" class="form-input ep-name-input" placeholder="قىسىم ئاتى" value="${escapeHTML(defaultName || count + '-قىسىم')}" style="flex: 1;" autocomplete="off">
                 <input type="text" class="form-input ep-url-input" placeholder="Archive ياكى Telegram ئۇلانمىسى" style="flex: 2.5;" autocomplete="off">
-                <button type="button" class="del-btn" onclick="this.parentElement.remove()" style="width: 36px; height: 36px; flex-shrink: 0;">✕</button>
+                <button type="button" class="del-btn" onclick="this.parentElement.remove()" style="width: 32px; height: 32px; flex-shrink: 0;">✕</button>
             `;
             container.appendChild(row);
         }
@@ -1583,8 +1672,8 @@
             }
 
             window.dbSet(window.dbRef(window.db, `settings/${type}`), val)
-                .then(() => alert('تەڭشەك مۇۋەپپەقىيەتلىك ساقلاندى!'))
-                .catch(() => alert('ساقلاشتا خاتالىق كۆرۈلدى!'));
+                .then(() => alert('تەڭشەك ساقلاندى!'))
+                .catch(() => alert('خاتالىق كۆرۈلدى!'));
         };
 
         function renderHeroSliderSelectOptions() {
@@ -1612,7 +1701,7 @@
                 title: allMovies[movieId].title,
                 poster: allMovies[movieId].poster,
                 type: allMovies[movieId].type
-            }).then(() => alert('باش بەت سىلايدېرىغا قوشۇلدى!'));
+            }).then(() => alert('باش بەتكە قوشۇلدى!'));
         }
 
         function renderHeroSlider() {
@@ -1654,7 +1743,7 @@
                     <div class="hero-slide-overlay">
                         <div class="hero-slide-title">${escapeHTML(slideItem.title)}</div>
                         <span class="hero-slide-badge">${escapeHTML(getCategoryName(slideItem.type))}</span>
-                        <p style="font-size: 12px; color: #cbd5e1; margin-bottom: 10px;">ئەڭ يېڭى ۋە يۇقىرى سۈپەتلىك تاللانما فىلىملەر.</p>
+                        <p style="font-size: 11px; color: #cbd5e1; margin-bottom: 8px;">ئەڭ يېڭى ۋە تاللانغان نادىر فىلىم.</p>
                         <button class="btn-watch" onclick="event.stopPropagation(); handleCardClick('${slideItem.id}')"><i class="fa-solid fa-play"></i> كۆرۈش</button>
                         ${window.currentUser && window.currentUser.role === 'admin' && slideItem.sKey ? `<button class="del-btn" onclick="event.stopPropagation(); deleteSliderItem('${slideItem.sKey}')" style="position:absolute; top:10px; left:10px;">✕</button>` : ''}
                     </div>
@@ -1743,7 +1832,7 @@
             const keys = Object.keys(allMovies).sort((a, b) => (allMovies[b].createdAt || 0) - (allMovies[a].createdAt || 0));
 
             if (keys.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 40px;">قوشۇلىۋاتىدۇ سەل ساقلاڭ...</div>';
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 40px;">مەزمۇن يوق...</div>';
                 return;
             }
 
@@ -1755,7 +1844,7 @@
                 });
                 let sectionDiv = document.createElement('div');
                 sectionDiv.className = 'category-section';
-                sectionDiv.innerHTML = `<div class="section-header-row"><div class="section-title">👍 ئەڭ ياقتۇرۇلغان كىنولەر</div></div><div class="movie-grid" id="grid_top_rated"></div>`;
+                sectionDiv.innerHTML = `<div class="section-header-row"><div class="section-title">👍 ئەڭ ياقتۇرۇلغانلار</div></div><div class="movie-grid" id="grid_top_rated"></div>`;
                 container.appendChild(sectionDiv);
                 let grid = document.getElementById('grid_top_rated');
                 ratedKeys.forEach(id => grid.appendChild(createMovieCardElement(id, allMovies[id])));
@@ -1769,7 +1858,7 @@
                 sectionDiv.innerHTML = `<div class="section-header-row"><div class="section-title">📂 ${getCategoryName(currentFilter)}</div></div><div class="movie-grid" id="grid_${currentFilter}"></div>`;
                 container.appendChild(sectionDiv);
                 let grid = document.getElementById(`grid_${currentFilter}`);
-                if (filteredKeys.length === 0) grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 20px;">قوشۇلىۋاتىدۇ سەل ساقلاڭ...</div>';
+                if (filteredKeys.length === 0) grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 20px;">تېپىلمىدى...</div>';
                 else filteredKeys.forEach(id => grid.appendChild(createMovieCardElement(id, allMovies[id])));
             } else {
                 const categories = [
@@ -1854,7 +1943,7 @@
             if(!histGrid) return;
             histGrid.innerHTML = '';
             if(historyList.length === 0) {
-                histGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 40px;">قوشۇلىۋاتىدۇ سەل ساقلاڭ...</div>';
+                histGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 40px;">كۆرۈش خاتىرىسى يوق...</div>';
                 return;
             }
             historyList.forEach(id => {
@@ -1876,7 +1965,9 @@
         }
 
         function checkUserVipStatus(userObj) {
-            if (!userObj || !userObj.vip) return false;
+            if (!userObj) return false;
+            if (userObj.role === 'admin') return true;
+            if (!userObj.vip) return false;
             if (userObj.vipExpire && userObj.vipExpire <= Date.now()) return false;
             return true;
         }
@@ -1884,15 +1975,15 @@
         function handleCardClick(id) {
             const item = allMovies[id];
             if(!item) return;
-            addToHistory(id);
 
-            const isUserVipActive = window.currentUser && (window.currentUser.role === 'admin' || checkUserVipStatus(window.currentUser));
+            const isUserVipActive = checkUserVipStatus(window.currentUser);
             if(item.tag === 'VIP' && (!item.type || !item.type.includes('series')) && !isUserVipActive) {
-                alert('بۇ فىلىم پەقەت VIP ئەزالار ئۈچۈنلا!');
+                alert('بۇ فىلىم پەقەت VIP ئەزالار ئۈچۈنلا ئوچۇق!');
                 switchTab('vipOpenTab');
                 return;
             }
 
+            addToHistory(id);
             currentActiveMovieId = id;
             window.dbSet(window.dbRef(window.db, `movies/${id}/views`), (item.views || 0) + 1);
             openMovieDetail(id);
@@ -1918,7 +2009,7 @@
             document.getElementById('detailMovieViews').innerText = `👀 كۆرۈش سانى: ${item.views || 1}`;
 
             document.getElementById('trailerBtnContainer').innerHTML = item.trailer ? 
-                `<button class="action-btn" style="background:var(--accent-blue-grad); padding:10px; font-size:12px; margin:0;" onclick="playTrailer('${item.trailer}')"><i class="fa-solid fa-play"></i> فىلىم ئېلانىنى كۆرۈش (Trailer)</button>` : '';
+                `<button class="action-btn" style="background:var(--accent-blue-grad); padding:9px; font-size:12px; margin:0;" onclick="playTrailer('${item.trailer}')"><i class="fa-solid fa-play"></i> فىلىم ئېلانىنى كۆرۈش (Trailer)</button>` : '';
 
             const episodeBarBox = document.getElementById('detailEpisodeBarContainer');
             episodeBarBox.innerHTML = '';
@@ -1948,13 +2039,12 @@
             const playerBox = document.getElementById('detailPlayerContainer');
             const fsBtn = document.getElementById('floatingFsBtn');
             if (!vdoIdOrUrl) {
-                playerBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:13px;">ۋىدىيو ئۇلانمىسى تېپىلمىدى</div>';
+                playerBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;font-size:12px;">سىن ئۇلانمىسى تېپىلمىدى</div>';
                 if (fsBtn) fsBtn.style.display = 'none';
                 return;
             }
 
             if (fsBtn) fsBtn.style.display = 'flex';
-
             let cleanVal = vdoIdOrUrl.trim();
 
             let ytId = extractYouTubeID(cleanVal);
@@ -1986,8 +2076,8 @@
 
             if (isStreamOrVideo) {
                 playerBox.innerHTML = `
-                    <video id="nativeVideoPlayer" class="native-cinema-video" controls playsinline webkit-playsinline x5-playsinline preload="auto" poster="${posterUrl || ''}">
-                        تور كۆرگۈچىڭىز بۇ سىننى قوللىمايدۇ.
+                    <video id="nativeVideoPlayer" class="native-cinema-video" controls playsinline webkit-playsinline x5-playsinline preload="metadata" poster="${posterUrl || ''}">
+                        سىننى قويۇش مۇمكىن بولمىدى.
                     </video>
                 `;
                 
@@ -1998,14 +2088,8 @@
                         currentHlsInstance = new Hls({
                             enableWorker: true,
                             lowLatencyMode: true,
-                            backBufferLength: 90,
-                            maxBufferLength: 30,
-                            maxMaxBufferLength: 60,
-                            maxBufferSize: 60 * 1000 * 1000,
-                            liveSyncDurationCount: 3,
-                            fragLoadingTimeOut: 20000,
-                            manifestLoadingTimeOut: 20000,
-                            levelLoadingTimeOut: 20000
+                            backBufferLength: 60,
+                            maxBufferLength: 30
                         });
                         currentHlsInstance.loadSource(cleanVal);
                         currentHlsInstance.attachMedia(video);
@@ -2015,7 +2099,6 @@
                 } else {
                     video.src = cleanVal;
                 }
-                
                 return;
             }
 
@@ -2101,16 +2184,16 @@
             const days = Math.floor(hours / 24);
 
             if (seconds < 60) return 'ھازىرلا';
-            if (minutes < 60) return `${minutes} مىنۇت بۇرۇن`;
-            if (hours < 24) return `${hours} سائەت بۇرۇن`;
-            if (days < 30) return `${days} كۈن بۇرۇن`;
+            if (minutes < 60) return `${minutes} مىنۇت ئىلگىرى`;
+            if (hours < 24) return `${hours} سائەت ئىلگىرى`;
+            if (days < 30) return `${days} كۈن ئىلگىرى`;
             return new Date(Number(timestamp)).toLocaleDateString();
         }
 
         function submitComment() {
             if(!window.currentUser) return;
             const commentText = document.getElementById('commentInputBox').value.trim();
-            if(!commentText) return alert('پىكىر مەزمۇنىنى يېزىڭ!');
+            if(!commentText) return alert('پىكىر كىرگۈزۈڭ!');
 
             const commentId = 'com_' + Date.now();
             window.dbSet(window.dbRef(window.db, `movies/${currentActiveMovieId}/comments/${commentId}`), {
@@ -2118,8 +2201,7 @@
                 avatar: window.currentUser.avatar || '', 
                 text: commentText, 
                 timestamp: Date.now(), 
-                likes: {},
-                replies: {}
+                likes: {}
             }).then(() => {
                 document.getElementById('commentInputBox').value = '';
                 reloadCurrentComments();
@@ -2135,33 +2217,9 @@
             });
         }
 
-        function toggleReplyBox(commentId) {
-            const box = document.getElementById('replyBox_' + commentId);
-            if (!box) return;
-            box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
-        }
-
-        function submitReply(commentId) {
-            if (!window.currentUser) return;
-            const replyInput = document.getElementById('replyInput_' + commentId);
-            const text = replyInput.value.trim();
-            if (!text) return;
-
-            const replyId = 'rep_' + Date.now();
-            window.dbSet(window.dbRef(window.db, `movies/${currentActiveMovieId}/comments/${commentId}/replies/${replyId}`), {
-                user: window.currentUser.user,
-                avatar: window.currentUser.avatar || '',
-                text: text,
-                timestamp: Date.now()
-            }).then(() => {
-                replyInput.value = '';
-                reloadCurrentComments();
-            });
-        }
-
         function deleteComment(commentId) {
             if(!window.currentUser) return;
-            if(confirm('پىكىرنى ئۆچۈرەمسىز؟')) {
+            if(confirm('پىكىر ئۆچۈرۈلسۇنمۇ؟')) {
                 window.dbRemove(window.dbRef(window.db, `movies/${currentActiveMovieId}/comments/${commentId}`)).then(() => reloadCurrentComments());
             }
         }
@@ -2185,7 +2243,7 @@
             if (badge) badge.innerText = `${comKeys.length} پىكىر`;
 
             if(comKeys.length === 0) {
-                container.innerHTML = '<div style="color:var(--text-secondary); font-size:12px; text-align:center; padding:16px;">تېخى پىكىر يوق</div>';
+                container.innerHTML = '<div style="color:var(--text-secondary); font-size:12px; text-align:center; padding:16px;">پىكىر تېخى يوق</div>';
                 return;
             }
 
@@ -2197,28 +2255,6 @@
                 const canDelete = window.currentUser && (window.currentUser.role === 'admin' || window.currentUser.user === com.user);
                 const timeText = formatRelativeTime(com.timestamp);
 
-                let repliesHtml = '';
-                const replies = com.replies || {};
-                const repKeys = Object.keys(replies);
-                if (repKeys.length > 0) {
-                    repliesHtml += `<div class="replies-nested-container">`;
-                    repKeys.forEach(rKey => {
-                        const rep = replies[rKey];
-                        repliesHtml += `
-                            <div class="reply-item">
-                                <div class="reply-avatar">${rep.avatar ? `<img src="${rep.avatar}">` : '👤'}</div>
-                                <div style="display:flex; flex-direction:column; width:100%;">
-                                    <div style="font-weight:700; color:#ff2a54; font-size:11px;">
-                                        ${escapeHTML(rep.user)} <span style="font-weight:normal; color:var(--text-secondary); font-size:9px;">(${formatRelativeTime(rep.timestamp)})</span>
-                                    </div>
-                                    <div style="font-size:12px; color:var(--text-primary); margin-top:2px;">${escapeHTML(rep.text)}</div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    repliesHtml += `</div>`;
-                }
-
                 const div = document.createElement('div');
                 div.className = 'comment-item';
                 div.innerHTML = `
@@ -2226,7 +2262,7 @@
                     <div class="comment-content-box">
                         <div class="comment-user">
                             <span>${escapeHTML(com.user)} <span class="comment-time">(${timeText})</span></span>
-                            ${canDelete ? `<button class="del-btn" style="width:22px; height:22px; font-size:10px;" onclick="deleteComment('${k}')">✕</button>` : ''}
+                            ${canDelete ? `<button class="del-btn" style="width:20px; height:20px; font-size:9px;" onclick="deleteComment('${k}')">✕</button>` : ''}
                         </div>
                         <div class="comment-text-body">${escapeHTML(com.text)}</div>
                         
@@ -2234,17 +2270,7 @@
                             <button class="comment-action-link ${hasLiked ? 'liked' : ''}" onclick="toggleCommentLike('${k}')">
                                 <i class="fa-solid fa-heart"></i> <span>${likesCount}</span>
                             </button>
-                            <button class="comment-action-link" onclick="toggleReplyBox('${k}')">
-                                <i class="fa-solid fa-reply"></i> جاۋاب
-                            </button>
                         </div>
-
-                        <div class="reply-input-box" id="replyBox_${k}" style="display:none; gap:6px; margin-top:8px;">
-                            <input type="text" id="replyInput_${k}" class="form-input" placeholder="جاۋابىڭىز..." style="padding:8px 12px; font-size:11px;" autocomplete="off">
-                            <button type="button" class="action-btn" style="width:auto; padding:8px 16px; font-size:11px; margin:0;" onclick="submitReply('${k}')">يوللاش</button>
-                        </div>
-
-                        ${repliesHtml}
                     </div>
                 `;
                 container.appendChild(div);
@@ -2254,9 +2280,9 @@
         async function changeDetailEpisode(btnEl, url, episodeIndex) {
             if (episodeIndex > 0) {
                 const item = allMovies[currentActiveMovieId];
-                const isUserVipActive = window.currentUser && (window.currentUser.role === 'admin' || checkUserVipStatus(window.currentUser));
+                const isUserVipActive = checkUserVipStatus(window.currentUser);
                 if (item && item.tag === 'VIP' && !isUserVipActive) {
-                    alert('بۇ قىسىم VIP ئەزالار ئۈچۈنلا!');
+                    alert('بۇ قىسىم VIP ئەزالار ئۈچۈنلا ئوچۇق!');
                     switchTab('vipOpenTab');
                     return;
                 }
@@ -2286,7 +2312,7 @@
             if(!favGrid) return;
             favGrid.innerHTML = '';
             if(favorites.length === 0) {
-                favGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 40px;">قوشۇلىۋاتىدۇ سەل ساقلاڭ...</div>';
+                favGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 40px;">ياقتۇرغان فىلىم تېخى يوق...</div>';
                 return;
             }
             favorites.forEach(id => { 
@@ -2315,7 +2341,7 @@
                         <div class="admin-user-avatar">${uData.avatar ? `<img src="${uData.avatar}">` : '👤'}</div>
                         <div class="admin-user-info">
                             <span class="admin-user-name">${escapeHTML(uData.user || uData.username || 'ئابونت')}</span>
-                            <span class="admin-user-status" style="color: ${isVip ? '#2ed573' : 'var(--text-secondary)'};">${isVip ? `👑 VIP (قالدى: ${remainingDays} كۈن)` : '👤 ئادەتتىكى'}</span>
+                            <span class="admin-user-status" style="color: ${isVip ? '#2ed573' : 'var(--text-secondary)'};">${isVip ? `👑 VIP (${remainingDays} كۈن)` : '👤 ئادەتتىكى'}</span>
                         </div>
                     </div>
                     <div class="admin-user-btns">
@@ -2340,7 +2366,7 @@
         }
 
         function deleteUserAccount(userKey) {
-            if(confirm('راستلا ئۆچۈرەمسىز؟')) window.dbRemove(window.dbRef(window.db, 'users/' + userKey));
+            if(confirm('ئابونت ئۆچۈرۈلسۇنمۇ؟')) window.dbRemove(window.dbRef(window.db, 'users/' + userKey));
         }
 
         function toggleFavorite(id) {
@@ -2351,7 +2377,7 @@
         }
 
         function deleteMovie(id) {
-            if(confirm('مەزمۇننى ئۆچۈرەمسىز؟')) window.dbRemove(window.dbRef(window.db, 'movies/' + id));
+            if(confirm('فىلىم ئۆچۈرۈلسۇنمۇ؟')) window.dbRemove(window.dbRef(window.db, 'movies/' + id));
         }
 
         function parseSeriesEpisodes(linksData) {
@@ -2380,10 +2406,10 @@
             const type = document.getElementById('contentType').value;
             const genre = document.getElementById('contentGenre').value;
             const title = document.getElementById('contentTitle').value.trim();
-            const poster = uploadedPosterData;
+            const poster = document.getElementById('contentPoster').value.trim();
             
             if(!title) return alert('مەزمۇن نامىنى كىرگۈزۈڭ!');
-            if(!poster) return alert('رەسىم تاللاڭ ياكى تور ئۇلانمىسىنى كىرگۈزۈڭ!');
+            if(!poster) return alert('سۈرەت ئۇلانمىسىنى تولۇق كىرگۈزۈڭ!');
 
             let episodesArr = [];
             if (type.includes('series')) {
@@ -2409,9 +2435,8 @@
                 links: episodesArr,
                 views: 0, createdAt: Date.now()
             }).then(() => {
-                alert('مەزمۇن قوشۇلدى!');
+                alert('فىلىم ساقلاندى!');
                 document.getElementById('uploadForm').reset();
-                uploadedPosterData = '';
                 document.getElementById('posterPreviewContainer').style.display = 'none';
                 document.getElementById('dynamicEpisodesContainer').innerHTML = '';
                 switchTab('homeTab');
@@ -2436,7 +2461,7 @@
             });
 
             if(filteredIds.length === 0) {
-                container.innerHTML = '<div style="text-align:center; color:var(--text-secondary); padding:20px; font-size:12px;">قوشۇلىۋاتىدۇ سەل ساقلاڭ...</div>';
+                container.innerHTML = '<div style="text-align:center; color:var(--text-secondary); padding:20px; font-size:12px;">مەزمۇن تېپىلمىدى...</div>';
                 return;
             }
 
