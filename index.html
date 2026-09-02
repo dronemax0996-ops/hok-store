@@ -1090,7 +1090,7 @@
             </div>
 
             <div id="avatarPreviewContainer" style="display: none; margin-bottom: 14px;">
-                <img id="avatarPreviewImg" src="" style="width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid #ff2a54;">
+                <img id="avatarPreviewImg" alt="رەسىم" style="width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid #ff2a54;">
             </div>
 
             <div style="display: flex; gap: 8px;">
@@ -1140,6 +1140,12 @@
 
         <div id="categoryBackBarContainer" style="display: none; padding: 0 16px; margin-top: 10px;">
             <button class="detail-back-btn" onclick="resetToHomeAllView()">⬅️ باش بەتكە قايتىش</button>
+        </div>
+
+        <!-- تەلەپ: مەزمۇن چىققۇچە يۈكلىنىۋاتىدۇ... ئۇچۇرى -->
+        <div id="loadingIndicatorBox" style="text-align: center; color: var(--text-secondary); padding: 50px 20px; font-size: 14px; font-weight: 700;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; color: #ff2a54; margin-bottom: 10px; display: block;"></i>
+            مەزمۇنلار يۈكلىنىۋاتىدۇ...
         </div>
 
         <div id="homeSectionsContainer"></div>
@@ -1400,7 +1406,6 @@
         </div>
     </div>
 
-    <!-- ⚙️ تەڭشەك رايۇنى (بارلىق فىلىملەرنى ھەقسىز قىلىش كونترولى قوشۇلدى) -->
     <div id="settingsTab" class="tab-content">
         <div class="settings-page-wrapper">
             
@@ -1418,7 +1423,6 @@
                 </div>
             </div>
 
-            <!-- 🎬 باشقۇرغۇچى ئۈچۈن بارلىق فىلىملەرنى بىرلا ۋاقىتتا ھەقسىز قىلىش تەڭشىكى -->
             <div id="adminGlobalFreeSection" style="display: none;">
                 <div class="settings-group-title"><i class="fa-solid fa-shield-halved" style="color: #ff2a54;"></i> باشقۇرغۇچى: پۈتۈن فىلىم كونترولى</div>
                 <div class="settings-group-card">
@@ -2504,15 +2508,18 @@
 
         function renderMovies() {
             const container = document.getElementById('homeSectionsContainer');
+            const loadingIndicator = document.getElementById('loadingIndicatorBox');
             if(!container) return;
+            
             container.innerHTML = '';
-
             const keys = Object.keys(allMovies).sort((a, b) => (allMovies[b].createdAt || 0) - (allMovies[a].createdAt || 0));
 
             if (keys.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 40px;">مەزمۇن يوق...</div>';
+                if (loadingIndicator) loadingIndicator.style.display = 'block';
                 return;
             }
+
+            if (loadingIndicator) loadingIndicator.style.display = 'none';
 
             if (currentFilter === 'top_rated') {
                 let ratedKeys = [...keys].sort((a, b) => {
