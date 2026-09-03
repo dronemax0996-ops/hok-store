@@ -198,7 +198,26 @@
             align-items: center;
             gap: 10px;
         }
-        .logo i { -webkit-text-fill-color: #ff2a54; }
+        
+        /* تېلېفوندىن يۈكلەنگەن يۇمىلاق بەلگە ئۇسلۇبى */
+        .header-custom-logo-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            overflow: hidden;
+            border: 2px solid rgba(255, 215, 0, 0.6);
+            box-shadow: 0 0 12px rgba(255, 215, 0, 0.35);
+            background: rgba(22, 22, 34, 0.9);
+        }
+        .header-custom-logo-circle img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
         .search-btn { 
             font-size: 14px; 
@@ -319,27 +338,6 @@
             width: 24px;
             border-radius: 10px;
         }
-
-        #notificationBanner {
-            position: fixed;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-100px);
-            background: var(--accent-gradient);
-            color: #ffffff;
-            padding: 10px 20px;
-            border-radius: var(--pill-radius);
-            font-size: 12px;
-            font-weight: 700;
-            z-index: 9999;
-            box-shadow: 0 10px 30px rgba(255, 42, 84, 0.5);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            max-width: 90%;
-        }
-        #notificationBanner.show { transform: translateX(-50%) translateY(0); }
 
         #splashScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -1025,6 +1023,63 @@
             background: rgba(255, 42, 84, 0.05);
             cursor: pointer;
         }
+
+        .admin-stat-summary-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+        .admin-stat-box {
+            background: rgba(15, 15, 25, 0.7);
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            padding: 10px 8px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .admin-stat-val {
+            font-size: 16px;
+            font-weight: 900;
+            color: #ff2a54;
+        }
+        .admin-stat-lbl {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        .admin-movie-table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 14px;
+            border: 1px solid var(--border-glow);
+            background: rgba(10, 10, 18, 0.6);
+            margin-top: 10px;
+        }
+        .admin-movie-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+            text-align: right;
+            white-space: nowrap;
+        }
+        .admin-movie-table th {
+            background: rgba(255, 42, 84, 0.1);
+            color: #ff2a54;
+            padding: 9px 8px;
+            font-weight: 800;
+            border-bottom: 1px solid var(--border-glow);
+        }
+        .admin-movie-table td {
+            padding: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            vertical-align: middle;
+        }
+        .admin-movie-table tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
     </style>
 </head>
 <body>
@@ -1100,11 +1155,6 @@
         </div>
     </div>
 
-    <div id="notificationBanner">
-        <span>🎬 يېڭى فىلىم:</span>
-        <span id="notifMovieTitle" style="text-decoration: underline; cursor: pointer;"></span>
-    </div>
-
     <div id="splashScreen">
         <div class="splash-content" style="text-align: center;">
             <div class="splash-cinema-icon"><i class="fa-solid fa-clapperboard"></i></div>
@@ -1114,7 +1164,26 @@
     </div>
 
     <header>
-        <div class="logo"><i class="fa-solid fa-clapperboard"></i> كۆزنەك كىنوخانىسى</div>
+        <div class="logo">
+            <!-- يۇمىلاق شەكىلدىكى بەلگە قۇتىسى -->
+            <span class="header-custom-logo-circle" id="headerSiteLogoBox">
+                <!-- دەسلەپكى ئالتۇن بەلگە، باشقۇرغۇچى رەسىم قويسا ئاپتوماتىك ئۆزگىرىدۇ -->
+                <svg viewBox="0 0 100 100" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="koznakGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#fff099" />
+                            <stop offset="50%" stop-color="#d4af37" />
+                            <stop offset="100%" stop-color="#aa771c" />
+                        </linearGradient>
+                    </defs>
+                    <rect x="36" y="16" width="50" height="34" rx="9" transform="rotate(13 36 16)" stroke="url(#koznakGoldGrad)" stroke-width="6.5" fill="none" opacity="0.9" />
+                    <rect x="18" y="32" width="56" height="40" rx="10" transform="rotate(-10 18 32)" stroke="url(#koznakGoldGrad)" stroke-width="7" fill="none" />
+                    <path d="M 27 50 C 45 68, 62 62, 75 42" stroke="url(#koznakGoldGrad)" stroke-width="6" stroke-linecap="round" fill="none" />
+                    <polygon points="46,47 46,59 56,53" fill="url(#koznakGoldGrad)" />
+                </svg>
+            </span>
+            كۆزنەك كىنوخانىسى
+        </div>
         <button class="search-btn" onclick="openSearch()"><i class="fa-solid fa-magnifying-glass"></i></button>
     </header>
 
@@ -1142,7 +1211,6 @@
             <button class="detail-back-btn" onclick="resetToHomeAllView()">⬅️ باش بەتكە قايتىش</button>
         </div>
 
-        <!-- تەلەپ: مەزمۇن چىققۇچە يۈكلىنىۋاتىدۇ... ئۇچۇرى -->
         <div id="loadingIndicatorBox" style="text-align: center; color: var(--text-secondary); padding: 50px 20px; font-size: 14px; font-weight: 700;">
             <i class="fa-solid fa-spinner fa-spin" style="font-size: 24px; color: #ff2a54; margin-bottom: 10px; display: block;"></i>
             مەزمۇنلار يۈكلىنىۋاتىدۇ...
@@ -1439,6 +1507,73 @@
                 </div>
             </div>
 
+            <!-- باشقۇرغۇچى ئۈچۈن لوگو ئۆزگەرتىش رايونى -->
+            <div id="adminLogoSection" style="display: none;">
+                <div class="settings-group-title"><i class="fa-solid fa-image" style="color: #ffd700;"></i> باشقۇرغۇچى: باش بەت يۇمىلاق لوگوسىنى تەڭشەش</div>
+                <div class="settings-group-card" style="padding: 14px;">
+                    <div style="display: flex; align-items: center; gap: 14px;">
+                        <div class="header-custom-logo-circle" id="adminLogoPreviewBox" style="width: 50px; height: 50px; flex-shrink: 0;">
+                            <!-- لوگو كۆرۈنۈشى -->
+                        </div>
+                        <div style="flex: 1; text-align: right;">
+                            <div style="font-size: 12px; font-weight: 800; color: var(--text-primary);">باش بەتتىكى يۇمىلاق بەلگە</div>
+                            <div style="font-size: 10px; color: var(--text-secondary); margin-bottom: 8px;">تېلېفوندىن يېڭى رەسىم فەيلىنى تاللاپ يۈكلەڭ</div>
+                            <input type="file" id="siteLogoFileInput" accept="image/*" style="display: none;" onchange="handleSiteLogoSelected(event)">
+                            <div style="display: flex; gap: 6px;">
+                                <button type="button" class="admin-mini-btn btn-vip-plus" onclick="document.getElementById('siteLogoFileInput').click()">📁 رەسىم تاللاش</button>
+                                <button type="button" class="admin-mini-btn btn-del-user" onclick="resetSiteLogoToDefault()">ئەسلىگە قايتۇرۇش</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="adminMovieStatsSection" style="display: none;">
+                <div class="settings-group-title"><i class="fa-solid fa-chart-line" style="color: #00c6ff;"></i> باشقۇرغۇچى: فىلىملەر سىتاستىكا جەدۋىلى</div>
+                <div class="settings-group-card" style="padding: 14px;">
+                    <div class="admin-stat-summary-grid">
+                        <div class="admin-stat-box">
+                            <span class="admin-stat-val" id="statTotalMovies">0</span>
+                            <span class="admin-stat-lbl">جەمئىي فىلىم</span>
+                        </div>
+                        <div class="admin-stat-box">
+                            <span class="admin-stat-val" id="statTotalViews">0</span>
+                            <span class="admin-stat-lbl">ئومۇمىي كۆرۈلۈش</span>
+                        </div>
+                        <div class="admin-stat-box">
+                            <span class="admin-stat-val" id="statTotalLikes">0</span>
+                            <span class="admin-stat-lbl">جەمئىي ياقتۇرۇش</span>
+                        </div>
+                        <div class="admin-stat-box">
+                            <span class="admin-stat-val" id="statTotalComments">0</span>
+                            <span class="admin-stat-lbl">جەمئىي پىكىرلەر</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 8px;">
+                        <input type="text" id="adminStatMovieSearchInput" class="form-input" style="padding: 8px 12px; font-size: 11px;" placeholder="🔍 جەدۋەلدىن فىلىم ئىسمىنى ئىزدەش..." oninput="renderAdminMovieStatsTable()" autocomplete="off">
+                    </div>
+
+                    <div class="admin-movie-table-wrapper">
+                        <table class="admin-movie-table">
+                            <thead>
+                                <tr>
+                                    <th>رەسىم</th>
+                                    <th>فىلىم نامى</th>
+                                    <th>ژانىر/تۈر</th>
+                                    <th>بەلگە</th>
+                                    <th>كۆرۈلۈشى</th>
+                                    <th>باھا (👍/👎)</th>
+                                    <th>پىكىر</th>
+                                    <th>مەشغۇلات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="adminMovieStatsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
             <div class="settings-group-title"><i class="fa-solid fa-user-gear"></i> ھېسابات ۋە سۈرەت</div>
             <div class="settings-group-card">
                 <div class="settings-cell-row" onclick="openAvatarModal()">
@@ -1624,7 +1759,6 @@
         let historyList = JSON.parse(localStorage.getItem('koznak_history') || '[]');
         let currentActiveMovieId = null;
         let searchTimeout = null;
-        let lastNotifiedMovieId = localStorage.getItem('koznak_last_notif') || '';
         let currentSlideIndex = 0;
         let sliderInterval = null;
         let touchStartX = 0;
@@ -1634,6 +1768,55 @@
         let sessionListenerUnsubscribe = null;
         let userRealtimeListenerUnsubscribe = null;
         let temporaryAvatarBase64 = '';
+        let currentSiteLogo = '';
+
+        const defaultLogoSVG = `
+            <svg viewBox="0 0 100 100" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="koznakGoldGradDef" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#fff099" />
+                        <stop offset="50%" stop-color="#d4af37" />
+                        <stop offset="100%" stop-color="#aa771c" />
+                    </linearGradient>
+                </defs>
+                <rect x="36" y="16" width="50" height="34" rx="9" transform="rotate(13 36 16)" stroke="url(#koznakGoldGradDef)" stroke-width="6.5" fill="none" opacity="0.9" />
+                <rect x="18" y="32" width="56" height="40" rx="10" transform="rotate(-10 18 32)" stroke="url(#koznakGoldGradDef)" stroke-width="7" fill="none" />
+                <path d="M 27 50 C 45 68, 62 62, 75 42" stroke="url(#koznakGoldGradDef)" stroke-width="6" stroke-linecap="round" fill="none" />
+                <polygon points="46,47 46,59 56,53" fill="url(#koznakGoldGradDef)" />
+            </svg>
+        `;
+
+        function applySiteLogo(logoUrl) {
+            currentSiteLogo = logoUrl || '';
+            const logoBox = document.getElementById('headerSiteLogoBox');
+            const adminPreviewBox = document.getElementById('adminLogoPreviewBox');
+            
+            const html = currentSiteLogo ? `<img src="${currentSiteLogo}" alt="Logo">` : defaultLogoSVG;
+            if (logoBox) logoBox.innerHTML = html;
+            if (adminPreviewBox) adminPreviewBox.innerHTML = html;
+        }
+
+        window.handleSiteLogoSelected = async function(event) {
+            if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
+            const file = event.target.files[0];
+            if (!file) return;
+
+            try {
+                const base64 = await compressImage(file, 200, 200, 0.9);
+                await window.dbSet(window.dbRef(window.db, 'settings/siteLogo'), base64);
+                alert('يېڭى يۇمىلاق لوگو مۇۋەپپەقىيەتلىك بېكىتىلدى!');
+            } catch(e) {
+                alert('رەسىمنى بىر تەرەپ قىلىشتا خاتالىق كۆرۈلدى!');
+            }
+        };
+
+        window.resetSiteLogoToDefault = async function() {
+            if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
+            if (confirm('لوگو ئەسلى ھالەتكە قايتۇرۇلسۇنمۇ؟')) {
+                await window.dbRemove(window.dbRef(window.db, 'settings/siteLogo'));
+                alert('لوگو ئەسلى ھالەتكە قايتۇرۇلدى!');
+            }
+        };
 
         window.toggleAuthForm = function(mode) {
             const loginBtn = document.getElementById('authTabLoginBtn');
@@ -1998,12 +2181,12 @@
             const moviesRef = window.dbRef(window.db, 'movies');
             window.dbOnValue(moviesRef, (snapshot) => {
                 allMovies = snapshot.val() || {};
-                checkNewMovieNotification();
                 renderHeroSliderSelectOptions();
                 renderHeroSlider();
                 renderMovies();
                 renderFavorites();
                 renderHistory();
+                renderAdminMovieStatsTable();
             }, { onlyOnce: false });
 
             const genresRef = window.dbRef(window.db, 'genresList');
@@ -2038,6 +2221,9 @@
                 const adminPriceEl = document.getElementById('adminVipPrice');
                 if (adminPriceEl) adminPriceEl.value = vipPrice;
 
+                // لوگو يېڭىلاش
+                applySiteLogo(settings.siteLogo || '');
+
                 isGlobalFreeEnabled = settings.globalFreeMode || false;
                 const freeToggle = document.getElementById('globalFreeToggle');
                 if (freeToggle) freeToggle.checked = isGlobalFreeEnabled;
@@ -2066,6 +2252,77 @@
             const val = checkboxEl.checked;
             window.dbSet(window.dbRef(window.db, 'settings/globalFreeMode'), val).then(() => {
                 alert(val ? 'بارلىق فىلىملەر ۋاقىتلىق ھەقسىز قىلىندى!' : 'ئەسلىدىكى VIP ھالىتىگە قايتۇرۇلدى!');
+            });
+        };
+
+        window.renderAdminMovieStatsTable = function() {
+            const tableBody = document.getElementById('adminMovieStatsTableBody');
+            if (!tableBody) return;
+            tableBody.innerHTML = '';
+
+            const searchKw = (document.getElementById('adminStatMovieSearchInput')?.value || '').trim().toLowerCase();
+            const movieIds = Object.keys(allMovies || {});
+
+            let totalViews = 0;
+            let totalLikes = 0;
+            let totalComments = 0;
+
+            movieIds.forEach(id => {
+                const m = allMovies[id];
+                totalViews += Number(m.views || 0);
+                totalLikes += Object.keys(m.reactions?.likes || {}).length;
+                totalComments += Object.keys(m.comments || {}).length;
+            });
+
+            const statTotalMovies = document.getElementById('statTotalMovies');
+            const statTotalViews = document.getElementById('statTotalViews');
+            const statTotalLikes = document.getElementById('statTotalLikes');
+            const statTotalComments = document.getElementById('statTotalComments');
+
+            if (statTotalMovies) statTotalMovies.innerText = movieIds.length;
+            if (statTotalViews) statTotalViews.innerText = totalViews;
+            if (statTotalLikes) statTotalLikes.innerText = totalLikes;
+            if (statTotalComments) statTotalComments.innerText = totalComments;
+
+            const filteredIds = movieIds.filter(id => {
+                const m = allMovies[id];
+                if (!searchKw) return true;
+                return (m.title || '').toLowerCase().includes(searchKw) || (m.genre || '').toLowerCase().includes(searchKw);
+            }).sort((a, b) => (allMovies[b].views || 0) - (allMovies[a].views || 0));
+
+            if (filteredIds.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:18px; color:var(--text-secondary);">فىلىم ئۇچۇرى تېپىلمىدى</td></tr>`;
+                return;
+            }
+
+            filteredIds.forEach(id => {
+                const m = allMovies[id];
+                const likesCount = Object.keys(m.reactions?.likes || {}).length;
+                const dislikesCount = Object.keys(m.reactions?.dislikes || {}).length;
+                const commentsCount = Object.keys(m.comments || {}).length;
+                const posterThumb = m.poster ? `<img src="${m.poster}" style="width:28px; height:38px; border-radius:6px; object-fit:cover;">` : '🎬';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="width: 36px; text-align: center;">${posterThumb}</td>
+                    <td>
+                        <div style="font-weight: 800; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${escapeHTML(m.title)}">
+                            ${escapeHTML(m.title)}
+                        </div>
+                    </td>
+                    <td><span style="font-size: 10px; color: var(--text-secondary);">${escapeHTML(getCategoryName(m.type))} • ${escapeHTML(m.genre || 'ئادەتتىكى')}</span></td>
+                    <td><span style="font-size: 10px; font-weight: 800; color: ${m.tag === 'VIP' ? '#ffd700' : '#2ed573'};">${escapeHTML(m.tag || 'ئادەتتىكى')}</span></td>
+                    <td style="font-weight: 800; color: #00c6ff;">👀 ${m.views || 0}</td>
+                    <td><span style="color:#2ed573;">👍 ${likesCount}</span> / <span style="color:#ff4757;">👎 ${dislikesCount}</span></td>
+                    <td>💬 ${commentsCount}</td>
+                    <td>
+                        <div style="display:flex; gap:6px; align-items:center;">
+                            <button type="button" class="admin-mini-btn" style="background:#0072ff; color:#fff;" onclick="handleCardClick('${id}')">كۆرۈش</button>
+                            <button type="button" class="del-btn" style="width:26px; height:26px; font-size:10px;" onclick="deleteMovie('${id}')">🗑️</button>
+                        </div>
+                    </td>
+                `;
+                tableBody.appendChild(tr);
             });
         };
 
@@ -2176,6 +2433,16 @@
                 document.getElementById('adminAccountSection').style.display = isAdmin ? 'block' : 'none';
                 document.getElementById('adminGlobalFreeSection').style.display = isAdmin ? 'block' : 'none';
                 
+                // باشقۇرغۇچىغا لوگو تەڭشەش بۆلىكىنى كۆرسىتىش
+                const logoSection = document.getElementById('adminLogoSection');
+                if (logoSection) logoSection.style.display = isAdmin ? 'block' : 'none';
+
+                const statsSection = document.getElementById('adminMovieStatsSection');
+                if (statsSection) {
+                    statsSection.style.display = isAdmin ? 'block' : 'none';
+                    if (isAdmin) renderAdminMovieStatsTable();
+                }
+
                 renderMovies();
             }
         };
@@ -2244,6 +2511,9 @@
 
             if(tabId === 'historyTab') renderHistory();
             if(tabId === 'favTab') renderFavorites();
+            if(tabId === 'settingsTab' && window.currentUser && window.currentUser.role === 'admin') {
+                renderAdminMovieStatsTable();
+            }
         }
 
         function openSearch() { 
@@ -2451,28 +2721,6 @@
             if(confirm('سىلايدېرنى ئۆچۈرەمسىز؟')) {
                 window.dbRemove(window.dbRef(window.db, 'featuredSliders/' + sKey));
             }
-        }
-
-        function checkNewMovieNotification() {
-            const keys = Object.keys(allMovies).sort((a, b) => (allMovies[b].createdAt || 0) - (allMovies[a].createdAt || 0));
-            if(keys.length > 0) {
-                const latestId = keys[0];
-                const latestMovie = allMovies[latestId];
-                if(latestId !== lastNotifiedMovieId && latestMovie && (Date.now() - (latestMovie.createdAt || 0) < 86400000)) {
-                    showNotificationBanner(latestMovie.title, latestId);
-                    lastNotifiedMovieId = latestId;
-                    localStorage.setItem('koznak_last_notif', latestId);
-                }
-            }
-        }
-
-        function showNotificationBanner(title, movieId) {
-            const banner = document.getElementById('notificationBanner');
-            const titleSpan = document.getElementById('notifMovieTitle');
-            titleSpan.innerText = title;
-            titleSpan.onclick = () => { banner.classList.remove('show'); handleCardClick(movieId); };
-            banner.classList.add('show');
-            setTimeout(() => banner.classList.remove('show'), 5000);
         }
 
         function filterCategory(category, el) {
@@ -2880,6 +3128,7 @@
                         allMovies[currentActiveMovieId].reactions = reactions;
                     }
                     renderReactions(reactions);
+                    renderAdminMovieStatsTable();
                 });
             });
         }
@@ -2963,6 +3212,7 @@
                 if(snap.exists()) { 
                     allMovies[currentActiveMovieId] = snap.val(); 
                     renderComments(snap.val().comments || {}); 
+                    renderAdminMovieStatsTable();
                 }
             });
         }
