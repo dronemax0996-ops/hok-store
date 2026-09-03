@@ -398,7 +398,6 @@
         .detail-title { font-size: 18px; font-weight: 900; margin-bottom: 6px; color: var(--text-primary); }
         .detail-meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; gap: 8px; }
 
-        /* ئىخچاملانغان چۈشۈرۈش كۇنۇپكىسى */
         .btn-mini-download {
             background: var(--accent-svip);
             color: #ffffff;
@@ -549,7 +548,6 @@
         .nav-item.active { color: #ff2a54; transform: scale(1.05); }
         .nav-item span:first-child { font-size: 17px; }
 
-        /* يېڭىلانغان ئابونت باشقۇرۇش كارتىسى */
         .admin-users-list { display: flex; flex-direction: column; gap: 12px; margin-top: 10px; }
         .admin-user-card {
             background: var(--surface-bg); border: 1px solid var(--border-glow);
@@ -592,10 +590,16 @@
             padding: 6px 14px; border-radius: var(--pill-radius); margin: 6px 0 10px 0; cursor: pointer;
         }
 
+        /* يېڭىلانغان ئەزالىق ئېچىش كارتىسى ۋە چۈشەندۈرۈش بۆلىكى */
+        .vip-card-flex-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
         .vip-luxury-card {
             background: linear-gradient(145deg, rgba(30, 26, 45, 0.95) 0%, rgba(18, 18, 28, 0.98) 100%);
-            border: 1px solid rgba(255, 215, 0, 0.35); border-radius: 26px; padding: 22px 18px;
-            text-align: center; position: relative; margin-bottom: 14px;
+            border: 1px solid rgba(255, 215, 0, 0.35); border-radius: 26px; padding: 20px 16px;
+            text-align: center; position: relative;
         }
         .vip-luxury-card.svip-card {
             border-color: rgba(224, 64, 251, 0.5);
@@ -605,13 +609,56 @@
         .vip-luxury-card.svip-card .vip-crown-icon { background: var(--accent-svip); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .vip-price-tag { font-size: 26px; font-weight: 900; background: var(--accent-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; }
         .vip-luxury-card.svip-card .vip-price-tag { background: var(--accent-svip); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .vip-features-list { text-align: right; margin: 14px 0; display: flex; flex-direction: column; gap: 8px; font-size: 12px; color: #cbd5e1; }
+        .vip-features-list { text-align: right; margin: 12px 0; display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: #cbd5e1; }
         .vip-feature-item { display: flex; align-items: center; gap: 8px; }
         .vip-feature-item i { color: #ffd700; font-size: 13px; }
         .vip-luxury-card.svip-card .vip-feature-item i { color: #e040fb; }
+
+        .vip-instruction-card {
+            background: rgba(20, 20, 32, 0.85);
+            border: 1px solid var(--border-glow);
+            border-radius: 22px;
+            padding: 16px;
+            text-align: right;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+        .instruction-step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .step-circle {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 900;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
         .vip-copy-box {
-            background: rgba(10, 10, 18, 0.7); border: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: var(--pill-radius); padding: 8px 14px; display: flex; justify-content: space-between; align-items: center; margin: 10px 0 14px 0; cursor: pointer;
+            background: rgba(10, 10, 18, 0.8); border: 1px solid rgba(255, 215, 0, 0.4);
+            border-radius: var(--pill-radius); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; margin: 8px 0; cursor: pointer;
+        }
+
+        .tg-copy-bar {
+            background: rgba(0, 136, 204, 0.12);
+            border: 1px solid rgba(0, 136, 204, 0.4);
+            border-radius: var(--pill-radius);
+            padding: 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-top: 6px;
         }
 
         .avatar-modal, .download-modal {
@@ -797,7 +844,6 @@
                     <span id="detailMovieTag" style="color: #ff2a54; font-weight: 800;"></span>
                 </div>
                 
-                <!-- كىچىكلىتىلگەن چۈشۈرۈپ كۆرۈش كۇنۇپكىسى بۆلىكى -->
                 <div style="display: flex; gap: 8px; margin-top: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
                     <div id="trailerBtnContainer"></div>
                     <button type="button" class="btn-mini-download" onclick="handleDownloadClick()">
@@ -988,7 +1034,6 @@
                     </div>
                 </div>
 
-                <!-- يېڭىلانغان ئابونت باشقۇرۇش مەركىزى -->
                 <div id="adminAccountSection" style="display: none; margin-top: 18px; border-top: 1px solid var(--border-glow); padding-top: 14px; text-align: right;">
                     <div class="section-title" style="font-size: 14px; margin-bottom: 10px;"><i class="fa-solid fa-users-gear"></i> باشقۇرغۇچى: ئەزالارنى تولۇق باشقۇرۇش</div>
                     <div class="form-group" style="margin-bottom: 10px;">
@@ -1004,15 +1049,45 @@
         </div>
     </div>
 
-    <!-- ئەزالىق ۋە VIP مەركىزى -->
+    <!-- ئەزالىق ئېچىش ۋە UID كۆچۈرۈپ باشقۇرغۇچىغا يوللاش مەركىزى -->
     <div id="vipOpenTab" class="tab-content">
         <div class="page-box" style="max-width: 440px;">
             <div class="vip-card-flex-container">
+                
+                <!-- تەپسىلىي يېتەكچى چۈشەندۈرۈش كارتىسى -->
+                <div class="vip-instruction-card">
+                    <div style="font-size: 14px; font-weight: 900; color: #ffd700; margin-bottom: 8px;">
+                        📌 ئەزالىق ئېچىش تەرتىپى ۋە چۈشەندۈرۈشى:
+                    </div>
+                    
+                    <div class="instruction-step-item">
+                        <span class="step-circle">1</span>
+                        <div>تۆۋەندىكى شەخسىي <b>UID</b> نومۇرىڭىزنى <b>«كۆچۈرۈش»</b> كۇنۇپكىسى ئارقىلىق نۇسخىلاپ ئېلىڭ.</div>
+                    </div>
+
+                    <div class="instruction-step-item">
+                        <span class="step-circle">2</span>
+                        <div>ئاستىدىكى <b>«@KOZNAK_USD»</b> تېلېگرامما نامىنى كۆچۈرۈۋېلىپ، تېلېگرامما ئىزدەش كۆزنىكىدە ئىزدەپ باشقۇرغۇچىغا كۆچۈرگەن <b>UID</b> نومۇرىڭىزنى يوللاپ ئەزالىقنى ئاچقۇزۇڭ.</div>
+                    </div>
+                </div>
+
+                <!-- شەخسىي UID كۆچۈرۈش بۆلىكى -->
+                <div class="vip-copy-box" onclick="copyUserUID()" title="كۆچۈرۈش ئۈچۈن چېكىڭ">
+                    <div style="text-align: right;">
+                        <div style="font-size: 11px; color: var(--text-secondary);">سىزنىڭ شەخسىي كىملىك (UID) نومۇرىڭىز:</div>
+                        <div id="displayVipTabUID" style="font-size: 17px; font-weight: 900; color: #ffd700; letter-spacing: 1px;">------</div>
+                    </div>
+                    <button type="button" style="background: rgba(255, 215, 0, 0.2); border: 1px solid #ffd700; color: #ffd700; border-radius: var(--pill-radius); padding: 5px 12px; font-size: 11px; font-weight: 800; cursor: pointer;">
+                        UID كۆچۈرۈش <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+
+                <!-- ئەزالىق تۈرلىرى -->
                 <div class="vip-luxury-card">
                     <div class="vip-crown-icon"><i class="fa-solid fa-crown"></i></div>
                     <h3 style="font-size: 17px; font-weight: 900; color: #ffffff; margin-bottom: 2px;">ئۆلچەملىك VIP ئەزالىق</h3>
                     <p style="font-size: 11px; color: var(--text-secondary);">بارلىق كىنولارنى چەكلىمىسىز 1 ئاي (30 كۈن) كۆرۈش</p>
-                    <div style="margin: 8px 0;">
+                    <div style="margin: 6px 0;">
                         <span class="vip-price-tag" id="displayVipPrice">4＄</span>
                     </div>
                     <div class="vip-features-list">
@@ -1025,28 +1100,28 @@
                     <div class="vip-crown-icon"><i class="fa-solid fa-gem"></i></div>
                     <h3 style="font-size: 17px; font-weight: 900; color: #ffffff; margin-bottom: 2px;">ئالىي ئەزالىق (Super VIP)</h3>
                     <p style="font-size: 11px; color: #e040fb;">ھەم 1 ئاي چەكلىمىسىز كۆرۈش + ھەم فىلىملەرنى چۈشۈرۈۋېلىش</p>
-                    <div style="margin: 8px 0;">
+                    <div style="margin: 6px 0;">
                         <span class="vip-price-tag" id="displaySvipPrice">7＄</span>
                     </div>
                     <div class="vip-features-list">
                         <div class="vip-feature-item"><i class="fa-solid fa-circle-check"></i><span>بارلىق VIP فىلىملەرنى كۆرۈش</span></div>
                         <div class="vip-feature-item"><i class="fa-solid fa-circle-check"></i><span><b>بارلىق فىلىملەرنىڭ ئەسلى چۈشۈرۈش ئۇلانمىسىنى ئېچىش</b></span></div>
-                        <div class="vip-feature-item"><i class="fa-solid fa-circle-check"></i><span>Browser ئارقىلىق يۇقىرى سۈرئەتتە ساقلىۋېلىش</span></div>
                     </div>
                 </div>
 
-                <div class="vip-copy-box" onclick="copyUserUID()" title="ID نومۇرنى كۆچۈرۈش">
+                <!-- تېلېگرامما نامىنى مۇشۇ پېتى كۆچۈرۈپ ئىزدەش كۇنۇپكىسى -->
+                <div class="tg-copy-bar" onclick="copyTelegramUsername()">
                     <div style="text-align: right;">
-                        <div style="font-size: 11px; color: var(--text-secondary);">سىزنىڭ UID نومۇرىڭىز:</div>
-                        <div id="displayVipTabUID" style="font-size: 16px; font-weight: 900; color: #ffd700;">------</div>
+                        <div style="font-size: 10px; color: #94a3b8;">باشقۇرغۇچى تېلېگرامما ھېساباتى:</div>
+                        <div style="font-size: 15px; font-weight: 900; color: #0088cc; letter-spacing: 0.5px;">@KOZNAK_USD</div>
                     </div>
-                    <button type="button" style="background: rgba(255, 215, 0, 0.2); border: 1px solid #ffd700; color: #ffd700; border-radius: var(--pill-radius); padding: 4px 10px; font-size: 11px; font-weight: 800; cursor: pointer;">
-                        كۆچۈرۈش <i class="fa-regular fa-copy"></i>
+                    <button type="button" style="background: #0088cc; color: #ffffff; border: none; border-radius: var(--pill-radius); padding: 7px 14px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fa-regular fa-copy"></i> كۆچۈرۈۋېلىش
                     </button>
                 </div>
 
-                <a href="https://t.me/KOZNAK_USD" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #0088cc, #00b4d8); color: #ffffff; padding: 12px; border-radius: var(--pill-radius); font-weight: 800; text-decoration: none; font-size: 13px; box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);">
-                    <i class="fa-brands fa-telegram" style="font-size: 17px;"></i> تېلېگرامما ئارقىلىق ئېچىش (@KOZNAK_USD)
+                <a href="https://t.me/KOZNAK_USD" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #0088cc, #00b4d8); color: #ffffff; padding: 12px; border-radius: var(--pill-radius); font-weight: 800; text-decoration: none; font-size: 12px; box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4); margin-top: 4px;">
+                    <i class="fa-brands fa-telegram" style="font-size: 16px;"></i> تېلېگراممىدا بىۋاسىتە ئېچىش (@KOZNAK_USD)
                 </a>
             </div>
         </div>
@@ -1242,7 +1317,7 @@
             </div>
 
             <div style="text-align: center; font-size: 11px; color: var(--text-secondary); margin-top: 14px;">
-                كۆزنەك كىنوخانىسى • Koznak TV v3.0
+                كۆزنەك كىنوخانىسى • Koznak TV v3.1
             </div>
         </div>
     </div>
@@ -1474,7 +1549,6 @@
             });
         }
 
-        // ئابونت ئۇچۇرىنى تەكشۈرۈش ۋە 30 كۈنلۈك قەرەلى توشقان بولسا ئاپتوماتىك ئۆچۈرۈش
         function listenToUserRealtimeData(userKey) {
             if (!window.db) return;
             if (userRealtimeListenerUnsubscribe) userRealtimeListenerUnsubscribe();
@@ -1485,7 +1559,6 @@
                     const dbData = snapshot.val();
                     const isAdmin = (dbData.user === 'dronemax' && dbData.password === '652923198405083311') || dbData.role === 'admin';
                     
-                    // ۋاقىت توشقان بولسا ئاپتوماتىك ئادەتتىكىگە قايتۇرۇش
                     if (!isAdmin && dbData.vipExpire && dbData.vipExpire <= Date.now()) {
                         window.dbUpdate(userRef, { vip: false, isSuperVip: false, vipExpire: null });
                         dbData.vip = false;
@@ -1533,7 +1606,6 @@
             return !!userObj.isSuperVip;
         }
 
-        // چۈشۈرۈپ كۆرۈش كۇنۇپكىسىنىڭ مېخانىزمى
         window.handleDownloadClick = function() {
             if (!window.currentUser) return alert('ئالدى بىلەن تىزىملىتىپ كىرىڭ!');
             const isSVIP = checkUserSuperVipStatus(window.currentUser);
@@ -1586,8 +1658,19 @@
             if (!window.currentUser || !window.currentUser.uid) return;
             const uidText = String(window.currentUser.uid);
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(uidText).then(() => alert('UID نومۇرىڭىز كۆچۈرۈلدى: ' + uidText));
+                navigator.clipboard.writeText(uidText).then(() => alert('UID نومۇرىڭىز نۇسخىلاندى: ' + uidText + '\nبۇ نومۇرنى باشقۇرغۇچىغا يوللاپ بەرسىڭىز ئەزالىقىڭىز دەرھال ئېچىلىدۇ.'));
             } else prompt('UID نومۇرىڭىزنى كۆچۈرۈۋېلىڭ:', uidText);
+        };
+
+        window.copyTelegramUsername = function() {
+            const tgName = '@KOZNAK_USD';
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(tgName).then(() => {
+                    alert('باشقۇرغۇچى تېلېگرامما نامى نۇسخىلاندى: ' + tgName + '\nئەمدى تېلېگراممىنى ئېچىپ، ئىزدەش كۆزنىكىگە چاپلاپ ئىزدىتىپ UID نومۇرىڭىزنى ئەۋەتىپ بېرىڭ.');
+                }).catch(() => prompt('تېلېگرامما نامىنى كۆچۈرۈۋېلىڭ:', tgName));
+            } else {
+                prompt('تېلېگرامما نامىنى كۆچۈرۈۋېلىڭ:', tgName);
+            }
         };
 
         window.openAvatarModal = function() {
@@ -1664,7 +1747,6 @@
             const isSVIP = checkUserSuperVipStatus(window.currentUser);
             const isVIP = checkUserVipStatus(window.currentUser);
 
-            // قالغان كۈن سانىنى دەلىللەش
             let remainingDays = 0;
             if (window.currentUser.vipExpire) {
                 remainingDays = Math.ceil((window.currentUser.vipExpire - Date.now()) / (1000 * 60 * 60 * 24));
@@ -2207,7 +2289,6 @@
             });
         }
 
-        // يېڭىلانغان ئابونت باشقۇرۇش كۆزنىكى
         function renderAdminUsersList() {
             const container = document.getElementById('adminUsersListContainer');
             if(!container) return;
@@ -2217,7 +2298,6 @@
             Object.keys(allUsers).forEach(userKey => {
                 const uData = allUsers[userKey];
                 
-                // قەرەلى توشقان بولسا كۆرسىتىشتىن بۇرۇن تەڭشەش
                 if (uData.role !== 'admin' && uData.vipExpire && uData.vipExpire <= Date.now()) {
                     uData.vip = false;
                     uData.isSuperVip = false;
@@ -2278,7 +2358,6 @@
             });
         }
 
-        // 1 ئاي (30 كۈن) بويىچە ئەزالىق ئېچىش، قايتۇرۇش ۋە ئۆچۈرۈش
         window.setVipRole = function(userKey, action) {
             const uData = allUsers[userKey] || {};
             const oneMonthMs = 30 * 24 * 60 * 60 * 1000;
