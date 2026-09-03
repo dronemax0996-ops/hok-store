@@ -1067,7 +1067,7 @@
 
                     <div class="instruction-step-item">
                         <span class="step-circle">2</span>
-                        <div>ئەزالىقنى <b>ئاپتوماتىك</b> ئېچىش ئۈچۈن <b>«@koznaktv_bot»</b> تېلېگرامما بوتىنى ئىشلىتىڭ، ياكى <b>«@KOZNAK_USD»</b> تېلېگرامما ئادرېسىغا كۆچۈرگەن <b>UID</b> نومۇرىڭىزنى ئەۋەتىپ باشقۇرغۇچى ئارقىلىق ئاچقۇزۇڭ.</div>
+                        <div>ئەزالىقنى ئېچىش ئۈچۈن تۆۋەندىكى بوت ئادرېسىنى كۆچۈرۈۋېلىپ ياكى باشقۇرغۇچى ئارقىلىق ئاچقۇزۇڭ.</div>
                     </div>
                 </div>
 
@@ -1109,10 +1109,10 @@
                     </div>
                 </div>
 
-                <!-- بوت ئارقىلىق ئاپتوماتىك ئېچىش بۆلىكى (كۆچۈرگىلى بولىدىغان) -->
+                <!-- بوت ئۇلانمىسىنى كۆچۈرۈش بۆلىكى -->
                 <div class="tg-copy-bar" onclick="copyBotUsername()">
                     <div style="text-align: right;">
-                        <div style="font-size: 10px; color: #94a3b8;">ئاپتوماتىك ئەزالىق ئېچىش بوتى:</div>
+                        <div style="font-size: 10px; color: #94a3b8;">بوت ئۇلانمىسىنى كۆچۈرۈش:</div>
                         <div style="font-size: 15px; font-weight: 900; color: #0088cc; letter-spacing: 0.5px;">@koznaktv_bot</div>
                     </div>
                     <button type="button" style="background: #0088cc; color: #ffffff; border: none; border-radius: var(--pill-radius); padding: 7px 14px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
@@ -1120,14 +1120,10 @@
                     </button>
                 </div>
 
-                <a href="https://t.me/koznaktv_bot" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #0088cc, #00b4d8); color: #ffffff; padding: 12px; border-radius: var(--pill-radius); font-weight: 800; text-decoration: none; font-size: 12px; box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);">
-                    <i class="fa-brands fa-telegram" style="font-size: 16px;"></i> بوتتا ئاپتوماتىك ئېچىش (@koznaktv_bot)
-                </a>
-
-                <!-- باشقۇرغۇچى ئارقىلىق ئېچىش بۆلىكى (كۆچۈرگىلى بولىدىغان) -->
+                <!-- باشقۇرغۇچى ئارقىلىق ئېچىش كۆچۈرۈش بۆلىكى -->
                 <div class="tg-copy-bar" onclick="copyTelegramUsername()" style="margin-top: 4px;">
                     <div style="text-align: right;">
-                        <div style="font-size: 10px; color: #94a3b8;">باشقۇرغۇچى ئارقىلىق ئېچىش:</div>
+                        <div style="font-size: 10px; color: #94a3b8;">باشقۇرغۇچى ئارقىلىق ئېچىش كۆچۈرۈش:</div>
                         <div style="font-size: 15px; font-weight: 900; color: #0088cc; letter-spacing: 0.5px;">@KOZNAK_USD</div>
                     </div>
                     <button type="button" style="background: #0088cc; color: #ffffff; border: none; border-radius: var(--pill-radius); padding: 7px 14px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
@@ -1135,9 +1131,6 @@
                     </button>
                 </div>
 
-                <a href="https://t.me/KOZNAK_USD" target="_blank" style="display: flex; align-items: center; justify-content: center; gap: 8px; background: linear-gradient(135deg, #0088cc, #00b4d8); color: #ffffff; padding: 12px; border-radius: var(--pill-radius); font-weight: 800; text-decoration: none; font-size: 12px; box-shadow: 0 8px 25px rgba(0, 136, 204, 0.4);">
-                    <i class="fa-brands fa-telegram" style="font-size: 16px;"></i> باشقۇرغۇچىغا ئۇچۇر قىلىش (@KOZNAK_USD)
-                </a>
             </div>
         </div>
     </div>
@@ -1681,10 +1674,10 @@
             const botName = '@koznaktv_bot';
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(botName).then(() => {
-                    alert('بوت ئادرېسى نۇسخىلاندى: ' + botName + '\nئەمدى تېلېگراممىنى ئېچىپ، ئىزدەش كۆزنىكىگە چاپلاپ بوتنى ئېچىپ UID نومۇرىڭىزنى ئەۋەتىڭ.');
-                }).catch(() => prompt('بوت ئادرېسىنى كۆچۈرۈۋېلىڭ:', botName));
+                    alert('بوت ئۇلانمىسى نۇسخىلاندى: ' + botName + '\nئەمدى تېلېگراممىنى ئېچىپ، ئىزدەش كۆزنىكىگە چاپلاپ بوتنى ئېچىپ UID نومۇرىڭىزنى ئەۋەتىڭ.');
+                }).catch(() => prompt('بوت ئۇلانمىسىنى كۆچۈرۈۋېلىڭ:', botName));
             } else {
-                prompt('بوت ئادرېسىنى كۆچۈرۈۋېلىڭ:', botName);
+                prompt('بوت ئۇلانمىسىنى كۆچۈرۈۋېلىڭ:', botName);
             }
         };
 
@@ -1692,7 +1685,7 @@
             const tgName = '@KOZNAK_USD';
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(tgName).then(() => {
-                    alert('باشقۇرغۇچى تېلېگرامما نامى نۇسخىلاندى: ' + tgName + '\nئەمدى تېلېگراممىنى ئېچىپ، باشقۇرغۇچىغا UID نومۇرىڭىزنى ئەۋەتىپ بېرىڭ.');
+                    alert('باشقۇرغۇچى ئارقىلىق ئېچىش نامى نۇسخىلاندى: ' + tgName + '\nئەمدى تېلېگراممىنى ئېچىپ، باشقۇرغۇچىغا UID نومۇرىڭىزنى ئەۋەتىپ بېرىڭ.');
                 }).catch(() => prompt('تېلېگرامما نامىنى كۆچۈرۈۋېلىڭ:', tgName));
             } else {
                 prompt('تېلېگرامما نامىنى كۆچۈرۈۋېلىڭ:', tgName);
