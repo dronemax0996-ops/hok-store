@@ -8,7 +8,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ff3b30">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Koznak TV">
 
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
@@ -148,18 +148,24 @@
 
         .home-top-header {
             background: #ff3b30;
-            padding: 14px 16px 18px 16px;
+            padding-top: calc(env(safe-area-inset-top, 24px) + 16px);
+            padding-bottom: 18px;
+            padding-left: 16px;
+            padding-right: 16px;
             border-bottom-left-radius: 24px;
             border-bottom-right-radius: 24px;
             box-shadow: 0 4px 20px rgba(255, 59, 48, 0.25);
-            position: sticky; top: 0; z-index: 1000;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
         .home-top-title-row {
             text-align: center;
             color: #ffffff;
-            font-size: 18px;
+            font-size: 19px;
             font-weight: 900;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
+            margin-top: 4px;
         }
         .home-search-bar-wrapper {
             display: flex;
@@ -302,7 +308,7 @@
         .search-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--surface-bg); backdrop-filter: blur(25px);
-            z-index: 3000; padding: 24px 18px; overflow-y: auto;
+            z-index: 3000; padding: calc(env(safe-area-inset-top, 24px) + 16px) 18px 24px 18px; overflow-y: auto;
         }
         .search-input {
             width: 100%; padding: 12px 18px; font-size: 13px;
@@ -312,6 +318,7 @@
         .filter-section-card {
             background: var(--bg-color); border: 1px solid var(--border-glow);
             border-radius: 16px; padding: 12px; margin-bottom: 14px; text-align: right;
+            transition: all 0.25s ease;
         }
         .filter-row-group { margin-bottom: 8px; }
         .filter-row-group:last-child { margin-bottom: 0; }
@@ -418,12 +425,26 @@
         }
 
         #detailTab { min-height: 100vh; }
-        .detail-container { max-width: 820px; margin: 0 auto; padding: 14px; }
+        .detail-container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 14px;
+            padding-top: calc(env(safe-area-inset-top, 24px) + 18px);
+        }
         .detail-back-btn {
-            background: var(--surface-card); border: 1px solid var(--border-glow); 
-            color: var(--text-primary); padding: 8px 18px; border-radius: var(--pill-radius);
-            font-size: 12px; font-weight: 700; cursor: pointer; margin-bottom: 12px; display: inline-flex; align-items: center; gap: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            background: var(--surface-card);
+            border: 1px solid var(--border-glow);
+            color: var(--text-primary);
+            padding: 9px 20px;
+            border-radius: var(--pill-radius);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-bottom: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         
         .detail-player-wrapper {
@@ -526,7 +547,11 @@
             box-shadow: 0 6px 20px rgba(255, 59, 48, 0.3);
         }
 
-        .settings-page-wrapper { max-width: 520px; margin: 14px auto; padding: 0 14px; }
+        .settings-page-wrapper {
+            max-width: 520px;
+            margin: 0 auto;
+            padding: calc(env(safe-area-inset-top, 24px) + 14px) 14px 0 14px;
+        }
         .user-profile-card-modern { 
             background: var(--surface-card);
             border: 1px solid var(--border-glow); 
@@ -682,9 +707,9 @@
             cursor: pointer; margin-top: 6px;
         }
 
-        .avatar-modal, .download-modal {
+        .avatar-modal, .download-modal, .image-preview-modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px);
+            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(15px);
             z-index: 100000; align-items: center; justify-content: center; padding: 20px;
         }
         .avatar-modal-content, .download-modal-content {
@@ -770,6 +795,14 @@
                 <button type="button" class="action-btn" style="flex: 1; margin: 0; padding: 10px; background: var(--accent-svip);" onclick="copyDownloadUrlDirect()"><i class="fa-regular fa-copy"></i> كۆچۈرۈۋېلىش</button>
                 <button type="button" class="action-btn" style="flex: 1; margin: 0; padding: 10px; background: #64748b;" onclick="closeDownloadModal()">تاقاش</button>
             </div>
+        </div>
+    </div>
+
+    <!-- چوڭايتىپ كۆرۈش كۆزنىكى (باشقۇرغۇچى رەسىملەرنى كۆرۈش ئۈچۈن) -->
+    <div id="imagePreviewModal" class="image-preview-modal" onclick="closeImagePreview()">
+        <div style="position: relative; max-width: 90vw; max-height: 85vh; text-align: center;" onclick="event.stopPropagation()">
+            <img id="imagePreviewTarget" src="" alt="رەسىم" style="width: 100%; max-height: 80vh; border-radius: 16px; object-fit: contain; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+            <button type="button" style="margin-top: 14px; background: #ff3b30; color: #fff; border: none; padding: 8px 24px; border-radius: var(--pill-radius); font-size: 13px; font-weight: 800; cursor: pointer;" onclick="closeImagePreview()">تاقاش ✕</button>
         </div>
     </div>
 
@@ -862,7 +895,7 @@
 
     <!-- 2. كىنو (بارلىق كىنولار سەھىپىسى) -->
     <div id="moviesOnlyTab" class="tab-content">
-        <div class="category-section" style="margin-top: 16px;">
+        <div class="category-section" style="margin-top: 16px; padding-top: calc(env(safe-area-inset-top, 24px) + 10px);">
             <div class="section-title">🎬 بارلىق كىنولار</div>
             <div class="movie-grid" id="moviesOnlyGrid" style="margin-top: 12px;"></div>
         </div>
@@ -870,7 +903,7 @@
 
     <!-- 3. تىياتىرلار (بارلىق قىسىملىق كىنولار سەھىپىسى) -->
     <div id="theatersTab" class="tab-content">
-        <div class="category-section" style="margin-top: 16px;">
+        <div class="category-section" style="margin-top: 16px; padding-top: calc(env(safe-area-inset-top, 24px) + 10px);">
             <div class="section-title">📺 تىياتىرلار ۋە قىسىملىق كىنولار</div>
             <div class="movie-grid" id="theatersGrid" style="margin-top: 12px;"></div>
         </div>
@@ -878,7 +911,7 @@
 
     <!-- 4. قىسقا فىلىم -->
     <div id="shortsTab" class="tab-content">
-        <div class="category-section" style="margin-top: 16px;">
+        <div class="category-section" style="margin-top: 16px; padding-top: calc(env(safe-area-inset-top, 24px) + 10px);">
             <div class="section-title" style="padding: 0 16px; margin-bottom: 12px;">📱 قىسقا فىلىملەر (Shorts)</div>
             <div class="shorts-feed-container" id="shortsFeedContainer"></div>
         </div>
@@ -1016,7 +1049,7 @@
         </div>
     </div>
 
-    <!-- 6. تەڭشەك رايۇنى (كۆرۈش خاتىرىسى تازىلاش، قانال ئۇلانمىسى ۋە نەشرى بىلەن) -->
+    <!-- 6. تەڭشەك رايۇنى -->
     <div id="settingsTab" class="tab-content">
         <div class="settings-page-wrapper">
             <div class="settings-group-title"><i class="fa-solid fa-crown" style="color: #ffd700;"></i> ئەزالىق ۋە VIP مەركىزى</div>
@@ -1282,7 +1315,7 @@
 
     <!-- VIP ئەزالىق ئېچىش مەركىزى -->
     <div id="vipOpenTab" class="tab-content">
-        <div class="page-box" style="max-width: 440px;">
+        <div class="page-box" style="max-width: 440px; padding-top: calc(env(safe-area-inset-top, 24px) + 14px);">
             <button class="detail-back-btn" onclick="switchTab('settingsTab')">⬅️ تەڭشەكلەرگە قايتىش</button>
             <div class="vip-card-flex-container" style="margin-top: 10px;">
                 <div class="vip-instruction-card">
@@ -1295,7 +1328,7 @@
                     </div>
                     <div class="instruction-step-item">
                         <span class="step-circle">2</span>
-                        <div>ئەزالىقنى ئېچىش ئۈچۈن تۆۋەندىكى بوت ئادرېسىنى كۆچۈرۈۋېلىپ ياكى باشقۇرغۇچى ئارقىلىق ئاچقۇزۇڭ.</div>
+                        <div>ئەزالىقنى ئېچىش ئۈچۈن تۆۋەندىكى بوت ئادرېسى ياكى باشقۇرغۇچىنىڭ شەخسىي ئادرېسى ئارقىلىق ئاچقۇزۇڭ.</div>
                     </div>
                 </div>
 
@@ -1335,6 +1368,16 @@
                     </div>
                 </div>
 
+                <div class="tg-copy-bar" onclick="copyAdminUsername()">
+                    <div style="text-align: right;">
+                        <div style="font-size: 10px; color: #94a3b8;">باشقۇرغۇچى شەخسىي ئادرېسىنى كۆچۈرۈش:</div>
+                        <div style="font-size: 15px; font-weight: 900; color: #ff3b30; letter-spacing: 0.5px;">@KOZNAK_USD</div>
+                    </div>
+                    <button type="button" style="background: #ff3b30; color: #ffffff; border: none; border-radius: var(--pill-radius); padding: 7px 14px; font-size: 11px; font-weight: 800; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                        <i class="fa-regular fa-copy"></i> كۆچۈرۈۋېلىش
+                    </button>
+                </div>
+
                 <div class="tg-copy-bar" onclick="copyBotUsername()">
                     <div style="text-align: right;">
                         <div style="font-size: 10px; color: #94a3b8;">بوت ئۇلانمىسىنى كۆچۈرۈش:</div>
@@ -1363,7 +1406,7 @@
         <button class="close-search" onclick="closeSearch()">تاقاش ✕</button>
         <input type="text" id="searchInputBox" class="search-input" placeholder="سىز ئىزدەڭ مەن تاپاي..." oninput="performFilteredSearch()">
         
-        <div class="filter-section-card">
+        <div class="filter-section-card" id="searchFilterSection">
             <div class="filter-row-group">
                 <span class="filter-row-label">🎬 كىنو خىلى</span>
                 <div class="filter-chips-row" id="filterTypeChips">
@@ -1696,7 +1739,7 @@
             isGlobalFreeEnabled = checkbox.checked;
             window.dbSet(window.dbRef(window.db, 'settings/globalFree'), isGlobalFreeEnabled).then(() => {
                 renderMovies();
-                alert(isGlobalFreeEnabled ? '⚠️ بارلىق فىلىملەر ۋاقىتلىق ھەقسىز قىلىнды!' : '🔒 نورمال ھالەتكە قايتۇرۇلدى!');
+                alert(isGlobalFreeEnabled ? '⚠️ بارلىق فىلىملەر ۋاقىتلىق ھەقسىز قىلىندى!' : '🔒 نورمال ھالەتكە قايتۇرۇلدى!');
             });
         };
 
@@ -1709,11 +1752,25 @@
             navigator.clipboard.writeText('@koznaktv_bot').then(() => alert('بوت نۇسخىلاندى: @koznaktv_bot'));
         };
 
+        window.copyAdminUsername = function() {
+            navigator.clipboard.writeText('@KOZNAK_USD').then(() => alert('باشقۇرغۇچى ئادرېسى نۇسخىلاندى: @KOZNAK_USD'));
+        };
+
         window.copyKoznakTvChannelUrl = function() {
             const channelUrl = 'https://t.me/koznak_tv';
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(channelUrl).then(() => alert('قانال ئۇلانمىسى نۇسخىلاندى: ' + channelUrl));
             } else { prompt('قانال ئۇلانمىسىنى كۆچۈرۈڭ:', channelUrl); }
+        };
+
+        window.openImagePreview = function(imgSrc) {
+            if (!imgSrc) return;
+            document.getElementById('imagePreviewTarget').src = imgSrc;
+            document.getElementById('imagePreviewModal').style.display = 'flex';
+        };
+
+        window.closeImagePreview = function() {
+            document.getElementById('imagePreviewModal').style.display = 'none';
         };
 
         window.openAvatarModal = function() {
@@ -1747,23 +1804,23 @@
             alert('باش رەسىم يېڭىلاندى!');
         };
 
-        async function handlePosterFileSelected(event) {
+        window.handlePosterFileSelected = async function(event) {
             const file = event.target.files[0];
             if (!file) return;
             const base64 = await compressImage(file, 600, 850, 0.8);
             document.getElementById('contentPosterBase64').value = base64;
             document.getElementById('uploadPosterPreviewImg').src = base64;
             document.getElementById('uploadPosterPreviewContainer').style.display = 'block';
-        }
+        };
 
-        async function handleFeedbackImageSelected(event) {
+        window.handleFeedbackImageSelected = async function(event) {
             const file = event.target.files[0];
             if (!file) return;
             try {
                 const base64 = await compressImage(file, 500, 700, 0.8);
                 document.getElementById('fbMovieImageBase64').value = base64;
             } catch(e) { alert('رەسىم قاچىلانمىدى!'); }
-        }
+        };
 
         window.submitSearchFeedback = async function() {
             const title = document.getElementById('fbMovieTitle').value.trim();
@@ -1895,7 +1952,7 @@
             document.querySelectorAll('iframe').forEach(i => i.src = '');
         }
 
-        function switchTab(tabId, el) {
+        window.switchTab = function(tabId, el) {
             stopAllVideos();
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
             const targetTab = document.getElementById(tabId);
@@ -1913,7 +1970,7 @@
             if(tabId === 'adminCenterTab' && window.currentUser && window.currentUser.role === 'admin') {
                 switchAdminSubTab('upload');
             }
-        }
+        };
 
         window.switchAccountSubTab = function(type) {
             const isFav = type === 'fav';
@@ -1941,7 +1998,7 @@
             if(type === 'feedbacks') renderAdminFeedbacksList();
         };
 
-        function renderAdminMovieStatsTable() {
+        window.renderAdminMovieStatsTable = function() {
             const tableBody = document.getElementById('adminMovieStatsTableBody');
             if (!tableBody) return;
             tableBody.innerHTML = '';
@@ -1974,14 +2031,14 @@
                 `;
                 tableBody.appendChild(tr);
             });
-        }
+        };
 
         function renderAdminFeedbacksList() {
             const container = document.getElementById('adminFeedbacksListContainer');
             if (!container) return;
             container.innerHTML = '';
 
-            const keys = Object.keys(allFeedbacks || {}).sort((a, b) => allFeedbacks[b].createdAt - allFeedbacks[a].createdAt);
+            const keys = Object.keys(allFeedbacks || {}).sort((a, b) => (allFeedbacks[b].createdAt || 0) - (allFeedbacks[a].createdAt || 0));
             if (keys.length === 0) {
                 container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">ھېچقانداق ئىنكاس يوق</div>';
                 return;
@@ -1993,7 +2050,7 @@
                 div.className = 'admin-user-card';
                 div.innerHTML = `
                     <div style="display: flex; gap: 10px; align-items: center;">
-                        ${fb.poster ? `<img src="${fb.poster}" style="width:50px; height:70px; border-radius:8px; object-fit:cover;">` : '<div style="width:50px; height:70px; background:#333; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:10px;">رەسىم يوق</div>'}
+                        ${fb.poster ? `<img src="${fb.poster}" onclick="openImagePreview('${fb.poster}')" title="چوڭايتىپ كۆرۈش ئۈچۈن بېسىڭ" style="width:55px; height:75px; border-radius:8px; object-fit:cover; cursor:zoom-in; border: 1px solid var(--border-glow);">` : '<div style="width:55px; height:75px; background:#333; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:10px;">رەسىم يوق</div>'}
                         <div style="flex: 1; text-align: right;">
                             <div style="font-weight: 900; font-size: 13px; color: var(--text-primary);">🎬 ${escapeHTML(fb.title)}</div>
                             <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px; word-break: break-all;">🔗 ئۇلانما: ${escapeHTML(fb.link)}</div>
@@ -2006,18 +2063,18 @@
             });
         }
 
-        function goBackToHome() { stopAllVideos(); switchTab('homeTab'); }
-        function openSearch() { document.getElementById('searchModal').style.display = 'block'; performFilteredSearch(); }
-        function closeSearch() { document.getElementById('searchModal').style.display = 'none'; }
+        window.goBackToHome = function() { stopAllVideos(); switchTab('homeTab'); };
+        window.openSearch = function() { document.getElementById('searchModal').style.display = 'block'; performFilteredSearch(); };
+        window.closeSearch = function() { document.getElementById('searchModal').style.display = 'none'; };
 
-        function setTheme(mode) {
+        window.setTheme = function(mode) {
             document.body.classList.toggle('dark-mode', mode === 'dark');
             document.getElementById('darkThemeCard').classList.toggle('active', mode === 'dark');
             document.getElementById('lightThemeCard').classList.toggle('active', mode === 'light');
             localStorage.setItem('koznak_theme', mode);
-        }
+        };
 
-        function toggleUploadInputs() {
+        window.toggleUploadInputs = function() {
             const type = document.getElementById('contentType').value;
             const linkLbl = document.getElementById('mainLinkLabel');
             const seriesGroupLbl = document.getElementById('seriesGroupLabel');
@@ -2033,9 +2090,9 @@
                 document.getElementById('singleLinkGroup').style.display = type.includes('series') ? 'none' : 'block';
                 document.getElementById('seriesLinksGroup').style.display = type.includes('series') ? 'block' : 'none';
             }
-        }
+        };
 
-        function addEpisodeInputRow(defaultName = '') {
+        window.addEpisodeInputRow = function(defaultName = '') {
             const container = document.getElementById('dynamicEpisodesContainer');
             const count = container.children.length + 1;
             const row = document.createElement('div');
@@ -2046,27 +2103,27 @@
                 <button type="button" class="del-btn" onclick="this.parentElement.remove()" style="width: 32px; height: 32px; flex-shrink: 0;">✕</button>
             `;
             container.appendChild(row);
-        }
+        };
 
-        function filterByQuickMenu(type) {
+        window.filterByQuickMenu = function(type) {
             if (type === 'newest') { currentFilter = 'all'; renderMovies(); }
             else if (type === 'series') { switchTab('theatersTab', document.querySelectorAll('.nav-item')[2]); }
             else if (type === 'top_rated') { filterCategory('top_rated', null); }
             else if (type === 'free') { filterCategory('free', null); }
-        }
+        };
 
-        function filterCategory(category, el) {
+        window.filterCategory = function(category, el) {
             currentFilter = category;
             document.querySelectorAll('.cat-chip').forEach(btn => btn.classList.remove('active'));
             if(el) el.classList.add('active');
             document.getElementById('categoryBackBarContainer').style.display = category !== 'all' ? 'block' : 'none';
             renderMovies();
-        }
+        };
 
-        function resetToHomeAllView() {
+        window.resetToHomeAllView = function() {
             const allBtn = document.querySelector('.cat-chip');
             if (allBtn) filterCategory('all', allBtn);
-        }
+        };
 
         function getCategoryName(type) {
             switch(type) {
@@ -2341,7 +2398,14 @@
             const query = (document.getElementById('searchInputBox').value || '').trim().toLowerCase();
             const container = document.getElementById('searchResultsContainer');
             const feedbackBox = document.getElementById('searchFeedbackBox');
+            const filterSection = document.getElementById('searchFilterSection');
             container.innerHTML = '';
+
+            if (query.length > 0) {
+                if (filterSection) filterSection.style.display = 'none';
+            } else {
+                if (filterSection) filterSection.style.display = 'block';
+            }
 
             const keys = Object.keys(allMovies || {});
             let results = keys.filter(id => {
@@ -2353,26 +2417,25 @@
                 const country = (m.country || '').toLowerCase();
                 const tag = m.tag || '';
 
-                if (query && !title.includes(query)) return false;
-                if (searchFiltersState.type !== 'all' && !type.includes(searchFiltersState.type)) return false;
-                if (searchFiltersState.genre !== 'all' && !genre.includes(searchFiltersState.genre.toLowerCase())) return false;
-                if (searchFiltersState.year !== 'all' && year !== searchFiltersState.year) return false;
-                if (searchFiltersState.country !== 'all' && !country.includes(searchFiltersState.country.toLowerCase())) return false;
-                if (searchFiltersState.price === 'free' && tag === 'VIP') return false;
-                if (searchFiltersState.price === 'vip' && tag !== 'VIP') return false;
+                if (query) {
+                    if (!title.includes(query)) return false;
+                } else {
+                    if (searchFiltersState.type !== 'all' && !type.includes(searchFiltersState.type)) return false;
+                    if (searchFiltersState.genre !== 'all' && !genre.includes(searchFiltersState.genre.toLowerCase())) return false;
+                    if (searchFiltersState.year !== 'all' && year !== searchFiltersState.year) return false;
+                    if (searchFiltersState.country !== 'all' && !country.includes(searchFiltersState.country.toLowerCase())) return false;
+                    if (searchFiltersState.price === 'free' && tag === 'VIP') return false;
+                    if (searchFiltersState.price === 'vip' && tag !== 'VIP') return false;
+                }
 
                 return true;
             });
 
             if (results.length === 0) {
                 container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 15px; font-size: 13px;">ھېچقانداق فىلىم تېپىلمىدى</div>';
-                if (query.length > 0) {
-                    feedbackBox.style.display = 'block';
-                    if (!document.getElementById('fbMovieTitle').value) {
-                        document.getElementById('fbMovieTitle').value = query;
-                    }
-                } else {
-                    feedbackBox.style.display = 'none';
+                feedbackBox.style.display = 'block';
+                if (query.length > 0 && !document.getElementById('fbMovieTitle').value) {
+                    document.getElementById('fbMovieTitle').value = query;
                 }
                 return;
             }
@@ -2460,6 +2523,13 @@
             historyList.forEach(id => { if(allMovies[id]) histGrid.appendChild(createMovieCardElement(id, allMovies[id])); });
         }
 
+        window.clearWatchHistory = function() {
+            historyList = [];
+            localStorage.removeItem('koznak_history');
+            renderHistory();
+            alert('كۆرۈش خاتىرىسى تازىلاندى!');
+        };
+
         function renderFavorites() {
             const favGrid = document.getElementById('favList');
             if(!favGrid) return;
@@ -2471,16 +2541,300 @@
             favorites.forEach(id => { if(allMovies[id]) favGrid.appendChild(createMovieCardElement(id, allMovies[id])); });
         }
 
-        function toggleFavorite(id) {
+        window.toggleFavorite = function(id) {
             favorites = favorites.includes(id) ? favorites.filter(favId => favId !== id) : [...favorites, id];
             localStorage.setItem('koznak_favs', JSON.stringify(favorites));
             renderMovies();
             renderFavorites();
             if(document.getElementById('shortsTab').classList.contains('active-tab')) renderShortsFeed();
+        };
+
+        window.handleUploadSubmit = async function(event) {
+            event.preventDefault();
+            if (!window.currentUser || window.currentUser.role !== 'admin') return alert('سىز باشقۇرغۇچى ئەمەس!');
+
+            const type = document.getElementById('contentType').value;
+            const customType = document.getElementById('contentCustomType').value.trim();
+            const genre = document.getElementById('contentGenre').value.trim();
+            const year = document.getElementById('contentYear').value.trim();
+            const country = document.getElementById('contentCountry').value.trim();
+            const tag = document.getElementById('contentTag').value;
+            const title = document.getElementById('contentTitle').value.trim();
+            const poster = document.getElementById('contentPosterBase64').value.trim();
+            const trailer = document.getElementById('contentTrailer').value.trim();
+            const downloadLink = document.getElementById('contentDownloadLink').value.trim();
+
+            if (!title) return alert('فىلىم نامىنى كىرگۈزۈڭ!');
+            if (!poster) return alert('تەشۋىقات رەسىمىنى چوقۇم تاللاڭ!');
+
+            const movieId = 'mov_' + Date.now();
+            let movieData = {
+                id: movieId,
+                type: type,
+                customType: customType,
+                genre: genre,
+                year: year,
+                country: country,
+                tag: tag,
+                title: title,
+                poster: poster,
+                trailer: trailer,
+                downloadLink: downloadLink,
+                views: 0,
+                createdAt: Date.now()
+            };
+
+            if (type.includes('series') || type === 'short') {
+                const epNames = document.querySelectorAll('.ep-name-input');
+                const epUrls = document.querySelectorAll('.ep-url-input');
+                let links = [];
+                epNames.forEach((nameInput, index) => {
+                    const epUrl = epUrls[index]?.value.trim();
+                    if (epUrl) {
+                        links.push({
+                            name: nameInput.value.trim() || `${index + 1}-قىسىم`,
+                            url: epUrl
+                        });
+                    }
+                });
+                if (links.length === 0) return alert('ئەڭ ئاز بىر قىسىمنىڭ ئۇلانمىسىنى كىرگۈزۈڭ!');
+                movieData.links = links;
+            } else {
+                const singleLink = document.getElementById('contentLink').value.trim();
+                if (!singleLink) return alert('سىن قويۇش ئۇلانمىسىنى كىرگۈزۈڭ!');
+                movieData.link = singleLink;
+            }
+
+            try {
+                await window.dbSet(window.dbRef(window.db, `movies/${movieId}`), movieData);
+                alert('فىلىم مۇۋەپپەقىيەتلىك ساقلاندى!');
+                document.getElementById('uploadForm').reset();
+                document.getElementById('contentPosterBase64').value = '';
+                document.getElementById('uploadPosterPreviewContainer').style.display = 'none';
+                document.getElementById('dynamicEpisodesContainer').innerHTML = '';
+                switchTab('homeTab');
+            } catch(e) {
+                alert('ساقلاشتا خاتالىق كۆرۈلدى: ' + e.message);
+            }
+        };
+
+        window.deleteMovie = async function(id) {
+            if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
+            if (confirm('راستلا بۇ فىلىمنى ئۆچۈرەمسىز؟')) {
+                try {
+                    await window.dbRemove(window.dbRef(window.db, `movies/${id}`));
+                    alert('فىلىم ئۆچۈرۈلدى!');
+                } catch(e) {
+                    alert('ئۆچۈرۈش مەغلۇپ بولدى!');
+                }
+            }
+        };
+
+        window.renderAdminUsersList = function() {
+            const container = document.getElementById('adminUsersListContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const searchKey = (document.getElementById('adminUserSearchInput')?.value || '').trim().toLowerCase();
+            const userKeys = Object.keys(allUsers || {});
+
+            if (userKeys.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 20px;">ئەزالار تېپىلمىدى</div>';
+                return;
+            }
+
+            userKeys.forEach(key => {
+                const u = allUsers[key];
+                const displayName = (u.nickname || u.user || '').toLowerCase();
+                const uid = String(u.uid || '');
+
+                if (searchKey && !displayName.includes(searchKey) && !uid.includes(searchKey) && !u.user.toLowerCase().includes(searchKey)) {
+                    return;
+                }
+
+                let remainingDays = 0;
+                if (u.vipExpire) {
+                    remainingDays = Math.ceil((u.vipExpire - Date.now()) / (1000 * 60 * 60 * 24));
+                    if (remainingDays < 0) remainingDays = 0;
+                }
+
+                let statusBadge = 'ئادەتتىكى ئەزا';
+                if (u.role === 'admin') statusBadge = '👑 باشقۇرغۇچى';
+                else if (u.isSuperVip && remainingDays > 0) statusBadge = `💎 ئالىي ئەزا (${remainingDays} كۈن)`;
+                else if (u.vip && remainingDays > 0) statusBadge = `⭐ VIP (${remainingDays} كۈن)`;
+
+                const card = document.createElement('div');
+                card.className = 'admin-user-card';
+                card.innerHTML = `
+                    <div class="admin-user-header-row">
+                        <div class="admin-user-left-box">
+                            <div class="admin-user-avatar">
+                                ${u.avatar ? `<img src="${u.avatar}">` : '👤'}
+                            </div>
+                            <div class="admin-user-info">
+                                <span class="admin-user-name">${escapeHTML(u.nickname || u.user)} (${escapeHTML(u.user)})</span>
+                                <span class="admin-user-uid-badge">UID: ${u.uid || 'يوق'}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="admin-user-status-bar">
+                        <span>ھالىتى:</span>
+                        <span style="font-weight: 800; color: #ff3b30;">${statusBadge}</span>
+                    </div>
+                    <div class="admin-user-btns-grid">
+                        <button class="admin-mini-btn btn-vip-on" onclick="setVipForUser('${key}', 30, false)">VIP 1 ئاي</button>
+                        <button class="admin-mini-btn btn-svip-on" onclick="setVipForUser('${key}', 30, true)">SVIP 1 ئاي</button>
+                        <button class="admin-mini-btn btn-vip-off" onclick="cancelVipForUser('${key}')">VIP بىكار قىلىش</button>
+                        <button class="admin-mini-btn btn-del-user" onclick="deleteUserAccount('${key}')">🗑️ ھېساباتنى ئۆچۈرۈش</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        };
+
+        window.setVipForUser = async function(userKey, days, isSuper) {
+            if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
+            const expireDate = Date.now() + (days * 24 * 60 * 60 * 1000);
+            await window.dbUpdate(window.dbRef(window.db, `users/${userKey}`), {
+                vip: true,
+                isSuperVip: isSuper,
+                vipExpire: expireDate
+            });
+            alert('ئەزالىق مۇۋەپپەقىيەتلىك بېرىلدى!');
+        };
+
+        window.cancelVipForUser = async function(userKey) {
+            if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
+            await window.dbUpdate(window.dbRef(window.db, `users/${userKey}`), {
+                vip: false,
+                isSuperVip: false,
+                vipExpire: 0
+            });
+            alert('ئەزالىق بىكار قىلىندى!');
+        };
+
+        window.deleteUserAccount = async function(userKey) {
+            if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
+            if (confirm('راستلا بۇ ھېساباتنى پۈتۈنلەي ئۆچۈرەمسىز؟')) {
+                await window.dbRemove(window.dbRef(window.db, `users/${userKey}`));
+                alert('ھېسابات ئۆچۈرۈلدى!');
+            }
+        };
+
+        window.rateMovie = async function(type) {
+            if (!currentActiveMovieId) return;
+            if (!window.currentUser) return alert('باھا بېرىش ئۈچۈن كىرىڭ!');
+
+            const userKey = window.currentUser.userKey;
+            const oppType = type === 'like' ? 'dislike' : 'like';
+
+            try {
+                await window.dbSet(window.dbRef(window.db, `movies/${currentActiveMovieId}/reactions/${type}s/${userKey}`), true);
+                await window.dbRemove(window.dbRef(window.db, `movies/${currentActiveMovieId}/reactions/${oppType}s/${userKey}`));
+            } catch(e) {}
+        };
+
+        function renderReactions(reactions) {
+            const likesObj = reactions.likes || {};
+            const dislikesObj = reactions.dislikes || {};
+
+            const likeCount = Object.keys(likesObj).length;
+            const dislikeCount = Object.keys(dislikesObj).length;
+
+            document.getElementById('likeCount').innerText = likeCount;
+            document.getElementById('dislikeCount').innerText = dislikeCount;
+
+            const myKey = window.currentUser ? window.currentUser.userKey : '';
+            document.getElementById('likeBtn').classList.toggle('active-like', !!likesObj[myKey]);
+            document.getElementById('dislikeBtn').classList.toggle('active-dislike', !!dislikesObj[myKey]);
+        }
+
+        window.insertEmoji = function(emoji) {
+            const input = document.getElementById('commentInputBox');
+            input.value += emoji;
+            input.focus();
+        };
+
+        window.submitComment = async function() {
+            if (!currentActiveMovieId) return;
+            if (!window.currentUser) return alert('ئىنكاس يوللاش ئۈچۈن كىرىڭ!');
+
+            const input = document.getElementById('commentInputBox');
+            const text = input.value.trim();
+            if (!text) return alert('پىكىر مەزمۇنىنى كىرگۈزۈڭ!');
+
+            const commentId = 'c_' + Date.now();
+            const commentData = {
+                id: commentId,
+                user: window.currentUser.nickname || window.currentUser.user,
+                avatar: window.currentUser.avatar || '',
+                text: text,
+                time: Date.now()
+            };
+
+            try {
+                await window.dbSet(window.dbRef(window.db, `movies/${currentActiveMovieId}/comments/${commentId}`), commentData);
+                input.value = '';
+            } catch(e) {
+                alert('ئىنكاس ئەۋەتىش مەغلۇپ بولدى!');
+            }
+        };
+
+        function renderComments(comments) {
+            const container = document.getElementById('commentsListContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const keys = Object.keys(comments || {}).sort((a, b) => (comments[b].time || 0) - (comments[a].time || 0));
+            document.getElementById('commentsCountBadge').innerText = `${keys.length} پىكىر`;
+
+            if (keys.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); font-size: 11px; padding: 10px;">بۇ فىلىمگە تېخى ھېچكىم باھا بەرمىدى، بىرىنچى بولۇپ پىكىر قالدۇرۇڭ!</div>';
+                return;
+            }
+
+            keys.forEach(k => {
+                const c = comments[k];
+                const item = document.createElement('div');
+                item.className = 'comment-item';
+                item.innerHTML = `
+                    <div class="comment-avatar">
+                        ${c.avatar ? `<img src="${c.avatar}">` : '👤'}
+                    </div>
+                    <div class="comment-content-box">
+                        <div class="comment-user">
+                            <span>${escapeHTML(c.user)}</span>
+                        </div>
+                        <div style="color: var(--text-primary); font-size: 12px; margin-top: 2px;">${escapeHTML(c.text)}</div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function renderRelatedMovies(currentId) {
+            const grid = document.getElementById('relatedMoviesGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            const currentMovie = allMovies[currentId];
+            const currentType = currentMovie ? currentMovie.type : '';
+
+            const relatedKeys = Object.keys(allMovies || {})
+                .filter(id => id !== currentId && (allMovies[id].type === currentType || !currentType))
+                .slice(0, 6);
+
+            if (relatedKeys.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); font-size: 11px; padding: 14px;">باشقا تەۋسىيە كىنولار تېپىلمىدى</div>';
+                return;
+            }
+
+            relatedKeys.forEach(id => {
+                grid.appendChild(createMovieCardElement(id, allMovies[id]));
+            });
         }
 
         window.startApp = function() {
-            // دەرھال كۆرسىتىش ئۈچۈن localStorage دىن ئوقۇش
             const cachedMovies = localStorage.getItem('koznak_cached_movies');
             if(cachedMovies) {
                 try {
@@ -2500,7 +2854,6 @@
                 document.getElementById('authOverlay').style.display = 'flex';
             }
 
-            // ئاساسىي سانلىق مەلۇماتلارنى دەرھال ۋە ئۈزلۈكسىز تز يۈكلەش
             const fetchDbData = () => {
                 window.dbGet(window.dbRef(window.db, 'movies')).then(snap => {
                     if (snap.exists()) {
@@ -2531,6 +2884,13 @@
                 if(document.getElementById('moviesOnlyTab').classList.contains('active-tab')) renderMoviesOnlyGrid();
                 if(document.getElementById('theatersTab').classList.contains('active-tab')) renderTheatersGrid();
                 if(document.getElementById('shortsTab').classList.contains('active-tab')) renderShortsFeed();
+                if(document.getElementById('adminCenterTab').classList.contains('active-tab')) {
+                    renderAdminMovieStatsTable();
+                }
+                if(currentActiveMovieId && allMovies[currentActiveMovieId]) {
+                    renderReactions(allMovies[currentActiveMovieId].reactions || {});
+                    renderComments(allMovies[currentActiveMovieId].comments || {});
+                }
             });
 
             window.dbOnValue(window.dbRef(window.db, 'users'), snap => {
@@ -2548,10 +2908,25 @@
                 isGlobalFreeEnabled = !!s.globalFree;
                 const toggle = document.getElementById('globalFreeToggle');
                 if (toggle) toggle.checked = isGlobalFreeEnabled;
+                if (s.vipPrice) {
+                    const el = document.getElementById('displayVipPrice');
+                    if (el) el.innerText = s.vipPrice;
+                    const inp = document.getElementById('adminVipPriceInput');
+                    if (inp && !inp.value) inp.value = s.vipPrice;
+                }
+                if (s.svipPrice) {
+                    const el = document.getElementById('displaySvipPrice');
+                    if (el) el.innerText = s.svipPrice;
+                    const inp = document.getElementById('adminSvipPriceInput');
+                    if (inp && !inp.value) inp.value = s.svipPrice;
+                }
             });
         };
 
         window.addEventListener('load', () => {
+            const savedTheme = localStorage.getItem('koznak_theme') || 'light';
+            setTheme(savedTheme);
+
             const splash = document.getElementById('splashScreen');
             if(splash) {
                 setTimeout(() => {
