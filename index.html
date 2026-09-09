@@ -23,7 +23,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'koznak-pwa-v2';
+                    const CACHE_NAME = 'koznak-pwa-v3';
                     const ASSETS = [
                         './',
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
@@ -825,45 +825,98 @@
             border-radius: 18px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 3px;
         }
 
-        /* چۈشۈرۈش كارتىسى ئۇسلۇبى */
-        .download-item-card {
+        /* زامانىۋى توركۆرگۈچ ئۇسلۇبىدىكى چۈشۈرۈش تاختىسى */
+        .browser-download-item {
             background: var(--surface-card);
             border: 1px solid var(--border-glow);
             border-radius: 18px;
-            padding: 12px;
+            padding: 14px;
             margin-bottom: 12px;
             display: flex;
             flex-direction: column;
             gap: 8px;
             text-align: right;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+            position: relative;
+            transition: all 0.25s ease;
         }
-        .download-item-header {
+        .browser-download-top {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
-        .download-item-thumb {
+        .browser-download-thumb {
             width: 48px;
-            height: 64px;
-            border-radius: 8px;
+            height: 66px;
+            border-radius: 10px;
             object-fit: cover;
-            background: #222;
+            background: #111;
+            border: 1px solid var(--border-glow);
             flex-shrink: 0;
         }
-        .download-progress-bar-bg {
+        .browser-download-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow: hidden;
+        }
+        .browser-download-title {
+            font-weight: 800;
+            font-size: 13.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-primary);
+        }
+        .browser-download-meta {
+            font-size: 11px;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            direction: ltr !important;
+        }
+        .browser-download-speed-tag {
+            background: rgba(0, 198, 255, 0.1);
+            color: #0072ff;
+            padding: 2px 7px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 10.5px;
+        }
+        .browser-download-bar-bg {
             width: 100%;
-            height: 6px;
-            background: var(--bg-color);
+            height: 7px;
+            background: rgba(100, 116, 139, 0.14);
             border-radius: 10px;
             overflow: hidden;
-            border: 1px solid var(--border-glow);
+            margin-top: 3px;
         }
-        .download-progress-bar-fill {
+        .browser-download-bar-fill {
             height: 100%;
             width: 0%;
-            background: linear-gradient(90deg, #ff3b30, #ff6b00);
-            transition: width 0.3s;
+            background: linear-gradient(90deg, #ff3b30 0%, #ff8800 100%);
+            border-radius: 10px;
+            transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .browser-download-controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+        .btn-browser-ctrl {
+            flex: 1;
+            padding: 7px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
         }
 
         .settings-group-card {
@@ -1429,7 +1482,7 @@
                 </button>
             </div>
 
-            <!-- ھېسابات ئىچكى كۆزنەكلىرى (ئىككى ئاساسلىق رايون) -->
+            <!-- ھېسابات ئىچكى كۆزنەكلىرى -->
             <div class="auth-nav-pills" style="margin-bottom: 14px;">
                 <button type="button" class="auth-nav-pill active" id="accountSubFavBtn" onclick="switchAccountSubTab('fav')">
                     <i class="fa-solid fa-heart"></i> ياقتۇرغان ۋە كۆرگەنلىرىم
@@ -1451,12 +1504,12 @@
                 <div class="movie-grid" id="historyList" style="margin-bottom: 20px;"></div>
             </div>
 
-            <!-- 2-رايون: چۈشۈرۈۋاتقان ۋە تولۇق چۈشۈپ ساقلانغان سىنلار -->
+            <!-- 2-رايون: Browser ئۇسلۇبىدىكى چۈشۈرۈش رايونى -->
             <div id="accountDownSection" style="display: none;">
-                <div class="section-title" style="font-size: 13px; margin: 10px 0;"><i class="fa-solid fa-spinner fa-spin" style="color:#00c6ff;"></i> ھازىر چۈشۈۋاتقان سىنلار (ئۈزۈلسە كەينىگە يانمايدۇ)</div>
+                <div class="section-title" style="font-size: 13px; margin: 10px 0;"><i class="fa-solid fa-cloud-arrow-down" style="color:#0072ff;"></i> ھازىر چۈشۈۋاتقان سىنلار (سۈرئەت ۋە مىقدار كۆرسەتكۈچى)</div>
                 <div id="activeDownloadingContainer"></div>
 
-                <div class="section-title" style="font-size: 13px; margin: 20px 0 10px 0;"><i class="fa-solid fa-circle-check" style="color:#2ed573;"></i> تېلېفون سىغىمىغا تولۇق چۈشكەن فىلىملەر</div>
+                <div class="section-title" style="font-size: 13px; margin: 20px 0 10px 0;"><i class="fa-solid fa-circle-check" style="color:#2ed573;"></i> چۈشۈپ بولغان سىنلار (تورسىز قويغۇچ)</div>
                 <div id="completedDownloadsContainer"></div>
             </div>
         </div>
@@ -1568,7 +1621,7 @@
             </div>
 
             <div style="text-align: center; font-size: 11px; color: var(--text-secondary); margin-top: 14px;">
-                كۆزنەك كىنوخانىسى • Koznak TV v3.15 (Resumable Offline Engine)
+                كۆزنەك كىنوخانىسى • Koznak TV v3.16 (Live Browser-Style Downloader)
             </div>
         </div>
     </div>
@@ -2012,15 +2065,14 @@
         let searchFiltersState = { type: 'all', genre: 'all', year: 'all', country: 'all', price: 'all' };
 
         /* ==========================================================
-           ئىچكى سىغىمدا ساقلاش ۋە ئۈزۈلۈپ ئۇلىنىدىغان چۈشۈرۈش سىستېمىسى
-           (IndexedDB Storage & Resumable Downloader)
+           توركۆرگۈچ ئۇسلۇبىدىكى چۈشۈرۈش ماتورى (Browser-grade Downloader)
            ========================================================== */
         let idb = null;
         const activeDownloadTasks = {};
 
         function initIndexedDB() {
             return new Promise((resolve) => {
-                const req = indexedDB.open('KoznakLocalVault', 1);
+                const req = indexedDB.open('KoznakLocalVault', 2);
                 req.onupgradeneeded = (e) => {
                     const db = e.target.result;
                     if (!db.objectStoreNames.contains('downloads')) {
@@ -2057,8 +2109,16 @@
             tx.objectStore('downloads').delete(id);
         }
 
-        // فىلىمنى ئىچكى سىغىمغا چۈشۈرۈش بۇيرۇقى
-        window.startMovieAppDownload = function() {
+        function formatBytes(bytes) {
+            if (!bytes || bytes <= 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+
+        // «ئەپ ئىچىگە چۈشۈرۈش» كۇنۇپكىسى بېسىلغان ھامان دەرھال قوشۇش
+        window.startMovieAppDownload = async function() {
             if (!window.currentUser) return alert('ئالدى بىلەن كىرىڭ!');
             if (!checkUserSuperVipStatus(window.currentUser)) {
                 alert('فىلىمنى چۈشۈرۈپ كۆرۈش پەقەت ئالىي ئەزالار ئۈچۈنلا ئوچۇق!');
@@ -2075,8 +2135,9 @@
 
             if (!directUrl) return alert('بۇ فىلىمنىڭ چۈشۈرۈش ئادرېسى تېپىلمىدى!');
 
-            initDownloadTask(item.id, item.title, item.poster, directUrl);
-            alert('«' + item.title + '» ھېسابات رايونىدىكى چۈشۈرۈلگەنلەر بۆلىكىگە قوشۇلدى!');
+            await initDownloadTask(item.id, item.title, item.poster, directUrl);
+
+            // ساقلاش بېسىلغان ھامان شۇئان چۈشۈش رايونىغا يۈتكىلىپ كۆرۈنۈش
             switchTab('accountTab');
             switchAccountSubTab('downloads');
         };
@@ -2094,24 +2155,30 @@
                     status: 'downloading',
                     receivedBytes: 0,
                     totalBytes: 0,
+                    speed: 0,
                     chunks: [],
                     blob: null,
                     updatedAt: Date.now()
                 };
                 saveDownloadToIDB(task);
             } else if (task.status === 'completed') {
-                return alert('بۇ فىلىم ئاللىقاچان تېلېفونغا تولۇق چۈشكەن!');
+                return alert('بۇ فىلىم ئاللىقاچان تېلېفونىڭىزغا تولۇق چۈشكەن!');
             }
 
             executeDownloadTask(task);
         }
 
-        // كۆپ بۆلەكتە ئۈزۈلمەي (Resumable) چۈشۈرۈش ماتورى
+        // سۈرئەت، مىقدار ۋە پىرسەنتنى جانلىق ھېسابلاپ چۈشۈرۈش
         function executeDownloadTask(task) {
             if (activeDownloadTasks[task.id]) return;
 
             const controller = new AbortController();
-            activeDownloadTasks[task.id] = { controller, task };
+            activeDownloadTasks[task.id] = {
+                controller,
+                task,
+                lastBytes: task.receivedBytes || 0,
+                lastTime: Date.now()
+            };
 
             const startByte = task.receivedBytes || 0;
             const headers = startByte > 0 ? { 'Range': `bytes=${startByte}-` } : {};
@@ -2126,23 +2193,42 @@
                     }
 
                     const reader = res.body.getReader();
+                    let lastUiUpdate = Date.now();
+
                     while (true) {
                         const { done, value } = await reader.read();
                         if (done) break;
+
                         task.chunks.push(value);
                         task.receivedBytes += value.length;
                         task.updatedAt = Date.now();
 
-                        // ھەر 1MB دە سىغىمغا كۆچۈرۈپ ساقلاپ مېڭىش
-                        if (task.receivedBytes % (1024 * 1024) < 65536) {
+                        // ھەر سېكۇنتتا سۈرئەت ۋە پىرسەنتنى رېئال ۋاقىتتا يېڭىلاپ تۇرۇش
+                        const now = Date.now();
+                        const timeDiff = (now - activeDownloadTasks[task.id].lastTime) / 1000;
+
+                        if (timeDiff >= 0.8) {
+                            const bytesDiff = task.receivedBytes - activeDownloadTasks[task.id].lastBytes;
+                            task.speed = Math.round(bytesDiff / timeDiff);
+                            activeDownloadTasks[task.id].lastBytes = task.receivedBytes;
+                            activeDownloadTasks[task.id].lastTime = now;
+                        }
+
+                        if (now - lastUiUpdate > 300) {
+                            updateSingleDownloadProgressUI(task);
+                            lastUiUpdate = now;
+                        }
+
+                        // ھەر 2MB دا سىغىم بازىسىغا ساقلاش
+                        if (task.receivedBytes % (2 * 1024 * 1024) < 65536) {
                             saveDownloadToIDB(task);
-                            renderDownloadPanels();
                         }
                     }
 
                     task.blob = new Blob(task.chunks, { type: 'video/mp4' });
-                    task.chunks = []; // ئەستە تۇتۇش سىغىمىنى بوشىتىش
+                    task.chunks = [];
                     task.status = 'completed';
+                    task.speed = 0;
                     saveDownloadToIDB(task);
                     delete activeDownloadTasks[task.id];
                     renderDownloadPanels();
@@ -2151,12 +2237,37 @@
                     delete activeDownloadTasks[task.id];
                     if (err.name !== 'AbortError') {
                         task.status = 'paused';
+                        task.speed = 0;
                         saveDownloadToIDB(task);
                         renderDownloadPanels();
                     }
                 });
 
             renderDownloadPanels();
+        }
+
+        // سىستېمىنى قايتا سىزمەي، پەقەت پىرسەنت، سۈرئەت ۋە مىقدار تېكىستىنى يېڭىلاش
+        function updateSingleDownloadProgressUI(task) {
+            const row = document.getElementById(`dl_card_${task.id}`);
+            if (!row) {
+                renderDownloadPanels();
+                return;
+            }
+
+            let pct = 0;
+            if (task.totalBytes > 0) {
+                pct = Math.min(100, Math.round((task.receivedBytes / task.totalBytes) * 100));
+            }
+
+            const fillBar = row.querySelector('.browser-download-bar-fill');
+            const percentLbl = row.querySelector('.dl-pct-lbl');
+            const speedLbl = row.querySelector('.dl-speed-lbl');
+            const sizeLbl = row.querySelector('.dl-size-lbl');
+
+            if (fillBar) fillBar.style.width = pct + '%';
+            if (percentLbl) percentLbl.innerText = pct + '%';
+            if (speedLbl) speedLbl.innerText = task.speed > 0 ? formatBytes(task.speed) + '/s' : 'چۈشۈۋاتىدۇ...';
+            if (sizeLbl) sizeLbl.innerText = `${formatBytes(task.receivedBytes)} / ${task.totalBytes ? formatBytes(task.totalBytes) : 'ئېنىقلانمىدى'}`;
         }
 
         window.togglePauseResumeDownload = async function(id) {
@@ -2167,6 +2278,7 @@
                 const task = all.find(d => d.id === id);
                 if (task) {
                     task.status = 'paused';
+                    task.speed = 0;
                     saveDownloadToIDB(task);
                 }
                 renderDownloadPanels();
@@ -2202,7 +2314,7 @@
             window.scrollTo(0, 0);
 
             document.getElementById('detailMovieTitle').innerText = '📥 [تورسىز نۇسخا] ' + task.title;
-            document.getElementById('detailMovieCategory').innerText = 'تېلېفون ئىچىدىكى ھۆججەتتىن بىۋاسىتە قويۇلدى';
+            document.getElementById('detailMovieCategory').innerText = 'تېلېفون ئىچىدىكى سىغىمدىن توردىن خالىي قويۇلدى';
             document.getElementById('detailMovieTag').innerText = 'Offline Ready';
             document.getElementById('detailMovieViews').innerText = '';
             document.getElementById('detailEpisodeBarContainer').innerHTML = '';
@@ -2227,7 +2339,7 @@
             if (countBadge) countBadge.innerText = activeList.length;
 
             if (activeList.length === 0) {
-                activeBox.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 15px; font-size: 12px;">نۆۋەتتە چۈشۈۋاتقان سىن يوق</div>';
+                activeBox.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 16px; font-size: 12px;">نۆۋەتتە چۈشۈۋاتقان فىلىم يوق</div>';
             } else {
                 activeList.forEach(task => {
                     const isPaused = !activeDownloadTasks[task.id];
@@ -2235,30 +2347,36 @@
                     if (task.totalBytes > 0) {
                         pct = Math.min(100, Math.round((task.receivedBytes / task.totalBytes) * 100));
                     }
-                    const mbDone = (task.receivedBytes / (1024 * 1024)).toFixed(1);
-                    const mbTotal = task.totalBytes ? (task.totalBytes / (1024 * 1024)).toFixed(1) + 'MB' : 'ئېنىقلانمىدى';
+                    const speedText = isPaused ? 'ۋاقىتلىق توختىتىلدى' : (task.speed > 0 ? formatBytes(task.speed) + '/s' : 'چۈشۈۋاتىدۇ...');
+                    const sizeText = `${formatBytes(task.receivedBytes)} / ${task.totalBytes ? formatBytes(task.totalBytes) : 'ئېنىقلانمىدى'}`;
 
                     const div = document.createElement('div');
-                    div.className = 'download-item-card';
+                    div.className = 'browser-download-item';
+                    div.id = `dl_card_${task.id}`;
                     div.innerHTML = `
-                        <div class="download-item-header">
-                            <img src="${task.poster || ''}" class="download-item-thumb">
-                            <div style="flex: 1;">
-                                <div style="font-weight: 800; font-size: 13px;">${escapeHTML(task.title)}</div>
-                                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 3px;">
-                                    ${isPaused ? '⏸️ توختىتىلدى' : '⚡ چۈشۈۋاتىدۇ'}: ${mbDone}MB / ${mbTotal} (${pct}%)
+                        <div class="browser-download-top">
+                            <img src="${task.poster || ''}" class="browser-download-thumb">
+                            <div class="browser-download-info">
+                                <div class="browser-download-title">${escapeHTML(task.title)}</div>
+                                <div class="browser-download-meta">
+                                    <span class="dl-size-lbl">${sizeText}</span>
+                                    <span class="browser-download-speed-tag dl-speed-lbl">${speedText}</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 800; color: #ff3b30; margin-top: 2px;">
+                                    <span>چۈشۈش سۈرئىتى:</span>
+                                    <span class="dl-pct-lbl">${pct}%</span>
+                                </div>
+                                <div class="browser-download-bar-bg">
+                                    <div class="browser-download-bar-fill" style="width: ${pct}%;"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="download-progress-bar-bg">
-                            <div class="download-progress-bar-fill" style="width: ${pct}%;"></div>
-                        </div>
-                        <div style="display: flex; gap: 8px; margin-top: 4px;">
-                            <button type="button" class="btn-link-action" style="background: ${isPaused ? '#2ed573' : '#ffa502'}; color: #fff; flex: 1;" onclick="togglePauseResumeDownload('${task.id}')">
-                                ${isPaused ? '<i class="fa-solid fa-play"></i> داۋاملاشتۇرۇش' : '<i class="fa-solid fa-pause"></i> ۋاقىتلىق توختىتىش'}
+                        <div class="browser-download-controls">
+                            <button type="button" class="btn-browser-ctrl" style="background: ${isPaused ? '#2ed573' : '#ffa502'}; color: #fff;" onclick="togglePauseResumeDownload('${task.id}')">
+                                ${isPaused ? '<i class="fa-solid fa-play"></i> داۋاملاشتۇرۇش' : '<i class="fa-solid fa-pause"></i> توختىتىپ تۇرۇش'}
                             </button>
-                            <button type="button" class="btn-link-action" style="background: #ff4757; color: #fff;" onclick="removeDownloadItem('${task.id}')">
-                                <i class="fa-solid fa-trash"></i> ئۆچۈرۈش
+                            <button type="button" class="btn-browser-ctrl" style="background: rgba(255, 71, 87, 0.15); border: 1px solid #ff4757; color: #ff4757;" onclick="removeDownloadItem('${task.id}')">
+                                <i class="fa-solid fa-xmark"></i> بىكار قىلىش
                             </button>
                         </div>
                     `;
@@ -2267,28 +2385,29 @@
             }
 
             if (completedList.length === 0) {
-                completedBox.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 15px; font-size: 12px;">چۈشۈرۈلگەن سىنلار يوق</div>';
+                completedBox.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 16px; font-size: 12px;">چۈشۈرۈلگەن سىنلار يوق</div>';
             } else {
                 completedList.forEach(task => {
-                    const mbTotal = (task.receivedBytes / (1024 * 1024)).toFixed(1);
+                    const sizeFormatted = formatBytes(task.receivedBytes);
                     const div = document.createElement('div');
-                    div.className = 'download-item-card';
+                    div.className = 'browser-download-item';
                     div.innerHTML = `
-                        <div class="download-item-header">
-                            <img src="${task.poster || ''}" class="download-item-thumb">
-                            <div style="flex: 1;">
-                                <div style="font-weight: 800; font-size: 13px;">${escapeHTML(task.title)}</div>
-                                <div style="font-size: 11px; color: #2ed573; font-weight: 700; margin-top: 3px;">
-                                    ✅ تېلېفوندا ساقلاندى (${mbTotal}MB)
+                        <div class="browser-download-top">
+                            <img src="${task.poster || ''}" class="browser-download-thumb">
+                            <div class="browser-download-info">
+                                <div class="browser-download-title">${escapeHTML(task.title)}</div>
+                                <div style="font-size: 11.5px; color: #2ed573; font-weight: 800; margin-top: 4px;">
+                                    <i class="fa-solid fa-circle-check"></i> پۈتۈنلەي ساقلاندى (${sizeFormatted})
                                 </div>
+                                <div style="font-size: 10px; color: var(--text-secondary);">تور يوق چاغدىمۇ ئەپ ئىچىدە راۋان قويۇلىدۇ</div>
                             </div>
                         </div>
-                        <div style="display: flex; gap: 8px; margin-top: 4px;">
-                            <button type="button" class="btn-link-action" style="background: #ff3b30; color: #fff; flex: 1;" onclick="playDownloadedMovie('${task.id}')">
-                                <i class="fa-solid fa-play"></i> دەرھال كۆرۈش (تورسىز)
+                        <div class="browser-download-controls">
+                            <button type="button" class="btn-browser-ctrl" style="background: #ff3b30; color: #fff;" onclick="playDownloadedMovie('${task.id}')">
+                                <i class="fa-solid fa-play"></i> قويۇش (تورسىز)
                             </button>
-                            <button type="button" class="btn-link-action" style="background: rgba(255, 71, 87, 0.15); color: #ff4757; border: 1px solid #ff4757;" onclick="removeDownloadItem('${task.id}')">
-                                <i class="fa-solid fa-trash"></i> تېلېفوندىن يۇيۇش
+                            <button type="button" class="btn-browser-ctrl" style="background: rgba(255, 71, 87, 0.15); border: 1px solid #ff4757; color: #ff4757;" onclick="removeDownloadItem('${task.id}')">
+                                <i class="fa-solid fa-trash"></i> تېلېفوندىن ئۆچۈرۈش
                             </button>
                         </div>
                     `;
@@ -2297,7 +2416,6 @@
             }
         }
 
-        // ئاپتوماتىك تور ئەسلىگە كەلگەندە چۈشۈرۈشنى باشتىن ئەمەس توختىغان يېرىدىن داۋاملاشتۇرۇش
         window.addEventListener('online', async () => {
             const all = await getAllDownloadsFromIDB();
             all.forEach(task => {
