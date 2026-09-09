@@ -18,12 +18,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-    <!-- PWA Offline Service Worker تىزىملاش -->
+    <!-- PWA Offline Service Worker -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'koznak-pwa-v3';
+                    const CACHE_NAME = 'koznak-pwa-v4';
                     const ASSETS = [
                         './',
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
@@ -318,7 +318,6 @@
         }
         .splash-brand-text { font-size: 21px; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
 
-        /* قىسقا فىلىم بۆلىكى تولۇق ئېكران ۋە سۈرۈش */
         #shortsTab {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -1261,7 +1260,7 @@
         </div>
     </div>
 
-    <!-- 4. قىسقا فىلىم بۆلىكى (پەقەت سىيرىپ كۆرۈلىدۇ) -->
+    <!-- 4. قىسقا فىلىم بۆلىكى -->
     <div id="shortsTab" class="tab-content">
         <div class="shorts-viewer-container" id="shortsSwipeArea">
             <div class="shorts-top-bar">
@@ -1304,7 +1303,6 @@
             </div>
         </div>
 
-        <!-- قىسقا فىلىم قىسىم تاللاش قەۋىتى -->
         <div class="shorts-drawer-sheet" id="shortsEpisodeDrawer">
             <div class="shorts-drawer-header">
                 <button class="shorts-drawer-back-btn" onclick="closeShortsDrawers()">
@@ -1316,7 +1314,6 @@
             <div class="shorts-ep-grid" id="shortsEpisodeGrid"></div>
         </div>
 
-        <!-- قىسقا فىلىم تەڭشەك قەۋىتى -->
         <div class="shorts-drawer-sheet" id="shortsSettingsDrawer">
             <div class="shorts-drawer-header">
                 <button class="shorts-drawer-back-btn" onclick="closeShortsDrawers()">
@@ -1356,7 +1353,6 @@
             </div>
         </div>
 
-        <!-- قىسقا فىلىم ئىنكاس قەۋىتى -->
         <div class="shorts-drawer-sheet" id="shortsCommentDrawer">
             <div class="shorts-drawer-header">
                 <button class="shorts-drawer-back-btn" onclick="closeShortsDrawers()">
@@ -2065,7 +2061,7 @@
         let searchFiltersState = { type: 'all', genre: 'all', year: 'all', country: 'all', price: 'all' };
 
         /* ==========================================================
-           توركۆرگۈچ ئۇسلۇبىدىكى چۈشۈرۈش ماتورى (Browser-grade Downloader)
+           چۈشۈرۈش ماتورى (IndexedDB Storage & Resumable Downloader)
            ========================================================== */
         let idb = null;
         const activeDownloadTasks = {};
@@ -2088,9 +2084,13 @@
         }
 
         function saveDownloadToIDB(data) {
-            if (!idb) return;
-            const tx = idb.transaction('downloads', 'readwrite');
-            tx.objectStore('downloads').put(data);
+            return new Promise((resolve) => {
+                if (!idb) return resolve();
+                const tx = idb.transaction('downloads', 'readwrite');
+                tx.objectStore('downloads').put(data);
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => resolve();
+            });
         }
 
         function getAllDownloadsFromIDB() {
@@ -2117,7 +2117,7 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
-        // «ئەپ ئىچىگە چۈشۈرۈش» كۇنۇپكىسى بېسىلغان ھامان دەرھال قوشۇش
+        // كۇنۇپكا بېسىلغان ھامان دەرھال چۈشۈرۈش تىزىملىكىگە چىقىرىش
         window.startMovieAppDownload = async function() {
             if (!window.currentUser) return alert('ئالدى بىلەن كىرىڭ!');
             if (!checkUserSuperVipStatus(window.currentUser)) {
@@ -2135,11 +2135,12 @@
 
             if (!directUrl) return alert('بۇ فىلىمنىڭ چۈشۈرۈش ئادرېسى تېپىلمىدى!');
 
-            await initDownloadTask(item.id, item.title, item.poster, directUrl);
-
-            // ساقلاش بېسىلغان ھامان شۇئان چۈشۈش رايونىغا يۈتكىلىپ كۆرۈنۈش
+            // 1. ئالدى بىلەن دەرھال چۈشۈش كۆزنىكىگە سەكرەش
             switchTab('accountTab');
             switchAccountSubTab('downloads');
+
+            // 2. ۋەزىپىنى دەرھال ئاكتىپلاشتۇرۇش
+            await initDownloadTask(item.id, item.title, item.poster, directUrl);
         };
 
         async function initDownloadTask(id, title, poster, url) {
@@ -2160,15 +2161,19 @@
                     blob: null,
                     updatedAt: Date.now()
                 };
-                saveDownloadToIDB(task);
+                await saveDownloadToIDB(task);
             } else if (task.status === 'completed') {
                 return alert('بۇ فىلىم ئاللىقاچان تېلېفونىڭىزغا تولۇق چۈشكەن!');
+            } else {
+                task.status = 'downloading';
+                await saveDownloadToIDB(task);
             }
 
+            // دەرھال يۈزنى سىزىپ چۈشۈشنى قوزغىتىش
+            renderDownloadPanels();
             executeDownloadTask(task);
         }
 
-        // سۈرئەت، مىقدار ۋە پىرسەنتنى جانلىق ھېسابلاپ چۈشۈرۈش
         function executeDownloadTask(task) {
             if (activeDownloadTasks[task.id]) return;
 
@@ -2203,23 +2208,21 @@
                         task.receivedBytes += value.length;
                         task.updatedAt = Date.now();
 
-                        // ھەر سېكۇنتتا سۈرئەت ۋە پىرسەنتنى رېئال ۋاقىتتا يېڭىلاپ تۇرۇش
                         const now = Date.now();
                         const timeDiff = (now - activeDownloadTasks[task.id].lastTime) / 1000;
 
-                        if (timeDiff >= 0.8) {
+                        if (timeDiff >= 0.7) {
                             const bytesDiff = task.receivedBytes - activeDownloadTasks[task.id].lastBytes;
                             task.speed = Math.round(bytesDiff / timeDiff);
                             activeDownloadTasks[task.id].lastBytes = task.receivedBytes;
                             activeDownloadTasks[task.id].lastTime = now;
                         }
 
-                        if (now - lastUiUpdate > 300) {
+                        if (now - lastUiUpdate > 250) {
                             updateSingleDownloadProgressUI(task);
                             lastUiUpdate = now;
                         }
 
-                        // ھەر 2MB دا سىغىم بازىسىغا ساقلاش
                         if (task.receivedBytes % (2 * 1024 * 1024) < 65536) {
                             saveDownloadToIDB(task);
                         }
@@ -2229,7 +2232,7 @@
                     task.chunks = [];
                     task.status = 'completed';
                     task.speed = 0;
-                    saveDownloadToIDB(task);
+                    await saveDownloadToIDB(task);
                     delete activeDownloadTasks[task.id];
                     renderDownloadPanels();
                 })
@@ -2242,11 +2245,8 @@
                         renderDownloadPanels();
                     }
                 });
-
-            renderDownloadPanels();
         }
 
-        // سىستېمىنى قايتا سىزمەي، پەقەت پىرسەنت، سۈرئەت ۋە مىقدار تېكىستىنى يېڭىلاش
         function updateSingleDownloadProgressUI(task) {
             const row = document.getElementById(`dl_card_${task.id}`);
             if (!row) {
@@ -2279,7 +2279,7 @@
                 if (task) {
                     task.status = 'paused';
                     task.speed = 0;
-                    saveDownloadToIDB(task);
+                    await saveDownloadToIDB(task);
                 }
                 renderDownloadPanels();
             } else {
@@ -2287,8 +2287,9 @@
                 const task = all.find(d => d.id === id);
                 if (task) {
                     task.status = 'downloading';
-                    saveDownloadToIDB(task);
+                    await saveDownloadToIDB(task);
                     executeDownloadTask(task);
+                    renderDownloadPanels();
                 }
             }
         };
