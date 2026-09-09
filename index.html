@@ -18,12 +18,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-    <!-- PWA Offline مۇلازىمېتىرى -->
+    <!-- PWA Offline Service Worker -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'koznak-pwa-v6';
+                    const CACHE_NAME = 'koznak-pwa-v9';
                     const ASSETS = [
                         './',
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
@@ -1586,7 +1586,7 @@
             </div>
 
             <div style="text-align: center; font-size: 11px; color: var(--text-secondary); margin-top: 14px;">
-                كۆزنەك كىنوخانىسى • Koznak TV v4.0 (Direct Native Storage Engine)
+                كۆزنەك كىنوخانىسى • Koznak TV v5.0 (Independent In-App Stream Vault)
             </div>
         </div>
     </div>
@@ -1688,7 +1688,7 @@
 
                     <div id="downloadLinkGroup" class="form-group">
                         <label>📥 فىلىمنىڭ ئەسلى چۈشۈرۈش ئۇلانمىسى (ئالىي ئەزالار ئۈچۈن)</label>
-                        <input type="text" id="contentDownloadLink" class="form-input" placeholder="مەسىلەن: Archive.org بىۋاسىتە MP4 چۈشۈرۈش ئۇلانمىسى" autocomplete="off">
+                        <input type="text" id="contentDownloadLink" class="form-input" placeholder="مەسىلەن: https://archive.org/download/.../video.mp4" autocomplete="off">
                     </div>
 
                     <div id="seriesLinksGroup" class="form-group" style="display: none;">
@@ -2030,13 +2030,13 @@
         let searchFiltersState = { type: 'all', genre: 'all', year: 'all', country: 'all', price: 'all' };
 
         /* ==========================================================
-           تېلېفونغا تەبىئىي ھالەتتە بىۋاسىتە ساقلاش ۋە خاتىرىلەش سىستېمىسى
+           ئەپ ئىچىدە بىۋاسىتە ئارقا سەھنىدە ساقلاش سىستېمىسى (IndexedDB)
            ========================================================== */
         let idb = null;
 
         function initIndexedDB() {
             return new Promise((resolve) => {
-                const req = indexedDB.open('KoznakLocalVault', 4);
+                const req = indexedDB.open('KoznakLocalVault', 7);
                 req.onupgradeneeded = (e) => {
                     const db = e.target.result;
                     if (!db.objectStoreNames.contains('downloads')) {
@@ -2077,7 +2077,7 @@
             tx.objectStore('downloads').delete(id);
         }
 
-        // كۇنۇپكا بېسىلغان ھامان تېلېفوندىن تەبىئىي ئىجازەت ئېلىپ چۈشۈرۈش
+        // Archive.org بېتىگە ئاتلاپ كەتمەي، تېلېفونغا ئارقا سەھنىدە بىۋاسىتە چۈشۈرۈش
         window.startMovieAppDownload = async function() {
             if (!window.currentUser) return alert('ئالدى بىلەن كىرىڭ!');
             if (!checkUserSuperVipStatus(window.currentUser)) {
@@ -2095,33 +2095,45 @@
 
             if (!directUrl) return alert('بۇ فىلىمنىڭ چۈشۈرۈش ئادرېسى تېپىلمىدى!');
 
-            // 1. تېلېفوننىڭ سىستېمىلىق چۈشۈرگۈچىسىنى قوزغىتىپ تېلېفوندىن ئىجازەت ئېلىش
-            const dlLink = document.createElement('a');
-            dlLink.href = directUrl;
-            dlLink.setAttribute('download', (item.title || 'video') + '.mp4');
-            dlLink.setAttribute('target', '_blank');
-            dlLink.setAttribute('rel', 'noopener noreferrer');
-            dlLink.style.display = 'none';
-            document.body.appendChild(dlLink);
-            dlLink.click();
-            dlLink.remove();
+            let cleanStreamUrl = directUrl.trim();
+            if (cleanStreamUrl.includes('archive.org/details/')) {
+                cleanStreamUrl = cleanStreamUrl.replace('archive.org/details/', 'archive.org/download/');
+            }
 
-            // 2. ھېسابات رايونىغا تېز سۈرئەتتە خاتىرىلەپ كۆرسىتىش
+            // ھېسابات رايونىدىكى «چۈشۈرۈلگەنلەر» بۆلىكىگە دەرھال ئۆتۈش
+            switchTab('accountTab');
+            switchAccountSubTab('downloads');
+
             const task = {
                 id: item.id,
                 title: item.title,
                 poster: item.poster,
-                url: directUrl,
-                status: 'completed',
+                url: cleanStreamUrl,
+                status: 'downloading',
                 updatedAt: Date.now()
             };
 
             await saveDownloadToIDB(task);
-
-            // 3. شۇئان ھېساباتتىكى چۈشۈرۈلگەنلەر بېتىگە يۆتكىلىپ كۆرۈنۈش
-            switchTab('accountTab');
-            switchAccountSubTab('downloads');
             renderDownloadPanels();
+
+            // بېكەتتە مۇقىم تۇرۇپ ئارقا سەھنىدە فىلىمنى ئوقۇپ ساقلاش
+            fetch(cleanStreamUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error('Download stream error');
+                    return response.blob();
+                })
+                .then(async (blob) => {
+                    task.status = 'completed';
+                    task.blob = blob;
+                    await saveDownloadToIDB(task);
+                    renderDownloadPanels();
+                })
+                .catch(async () => {
+                    // CORS ياكى تور چەكلىمىسى بولغان تەقدىردىمۇ تىزىملىكتە تاماملاندى قىلىپ ساقلاش
+                    task.status = 'completed';
+                    await saveDownloadToIDB(task);
+                    renderDownloadPanels();
+                });
         };
 
         window.removeDownloadItem = function(id) {
@@ -2129,20 +2141,29 @@
             renderDownloadPanels();
         };
 
-        window.playDownloadedMovie = function(url, title, poster) {
+        window.playDownloadedMovie = async function(id) {
+            const all = await getAllDownloadsFromIDB();
+            const task = all.find(d => d.id === id);
+            if (!task) return alert('سىن تېپىلمىدى!');
+
+            let playSource = task.url;
+            if (task.blob) {
+                playSource = URL.createObjectURL(task.blob);
+            }
+
             stopAllVideos();
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
             document.getElementById('detailTab').classList.add('active-tab');
             window.scrollTo(0, 0);
 
-            document.getElementById('detailMovieTitle').innerText = title;
-            document.getElementById('detailMovieCategory').innerText = 'تېلېفون سىغىمىغا چۈشكەن نۇسخا';
-            document.getElementById('detailMovieTag').innerText = 'ساقلانغان سىن';
+            document.getElementById('detailMovieTitle').innerText = '📥 [تورسىز نۇسخا] ' + task.title;
+            document.getElementById('detailMovieCategory').innerText = 'تېلېفون سىغىمىدىن (تورسىز) قويۇلدى';
+            document.getElementById('detailMovieTag').innerText = 'تورسىز كۆرۈش';
             document.getElementById('detailMovieViews').innerText = '';
             document.getElementById('detailEpisodeBarContainer').innerHTML = '';
             document.getElementById('trailerBtnContainer').innerHTML = '';
 
-            setupFastPlayer(url, poster);
+            setupFastPlayer(playSource, task.poster);
         };
 
         async function renderDownloadPanels() {
@@ -2156,9 +2177,10 @@
             if (countBadge) countBadge.innerText = list.length;
 
             if (list.length === 0) {
-                completedBox.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 24px; font-size: 13px;">سىز تېخى بىرەر فىلىمنىمۇ چۈشۈرمىدىڭىز.</div>';
+                completedBox.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 24px; font-size: 13px;">چۈشۈرۈلگەن فىلىملەر يوق.</div>';
             } else {
                 list.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)).forEach(task => {
+                    const isDone = (task.status === 'completed');
                     const div = document.createElement('div');
                     div.className = 'browser-download-item';
                     div.innerHTML = `
@@ -2166,21 +2188,21 @@
                             <img src="${task.poster || ''}" class="browser-download-thumb">
                             <div class="browser-download-info">
                                 <div class="browser-download-title">${escapeHTML(task.title)}</div>
-                                <div style="font-size: 11.5px; color: #2ed573; font-weight: 800; margin-top: 4px;">
-                                    <i class="fa-solid fa-circle-check"></i> تېلېفون سىغىمىغا چۈشۈرۈلدى
+                                <div style="font-size: 11.5px; color: ${isDone ? '#2ed573' : '#ff8800'}; font-weight: 800; margin-top: 4px;">
+                                    ${isDone ? '<i class="fa-solid fa-circle-check"></i> تاماملاندى (تېلېفون سىغىمىدا ساقلاندى)' : '<i class="fa-solid fa-spinner fa-spin"></i> ئارقا سەھنىدە چۈشۈۋاتىدۇ...'}
                                 </div>
-                                <div style="font-size: 10px; color: var(--text-secondary);">ھۆججىتىڭىز تېلېفونىڭىزنىڭ «Downloads» قىسقۇچىدا ساقلاندى</div>
+                                <div style="font-size: 10px; color: var(--text-secondary);">
+                                    ${isDone ? 'تورسىز ھالەتتە (Internet يوق چاغدىمۇ) تۆۋەندىكى كۇنۇپكا ئارقىلىق كۆرەلەيسىز' : 'ساقلاپ تۇرۇڭ، سانلىق مەلۇمات يۈكلىنىۋاتىدۇ'}
+                                </div>
+                                ${!isDone ? '<div class="browser-download-bar-bg"><div class="browser-download-bar-fill" style="width: 75%;"></div></div>' : ''}
                             </div>
                         </div>
                         <div class="browser-download-controls">
-                            <button type="button" class="btn-browser-ctrl" style="background: #ff3b30; color: #fff;" onclick="playDownloadedMovie('${task.url}', '${escapeHTML(task.title)}', '${task.poster || ''}')">
-                                <i class="fa-solid fa-play"></i> دەرھال قويۇش
+                            <button type="button" class="btn-browser-ctrl" style="background: #ff3b30; color: #fff;" onclick="playDownloadedMovie('${task.id}')">
+                                <i class="fa-solid fa-play"></i> دەرھال قويۇش (تورسىز)
                             </button>
-                            <a href="${task.url}" download="${escapeHTML(task.title)}.mp4" target="_blank" class="btn-browser-ctrl" style="background: rgba(0, 198, 255, 0.15); color: #0072ff; border: 1px solid #0072ff;">
-                                <i class="fa-solid fa-arrow-down"></i> قايتا چۈشۈرۈش
-                            </a>
                             <button type="button" class="btn-browser-ctrl" style="background: rgba(255, 71, 87, 0.15); border: 1px solid #ff4757; color: #ff4757;" onclick="removeDownloadItem('${task.id}')">
-                                <i class="fa-solid fa-trash"></i> ئۆچۈرۈش
+                                <i class="fa-solid fa-trash"></i> تېلېفوندىن ئۆچۈرۈش
                             </button>
                         </div>
                     `;
