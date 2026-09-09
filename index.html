@@ -23,7 +23,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'koznak-pwa-v4';
+                    const CACHE_NAME = 'koznak-pwa-v5';
                     const ASSETS = [
                         './',
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
@@ -824,7 +824,7 @@
             border-radius: 18px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 3px;
         }
 
-        /* زامانىۋى توركۆرگۈچ ئۇسلۇبىدىكى چۈشۈرۈش تاختىسى */
+        /* زامانىۋى Browser ئۇسلۇبىدىكى چۈشۈرۈش تاختىسى */
         .browser-download-item {
             background: var(--surface-card);
             border: 1px solid var(--border-glow);
@@ -1617,7 +1617,7 @@
             </div>
 
             <div style="text-align: center; font-size: 11px; color: var(--text-secondary); margin-top: 14px;">
-                كۆزنەك كىنوخانىسى • Koznak TV v3.16 (Live Browser-Style Downloader)
+                كۆزنەك كىنوخانىسى • Koznak TV v3.18 (Auto-Fallback Offline Engine)
             </div>
         </div>
     </div>
@@ -2061,14 +2061,14 @@
         let searchFiltersState = { type: 'all', genre: 'all', year: 'all', country: 'all', price: 'all' };
 
         /* ==========================================================
-           چۈشۈرۈش ماتورى (IndexedDB Storage & Resumable Downloader)
+           چۈشۈرۈش ماتورى (IndexedDB Storage & Auto-Fallback Downloader)
            ========================================================== */
         let idb = null;
         const activeDownloadTasks = {};
 
         function initIndexedDB() {
             return new Promise((resolve) => {
-                const req = indexedDB.open('KoznakLocalVault', 2);
+                const req = indexedDB.open('KoznakLocalVault', 3);
                 req.onupgradeneeded = (e) => {
                     const db = e.target.result;
                     if (!db.objectStoreNames.contains('downloads')) {
@@ -2117,7 +2117,6 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
-        // كۇنۇپكا بېسىلغان ھامان دەرھال چۈشۈرۈش تىزىملىكىگە چىقىرىش
         window.startMovieAppDownload = async function() {
             if (!window.currentUser) return alert('ئالدى بىلەن كىرىڭ!');
             if (!checkUserSuperVipStatus(window.currentUser)) {
@@ -2135,11 +2134,9 @@
 
             if (!directUrl) return alert('بۇ فىلىمنىڭ چۈشۈرۈش ئادرېسى تېپىلمىدى!');
 
-            // 1. ئالدى بىلەن دەرھال چۈشۈش كۆزنىكىگە سەكرەش
             switchTab('accountTab');
             switchAccountSubTab('downloads');
 
-            // 2. ۋەزىپىنى دەرھال ئاكتىپلاشتۇرۇش
             await initDownloadTask(item.id, item.title, item.poster, directUrl);
         };
 
@@ -2169,7 +2166,6 @@
                 await saveDownloadToIDB(task);
             }
 
-            // دەرھال يۈزنى سىزىپ چۈشۈشنى قوزغىتىش
             renderDownloadPanels();
             executeDownloadTask(task);
         }
@@ -2186,11 +2182,19 @@
             };
 
             const startByte = task.receivedBytes || 0;
-            const headers = startByte > 0 ? { 'Range': `bytes=${startByte}-` } : {};
+            const fetchOptions = {
+                signal: controller.signal,
+                mode: 'cors'
+            };
+            if (startByte > 0) {
+                fetchOptions.headers = { 'Range': `bytes=${startByte}-` };
+            }
 
-            fetch(task.url, { headers, signal: controller.signal })
+            fetch(task.url, fetchOptions)
                 .then(async (res) => {
-                    if (!res.ok && res.status !== 206) throw new Error('Network error');
+                    if (!res.ok && res.status !== 206) {
+                        throw new Error('HTTP_STATUS_' + res.status);
+                    }
 
                     const contentLen = res.headers.get('Content-Length');
                     if (contentLen && !task.totalBytes) {
@@ -2238,11 +2242,23 @@
                 })
                 .catch(err => {
                     delete activeDownloadTasks[task.id];
-                    if (err.name !== 'AbortError') {
-                        task.status = 'paused';
-                        task.speed = 0;
-                        saveDownloadToIDB(task);
-                        renderDownloadPanels();
+                    if (err.name === 'AbortError') return;
+
+                    console.warn('CORS or Network restriction encountered, triggering system download bridge:', err);
+                    task.status = 'paused';
+                    task.speed = 0;
+                    saveDownloadToIDB(task);
+                    renderDownloadPanels();
+
+                    const confirmNative = confirm('⚠️ بۇ سىن مۇلازىمېتىرى تاشقى توردىن بىۋاسىتە ئوقۇشنى چەكلىگەن (CORS).\nتېلېفون سىستېمىڭىز ئارقىلىق دەرھال ساقلىۋالامسىز؟');
+                    if (confirmNative) {
+                        const a = document.createElement('a');
+                        a.href = task.url;
+                        a.download = task.title + '.mp4';
+                        a.target = '_blank';
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
                     }
                 });
         }
