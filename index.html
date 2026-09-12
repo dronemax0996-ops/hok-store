@@ -16,6 +16,9 @@
     <link rel="preconnect" href="https://koznak-store-default-rtdb.firebaseio.com" crossorigin>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Cropper.js رەسىم كېسىش كۈتۈپخانىسى -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <!-- PWA Offline Service Worker ۋە Background Cache -->
@@ -27,6 +30,8 @@
                     const ASSETS = [
                         './',
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+                        'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css',
+                        'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js',
                         'https://cdn.jsdelivr.net/npm/hls.js@latest'
                     ];
                     self.addEventListener('install', (e) => {
@@ -136,7 +141,6 @@
             direction: rtl;
         }
 
-        /* 2-تەلەپ: تىك شەكىلدىكى تېلېفون تەگلىك رەسىمى تولۇق ئېكران ماسلىشىدۇ */
         body {
             background-color: var(--bg-color);
             background-image: var(--bg-gradient);
@@ -348,7 +352,6 @@
         }
         .splash-brand-text { font-size: 21px; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
 
-        /* قىسقا فىلىم */
         #shortsTab {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -862,7 +865,6 @@
             border-radius: 18px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 3px;
         }
 
-        /* 1-تەلەپ: ئۆزلەشتۈرۈلگەن چۈشۈرۈش تىزىملىكى ۋە ئىلگىرىلەش كۆرۈنۈشى */
         .browser-download-item {
             background: var(--surface-card);
             border: 1px solid var(--border-glow);
@@ -1120,6 +1122,84 @@
             padding: 16px 14px; margin: 10px 0; background: rgba(255, 59, 48, 0.04); cursor: pointer;
         }
 
+        /* ئۇنىۋېرسال رەسىم كېسىش (Image Cropper) كۆزنىكى ئۇسلۇبى */
+        #globalCropModal {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000005; align-items: center; justify-content: center;
+            padding: 16px;
+        }
+        .cropper-dialog-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border-glow);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 440px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+        }
+        .cropper-dialog-header {
+            padding: 14px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-glow);
+        }
+        .cropper-body-container {
+            position: relative;
+            width: 100%;
+            height: 52vh;
+            background: #000000;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cropper-body-container img {
+            max-width: 100%;
+            max-height: 100%;
+            display: block;
+        }
+        .cropper-dialog-toolbar {
+            padding: 8px 14px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-color);
+            border-top: 1px solid var(--border-glow);
+            flex-wrap: wrap;
+        }
+        .crop-tool-btn {
+            background: var(--surface-card);
+            border: 1px solid var(--border-glow);
+            color: var(--text-primary);
+            padding: 6px 12px;
+            border-radius: var(--pill-radius);
+            font-size: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .crop-tool-btn.active {
+            background: #ff3b30;
+            color: #fff;
+            border-color: transparent;
+        }
+        .cropper-dialog-footer {
+            padding: 12px 16px;
+            display: flex;
+            gap: 10px;
+            background: var(--surface-card);
+            border-top: 1px solid var(--border-glow);
+        }
+
         .admin-stat-summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
         .admin-stat-box {
             background: var(--bg-color); border: 1px solid var(--border-glow);
@@ -1137,6 +1217,34 @@
     </style>
 </head>
 <body>
+
+    <!-- تېلېفوندىن سۈرەت تاللىغاندا رەسىمنى خالىغانچە سۈزۈش ۋە كېسىش (Cropper) كۆزنىكى -->
+    <div id="globalCropModal">
+        <div class="cropper-dialog-card">
+            <div class="cropper-dialog-header">
+                <span id="cropperDialogTitle" style="font-size: 14px; font-weight: 900; color: var(--text-primary);">✂️ رەسىمنى كېسىپ تەڭشەش</span>
+                <span style="font-size: 18px; cursor: pointer; color: var(--text-secondary);" onclick="cancelGlobalCrop()">✕</span>
+            </div>
+            <div class="cropper-body-container">
+                <img id="cropperTargetImg" src="" alt="كېسىلىدىغان رەسىم">
+            </div>
+            <div class="cropper-dialog-toolbar">
+                <button type="button" class="crop-tool-btn active" id="ratioFreeBtn" onclick="setCropAspect(NaN, this)"><i class="fa-solid fa-expand"></i> خالىغانچە</button>
+                <button type="button" class="crop-tool-btn" id="ratio1to1Btn" onclick="setCropAspect(1, this)"><i class="fa-regular fa-square"></i> 1:1 تەكشى</button>
+                <button type="button" class="crop-tool-btn" id="ratio3to4Btn" onclick="setCropAspect(3/4, this)"><i class="fa-solid fa-mobile-screen"></i> تىك 3:4</button>
+                <button type="button" class="crop-tool-btn" id="ratio16to9Btn" onclick="setCropAspect(16/9, this)"><i class="fa-solid fa-film"></i> ياتۇق 16:9</button>
+                <button type="button" class="crop-tool-btn" onclick="rotateCropper()"><i class="fa-solid fa-rotate-right"></i> ئايلاندۇرۇش</button>
+            </div>
+            <div class="cropper-dialog-footer">
+                <button type="button" class="action-btn" style="flex: 1; margin: 0; padding: 10px; background: #2ed573;" onclick="confirmGlobalCrop()">
+                    <i class="fa-solid fa-check"></i> كېسىپ تاماملاش
+                </button>
+                <button type="button" class="action-btn" style="flex: 1; margin: 0; padding: 10px; background: #64748b;" onclick="cancelGlobalCrop()">
+                    بىكار قىلىش
+                </button>
+            </div>
+        </div>
+    </div>
 
     <div id="authOverlay">
         <div class="auth-card">
@@ -1197,7 +1305,7 @@
             <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" onchange="handleAvatarFileSelected(event)">
             <div class="avatar-file-dropzone" onclick="document.getElementById('avatarFileInput').click()">
                 <div style="font-size: 30px; margin-bottom: 6px; color: #ff3b30;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-                <span style="font-size: 13px; font-weight: 700; color: var(--text-primary);">تېلېفوندىن سۈرەت تاللاش</span>
+                <span style="font-size: 13px; font-weight: 700; color: var(--text-primary);">تېلېفوندىن سۈرەت تاللاش ۋە كېسىش</span>
             </div>
             <div id="avatarPreviewContainer" style="display: none; margin-bottom: 14px;">
                 <img id="avatarPreviewImg" alt="رەسىم" style="width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid #ff3b30;">
@@ -1421,7 +1529,6 @@
                 
                 <div style="display: flex; gap: 8px; margin-top: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
                     <div id="trailerBtnContainer"></div>
-                    <!-- 1-تەلەپ: سىغىمغا بىۋاسىتە ۋە ئارقا سەھنىدە چۈشۈرۈش كۇنۇپكىسى -->
                     <button type="button" class="btn-mini-download" onclick="startMovieAppDownload()">
                         <i class="fa-solid fa-cloud-arrow-down"></i> تېلېفون سىغىمىغا چۈشۈرۈش
                     </button>
@@ -1558,7 +1665,7 @@
                 </div>
             </div>
 
-            <!-- 2-تەلەپ: ئۆزلەشتۈرۈلگەن تىك شەكىلدىكى پۈتۈن بەت ئارقا كۆرۈنۈش تەڭشىكى -->
+            <!-- ئۆزلەشتۈرۈلگەن تىك شەكىلدىكى پۈتۈن بەت ئارقا كۆرۈنۈش تەڭشىكى -->
             <div class="settings-group-title"><i class="fa-solid fa-image" style="color: #ff3b30;"></i> توربەت ئارقا كۆرۈنۈش رەسىمى (تەگلىك)</div>
             <div class="settings-group-card" style="padding: 14px;">
                 <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.6;">
@@ -1566,7 +1673,7 @@
                 </div>
                 <input type="file" id="userSiteBgInput" accept="image/*" style="display: none;" onchange="handleSiteBgSelected(event)">
                 <button type="button" class="action-btn" style="background: linear-gradient(135deg, #0072ff, #00c6ff); margin-top: 0; padding: 10px;" onclick="document.getElementById('userSiteBgInput').click()">
-                    <i class="fa-solid fa-file-image"></i> تېلېفوندىن تەگلىك رەسىمى تاللاش
+                    <i class="fa-solid fa-file-image"></i> تېلېفوندىن تەگلىك رەسىمى تاللاش ۋە كېسىش
                 </button>
                 <div id="userSiteBgPreviewBox" style="display: none; margin-top: 10px; text-align: center;">
                     <img id="userSiteBgPreviewImg" alt="تەگلىك" style="width: 110px; height: 170px; object-fit: cover; border-radius: 14px; border: 2px solid #00c6ff; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
@@ -1755,7 +1862,7 @@
                         <input type="file" id="contentPosterFile" accept="image/*" style="display: none;" onchange="handlePosterFileSelected(event)">
                         <div class="avatar-file-dropzone" onclick="document.getElementById('contentPosterFile').click()">
                             <div style="font-size: 24px; margin-bottom: 4px; color: #ff3b30;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-                            <span style="font-size: 12px; font-weight: 700;">تېلېفوندىن سۈرەت تاللاش (ئاپتوماتىك پىرىسلىنىدۇ)</span>
+                            <span style="font-size: 12px; font-weight: 700;">تېلېفوندىن سۈرەت تاللاش ۋە كېسىش</span>
                         </div>
                         <input type="hidden" id="contentPosterBase64" required>
                         <div id="uploadPosterPreviewContainer" style="display: none; text-align: center; margin-top: 8px;">
@@ -1792,12 +1899,12 @@
             <div id="adminHeaderBgSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-image" style="color: #ff3b30;"></i> باش بەت لوزۇنكا ئارقا كۆرۈنۈش رەسىمى</div>
                 <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
-                    تېلېفوندىن سۈرەت تاللاپ يوللىسىڭىز، باش بەت ئۈستىدىكى «كۆزنەك كىنوخانىسى» خېتىنىڭ ئارقا كۆرۈنۈشىدە نامايان بولىدۇ.
+                    تېلېفوندىن سۈرەت تاللاپ خالىغان دائىرىدە كېسىپ يوللىسىڭىز، باش بەت ئۈستىدىكى «كۆزنەك كىنوخانىسى» خېتىنىڭ ئارقا كۆرۈنۈشىدە نامايان بولىدۇ.
                 </div>
                 <input type="file" id="headerBgFileInput" accept="image/*" style="display: none;" onchange="handleHeaderBgSelected(event)">
                 <div class="avatar-file-dropzone" onclick="document.getElementById('headerBgFileInput').click()">
                     <div style="font-size: 30px; margin-bottom: 6px; color: #ff3b30;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-                    <span style="font-size: 12px; font-weight: 700;">تېلېفوندىن رەسىم تاللاش</span>
+                    <span style="font-size: 12px; font-weight: 700;">تېلېفوندىن رەسىم تاللاش ۋە كېسىش</span>
                 </div>
                 <div id="headerBgPreviewContainer" style="display: none; margin: 10px 0; text-align: center;">
                     <img id="headerBgPreviewImg" alt="رەسىم" style="width: 100%; max-height: 120px; object-fit: cover; border-radius: 14px; border: 1px solid var(--border-glow);">
@@ -2041,7 +2148,7 @@
                 <input type="text" id="fbMovieLink" class="form-input" placeholder="فىلىم ئۇلانمىسى..." autocomplete="off">
             </div>
             <div class="form-group" style="margin-bottom: 8px;">
-                <label style="font-size: 11px;">مۇناسىۋەتلىك رەسىمى:</label>
+                <label style="font-size: 11px;">مۇناسىۋەتلىك رەسىمى (تاللاپ كېسىڭ):</label>
                 <input type="file" id="fbMovieImageFile" accept="image/*" class="form-input" style="padding: 6px;" onchange="handleFeedbackImageSelected(event)">
                 <input type="hidden" id="fbMovieImageBase64">
             </div>
@@ -2068,6 +2175,122 @@
         }
 
         const ADMIN_HASH = hashPassword("652923198405083311");
+
+        /* ================== ئۇنىۋېرسال رەسىم كېسىش ۋە سۈزۈش (Image Cropper Engine) ================== */
+        let activeCropper = null;
+        let cropperResolve = null;
+        let cropperReject = null;
+
+        window.openImageCropper = function(file, defaultAspect = NaN, title = '✂️ رەسىمنى كېسىپ تەڭشەش') {
+            return new Promise((resolve, reject) => {
+                if (!file) return reject('ھۆججەت يوق');
+                cropperResolve = resolve;
+                cropperReject = reject;
+
+                document.getElementById('cropperDialogTitle').innerText = title;
+                const modal = document.getElementById('globalCropModal');
+                const imageEl = document.getElementById('cropperTargetImg');
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageEl.src = e.target.result;
+                    modal.style.display = 'flex';
+
+                    if (activeCropper) {
+                        activeCropper.destroy();
+                        activeCropper = null;
+                    }
+
+                    // ئەپ تەلىپىگە ئاساسەن تۇنجى نىسبەتنى تەڭشەش
+                    document.querySelectorAll('.crop-tool-btn').forEach(b => b.classList.remove('active'));
+                    if (isNaN(defaultAspect)) {
+                        document.getElementById('ratioFreeBtn')?.classList.add('active');
+                    } else if (Math.abs(defaultAspect - 1) < 0.05) {
+                        document.getElementById('ratio1to1Btn')?.classList.add('active');
+                    } else if (Math.abs(defaultAspect - 3/4) < 0.05) {
+                        document.getElementById('ratio3to4Btn')?.classList.add('active');
+                    } else {
+                        document.getElementById('ratioFreeBtn')?.classList.add('active');
+                    }
+
+                    activeCropper = new Cropper(imageEl, {
+                        aspectRatio: defaultAspect,
+                        viewMode: 1,
+                        dragMode: 'move',
+                        autoCropArea: 0.95,
+                        restore: false,
+                        guides: true,
+                        center: true,
+                        highlight: false,
+                        cropBoxMovable: true,
+                        cropBoxResizable: true,
+                        toggleDragModeOnDblclick: false,
+                        rotatable: true
+                    });
+                };
+                reader.onerror = err => reject(err);
+                reader.readAsDataURL(file);
+            });
+        };
+
+        window.setCropAspect = function(aspect, btn) {
+            if (!activeCropper) return;
+            activeCropper.setAspectRatio(aspect);
+            document.querySelectorAll('.crop-tool-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+        };
+
+        window.rotateCropper = function() {
+            if (!activeCropper) return;
+            activeCropper.rotate(90);
+        };
+
+        window.confirmGlobalCrop = function() {
+            if (!activeCropper) {
+                cancelGlobalCrop();
+                return;
+            }
+            // سۈزۈك ھەم پىرىسلانغان سۈپەتتە Canvas قا ئېلىش
+            const canvas = activeCropper.getCroppedCanvas({
+                maxWidth: 1280,
+                maxHeight: 1920,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high'
+            });
+
+            if (!canvas) {
+                alert('رەسىمنى كېسىش مەغلۇپ بولدى!');
+                cancelGlobalCrop();
+                return;
+            }
+
+            const croppedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+
+            if (activeCropper) {
+                activeCropper.destroy();
+                activeCropper = null;
+            }
+            document.getElementById('globalCropModal').style.display = 'none';
+
+            if (cropperResolve) {
+                cropperResolve(croppedBase64);
+                cropperResolve = null;
+                cropperReject = null;
+            }
+        };
+
+        window.cancelGlobalCrop = function() {
+            if (activeCropper) {
+                activeCropper.destroy();
+                activeCropper = null;
+            }
+            document.getElementById('globalCropModal').style.display = 'none';
+            if (cropperReject) {
+                cropperReject('بىكار قىلىندى');
+                cropperResolve = null;
+                cropperReject = null;
+            }
+        };
 
         function compressImage(file, maxWidth = 800, maxHeight = 1600, quality = 0.8) {
             return new Promise((resolve, reject) => {
@@ -2096,7 +2319,6 @@
             });
         }
 
-        /* 2-تەلەپ: پۈتۈن توربەت ئارقا كۆرۈنۈش تەگلىك رەسىمىنى قاچىلاش ۋە باشقۇرۇش */
         let temporarySiteBgBase64 = '';
 
         window.applyFullSiteBg = function(imgData) {
@@ -2109,7 +2331,6 @@
             }
         };
 
-        // بىرىنچى بولۇپ بەت ئېچىلغاندا تەگلىكنى دەرھال چىقىرىش
         try {
             const initialBg = localStorage.getItem('koznak_site_custom_bg');
             if (initialBg) {
@@ -2117,17 +2338,18 @@
             }
         } catch(e) {}
 
+        // پۈتۈن بەت تەگلىك رەسىمىنى تاللاش ۋە تېلېفوندىن كېسىش
         window.handleSiteBgSelected = async function(event) {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
             try {
-                // تىك شەكىلدىكى تېلېفون سۈرىتىگە پۈتۈنلەي ماسلاشتۇرۇش
-                const base64 = await compressImage(file, 900, 1920, 0.82);
-                temporarySiteBgBase64 = base64;
-                document.getElementById('userSiteBgPreviewImg').src = base64;
+                // تېلېفونغا تىك ئېكران ماس كېسىش ئىقتىدارىنى ئېچىش
+                const cropped = await window.openImageCropper(file, NaN, '✂️ تەگلىك رەسىمىنى كېسىش');
+                temporarySiteBgBase64 = cropped;
+                document.getElementById('userSiteBgPreviewImg').src = cropped;
                 document.getElementById('userSiteBgPreviewBox').style.display = 'block';
             } catch(e) {
-                alert('تەگلىك سۈرىتىنى ئوقۇش مەغلۇپ بولدى!');
+                event.target.value = '';
             }
         };
 
@@ -2136,7 +2358,6 @@
             localStorage.setItem('koznak_site_custom_bg', temporarySiteBgBase64);
             window.applyFullSiteBg(temporarySiteBgBase64);
             
-            // ئەگەر باشقۇرغۇچى بولسا بارلىق ئەپكىمۇ ئورتاقلاشتۇرالايدۇ
             if (window.currentUser && window.currentUser.role === 'admin') {
                 try {
                     await window.dbSet(window.dbRef(window.db, 'settings/globalSiteBgImage'), temporarySiteBgBase64);
@@ -2205,7 +2426,6 @@
         let currentShortEpIndex = 0;
         let searchFiltersState = { type: 'all', genre: 'all', year: 'all', country: 'all', price: 'all' };
 
-        /* 1-تەلەپ: سىنلارنى تېلېفون سىغىمىغا ئارقا كۆرۈنۈشتە ھەم بىۋاسىتە ئىشەنچلىك چۈشۈرۈش قۇرۇلمىسى */
         let idb = null;
 
         function initIndexedDB() {
@@ -2251,7 +2471,6 @@
             tx.objectStore('downloads').delete(id);
         }
 
-        // يېڭىلانغان قوش يۆنىلىشلىك كۈچلۈك چۈشۈرگۈچ
         window.startMovieAppDownload = async function() {
             if (!window.currentUser) return alert('ئالدى بىلەن كىرىڭ!');
             if (!checkUserSuperVipStatus(window.currentUser)) {
@@ -2290,14 +2509,10 @@
             await saveDownloadToIDB(task);
             renderDownloadPanels();
 
-            // 1. تېلېفون سىستېمىسىدىن ھۆججەت چۈشۈرگۈچ ئارقىلىق تېلېفوننىڭ ئۆزىگە قاچىلاش ئۇلانمىسىنى ئېچىش
             triggerDirectSystemDownload(cleanStreamUrl, item.title + '.mp4');
-
-            // 2. ئەپ ئىچىدىمۇ تورسىز ساقلاش (IndexedDB Blob)
             downloadViaBlobWithProgress(cleanStreamUrl, task);
         };
 
-        // تېلېفوننىڭ سىستېما سىغىمىغا بىۋاسىتە چۈشۈرۈپ ساقلاش
         function triggerDirectSystemDownload(url, filename) {
             try {
                 const a = document.createElement('a');
@@ -2310,7 +2525,6 @@
             } catch(e) {}
         }
 
-        // سىغىم ئىچىدە تورسىز ئىشلەش ئۈچۈن قاچىلاش
         function downloadViaBlobWithProgress(cleanStreamUrl, task) {
             const xhr = new XMLHttpRequest();
             xhr.open('GET', cleanStreamUrl, true);
@@ -2332,7 +2546,6 @@
                     await saveDownloadToIDB(task);
                     renderDownloadPanels();
                 } else {
-                    // CORS ياكى تاشقى چەكلىمە بولسا، ھۆججەت سىستېمىسى ئارقىلىق بولسىمۇ تولۇق دەپ كۆرسىتىش
                     task.status = 'completed';
                     task.progress = 100;
                     await saveDownloadToIDB(task);
@@ -2341,7 +2554,6 @@
             };
 
             xhr.onerror = async function() {
-                // تاشقى چەكلىمە سەۋەبىدىن سىستېمىغا ئاتلانغان بولسىمۇ مەۋجۇت دەپ ھېسابلىنىدۇ
                 task.status = 'completed';
                 task.progress = 100;
                 await saveDownloadToIDB(task);
@@ -2710,16 +2922,20 @@
         };
         window.closeAvatarModal = function() { document.getElementById('avatarModal').style.display = 'none'; };
 
+        // باش رەسىمنى تېلېفوندىن تاللاپ سېزىمچان كېسىش
         window.handleAvatarFileSelected = async function(event) {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
             try {
-                const base64 = await compressImage(file, 250, 250, 0.85);
-                temporaryAvatarBase64 = base64;
-                document.getElementById('avatarPreviewImg').src = base64;
+                // باش رەسىم ئۈچۈن تەكشى 1:1 نىسبەت تەڭشىلىدۇ، ئەمما خالىغانچە ئۆزگەرتكىلى بولىدۇ
+                const cropped = await window.openImageCropper(file, 1, '✂️ باش سۈرەتنى كېسىش');
+                temporaryAvatarBase64 = cropped;
+                document.getElementById('avatarPreviewImg').src = cropped;
                 document.getElementById('avatarPreviewContainer').style.display = 'block';
                 document.getElementById('saveAvatarBtn').style.display = 'block';
-            } catch(e) { alert('سۈرەت بىر تەرەپ قىلىش مەغلۇپ بولدى!'); }
+            } catch(e) {
+                event.target.value = '';
+            }
         };
 
         window.saveUploadedAvatar = async function() {
@@ -2732,16 +2948,19 @@
             alert('باش رەسىم يېڭىلاندى!');
         };
 
+        // لوزۇنكا ئارقا كۆرۈنۈشى رەسىمىنى تاللاش ۋە كېسىش
         window.handleHeaderBgSelected = async function(event) {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
             try {
-                const base64 = await compressImage(file, 800, 400, 0.8);
-                temporaryHeaderBgBase64 = base64;
-                document.getElementById('headerBgPreviewImg').src = base64;
+                const cropped = await window.openImageCropper(file, 16/9, '✂️ لوزۇنكا رەسىمىنى كېسىش');
+                temporaryHeaderBgBase64 = cropped;
+                document.getElementById('headerBgPreviewImg').src = cropped;
                 document.getElementById('headerBgPreviewContainer').style.display = 'block';
                 document.getElementById('saveHeaderBgBtn').style.display = 'block';
-            } catch(e) { alert('رەسىمنى پىرىسلاش مەغلۇپ بولدى!'); }
+            } catch(e) {
+                event.target.value = '';
+            }
         };
 
         window.saveHeaderBg = async function() {
@@ -2776,25 +2995,32 @@
             }
         };
 
+        // فىلىم يوللاشتىكى تەشۋىقات رەسىمىنى تېلېفوندىن تاللاپ خالىغانچە كېسىش
         window.handlePosterFileSelected = async function(event) {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
             try {
-                const base64 = await compressImage(file, 480, 680, 0.75);
-                document.getElementById('contentPosterBase64').value = base64;
+                // فىلىم كارتىسى ئۈچۈن قولايلىق تىك 3:4 نىسبەت بىلەن باشلىنىدۇ، خالىغانچە ئۆزگەرتكىلى بولىدۇ
+                const cropped = await window.openImageCropper(file, 3/4, '✂️ تەشۋىقات رەسىمىنى كېسىش');
+                document.getElementById('contentPosterBase64').value = cropped;
                 document.getElementById('contentPosterUrlInput').value = '';
-                document.getElementById('uploadPosterPreviewImg').src = base64;
+                document.getElementById('uploadPosterPreviewImg').src = cropped;
                 document.getElementById('uploadPosterPreviewContainer').style.display = 'block';
-            } catch(e) { alert('رەسىم قاچىلانمىدى!'); }
+            } catch(e) {
+                event.target.value = '';
+            }
         };
 
+        // ئىنكاس يوللاشتىكى سۈرەتنى تېلېفوندىن تاللاپ كېسىش
         window.handleFeedbackImageSelected = async function(event) {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
             try {
-                const base64 = await compressImage(file, 400, 550, 0.75);
-                document.getElementById('fbMovieImageBase64').value = base64;
-            } catch(e) { alert('رەسىم قاچىلانمىدى!'); }
+                const cropped = await window.openImageCropper(file, NaN, '✂️ مۇناسىۋەتلىك رەسىمنى كېسىش');
+                document.getElementById('fbMovieImageBase64').value = cropped;
+            } catch(e) {
+                event.target.value = '';
+            }
         };
 
         window.submitSearchFeedback = async function() {
@@ -4144,7 +4370,6 @@
                 } else {
                     applyHeaderBg('');
                 }
-                // ئەگەر ئومۇمىي بەت تەگلىكى بولسا سۈزۈپ ئېلىش
                 if (s.globalSiteBgImage && !localStorage.getItem('koznak_site_custom_bg')) {
                     window.applyFullSiteBg(s.globalSiteBgImage);
                 }
