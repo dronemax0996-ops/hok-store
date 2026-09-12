@@ -1505,7 +1505,7 @@
                             <div class="settings-icon-badge" style="color: #ff3b30;"><i class="fa-solid fa-toolbox"></i></div>
                             <div>
                                 <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">باشقۇرغۇچى مەركىزى</div>
-                                <div style="font-size: 11px; color: var(--text-secondary);">مەزمۇن قوشۇش، سىتاستىكا ۋە ئىنكاسلار</div>
+                                <div style="font-size: 11px; color: var(--text-secondary);">مەزمۇن قوشۇش، تېلېگرامما بوتى، سىتاستىكا</div>
                             </div>
                         </div>
                         <i class="fa-solid fa-chevron-left" style="font-size: 12px; color: var(--text-secondary);"></i>
@@ -1600,6 +1600,9 @@
                 <button type="button" class="auth-nav-pill active" id="adminSubUploadBtn" onclick="switchAdminSubTab('upload')">
                     <i class="fa-solid fa-cloud-arrow-up"></i> يوللاش
                 </button>
+                <button type="button" class="auth-nav-pill" id="adminSubTelegramBtn" onclick="switchAdminSubTab('telegram')">
+                    <i class="fa-brands fa-telegram"></i> تېلېگرامما بوتى
+                </button>
                 <button type="button" class="auth-nav-pill" id="adminSubUsersBtn" onclick="switchAdminSubTab('users')">
                     <i class="fa-solid fa-users-gear"></i> ئەزالار
                 </button>
@@ -1611,6 +1614,7 @@
                 </button>
             </div>
 
+            <!-- 1. نورمال يوللاش بۆلىكى -->
             <div id="adminUploadSection" class="settings-group-card" style="padding: 16px;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">➕ يېڭى مەزمۇن قوشۇش</div>
                 <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
@@ -1701,6 +1705,52 @@
                 </form>
             </div>
 
+            <!-- 2. تېلېگرامما بوتى ئارقىلىق يوللاش بۆلىكى (يېڭى قوشۇلدى) -->
+            <div id="adminTelegramSection" class="settings-group-card" style="padding: 16px; display: none;">
+                <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-brands fa-telegram" style="color: #0088cc;"></i> تېلېگرامما بوتى (File ID) ئارقىلىق فىلىم قوشۇش</div>
+                <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 14px; line-height: 1.6;">
+                    تېلېگرامما بوتىڭىزغا فىلىم ياكى رەسىم ئەۋەتكەندە ئالغان <b>`file_id`</b> كودىنى ياكى ئاممىۋى قانال (Public Channel) ئۇلانمىسىنى تۆۋەندىكى كۆزنەككە چاپلاپ توربەتكە بىۋاسىتە قوشالايسىز.
+                </div>
+                
+                <form id="telegramUploadForm" onsubmit="handleTelegramUploadSubmit(event)">
+                    <div class="form-group">
+                        <label>🎬 مەزمۇن تىپى</label>
+                        <select id="tgContentType" class="form-select">
+                            <option value="movie">كىنو (Movie)</option>
+                            <option value="series">قىسىملىق فىلىم (Series)</option>
+                            <option value="cartoon">كارتون (Cartoon)</option>
+                            <option value="free">ھەقسىز فىلىم (Free)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>مەزمۇن نامى</label>
+                        <input type="text" id="tgContentTitle" class="form-input" placeholder="فىلىم ئىسمى..." required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label>🖼️ تېلېگرامما رەسىم كودى (Photo File ID) ياكى URL</label>
+                        <input type="text" id="tgContentPoster" class="form-input" placeholder="رەسىمنىڭ file_id سى ياكى سۈرەت ئادرېسى" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label>📼 تېلېگرامما سىن كودى (Video File ID) ياكى Telegram Post URL</label>
+                        <input type="text" id="tgContentVideoLink" class="form-input" placeholder="فىلىمنىڭ file_id سى ياكى تېلېگرامما ئۇلانمىسى" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label>💰 ھەقلىق ياكى ھەقسىز</label>
+                        <select id="tgContentTag" class="form-select">
+                            <option value="ھەممە ئەزا كۆرەلەيدىغان">ھەقسىز (ئادەتتىكى)</option>
+                            <option value="VIP">VIP (ھەقلىق)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="action-btn" style="background: #0088cc;">تېلېگرامما بوتىدىن توربەتكە چىقىرىش</button>
+                </form>
+            </div>
+
+            <!-- 3. ئەزالار باشقۇرۇش -->
             <div id="adminUsersSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">👥 ئەزالارنى تولۇق باشقۇرۇش</div>
                 <div class="form-group" style="margin-bottom: 10px;">
@@ -1709,6 +1759,7 @@
                 <div class="admin-users-list" id="adminUsersListContainer"></div>
             </div>
 
+            <!-- 4. سىتاستىكا -->
             <div id="adminStatsSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">📊 فىلىملەر سىتاستىكا جەدۋىلى</div>
                 <div class="admin-stat-summary-grid">
@@ -1744,6 +1795,7 @@
                 </div>
             </div>
 
+            <!-- 5. ئىنكاسلار -->
             <div id="adminFeedbacksSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">💬 ئىزدەش رايونىدىن ئىنكاسلار</div>
                 <div id="adminFeedbacksListContainer" style="display: flex; flex-direction: column; gap: 12px;"></div>
@@ -1796,7 +1848,7 @@
                 <div class="vip-luxury-card svip-card">
                     <div class="vip-crown-icon"><i class="fa-solid fa-gem"></i></div>
                     <h3 style="font-size: 17px; font-weight: 900; color: var(--text-primary); margin-bottom: 2px;">ئالىي ئەزالىق (Super VIP)</h3>
-                    <p style="font-size: 11px; color: #e040fb;">ھەم 1 ئاي چەكلىمىسىز كۆرۈش + ھەم تېلېفونغا چۈشۈرۈۋېلىش</p>
+                    <p style="font-size: 11px; color: #e040fb;">ھەم 1 ئاي چەكلىمىسىز كۆرۈش + ھەم تېلېفونға چۈشۈرۈۋېلىش</p>
                     <div style="margin: 6px 0;">
                         <span class="vip-price-tag" id="displaySvipPrice">7＄</span>
                     </div>
@@ -2029,9 +2081,6 @@
 
         let searchFiltersState = { type: 'all', genre: 'all', year: 'all', country: 'all', price: 'all' };
 
-        /* ==========================================================
-           ئەپ ئىچىدە بىۋاسىتە ئارقا سەھنىدە ساقلاش سىستېمىسى (IndexedDB)
-           ========================================================== */
         let idb = null;
 
         function initIndexedDB() {
@@ -2077,7 +2126,6 @@
             tx.objectStore('downloads').delete(id);
         }
 
-        // Archive.org بېتىگە ئاتلاپ كەتمەي، تېلېفونغا ئارقا سەھنىدە بىۋاسىتە چۈشۈرۈش
         window.startMovieAppDownload = async function() {
             if (!window.currentUser) return alert('ئالدى بىلەن كىرىڭ!');
             if (!checkUserSuperVipStatus(window.currentUser)) {
@@ -2100,7 +2148,6 @@
                 cleanStreamUrl = cleanStreamUrl.replace('archive.org/details/', 'archive.org/download/');
             }
 
-            // ھېسابات رايونىدىكى «چۈشۈرۈلگەنلەر» بۆلىكىگە دەرھال ئۆتۈش
             switchTab('accountTab');
             switchAccountSubTab('downloads');
 
@@ -2116,7 +2163,6 @@
             await saveDownloadToIDB(task);
             renderDownloadPanels();
 
-            // بېكەتتە مۇقىم تۇرۇپ ئارقا سەھنىدە فىلىمنى ئوقۇپ ساقلاش
             fetch(cleanStreamUrl)
                 .then(response => {
                     if (!response.ok) throw new Error('Download stream error');
@@ -2129,7 +2175,6 @@
                     renderDownloadPanels();
                 })
                 .catch(async () => {
-                    // CORS ياكى تور چەكلىمىسى بولغان تەقدىردىمۇ تىزىملىكتە تاماملاندى قىلىپ ساقلاش
                     task.status = 'completed';
                     await saveDownloadToIDB(task);
                     renderDownloadPanels();
@@ -2194,7 +2239,6 @@
                                 <div style="font-size: 10px; color: var(--text-secondary);">
                                     ${isDone ? 'تورسىز ھالەتتە (Internet يوق چاغدىمۇ) تۆۋەندىكى كۇنۇپكا ئارقىلىق كۆرەلەيسىز' : 'ساقلاپ تۇرۇڭ، سانلىق مەلۇمات يۈكلىنىۋاتىدۇ'}
                                 </div>
-                                ${!isDone ? '<div class="browser-download-bar-bg"><div class="browser-download-bar-fill" style="width: 75%;"></div></div>' : ''}
                             </div>
                         </div>
                         <div class="browser-download-controls">
@@ -2718,11 +2762,13 @@
 
         window.switchAdminSubTab = function(type) {
             document.getElementById('adminSubUploadBtn').classList.toggle('active', type === 'upload');
+            document.getElementById('adminSubTelegramBtn').classList.toggle('active', type === 'telegram');
             document.getElementById('adminSubUsersBtn').classList.toggle('active', type === 'users');
             document.getElementById('adminSubStatsBtn').classList.toggle('active', type === 'stats');
             document.getElementById('adminSubFeedbacksBtn').classList.toggle('active', type === 'feedbacks');
 
             document.getElementById('adminUploadSection').style.display = type === 'upload' ? 'block' : 'none';
+            document.getElementById('adminTelegramSection').style.display = type === 'telegram' ? 'block' : 'none';
             document.getElementById('adminUsersSection').style.display = type === 'users' ? 'block' : 'none';
             document.getElementById('adminStatsSection').style.display = type === 'stats' ? 'block' : 'none';
             document.getElementById('adminFeedbacksSection').style.display = type === 'feedbacks' ? 'block' : 'none';
@@ -3546,6 +3592,46 @@
                 switchTab('homeTab');
             } catch(e) {
                 alert('ساقلاشتا خاتالىق كۆرۈلدى: ' + e.message);
+            }
+        };
+
+        // تېلېگرامما بوتى ئارقىلىق (file_id) كىرگۈزۈپ ساقلاش فۇنكسىيەسى
+        window.handleTelegramUploadSubmit = async function(event) {
+            event.preventDefault();
+            if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
+
+            const type = document.getElementById('tgContentType').value;
+            const title = document.getElementById('tgContentTitle').value.trim();
+            const poster = document.getElementById('tgContentPoster').value.trim();
+            const videoLink = document.getElementById('tgContentVideoLink').value.trim();
+            const tag = document.getElementById('tgContentTag').value;
+
+            if (!title || !poster || !videoLink) return alert('Барلىق بوشلۇقلارنى تولۇق كىرگۈزۈڭ!');
+
+            const movieId = 'tg_mov_' + Date.now();
+            const movieData = {
+                id: movieId,
+                type: type,
+                customType: 'تېلېگرامما فىلىمى',
+                genre: 'تاللانما',
+                year: '2026',
+                country: 'تېلېگرامما',
+                tag: tag,
+                title: title,
+                poster: poster,
+                link: videoLink,
+                downloadLink: videoLink,
+                views: 0,
+                createdAt: Date.now()
+            };
+
+            try {
+                await window.dbSet(window.dbRef(window.db, `movies/${movieId}`), movieData);
+                alert('تېلېگرامما بوتى ئارقىلىق فىلىم مۇۋەپپەقىيەتلىك توربەتكە قوشۇلدى!');
+                document.getElementById('telegramUploadForm').reset();
+                switchTab('homeTab');
+            } catch(e) {
+                alert('قوشۇشتا خاتالىق كۆرۈلدى: ' + e.message);
             }
         };
 
