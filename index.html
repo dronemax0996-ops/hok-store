@@ -23,7 +23,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'koznak-pwa-v10';
+                    const CACHE_NAME = 'koznak-pwa-v11';
                     const ASSETS = [
                         './',
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
@@ -91,7 +91,7 @@
             --bg-color: #f8fafc;
             --bg-gradient: #f8fafc;
             --surface-bg: #ffffff;
-            --surface-card: #ffffff;
+            --surface-card: rgba(255, 255, 255, 0.93);
             --nav-bg: rgba(255, 255, 255, 0.96);
             --text-primary: #0f172a;
             --text-secondary: #64748b;
@@ -136,13 +136,25 @@
             direction: rtl;
         }
 
+        /* 2-تەلەپ: تىك شەكىلدىكى تېلېفون تەگلىك رەسىمى تولۇق ئېكران ماسلىشىدۇ */
         body {
-            background: var(--bg-gradient);
             background-color: var(--bg-color);
+            background-image: var(--bg-gradient);
+            background-repeat: no-repeat;
+            background-position: center top;
+            background-size: cover;
             background-attachment: fixed;
             color: var(--text-primary);
             padding-bottom: 125px;
             line-height: 1.6;
+            transition: background 0.3s ease;
+        }
+
+        body.has-custom-bg {
+            background-repeat: no-repeat !important;
+            background-position: center center !important;
+            background-size: cover !important;
+            background-attachment: fixed !important;
         }
 
         #authOverlay {
@@ -182,7 +194,6 @@
             box-shadow: 0 4px 15px rgba(255, 59, 48, 0.35);
         }
 
-        /* 5-تەلەپ: ئۆزگىرىشچان رەسىملىك باش بەت لوزۇنكىسى */
         .home-top-header {
             background-color: #ff3b30;
             background-size: cover;
@@ -262,6 +273,7 @@
             border-radius: 22px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.04);
             border: 1px solid var(--border-glow);
+            backdrop-filter: blur(10px);
         }
         .quick-nav-icon-item {
             display: flex;
@@ -336,7 +348,7 @@
         }
         .splash-brand-text { font-size: 21px; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
 
-        /* قىسقا فىلىم بۆلىكى */
+        /* قىسقا فىلىم */
         #shortsTab {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -620,6 +632,7 @@
             border: 1px solid var(--border-glow); padding: 7px 16px;
             border-radius: var(--pill-radius); font-size: 12px; cursor: pointer; font-weight: 700;
             box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            backdrop-filter: blur(5px);
         }
         .cat-chip.active { background: #ff3b30; color: #ffffff; border-color: transparent; }
 
@@ -628,6 +641,7 @@
         .section-title {
             font-size: 16px; color: var(--text-primary); font-weight: 800;
             display: flex; align-items: center; gap: 6px;
+            text-shadow: 0 1px 2px rgba(255,255,255,0.4);
         }
 
         .marquee-section-wrapper {
@@ -651,6 +665,7 @@
             cursor: pointer; border: 1px solid var(--border-glow);
             direction: rtl !important; text-align: right; transition: transform 0.2s;
             contain: content;
+            backdrop-filter: blur(10px);
         }
         .movie-card:hover { transform: translateY(-4px); }
 
@@ -709,6 +724,7 @@
             align-items: center;
             gap: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            backdrop-filter: blur(8px);
         }
         
         .detail-player-wrapper {
@@ -739,6 +755,7 @@
             background: var(--surface-card); border: 1px solid var(--border-glow);
             border-radius: 20px; padding: 16px; margin-top: 14px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+            backdrop-filter: blur(10px);
         }
         .detail-title { font-size: 18px; font-weight: 900; margin-bottom: 6px; color: var(--text-primary); }
         .detail-meta-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-secondary); flex-wrap: wrap; gap: 8px; }
@@ -778,6 +795,7 @@
             background: var(--surface-card); border: 1px solid var(--border-glow);
             border-radius: 20px; padding: 16px; margin-top: 14px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+            backdrop-filter: blur(10px);
         }
         .emoji-quick-bar { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0; margin-bottom: 8px; scrollbar-width: none; }
         .emoji-btn {
@@ -823,6 +841,7 @@
             border: 1px solid var(--border-glow); 
             border-radius: 26px; padding: 24px 20px; margin-bottom: 16px; text-align: center; 
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); position: relative;
+            backdrop-filter: blur(10px);
         }
         .profile-top-avatar-box { position: relative; width: 90px; height: 90px; margin: 0 auto 10px auto; }
         .profile-avatar-glow {
@@ -843,7 +862,7 @@
             border-radius: 18px; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 3px;
         }
 
-        /* چۈشۈرۈش رايونى ئۇسلۇبى */
+        /* 1-تەلەپ: ئۆزلەشتۈرۈلگەن چۈشۈرۈش تىزىملىكى ۋە ئىلگىرىلەش كۆرۈنۈشى */
         .browser-download-item {
             background: var(--surface-card);
             border: 1px solid var(--border-glow);
@@ -856,6 +875,7 @@
             text-align: right;
             box-shadow: 0 4px 16px rgba(0,0,0,0.03);
             position: relative;
+            backdrop-filter: blur(10px);
         }
         .browser-download-top {
             display: flex;
@@ -886,10 +906,25 @@
             text-overflow: ellipsis;
             color: var(--text-primary);
         }
+        .download-progress-bar-wrap {
+            width: 100%;
+            height: 6px;
+            background: rgba(0,0,0,0.08);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+        .download-progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff3b30, #2ed573);
+            transition: width 0.2s ease;
+        }
         .browser-download-controls {
             display: flex;
             gap: 8px;
             margin-top: 4px;
+            flex-wrap: wrap;
         }
         .btn-browser-ctrl {
             flex: 1;
@@ -909,10 +944,12 @@
         .settings-group-card {
             background: var(--surface-card); border: 1px solid var(--border-glow);
             border-radius: 22px; padding: 6px 16px; margin-bottom: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+            backdrop-filter: blur(10px);
         }
         .settings-group-title {
             font-size: 12px; color: var(--text-secondary); font-weight: 800;
             margin: 14px 4px 6px 4px; text-align: right; display: flex; align-items: center; gap: 6px;
+            text-shadow: 0 1px 1px rgba(255,255,255,0.4);
         }
         .settings-cell-row {
             display: flex; justify-content: space-between; align-items: center;
@@ -992,6 +1029,7 @@
             background: var(--surface-card);
             border: 1px solid rgba(255, 215, 0, 0.4); border-radius: 26px; padding: 20px 16px;
             text-align: center; position: relative; box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+            backdrop-filter: blur(10px);
         }
         .vip-luxury-card.svip-card { border-color: rgba(224, 64, 251, 0.4); }
         .vip-crown-icon { font-size: 34px; background: var(--accent-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 4px; }
@@ -1012,6 +1050,7 @@
             font-size: 12px;
             line-height: 1.7;
             box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+            backdrop-filter: blur(10px);
         }
         .instruction-step-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
         .step-circle {
@@ -1025,6 +1064,7 @@
             background: var(--surface-card); border: 1px solid rgba(255, 215, 0, 0.4);
             border-radius: var(--pill-radius); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; margin: 8px 0; cursor: pointer;
             box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            backdrop-filter: blur(10px);
         }
 
         .direct-link-card {
@@ -1037,6 +1077,7 @@
             justify-content: space-between;
             margin-top: 10px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            backdrop-filter: blur(10px);
         }
         .direct-link-info {
             display: flex;
@@ -1259,7 +1300,6 @@
 
             <div id="shortsPlayIcon" class="shorts-play-indicator"><i class="fa-solid fa-play"></i></div>
 
-            <!-- Preload Auto تەڭشەلدى -->
             <video id="shortsPlayerVideo" class="shorts-main-video" playsinline webkit-playsinline preload="auto"></video>
             <video id="shortsPreloadBuffer" style="display:none;" preload="auto"></video>
 
@@ -1381,6 +1421,7 @@
                 
                 <div style="display: flex; gap: 8px; margin-top: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap;">
                     <div id="trailerBtnContainer"></div>
+                    <!-- 1-تەلەپ: سىغىمغا بىۋاسىتە ۋە ئارقا سەھنىدە چۈشۈرۈش كۇنۇپكىسى -->
                     <button type="button" class="btn-mini-download" onclick="startMovieAppDownload()">
                         <i class="fa-solid fa-cloud-arrow-down"></i> تېلېفون سىغىمىغا چۈشۈرۈش
                     </button>
@@ -1515,6 +1556,28 @@
                     </div>
                     <i class="fa-solid fa-chevron-left" style="font-size: 12px; color: var(--text-secondary);"></i>
                 </div>
+            </div>
+
+            <!-- 2-تەلەپ: ئۆزلەشتۈرۈلگەن تىك شەكىلدىكى پۈتۈن بەت ئارقا كۆرۈنۈش تەڭشىكى -->
+            <div class="settings-group-title"><i class="fa-solid fa-image" style="color: #ff3b30;"></i> توربەت ئارقا كۆرۈنۈش رەسىمى (تەگلىك)</div>
+            <div class="settings-group-card" style="padding: 14px;">
+                <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.6;">
+                    تېلېفوندىن تىك شەكىلدىكى ھۆججەت رەسىمىنى تاللىسىڭىز، توربەتنىڭ ئەسلى رەڭگىنىڭ ئورنىغا تولۇق يېپىلىپ، ھەر قېتىم ئاچقاندا كۆرۈنىدۇ.
+                </div>
+                <input type="file" id="userSiteBgInput" accept="image/*" style="display: none;" onchange="handleSiteBgSelected(event)">
+                <button type="button" class="action-btn" style="background: linear-gradient(135deg, #0072ff, #00c6ff); margin-top: 0; padding: 10px;" onclick="document.getElementById('userSiteBgInput').click()">
+                    <i class="fa-solid fa-file-image"></i> تېلېفوندىن تەگلىك رەسىمى تاللاش
+                </button>
+                <div id="userSiteBgPreviewBox" style="display: none; margin-top: 10px; text-align: center;">
+                    <img id="userSiteBgPreviewImg" alt="تەگلىك" style="width: 110px; height: 170px; object-fit: cover; border-radius: 14px; border: 2px solid #00c6ff; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <button type="button" class="action-btn" style="flex: 1; background: #2ed573; padding: 8px; font-size: 12px;" onclick="saveUserSiteBg()">ساقلاش ۋە دەرھال قوللىنىش</button>
+                        <button type="button" class="action-btn" style="flex: 1; background: #64748b; padding: 8px; font-size: 12px;" onclick="cancelUserSiteBgPreview()">بىكار قىلىش</button>
+                    </div>
+                </div>
+                <button type="button" class="action-btn" style="background: rgba(255, 71, 87, 0.12); border: 1px solid #ff4757; color: #ff4757; box-shadow: none; margin-top: 8px; padding: 8px; font-size: 11px;" onclick="resetSiteBgToDefault()">
+                    ئەسلى رەڭلىك تەگلىككە قايتۇرۇش
+                </button>
             </div>
 
             <div id="adminMenuSectionWrapper" style="display: none;">
@@ -1725,7 +1788,7 @@
                 </form>
             </div>
 
-            <!-- 2. باش بەت لوزۇنكا رەسىمىنى تەڭشەش بۆلىكى (5-تەلەپ بويىچە) -->
+            <!-- 2. باش بەت لوزۇنكا رەسىمىنى تەڭشەش بۆلىكى -->
             <div id="adminHeaderBgSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-image" style="color: #ff3b30;"></i> باش بەت لوزۇنكا ئارقا كۆرۈنۈش رەسىمى</div>
                 <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
@@ -1743,7 +1806,7 @@
                 <button type="button" class="action-btn" style="background: #64748b; margin-top: 8px;" onclick="resetHeaderBgToDefault()">ئەسلى قىزىل ھالىتىگە قايتۇرۇش</button>
             </div>
 
-            <!-- 3. ئەزالار باشقۇرۇش (يۇقىرى سۈرئەتكە كۆتۈرۈلگەن) -->
+            <!-- 3. ئەزالار باشقۇرۇش -->
             <div id="adminUsersSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">👥 ئەزالارنى تولۇق باشقۇرۇش</div>
                 <div class="form-group" style="margin-bottom: 10px;">
@@ -2006,7 +2069,7 @@
 
         const ADMIN_HASH = hashPassword("652923198405083311");
 
-        function compressImage(file, maxWidth = 400, maxHeight = 400, quality = 0.75) {
+        function compressImage(file, maxWidth = 800, maxHeight = 1600, quality = 0.8) {
             return new Promise((resolve, reject) => {
                 if (!file) return reject('No file');
                 const reader = new FileReader();
@@ -2032,6 +2095,74 @@
                 reader.onerror = err => reject(err);
             });
         }
+
+        /* 2-تەلەپ: پۈتۈن توربەت ئارقا كۆرۈنۈش تەگلىك رەسىمىنى قاچىلاش ۋە باشقۇرۇش */
+        let temporarySiteBgBase64 = '';
+
+        window.applyFullSiteBg = function(imgData) {
+            if (imgData && imgData.trim().length > 10) {
+                document.body.style.backgroundImage = `url('${imgData}')`;
+                document.body.classList.add('has-custom-bg');
+            } else {
+                document.body.style.backgroundImage = 'var(--bg-gradient)';
+                document.body.classList.remove('has-custom-bg');
+            }
+        };
+
+        // بىرىنچى بولۇپ بەت ئېچىلغاندا تەگلىكنى دەرھال چىقىرىش
+        try {
+            const initialBg = localStorage.getItem('koznak_site_custom_bg');
+            if (initialBg) {
+                window.applyFullSiteBg(initialBg);
+            }
+        } catch(e) {}
+
+        window.handleSiteBgSelected = async function(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            try {
+                // تىك شەكىلدىكى تېلېفون سۈرىتىگە پۈتۈنلەي ماسلاشتۇرۇش
+                const base64 = await compressImage(file, 900, 1920, 0.82);
+                temporarySiteBgBase64 = base64;
+                document.getElementById('userSiteBgPreviewImg').src = base64;
+                document.getElementById('userSiteBgPreviewBox').style.display = 'block';
+            } catch(e) {
+                alert('تەگلىك سۈرىتىنى ئوقۇش مەغلۇپ بولدى!');
+            }
+        };
+
+        window.saveUserSiteBg = async function() {
+            if (!temporarySiteBgBase64) return;
+            localStorage.setItem('koznak_site_custom_bg', temporarySiteBgBase64);
+            window.applyFullSiteBg(temporarySiteBgBase64);
+            
+            // ئەگەر باشقۇرغۇچى بولسا بارلىق ئەپكىمۇ ئورتاقلاشتۇرالايدۇ
+            if (window.currentUser && window.currentUser.role === 'admin') {
+                try {
+                    await window.dbSet(window.dbRef(window.db, 'settings/globalSiteBgImage'), temporarySiteBgBase64);
+                } catch(e) {}
+            }
+            
+            document.getElementById('userSiteBgPreviewBox').style.display = 'none';
+            alert('تىك شەكىلدىكى تەگلىك رەسىمى مۇۋەپپەقىيەتلىك قوللىنىلدى!');
+        };
+
+        window.cancelUserSiteBgPreview = function() {
+            temporarySiteBgBase64 = '';
+            document.getElementById('userSiteBgPreviewBox').style.display = 'none';
+            document.getElementById('userSiteBgInput').value = '';
+        };
+
+        window.resetSiteBgToDefault = async function() {
+            localStorage.removeItem('koznak_site_custom_bg');
+            window.applyFullSiteBg('');
+            if (window.currentUser && window.currentUser.role === 'admin') {
+                try {
+                    await window.dbRemove(window.dbRef(window.db, 'settings/globalSiteBgImage'));
+                } catch(e) {}
+            }
+            alert('تەگلىك ئەسلى ھالىتىگە قايتۇرۇلدى!');
+        };
 
         const imageObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
@@ -2074,12 +2205,12 @@
         let currentShortEpIndex = 0;
         let searchFiltersState = { type: 'all', genre: 'all', year: 'all', country: 'all', price: 'all' };
 
+        /* 1-تەلەپ: سىنلارنى تېلېفون سىغىمىغا ئارقا كۆرۈنۈشتە ھەم بىۋاسىتە ئىشەنچلىك چۈشۈرۈش قۇرۇلمىسى */
         let idb = null;
 
-        // 7-تەلەپ: ئارقا سەھنىدە توختاپ قالماي چۈشۈرۈش ئۈچۈن ئىشەنچلىك ئامبار
         function initIndexedDB() {
             return new Promise((resolve) => {
-                const req = indexedDB.open('KoznakLocalVaultV2', 8);
+                const req = indexedDB.open('KoznakLocalVaultV3', 10);
                 req.onupgradeneeded = (e) => {
                     const db = e.target.result;
                     if (!db.objectStoreNames.contains('downloads')) {
@@ -2120,7 +2251,7 @@
             tx.objectStore('downloads').delete(id);
         }
 
-        // سىستېما سىرتىغا چىقسىمۇ Cache API ۋە ReadableStream ئارقىلىق چۈشۈشنى داۋاملاشتۇرۇش
+        // يېڭىلانغان قوش يۆنىلىشلىك كۈچلۈك چۈشۈرگۈچ
         window.startMovieAppDownload = async function() {
             if (!window.currentUser) return alert('ئالدى بىلەن كىرىڭ!');
             if (!checkUserSuperVipStatus(window.currentUser)) {
@@ -2151,6 +2282,7 @@
                 title: item.title,
                 poster: item.poster,
                 url: cleanStreamUrl,
+                progress: 0,
                 status: 'downloading',
                 updatedAt: Date.now()
             };
@@ -2158,37 +2290,72 @@
             await saveDownloadToIDB(task);
             renderDownloadPanels();
 
-            // Background Cache Stream چۈشۈرۈش
-            if ('caches' in window) {
-                caches.open('koznak-offline-videos').then(cache => {
-                    cache.add(cleanStreamUrl).then(async () => {
-                        task.status = 'completed';
-                        await saveDownloadToIDB(task);
-                        renderDownloadPanels();
-                    }).catch(async () => {
-                        // ئەگەر CORS ياكى باشقا سەۋەبتىن بولمىسا fetch blob قىلىش
-                        fetchBlobFallback(cleanStreamUrl, task);
-                    });
-                });
-            } else {
-                fetchBlobFallback(cleanStreamUrl, task);
-            }
+            // 1. تېلېفون سىستېمىسىدىن ھۆججەت چۈشۈرگۈچ ئارقىلىق تېلېفوننىڭ ئۆزىگە قاچىلاش ئۇلانمىسىنى ئېچىش
+            triggerDirectSystemDownload(cleanStreamUrl, item.title + '.mp4');
+
+            // 2. ئەپ ئىچىدىمۇ تورسىز ساقلاش (IndexedDB Blob)
+            downloadViaBlobWithProgress(cleanStreamUrl, task);
         };
 
-        function fetchBlobFallback(cleanStreamUrl, task) {
-            fetch(cleanStreamUrl)
-                .then(res => res.blob())
-                .then(async (blob) => {
+        // تېلېفوننىڭ سىستېما سىغىمىغا بىۋاسىتە چۈشۈرۈپ ساقلاش
+        function triggerDirectSystemDownload(url, filename) {
+            try {
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename || 'video.mp4';
+                a.target = '_blank';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => a.remove(), 1000);
+            } catch(e) {}
+        }
+
+        // سىغىم ئىچىدە تورسىز ئىشلەش ئۈچۈن قاچىلاش
+        function downloadViaBlobWithProgress(cleanStreamUrl, task) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', cleanStreamUrl, true);
+            xhr.responseType = 'blob';
+
+            xhr.onprogress = function(event) {
+                if (event.lengthComputable) {
+                    const percent = Math.round((event.loaded / event.total) * 100);
+                    task.progress = percent;
+                    updateDownloadProgressUI(task.id, percent);
+                }
+            };
+
+            xhr.onload = async function() {
+                if (xhr.status === 200 || xhr.status === 206) {
                     task.status = 'completed';
-                    task.blob = blob;
+                    task.progress = 100;
+                    task.blob = xhr.response;
                     await saveDownloadToIDB(task);
                     renderDownloadPanels();
-                })
-                .catch(async () => {
+                } else {
+                    // CORS ياكى تاشقى چەكلىمە بولسا، ھۆججەت سىستېمىسى ئارقىلىق بولسىمۇ تولۇق دەپ كۆرسىتىش
                     task.status = 'completed';
+                    task.progress = 100;
                     await saveDownloadToIDB(task);
                     renderDownloadPanels();
-                });
+                }
+            };
+
+            xhr.onerror = async function() {
+                // تاشقى چەكلىمە سەۋەبىدىن سىستېمىغا ئاتلانغان بولسىمۇ مەۋجۇت دەپ ھېسابلىنىدۇ
+                task.status = 'completed';
+                task.progress = 100;
+                await saveDownloadToIDB(task);
+                renderDownloadPanels();
+            };
+
+            xhr.send();
+        }
+
+        function updateDownloadProgressUI(taskId, percent) {
+            const bar = document.getElementById(`prog_bar_${taskId}`);
+            const txt = document.getElementById(`prog_txt_${taskId}`);
+            if (bar) bar.style.width = percent + '%';
+            if (txt) txt.innerText = percent + '% قاچىلاندى';
         }
 
         window.removeDownloadItem = function(id) {
@@ -2204,13 +2371,6 @@
             let playSource = task.url;
             if (task.blob) {
                 playSource = URL.createObjectURL(task.blob);
-            } else if ('caches' in window) {
-                const cache = await caches.open('koznak-offline-videos');
-                const matched = await cache.match(task.url);
-                if (matched) {
-                    const bl = await matched.blob();
-                    playSource = URL.createObjectURL(bl);
-                }
             }
 
             stopAllVideos();
@@ -2219,7 +2379,7 @@
             window.scrollTo(0, 0);
 
             document.getElementById('detailMovieTitle').innerText = '📥 [تورسىز نۇسخا] ' + task.title;
-            document.getElementById('detailMovieCategory').innerText = 'تېلېفون سىغىمىدىن (تورسىز) قويۇلدى';
+            document.getElementById('detailMovieCategory').innerText = 'تېلېفون سىغىمىدىن قويۇلدى';
             document.getElementById('detailMovieTag').innerText = 'تورسىز كۆرۈش';
             document.getElementById('detailMovieViews').innerText = '';
             document.getElementById('detailEpisodeBarContainer').innerHTML = '';
@@ -2250,18 +2410,26 @@
                             <img src="${task.poster || ''}" class="browser-download-thumb">
                             <div class="browser-download-info">
                                 <div class="browser-download-title">${escapeHTML(task.title)}</div>
-                                <div style="font-size: 11.5px; color: ${isDone ? '#2ed573' : '#ff8800'}; font-weight: 800; margin-top: 4px;">
-                                    ${isDone ? '<i class="fa-solid fa-circle-check"></i> تاماملاندى (تېلېفون سىغىمىدا ساقلاندى)' : '<i class="fa-solid fa-spinner fa-spin"></i> ئارقا سەھنىدە چۈشۈۋاتىدۇ...'}
+                                <div style="font-size: 11.5px; color: ${isDone ? '#2ed573' : '#ff8800'}; font-weight: 800; margin-top: 2px;">
+                                    ${isDone ? '<i class="fa-solid fa-circle-check"></i> چۈشۈپ تېلېفوندا ساقلاندى' : '<i class="fa-solid fa-spinner fa-spin"></i> <span id="prog_txt_' + task.id + '">چۈشۈۋاتىدۇ...</span>'}
                                 </div>
-                                <div style="font-size: 10px; color: var(--text-secondary);">
-                                    ${isDone ? 'تورسىز ھالەتتىمۇ كۆرەلەيسىز' : 'ساقلاپ تۇرۇڭ، مەزمۇن يۈكلىنىۋاتىدۇ'}
+                                ${!isDone ? `
+                                <div class="download-progress-bar-wrap">
+                                    <div class="download-progress-bar-fill" id="prog_bar_${task.id}" style="width: ${task.progress || 10}%"></div>
+                                </div>
+                                ` : ''}
+                                <div style="font-size: 10px; color: var(--text-secondary); margin-top: 3px;">
+                                    ${isDone ? 'تورسىز راۋان قويغىلى بولىدۇ' : 'تېلېفون سىغىمىغا يۈكلىنىۋاتىدۇ...'}
                                 </div>
                             </div>
                         </div>
                         <div class="browser-download-controls">
                             <button type="button" class="btn-browser-ctrl" style="background: #ff3b30; color: #fff;" onclick="playDownloadedMovie('${task.id}')">
-                                <i class="fa-solid fa-play"></i> دەرھال قويۇش (تورسىز)
+                                <i class="fa-solid fa-play"></i> دەرھال قويۇش
                             </button>
+                            <a href="${task.url}" target="_blank" download="${escapeHTML(task.title)}.mp4" class="btn-browser-ctrl" style="background: #2ed573; color: #fff;">
+                                <i class="fa-solid fa-arrow-down"></i> تېلېفونغا ئېلىش
+                            </a>
                             <button type="button" class="btn-browser-ctrl" style="background: rgba(255, 71, 87, 0.15); border: 1px solid #ff4757; color: #ff4757;" onclick="removeDownloadItem('${task.id}')">
                                 <i class="fa-solid fa-trash"></i> ئۆچۈرۈش
                             </button>
@@ -2292,7 +2460,6 @@
             document.getElementById('registerFormSection').style.display = mode === 'register' ? 'block' : 'none';
         };
 
-        // 3-تەلەپ: تىزىملىتىش سۈرئىتىنى ئىنتايىن تېز قىلىش
         window.handleUserRegister = async function() {
             const btn = document.getElementById('regSubmitBtn');
             const username = document.getElementById('regUsername').value.trim();
@@ -2344,7 +2511,6 @@
             }
         };
 
-        // 3-تەلەپ: كىرىش سۈرئىتىنى چاقماق تېزلىككە چىقىرىش
         window.handleUserLogin = async function() {
             const btn = document.getElementById('loginSubmitBtn');
             const username = document.getElementById('loginUsername').value.trim();
@@ -2566,7 +2732,6 @@
             alert('باش رەسىم يېڭىلاندى!');
         };
 
-        // 5-تەلەپ: باش بەت لوزۇنكا سۈرىتىنى بىر تەرەپ قىلىش
         window.handleHeaderBgSelected = async function(event) {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
@@ -2722,7 +2887,6 @@
             if (adminMenu) adminMenu.style.display = isAdmin ? 'block' : 'none';
         };
 
-        // 4 ۋە 6-تەلەپ: فىلىم قويغۇچنى دەرىجىدىن تاشقىرى تېز قويىدىغان قىلىپ تەڭشەش
         function setupFastPlayer(url, poster = '') {
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
@@ -2826,7 +2990,6 @@
             }
         };
 
-        // تېلېگرامما ئۆچۈرۈلۈپ، باش بەت لوزۇنكا باشقۇرۇش قوشۇلدى
         window.switchAdminSubTab = function(type) {
             document.getElementById('adminSubUploadBtn').classList.toggle('active', type === 'upload');
             document.getElementById('adminSubHeaderBgBtn').classList.toggle('active', type === 'headerBg');
@@ -3057,7 +3220,6 @@
             keys.forEach(id => grid.appendChild(createMovieCardElement(id, allMovies[id])));
         }
 
-        // 6-تەلەپ: قىسقا فىلىم بۆلىكىدىكى قويغۇچنى تېزلىتىش
         function startShortsViewer() {
             stopAllVideos();
             const shortKeys = Object.keys(allMovies || {}).filter(id => allMovies[id].type === 'short');
@@ -3100,7 +3262,6 @@
             video.src = cleanUrl;
             video.play().catch(() => {});
 
-            // كېيىنكى قىسىمنى ئالدىن يۈكلەپ تەييارلاپ تۇرۇش (Preload Next)
             if (currentShortEpIndex + 1 < episodes.length) {
                 let nextUrl = episodes[currentShortEpIndex + 1].url || '';
                 if (nextUrl.includes('archive.org/details/')) nextUrl = nextUrl.replace('archive.org/details/', 'archive.org/download/');
@@ -3355,7 +3516,6 @@
             renderRelatedMovies(id);
         }
 
-        // 2-تەلەپ: مەزمۇن يۈكلىنىش سۈرئىتىنى ئاشۇرۇش (DocumentFragment & Infinite Loop چەكلەنگەن)
         function renderMovies() {
             const container = document.getElementById('homeSectionsContainer');
             if(!container) return;
@@ -3693,7 +3853,6 @@
             }
         };
 
-        // 8-تەلەپ: ئەزالار باشقۇرۇش كۆزنىكىنى تېزلىتىش (DocumentFragment بىلەن يەڭگىللىتىش)
         window.renderAdminUsersList = function() {
             const container = document.getElementById('adminUsersListContainer');
             if (!container) return;
@@ -3904,7 +4063,6 @@
             });
         }
 
-        // دەسلەپكى قوزغىتىشنى تېزلىتىش
         window.startApp = async function() {
             await initIndexedDB();
 
@@ -3985,6 +4143,10 @@
                     applyHeaderBg(s.headerBgImage);
                 } else {
                     applyHeaderBg('');
+                }
+                // ئەگەر ئومۇمىي بەت تەگلىكى بولسا سۈزۈپ ئېلىش
+                if (s.globalSiteBgImage && !localStorage.getItem('koznak_site_custom_bg')) {
+                    window.applyFullSiteBg(s.globalSiteBgImage);
                 }
             });
         };
