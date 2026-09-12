@@ -24,7 +24,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'koznak-pwa-v14';
+                    const CACHE_NAME = 'koznak-pwa-v15';
                     const ASSETS = [
                         './',
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
@@ -82,6 +82,7 @@
         window.dbOnValue = onValue;
         window.dbUpdate = update;
         window.dbOff = off;
+        window.firebaseReady = true;
 
         if (window.startApp) {
             window.startApp();
@@ -1799,6 +1800,7 @@
                 </button>
             </div>
 
+            <!-- 1. مەزمۇن قوشۇش -->
             <div id="adminUploadSection" class="settings-group-card" style="padding: 16px;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">➕ يېڭى مەزمۇن قوشۇش</div>
                 <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
@@ -1889,6 +1891,7 @@
                 </form>
             </div>
 
+            <!-- 2. پۈتۈن تەگلىك بۆلىكى -->
             <div id="adminSiteBgSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-panorama" style="color: #00c6ff;"></i> پۈتۈن توربەت تىك ئارقا تەگلىك رەسىمى</div>
                 <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
@@ -1910,6 +1913,7 @@
                 </button>
             </div>
 
+            <!-- 3. لوزۇنكا تەگلىكى بۆلىكى -->
             <div id="adminHeaderBgSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-image" style="color: #ff3b30;"></i> باش بەت لوزۇنكا ئارقا كۆرۈنۈش رەسىمى</div>
                 <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
@@ -1927,6 +1931,7 @@
                 <button type="button" class="action-btn" style="background: #64748b; margin-top: 8px;" onclick="resetHeaderBgToDefault()">ئەسلى قىزىل ھالىتىگە قايتۇرۇش</button>
             </div>
 
+            <!-- 4. ئەزالار باشقۇرۇش -->
             <div id="adminUsersSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">👥 ئەزالارنى تولۇق باشقۇرۇش</div>
                 <div class="form-group" style="margin-bottom: 10px;">
@@ -1938,6 +1943,7 @@
                 <div class="admin-users-list" id="adminUsersListContainer"></div>
             </div>
 
+            <!-- 5. سىتاستىكا -->
             <div id="adminStatsSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">📊 فىلىملەر سىتاستىكا جەدۋىلى</div>
                 <div class="admin-stat-summary-grid">
@@ -1973,6 +1979,7 @@
                 </div>
             </div>
 
+            <!-- 6. ئىنكاسلار -->
             <div id="adminFeedbacksSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">💬 ئىزدەش رايونىدىن ئىنكاسلار</div>
                 <div id="adminFeedbacksListContainer" style="display: flex; flex-direction: column; gap: 12px;"></div>
@@ -2189,6 +2196,38 @@
         }
 
         const ADMIN_HASH = hashPassword("652923198405083311");
+        const DB_BASE_URL = "https://koznak-store-default-rtdb.firebaseio.com";
+
+        // بىۋاسىتە ۋە قىلچە كېچىكمەيدىغان HTTP REST ئېغىزى
+        async function fetchUsersREST() {
+            try {
+                const res = await fetch(`${DB_BASE_URL}/users.json`);
+                if (res.ok) {
+                    return await res.json();
+                }
+            } catch(e) {}
+            return null;
+        }
+
+        async function fetchSingleUserREST(safeKey) {
+            try {
+                const res = await fetch(`${DB_BASE_URL}/users/${safeKey}.json`);
+                if (res.ok) {
+                    return await res.json();
+                }
+            } catch(e) {}
+            return null;
+        }
+
+        async function saveUserREST(safeKey, userData) {
+            try {
+                await fetch(`${DB_BASE_URL}/users/${safeKey}.json`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(userData)
+                });
+            } catch(e) {}
+        }
 
         let activeCropper = null;
         let cropperResolve = null;
@@ -2651,35 +2690,7 @@
             document.getElementById('registerFormSection').style.display = mode === 'register' ? 'block' : 'none';
         };
 
-        /* ================== پۇختا كىرىش ۋە تىزىملىتىش لوگىكىسى (قېتىۋېلىش پۈتۈنلەي تۈزىتىلدى) ================== */
-        function fetchUserFromDB(safeKey) {
-            return new Promise((resolve) => {
-                const userRef = window.dbRef(window.db, 'users/' + safeKey);
-                let resolved = false;
-                
-                // onValue ئارقىلىق دەرھال بىر قېتىم ئېلىش
-                window.dbOnValue(userRef, (snapshot) => {
-                    if (!resolved) {
-                        resolved = true;
-                        resolve(snapshot);
-                    }
-                }, (error) => {
-                    if (!resolved) {
-                        resolved = true;
-                        resolve(null);
-                    }
-                }, { onlyOnce: true });
-
-                // ئەڭ كۆپ بولغاندا 10 سېكۇنت كۈتۈش
-                setTimeout(() => {
-                    if (!resolved) {
-                        resolved = true;
-                        resolve(null);
-                    }
-                }, 10000);
-            });
-        }
-
+        /* ================== چاقماقتەك ئىشەنچلىك كىرىش ۋە تىزىملىتىش سىستېمىسى ================== */
         window.handleUserRegister = async function() {
             const btn = document.getElementById('regSubmitBtn');
             const username = document.getElementById('regUsername').value.trim();
@@ -2692,9 +2703,9 @@
 
             const safeKey = 'usr_' + encodeURIComponent(username).replace(/[^a-zA-Z0-9_]/g, '');
             try {
-                const userSnap = await fetchUserFromDB(safeKey);
-
-                if (userSnap && userSnap.exists()) {
+                // تېز REST ئارقىلىق دەلىللەش
+                const existingUser = await fetchSingleUserREST(safeKey);
+                if (existingUser) {
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fa-solid fa-check"></i> دەرھال تىزىملىتىش ۋە كىرىش';
                     return alert('بۇ ھېسابات ئاللىقاچان بار!');
@@ -2721,7 +2732,7 @@
                     createdAt: Date.now()
                 };
 
-                await window.dbSet(window.dbRef(window.db, 'users/' + safeKey), newUser).catch(() => {});
+                await saveUserREST(safeKey, newUser);
                 localStorage.setItem('koznak_session_id', newSessionId);
                 window.currentUser = newUser;
                 finishUserLoginSession();
@@ -2745,7 +2756,7 @@
             const safeKey = 'usr_' + encodeURIComponent(username).replace(/[^a-zA-Z0-9_]/g, '');
             const inputHash = hashPassword(password);
 
-            // 1. باشقۇرغۇچى (dronemax) ئۈچۈن قىلچە كېچىكمەي بىۋاسىتە كىرىش
+            // 1. باشقۇرغۇچى (dronemax) ئۈچۈن قىلچە كۈتمەي بىۋاسىتە كىرىش
             if (username === 'dronemax' && inputHash === ADMIN_HASH) {
                 const newSessionId = generateSessionId();
                 const adminUser = {
@@ -2767,36 +2778,20 @@
                 localStorage.setItem('koznak_session_id', newSessionId);
                 window.currentUser = adminUser;
                 finishUserLoginSession();
-                
-                window.dbSet(window.dbRef(window.db, 'users/' + safeKey), adminUser).catch(() => {});
+                saveUserREST(safeKey, adminUser);
                 return;
             }
 
-            // 2. ئادەتتىكى ئابونتلارنىڭ كىرىشى
+            // 2. ئابونتلارنىڭ كىرىشى (REST ئارقىلىق پۈتۈنلەي قېتىۋالمايدۇ)
             try {
-                // ئاۋۋال ئەگەر تېلېفوندا بار بۇرۇنقى ئارخىپ ماس كەلسە دەرھال كىرگۈزۈش
-                const localUserStr = localStorage.getItem('koznak_logged_user');
-                if (localUserStr) {
-                    try {
-                        const localU = JSON.parse(localUserStr);
-                        if (localU.user === username && (localU.rawPass === password || localU.password === inputHash)) {
-                            window.currentUser = localU;
-                            finishUserLoginSession();
-                            return;
-                        }
-                    } catch(err) {}
-                }
+                const uData = await fetchSingleUserREST(safeKey);
 
-                // تور ئامبىرىدىن تەكشۈرۈش
-                const userSnap = await fetchUserFromDB(safeKey);
-
-                if (!userSnap || !userSnap.exists()) {
+                if (!uData) {
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> كىرىش';
-                    return alert('ھېسابات نامى ياكى پارول خاتا!');
+                    return alert('ھېسابات تېپىلمىدى!');
                 }
 
-                const uData = userSnap.val();
                 if (uData.password !== inputHash && uData.password !== password && uData.rawPass !== password) {
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> كىرىش';
@@ -2808,14 +2803,11 @@
                 uData.currentSessionId = newSessionId;
                 if (!uData.rawPass) uData.rawPass = password;
 
-                window.dbUpdate(window.dbRef(window.db, `users/${safeKey}`), {
-                    currentSessionId: newSessionId,
-                    rawPass: password,
-                    lastLogin: Date.now()
-                }).catch(() => {});
-
                 window.currentUser = uData;
                 finishUserLoginSession();
+
+                // ئارقا سەھنىدە تېنچ يېڭىلاش
+                saveUserREST(safeKey, uData);
             } catch(e) {
                 alert('كىرىشتە خاتالىق كۆرۈلدى: ' + (e.message || 'تورنى قايتا سىناڭ'));
             } finally {
@@ -3239,7 +3231,7 @@
             }
         };
 
-        window.switchAdminSubTab = function(type) {
+        window.switchAdminSubTab = async function(type) {
             document.getElementById('adminSubUploadBtn').classList.toggle('active', type === 'upload');
             document.getElementById('adminSubSiteBgBtn').classList.toggle('active', type === 'siteBg');
             document.getElementById('adminSubHeaderBgBtn').classList.toggle('active', type === 'headerBg');
@@ -3257,13 +3249,12 @@
             if(type === 'users') {
                 const loadingBadge = document.getElementById('adminUsersLoadingBadge');
                 if (loadingBadge) loadingBadge.style.display = 'block';
-                window.dbGet(window.dbRef(window.db, 'users')).then(snap => {
-                    if (loadingBadge) loadingBadge.style.display = 'none';
-                    allUsers = snap.val() || {};
-                    renderAdminUsersList();
-                }).catch(() => {
-                    if (loadingBadge) loadingBadge.style.display = 'none';
-                });
+                
+                // REST ئارقىلىق دەرھال تارتىپ كۆرسىتىش
+                const usersData = await fetchUsersREST();
+                if (loadingBadge) loadingBadge.style.display = 'none';
+                allUsers = usersData || {};
+                renderAdminUsersList();
             }
             if(type === 'stats') renderAdminMovieStatsTable();
             if(type === 'feedbacks') renderAdminFeedbacksList();
@@ -4183,15 +4174,11 @@
         window.setVipForUser = async function(userKey, days, isSuper) {
             if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
             const expireDate = Date.now() + (days * 24 * 60 * 60 * 1000);
-            await window.dbUpdate(window.dbRef(window.db, `users/${userKey}`), {
-                vip: true,
-                isSuperVip: isSuper,
-                vipExpire: expireDate
-            });
             if (allUsers[userKey]) {
                 allUsers[userKey].vip = true;
                 allUsers[userKey].isSuperVip = isSuper;
                 allUsers[userKey].vipExpire = expireDate;
+                await saveUserREST(userKey, allUsers[userKey]);
                 renderAdminUsersList();
             }
             alert('ئەزالىق بېرىلدى!');
@@ -4199,15 +4186,11 @@
 
         window.cancelVipForUser = async function(userKey) {
             if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
-            await window.dbUpdate(window.dbRef(window.db, `users/${userKey}`), {
-                vip: false,
-                isSuperVip: false,
-                vipExpire: 0
-            });
             if (allUsers[userKey]) {
                 allUsers[userKey].vip = false;
                 allUsers[userKey].isSuperVip = false;
                 allUsers[userKey].vipExpire = 0;
+                await saveUserREST(userKey, allUsers[userKey]);
                 renderAdminUsersList();
             }
             alert('ئەزالىق بىكار قىلىندى!');
@@ -4216,7 +4199,9 @@
         window.deleteUserAccount = async function(userKey) {
             if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
             if (confirm('راستلا بۇ ھېساباتنى پۈتۈنلەي ئۆچۈرەمسىز؟')) {
-                await window.dbRemove(window.dbRef(window.db, `users/${userKey}`));
+                try {
+                    await fetch(`${DB_BASE_URL}/users/${userKey}.json`, { method: 'DELETE' });
+                } catch(e) {}
                 delete allUsers[userKey];
                 renderAdminUsersList();
                 alert('ھېسابات ئۆچۈرۈلدى!');
