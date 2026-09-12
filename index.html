@@ -18,12 +18,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-    <!-- PWA Offline Service Worker -->
+    <!-- PWA Offline Service Worker ۋە Background Cache -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'koznak-pwa-v9';
+                    const CACHE_NAME = 'koznak-pwa-v10';
                     const ASSETS = [
                         './',
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
@@ -182,8 +182,14 @@
             box-shadow: 0 4px 15px rgba(255, 59, 48, 0.35);
         }
 
+        /* 5-تەلەپ: ئۆزگىرىشچان رەسىملىك باش بەت لوزۇنكىسى */
         .home-top-header {
-            background: #ff3b30;
+            background-color: #ff3b30;
+            background-size: cover;
+            background-position: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
             padding-top: calc(env(safe-area-inset-top, 24px) + 16px);
             padding-bottom: 18px;
             padding-left: 16px;
@@ -191,25 +197,37 @@
             border-bottom-left-radius: 24px;
             border-bottom-right-radius: 24px;
             box-shadow: 0 4px 20px rgba(255, 59, 48, 0.25);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            transition: background-image 0.4s ease;
+            overflow: hidden;
+        }
+        .home-top-header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(255, 59, 48, 0.85) 100%);
+            z-index: 1;
+            pointer-events: none;
         }
         .home-top-title-row {
+            position: relative;
+            z-index: 2;
             text-align: center;
             color: #ffffff;
-            font-size: 19px;
+            font-size: 20px;
             font-weight: 900;
             margin-bottom: 14px;
             margin-top: 4px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.6);
         }
         .home-search-bar-wrapper {
+            position: relative;
+            z-index: 2;
             display: flex;
             align-items: center;
             background: #ffffff;
             border-radius: var(--pill-radius);
             padding: 4px 6px 4px 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             cursor: pointer;
         }
         .home-search-input {
@@ -280,7 +298,7 @@
             background-color: #000000; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
             border: 1px solid var(--border-glow);
         }
-        .hero-slider-track { display: flex; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .hero-slider-track { display: flex; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform; }
         .hero-slide-item {
             min-width: 100%; width: 100%; height: 100%;
             position: relative; cursor: pointer; background-size: cover; background-position: center;
@@ -327,7 +345,7 @@
             display: none;
             overflow: hidden;
             margin: 0; padding: 0;
-            touch-action: none;
+            touch-action: pan-y;
         }
         #shortsTab.active-tab { display: block; }
         .shorts-viewer-container {
@@ -616,7 +634,7 @@
             position: relative; width: 100%; overflow: hidden;
             padding: 4px 0 14px 0; direction: ltr !important;
         }
-        .marquee-track { display: flex; gap: 12px; width: max-content; cursor: pointer; }
+        .marquee-track { display: flex; gap: 12px; width: max-content; cursor: pointer; will-change: transform; }
         .marquee-track:hover, .marquee-track:active { animation-play-state: paused !important; }
 
         @keyframes scrollRightToLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
@@ -1160,7 +1178,7 @@
 
     <!-- 1. باشبەت -->
     <div id="homeTab" class="tab-content active-tab">
-        <div class="home-top-header">
+        <div class="home-top-header" id="homeTopHeaderElement">
             <div class="home-top-title-row">كۆزنەك كىنوخانىسى</div>
             <div class="home-search-bar-wrapper" onclick="openSearch()">
                 <input type="text" class="home-search-input" placeholder="سىز ئىزدەڭ مەن تاپاي" readonly>
@@ -1241,7 +1259,9 @@
 
             <div id="shortsPlayIcon" class="shorts-play-indicator"><i class="fa-solid fa-play"></i></div>
 
-            <video id="shortsPlayerVideo" class="shorts-main-video" playsinline webkit-playsinline></video>
+            <!-- Preload Auto تەڭشەلدى -->
+            <video id="shortsPlayerVideo" class="shorts-main-video" playsinline webkit-playsinline preload="auto"></video>
+            <video id="shortsPreloadBuffer" style="display:none;" preload="auto"></video>
 
             <div class="shorts-right-actions">
                 <button class="shorts-action-btn" id="shortsActionFavBtn" onclick="toggleShortsFavorite()">
@@ -1505,7 +1525,7 @@
                             <div class="settings-icon-badge" style="color: #ff3b30;"><i class="fa-solid fa-toolbox"></i></div>
                             <div>
                                 <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">باشقۇرغۇچى مەركىزى</div>
-                                <div style="font-size: 11px; color: var(--text-secondary);">مەزمۇن قوشۇش، تېلېگرامما بوتى، سىتاستىكا</div>
+                                <div style="font-size: 11px; color: var(--text-secondary);">مەزمۇن قوشۇش، ئارقا تەگلىك ئۆزگەرتىش، ئەزالار</div>
                             </div>
                         </div>
                         <i class="fa-solid fa-chevron-left" style="font-size: 12px; color: var(--text-secondary);"></i>
@@ -1586,7 +1606,7 @@
             </div>
 
             <div style="text-align: center; font-size: 11px; color: var(--text-secondary); margin-top: 14px;">
-                كۆزنەك كىنوخانىسى • Koznak TV v5.0 (Independent In-App Stream Vault)
+                كۆزنەك كىنوخانىسى • Koznak TV Ultra Speed Edition
             </div>
         </div>
     </div>
@@ -1600,8 +1620,8 @@
                 <button type="button" class="auth-nav-pill active" id="adminSubUploadBtn" onclick="switchAdminSubTab('upload')">
                     <i class="fa-solid fa-cloud-arrow-up"></i> يوللاش
                 </button>
-                <button type="button" class="auth-nav-pill" id="adminSubTelegramBtn" onclick="switchAdminSubTab('telegram')">
-                    <i class="fa-brands fa-telegram"></i> تېلېگرامما بوتى
+                <button type="button" class="auth-nav-pill" id="adminSubHeaderBgBtn" onclick="switchAdminSubTab('headerBg')">
+                    <i class="fa-solid fa-image"></i> لوزۇنكا رەسىمى
                 </button>
                 <button type="button" class="auth-nav-pill" id="adminSubUsersBtn" onclick="switchAdminSubTab('users')">
                     <i class="fa-solid fa-users-gear"></i> ئەزالار
@@ -1625,7 +1645,7 @@
                             <option value="series">قىسىملىق كىنولار (Series)</option>
                             <option value="cartoon">كارتونلار (Cartoon)</option>
                             <option value="cartoon_series">قىسىملىق كارتۇن (Cartoon Series)</option>
-                            <option value="short">📱 قىسقا فىلىم (Internet Archive - قىسىملىق Shorts)</option>
+                            <option value="short">📱 قىسقا فىلىم (Archive.org MP4 قىسىملىق)</option>
                             <option value="free">🎁 ھەقسىز كىنولار (Free Movie)</option>
                         </select>
                     </div>
@@ -1686,8 +1706,8 @@
                     </div>
                     
                     <div id="singleLinkGroup" class="form-group">
-                        <label id="mainLinkLabel">📼 سىن قويۇش ئۇلانمىسى (Archive.org ياكى Telegram / MP4)</label>
-                        <input type="text" id="contentLink" class="form-input" placeholder="مەسىلەن: https://archive.org/... ياكى MP4 ئۇلانمىسى" autocomplete="off">
+                        <label id="mainLinkLabel">📼 سىن قويۇش ئۇلانمىسى (Archive.org ياكى MP4/HLS)</label>
+                        <input type="text" id="contentLink" class="form-input" placeholder="مەسىلەن: https://archive.org/.../video.mp4" autocomplete="off">
                     </div>
 
                     <div id="downloadLinkGroup" class="form-group">
@@ -1705,52 +1725,25 @@
                 </form>
             </div>
 
-            <!-- 2. تېلېگرامما بوتى ئارقىلىق يوللاش بۆلىكى (يېڭى قوشۇلدى) -->
-            <div id="adminTelegramSection" class="settings-group-card" style="padding: 16px; display: none;">
-                <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-brands fa-telegram" style="color: #0088cc;"></i> تېلېگرامما بوتى (File ID) ئارقىلىق فىلىم قوشۇش</div>
-                <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 14px; line-height: 1.6;">
-                    تېلېگرامما بوتىڭىزغا فىلىم ياكى رەسىم ئەۋەتكەندە ئالغان <b>`file_id`</b> كودىنى ياكى ئاممىۋى قانال (Public Channel) ئۇلانمىسىنى تۆۋەندىكى كۆزنەككە چاپلاپ توربەتكە بىۋاسىتە قوشالايسىز.
+            <!-- 2. باش بەت لوزۇنكا رەسىمىنى تەڭشەش بۆلىكى (5-تەلەپ بويىچە) -->
+            <div id="adminHeaderBgSection" class="settings-group-card" style="padding: 16px; display: none;">
+                <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-image" style="color: #ff3b30;"></i> باش بەت لوزۇنكا ئارقا كۆرۈنۈش رەسىمى</div>
+                <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
+                    تېلېفوندىن سۈرەت تاللاپ يوللىسىڭىز، باش بەت ئۈستىدىكى «كۆزنەك كىنوخانىسى» خېتىنىڭ ئارقا كۆرۈنۈشىدە نامايان بولىدۇ.
                 </div>
-                
-                <form id="telegramUploadForm" onsubmit="handleTelegramUploadSubmit(event)">
-                    <div class="form-group">
-                        <label>🎬 مەزمۇن تىپى</label>
-                        <select id="tgContentType" class="form-select">
-                            <option value="movie">كىنو (Movie)</option>
-                            <option value="series">قىسىملىق فىلىم (Series)</option>
-                            <option value="cartoon">كارتون (Cartoon)</option>
-                            <option value="free">ھەقسىز فىلىم (Free)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>مەزمۇن نامى</label>
-                        <input type="text" id="tgContentTitle" class="form-input" placeholder="فىلىم ئىسمى..." required autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                        <label>🖼️ تېلېگرامما رەسىم كودى (Photo File ID) ياكى URL</label>
-                        <input type="text" id="tgContentPoster" class="form-input" placeholder="رەسىمنىڭ file_id سى ياكى سۈرەت ئادرېسى" required autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                        <label>📼 تېلېگرامما سىن كودى (Video File ID) ياكى Telegram Post URL</label>
-                        <input type="text" id="tgContentVideoLink" class="form-input" placeholder="فىلىمنىڭ file_id سى ياكى تېلېگرامما ئۇلانمىسى" required autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                        <label>💰 ھەقلىق ياكى ھەقسىز</label>
-                        <select id="tgContentTag" class="form-select">
-                            <option value="ھەممە ئەزا كۆرەلەيدىغان">ھەقسىز (ئادەتتىكى)</option>
-                            <option value="VIP">VIP (ھەقلىق)</option>
-                        </select>
-                    </div>
-
-                    <button type="submit" class="action-btn" style="background: #0088cc;">تېلېگرامما بوتىدىن توربەتكە چىقىرىش</button>
-                </form>
+                <input type="file" id="headerBgFileInput" accept="image/*" style="display: none;" onchange="handleHeaderBgSelected(event)">
+                <div class="avatar-file-dropzone" onclick="document.getElementById('headerBgFileInput').click()">
+                    <div style="font-size: 30px; margin-bottom: 6px; color: #ff3b30;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                    <span style="font-size: 12px; font-weight: 700;">تېلېفوندىن رەسىم تاللاش</span>
+                </div>
+                <div id="headerBgPreviewContainer" style="display: none; margin: 10px 0; text-align: center;">
+                    <img id="headerBgPreviewImg" alt="رەسىم" style="width: 100%; max-height: 120px; object-fit: cover; border-radius: 14px; border: 1px solid var(--border-glow);">
+                </div>
+                <button type="button" class="action-btn" id="saveHeaderBgBtn" style="background: #2ed573; display: none;" onclick="saveHeaderBg()">لوزۇنكا رەسىمىنى دەرھال قوللىنىش</button>
+                <button type="button" class="action-btn" style="background: #64748b; margin-top: 8px;" onclick="resetHeaderBgToDefault()">ئەسلى قىزىل ھالىتىگە قايتۇرۇش</button>
             </div>
 
-            <!-- 3. ئەزالار باشقۇرۇش -->
+            <!-- 3. ئەزالار باشقۇرۇش (يۇقىرى سۈرئەتكە كۆتۈرۈلگەن) -->
             <div id="adminUsersSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">👥 ئەزالارنى تولۇق باشقۇرۇش</div>
                 <div class="form-group" style="margin-bottom: 10px;">
@@ -1848,7 +1841,7 @@
                 <div class="vip-luxury-card svip-card">
                     <div class="vip-crown-icon"><i class="fa-solid fa-gem"></i></div>
                     <h3 style="font-size: 17px; font-weight: 900; color: var(--text-primary); margin-bottom: 2px;">ئالىي ئەزالىق (Super VIP)</h3>
-                    <p style="font-size: 11px; color: #e040fb;">ھەم 1 ئاي چەكلىمىسىز كۆرۈش + ھەم تېلېفونға چۈشۈرۈۋېلىش</p>
+                    <p style="font-size: 11px; color: #e040fb;">ھەم 1 ئاي چەكلىمىسىز كۆرۈش + ھەم تېلېفونغا چۈشۈرۈۋېلىش</p>
                     <div style="margin: 6px 0;">
                         <span class="vip-price-tag" id="displaySvipPrice">7＄</span>
                     </div>
@@ -1904,7 +1897,7 @@
         <button class="nav-item" onclick="switchTab('moviesOnlyTab', this)"><span>🎬</span><span>كىنو</span></button>
         <button class="nav-item" onclick="switchTab('theatersTab', this)"><span>📺</span><span>تىياتىرلار</span></button>
         <button class="nav-item" onclick="switchTab('shortsTab', this)"><span>📱</span><span>قىسقا فىلىم</span></button>
-        <button class="nav-item" onclick="switchTab('accountTab', this)"><span>👤</span><span>ھېساۋات</span></button>
+        <button class="nav-item" onclick="switchTab('accountTab', this)"><span>👤</span><span>ھېسابات</span></button>
         <button class="nav-item" onclick="switchTab('settingsTab', this)"><span>⚙️</span><span>تەڭشەك</span></button>
     </div>
 
@@ -2013,7 +2006,7 @@
 
         const ADMIN_HASH = hashPassword("652923198405083311");
 
-        function compressImage(file, maxWidth = 300, maxHeight = 300, quality = 0.8) {
+        function compressImage(file, maxWidth = 400, maxHeight = 400, quality = 0.75) {
             return new Promise((resolve, reject) => {
                 if (!file) return reject('No file');
                 const reader = new FileReader();
@@ -2049,7 +2042,7 @@
                     observer.unobserve(img);
                 }
             });
-        }, { rootMargin: "150px 0px" });
+        }, { rootMargin: "250px 0px" });
 
         let allMovies = {};
         let allUsers = {};
@@ -2067,6 +2060,7 @@
         let sessionListenerUnsubscribe = null;
         let userRealtimeListenerUnsubscribe = null;
         let temporaryAvatarBase64 = '';
+        let temporaryHeaderBgBase64 = '';
 
         try {
             favorites = JSON.parse(localStorage.getItem('koznak_favs') || '[]');
@@ -2078,14 +2072,14 @@
 
         let currentShortMovie = null;
         let currentShortEpIndex = 0;
-
         let searchFiltersState = { type: 'all', genre: 'all', year: 'all', country: 'all', price: 'all' };
 
         let idb = null;
 
+        // 7-تەلەپ: ئارقا سەھنىدە توختاپ قالماي چۈشۈرۈش ئۈچۈن ئىشەنچلىك ئامبار
         function initIndexedDB() {
             return new Promise((resolve) => {
-                const req = indexedDB.open('KoznakLocalVault', 7);
+                const req = indexedDB.open('KoznakLocalVaultV2', 8);
                 req.onupgradeneeded = (e) => {
                     const db = e.target.result;
                     if (!db.objectStoreNames.contains('downloads')) {
@@ -2126,6 +2120,7 @@
             tx.objectStore('downloads').delete(id);
         }
 
+        // سىستېما سىرتىغا چىقسىمۇ Cache API ۋە ReadableStream ئارقىلىق چۈشۈشنى داۋاملاشتۇرۇش
         window.startMovieAppDownload = async function() {
             if (!window.currentUser) return alert('ئالدى بىلەن كىرىڭ!');
             if (!checkUserSuperVipStatus(window.currentUser)) {
@@ -2163,11 +2158,26 @@
             await saveDownloadToIDB(task);
             renderDownloadPanels();
 
+            // Background Cache Stream چۈشۈرۈش
+            if ('caches' in window) {
+                caches.open('koznak-offline-videos').then(cache => {
+                    cache.add(cleanStreamUrl).then(async () => {
+                        task.status = 'completed';
+                        await saveDownloadToIDB(task);
+                        renderDownloadPanels();
+                    }).catch(async () => {
+                        // ئەگەر CORS ياكى باشقا سەۋەبتىن بولمىسا fetch blob قىلىش
+                        fetchBlobFallback(cleanStreamUrl, task);
+                    });
+                });
+            } else {
+                fetchBlobFallback(cleanStreamUrl, task);
+            }
+        };
+
+        function fetchBlobFallback(cleanStreamUrl, task) {
             fetch(cleanStreamUrl)
-                .then(response => {
-                    if (!response.ok) throw new Error('Download stream error');
-                    return response.blob();
-                })
+                .then(res => res.blob())
                 .then(async (blob) => {
                     task.status = 'completed';
                     task.blob = blob;
@@ -2179,7 +2189,7 @@
                     await saveDownloadToIDB(task);
                     renderDownloadPanels();
                 });
-        };
+        }
 
         window.removeDownloadItem = function(id) {
             deleteDownloadFromIDB(id);
@@ -2194,6 +2204,13 @@
             let playSource = task.url;
             if (task.blob) {
                 playSource = URL.createObjectURL(task.blob);
+            } else if ('caches' in window) {
+                const cache = await caches.open('koznak-offline-videos');
+                const matched = await cache.match(task.url);
+                if (matched) {
+                    const bl = await matched.blob();
+                    playSource = URL.createObjectURL(bl);
+                }
             }
 
             stopAllVideos();
@@ -2237,7 +2254,7 @@
                                     ${isDone ? '<i class="fa-solid fa-circle-check"></i> تاماملاندى (تېلېفون سىغىمىدا ساقلاندى)' : '<i class="fa-solid fa-spinner fa-spin"></i> ئارقا سەھنىدە چۈشۈۋاتىدۇ...'}
                                 </div>
                                 <div style="font-size: 10px; color: var(--text-secondary);">
-                                    ${isDone ? 'تورسىز ھالەتتە (Internet يوق چاغدىمۇ) تۆۋەندىكى كۇنۇپكا ئارقىلىق كۆرەلەيسىز' : 'ساقلاپ تۇرۇڭ، سانلىق مەلۇمات يۈكلىنىۋاتىدۇ'}
+                                    ${isDone ? 'تورسىز ھالەتتىمۇ كۆرەلەيسىز' : 'ساقلاپ تۇرۇڭ، مەزمۇن يۈكلىنىۋاتىدۇ'}
                                 </div>
                             </div>
                         </div>
@@ -2246,7 +2263,7 @@
                                 <i class="fa-solid fa-play"></i> دەرھال قويۇش (تورسىز)
                             </button>
                             <button type="button" class="btn-browser-ctrl" style="background: rgba(255, 71, 87, 0.15); border: 1px solid #ff4757; color: #ff4757;" onclick="removeDownloadItem('${task.id}')">
-                                <i class="fa-solid fa-trash"></i> تېلېفوندىن ئۆچۈرۈش
+                                <i class="fa-solid fa-trash"></i> ئۆچۈرۈش
                             </button>
                         </div>
                     `;
@@ -2275,6 +2292,7 @@
             document.getElementById('registerFormSection').style.display = mode === 'register' ? 'block' : 'none';
         };
 
+        // 3-تەلەپ: تىزىملىتىش سۈرئىتىنى ئىنتايىن تېز قىلىش
         window.handleUserRegister = async function() {
             const btn = document.getElementById('regSubmitBtn');
             const username = document.getElementById('regUsername').value.trim();
@@ -2296,7 +2314,6 @@
 
                 const newSessionId = generateSessionId();
                 const newUID = generateShortUID();
-
                 const inputHash = hashPassword(password);
                 const isAdmin = (username === 'dronemax' && inputHash === ADMIN_HASH);
 
@@ -2305,7 +2322,7 @@
                     uid: isAdmin ? '888888' : newUID,
                     user: username,
                     nickname: isAdmin ? 'باشقۇرغۇچى' : username,
-                    password: password,
+                    password: inputHash,
                     role: isAdmin ? 'admin' : 'user',
                     vip: isAdmin,
                     isSuperVip: isAdmin,
@@ -2315,18 +2332,19 @@
                     createdAt: Date.now()
                 };
 
-                await window.dbSet(window.dbRef(window.db, 'users/' + safeKey), newUser);
+                window.dbSet(window.dbRef(window.db, 'users/' + safeKey), newUser);
                 localStorage.setItem('koznak_session_id', newSessionId);
                 window.currentUser = newUser;
                 finishUserLoginSession();
             } catch(e) {
-                alert('تىزىملىتىشتا تور خاتالىقى كۆرۈلدى!');
+                alert('تىزىملىتىشتا خاتالىق كۆرۈلدى!');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> دەرھال تىزىملىتىش ۋە كىرىش';
             }
         };
 
+        // 3-تەلەپ: كىرىش سۈرئىتىنى چاقماق تېزلىككە چىقىرىش
         window.handleUserLogin = async function() {
             const btn = document.getElementById('loginSubmitBtn');
             const username = document.getElementById('loginUsername').value.trim();
@@ -2337,9 +2355,9 @@
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> كىرىۋاتىدۇ...';
 
             const safeKey = 'usr_' + encodeURIComponent(username).replace(/[^a-zA-Z0-9_]/g, '');
+            const inputHash = hashPassword(password);
 
             try {
-                const inputHash = hashPassword(password);
                 const isTargetAdmin = (username === 'dronemax' && inputHash === ADMIN_HASH);
 
                 if (isTargetAdmin) {
@@ -2349,7 +2367,7 @@
                         uid: '888888',
                         user: username,
                         nickname: 'باشقۇرغۇچى',
-                        password: password,
+                        password: inputHash,
                         role: 'admin',
                         vip: true,
                         isSuperVip: true,
@@ -2359,12 +2377,7 @@
                         createdAt: Date.now()
                     };
 
-                    try {
-                        await window.dbSet(window.dbRef(window.db, 'users/' + safeKey), adminUser);
-                    } catch(err) {
-                        console.warn('Database write delayed:', err);
-                    }
-
+                    window.dbSet(window.dbRef(window.db, 'users/' + safeKey), adminUser);
                     localStorage.setItem('koznak_session_id', newSessionId);
                     window.currentUser = adminUser;
                     finishUserLoginSession();
@@ -2380,7 +2393,7 @@
                 }
 
                 const uData = userSnap.val();
-                if (uData.password !== password) {
+                if (uData.password !== inputHash && uData.password !== password) {
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> كىرىش';
                     return alert('پارول خاتا!');
@@ -2390,7 +2403,7 @@
                 localStorage.setItem('koznak_session_id', newSessionId);
                 uData.currentSessionId = newSessionId;
 
-                await window.dbUpdate(window.dbRef(window.db, `users/${safeKey}`), {
+                window.dbUpdate(window.dbRef(window.db, `users/${safeKey}`), {
                     currentSessionId: newSessionId,
                     lastLogin: Date.now()
                 });
@@ -2398,7 +2411,7 @@
                 window.currentUser = uData;
                 finishUserLoginSession();
             } catch(e) {
-                alert('كىرىشتە خاتالىق كۆرۈلدى: ' + (e.message || 'تور ئۇلىنىشىنى تەكشۈرۈڭ'));
+                alert('كىرىشتە خاتالىق كۆرۈلدى: ' + (e.message || 'تورنى تەكشۈرۈڭ'));
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> كىرىش';
@@ -2553,6 +2566,42 @@
             alert('باش رەسىم يېڭىلاندى!');
         };
 
+        // 5-تەلەپ: باش بەت لوزۇنكا سۈرىتىنى بىر تەرەپ قىلىش
+        window.handleHeaderBgSelected = async function(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            try {
+                const base64 = await compressImage(file, 800, 400, 0.8);
+                temporaryHeaderBgBase64 = base64;
+                document.getElementById('headerBgPreviewImg').src = base64;
+                document.getElementById('headerBgPreviewContainer').style.display = 'block';
+                document.getElementById('saveHeaderBgBtn').style.display = 'block';
+            } catch(e) { alert('رەسىمنى پىرىسلاش مەغلۇپ بولدى!'); }
+        };
+
+        window.saveHeaderBg = async function() {
+            if (!temporaryHeaderBgBase64) return;
+            await window.dbSet(window.dbRef(window.db, 'settings/headerBgImage'), temporaryHeaderBgBase64);
+            applyHeaderBg(temporaryHeaderBgBase64);
+            alert('لوزۇنكا رەسىمى مۇۋەپپەقىيەتلىك ئالماشتۇرۇلدى!');
+        };
+
+        window.resetHeaderBgToDefault = async function() {
+            await window.dbRemove(window.dbRef(window.db, 'settings/headerBgImage'));
+            applyHeaderBg('');
+            alert('ئەسلى قىزىل ھالەتكە قايتۇرۇلدى!');
+        };
+
+        function applyHeaderBg(imgUrl) {
+            const header = document.getElementById('homeTopHeaderElement');
+            if (!header) return;
+            if (imgUrl) {
+                header.style.backgroundImage = `url('${imgUrl}')`;
+            } else {
+                header.style.backgroundImage = 'none';
+            }
+        }
+
         window.handlePosterUrlInput = function(url) {
             const cleanUrl = url.trim();
             if (cleanUrl) {
@@ -2566,7 +2615,7 @@
             const file = event.target.files && event.target.files[0];
             if (!file) return;
             try {
-                const base64 = await compressImage(file, 600, 850, 0.8);
+                const base64 = await compressImage(file, 480, 680, 0.75);
                 document.getElementById('contentPosterBase64').value = base64;
                 document.getElementById('contentPosterUrlInput').value = '';
                 document.getElementById('uploadPosterPreviewImg').src = base64;
@@ -2578,7 +2627,7 @@
             const file = event.target.files && event.target.files[0];
             if (!file) return;
             try {
-                const base64 = await compressImage(file, 500, 700, 0.8);
+                const base64 = await compressImage(file, 400, 550, 0.75);
                 document.getElementById('fbMovieImageBase64').value = base64;
             } catch(e) { alert('رەسىم قاچىلانمىدى!'); }
         };
@@ -2602,7 +2651,7 @@
 
             try {
                 await window.dbSet(window.dbRef(window.db, `feedbacks/${fbId}`), feedbackData);
-                alert('تەلىپىڭىز باشقۇرغۇچىغا مۇۋەپپەقىيەتلىك ئەۋەتىلدى! رەھمەت.');
+                alert('تەلىپىڭىز باشقۇرغۇچىغا يوللاندى!');
                 document.getElementById('fbMovieTitle').value = '';
                 document.getElementById('fbMovieLink').value = '';
                 document.getElementById('fbMovieImageFile').value = '';
@@ -2673,22 +2722,38 @@
             if (adminMenu) adminMenu.style.display = isAdmin ? 'block' : 'none';
         };
 
+        // 4 ۋە 6-تەلەپ: فىلىم قويغۇچنى دەرىجىدىن تاشقىرى تېز قويىدىغان قىلىپ تەڭشەش
         function setupFastPlayer(url, poster = '') {
             stopAllVideos();
             const playerBox = document.getElementById('detailPlayerContainer');
-            if(!url) { playerBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;">سىن ئۇلانمىسى تېپىلمىدى</div>'; return; }
-            const cleanUrl = url.trim();
+            if(!url) { 
+                playerBox.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#888;">سىن ئۇلانمىسى تېپىلمىدى</div>'; 
+                return; 
+            }
+            let cleanUrl = url.trim();
+
+            if (cleanUrl.includes('archive.org/details/')) {
+                cleanUrl = cleanUrl.replace('archive.org/details/', 'archive.org/download/');
+            }
 
             if(cleanUrl.includes('.m3u8')) {
                 playerBox.innerHTML = `<video id="nativeVideoPlayer" class="native-cinema-video" playsinline webkit-playsinline preload="auto" poster="${poster}"></video>`;
                 const video = document.getElementById('nativeVideoPlayer');
                 if (Hls.isSupported()) {
-                    currentHlsInstance = new Hls({ enableWorker: true, lowLatencyMode: true });
+                    currentHlsInstance = new Hls({ 
+                        enableWorker: true, 
+                        lowLatencyMode: true,
+                        maxBufferLength: 30,
+                        maxMaxBufferLength: 60
+                    });
                     currentHlsInstance.loadSource(cleanUrl);
                     currentHlsInstance.attachMedia(video);
-                    currentHlsInstance.on(Hls.Events.MANIFEST_PARSED, () => video.play().catch(() => {}));
+                    currentHlsInstance.on(Hls.Events.MANIFEST_PARSED, () => {
+                        video.play().catch(() => {});
+                    });
                 } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-                    video.src = cleanUrl; video.play().catch(() => {});
+                    video.src = cleanUrl; 
+                    video.play().catch(() => {});
                 }
                 return;
             }
@@ -2702,7 +2767,8 @@
             }
 
             playerBox.innerHTML = `<video id="nativeVideoPlayer" class="native-cinema-video" src="${cleanUrl}" controls playsinline webkit-playsinline autoplay preload="auto" poster="${poster}"></video>`;
-            document.getElementById('nativeVideoPlayer').play().catch(() => {});
+            const nVid = document.getElementById('nativeVideoPlayer');
+            nVid.play().catch(() => {});
         }
 
         window.toggleCinemaFullscreen = function() {
@@ -2760,15 +2826,16 @@
             }
         };
 
+        // تېلېگرامما ئۆچۈرۈلۈپ، باش بەت لوزۇنكا باشقۇرۇش قوشۇلدى
         window.switchAdminSubTab = function(type) {
             document.getElementById('adminSubUploadBtn').classList.toggle('active', type === 'upload');
-            document.getElementById('adminSubTelegramBtn').classList.toggle('active', type === 'telegram');
+            document.getElementById('adminSubHeaderBgBtn').classList.toggle('active', type === 'headerBg');
             document.getElementById('adminSubUsersBtn').classList.toggle('active', type === 'users');
             document.getElementById('adminSubStatsBtn').classList.toggle('active', type === 'stats');
             document.getElementById('adminSubFeedbacksBtn').classList.toggle('active', type === 'feedbacks');
 
             document.getElementById('adminUploadSection').style.display = type === 'upload' ? 'block' : 'none';
-            document.getElementById('adminTelegramSection').style.display = type === 'telegram' ? 'block' : 'none';
+            document.getElementById('adminHeaderBgSection').style.display = type === 'headerBg' ? 'block' : 'none';
             document.getElementById('adminUsersSection').style.display = type === 'users' ? 'block' : 'none';
             document.getElementById('adminStatsSection').style.display = type === 'stats' ? 'block' : 'none';
             document.getElementById('adminFeedbacksSection').style.display = type === 'feedbacks' ? 'block' : 'none';
@@ -2865,12 +2932,12 @@
             const seriesGroupLbl = document.getElementById('seriesGroupLabel');
 
             if (type === 'short') {
-                linkLbl.innerHTML = '📱 قىسقا فىلىم ئۇلانمىسى (<span style="color:#ff3b30">Internet Archive</span> MP4 بىۋاسىتە ئۇلانمىسى)';
+                linkLbl.innerHTML = '📱 قىسقا فىلىم ئۇلانمىسى (Internet Archive MP4 ئۇلانمىسى)';
                 seriesGroupLbl.innerHTML = '📺 قىسقا فىلىم قىسىملىرى (Internet Archive MP4 ئۇلانمىلىرى بىلەن)';
                 document.getElementById('singleLinkGroup').style.display = 'none';
                 document.getElementById('seriesLinksGroup').style.display = 'block';
             } else {
-                linkLbl.innerHTML = '📼 سىن قويۇش ئۇلانمىسى (Archive.org ياكى Telegram / MP4)';
+                linkLbl.innerHTML = '📼 سىن قويۇش ئۇلانمىسى (Archive.org ياكى MP4/HLS)';
                 seriesGroupLbl.innerHTML = '📺 قىسىملىق ئۇلانمىلار (قىسىم سانى بىلەن قوشۇش)';
                 document.getElementById('singleLinkGroup').style.display = type.includes('series') ? 'none' : 'block';
                 document.getElementById('seriesLinksGroup').style.display = type.includes('series') ? 'block' : 'none';
@@ -2990,6 +3057,7 @@
             keys.forEach(id => grid.appendChild(createMovieCardElement(id, allMovies[id])));
         }
 
+        // 6-تەلەپ: قىسقا فىلىم بۆلىكىدىكى قويغۇچنى تېزلىتىش
         function startShortsViewer() {
             stopAllVideos();
             const shortKeys = Object.keys(allMovies || {}).filter(id => allMovies[id].type === 'short');
@@ -3025,8 +3093,19 @@
             document.getElementById('shortsActionFavBtn').classList.toggle('liked', isFav);
 
             const video = document.getElementById('shortsPlayerVideo');
-            video.src = currentEp.url || '';
+            let cleanUrl = (currentEp.url || '').trim();
+            if (cleanUrl.includes('archive.org/details/')) {
+                cleanUrl = cleanUrl.replace('archive.org/details/', 'archive.org/download/');
+            }
+            video.src = cleanUrl;
             video.play().catch(() => {});
+
+            // كېيىنكى قىسىمنى ئالدىن يۈكلەپ تەييارلاپ تۇرۇش (Preload Next)
+            if (currentShortEpIndex + 1 < episodes.length) {
+                let nextUrl = episodes[currentShortEpIndex + 1].url || '';
+                if (nextUrl.includes('archive.org/details/')) nextUrl = nextUrl.replace('archive.org/details/', 'archive.org/download/');
+                document.getElementById('shortsPreloadBuffer').src = nextUrl;
+            }
 
             video.onended = () => {
                 const autoPlayNext = document.getElementById('shortsAutoPlayNext').checked;
@@ -3276,6 +3355,7 @@
             renderRelatedMovies(id);
         }
 
+        // 2-تەلەپ: مەزمۇن يۈكلىنىش سۈرئىتىنى ئاشۇرۇش (DocumentFragment & Infinite Loop چەكلەنگەن)
         function renderMovies() {
             const container = document.getElementById('homeSectionsContainer');
             if(!container) return;
@@ -3337,7 +3417,11 @@
                         `;
                         const track = sec.querySelector('.marquee-track');
                         let pool = [...catKeys];
-                        while (pool.length < 8) pool = pool.concat(catKeys);
+                        let limitCount = 0;
+                        while (pool.length < 8 && limitCount < 3) {
+                            pool = pool.concat(catKeys);
+                            limitCount++;
+                        }
                         pool.concat(pool).forEach(id => track.appendChild(createMovieCardElement(id, allMovies[id])));
                         docFrag.appendChild(sec);
                     }
@@ -3566,8 +3650,9 @@
                 const epUrls = document.querySelectorAll('.ep-url-input');
                 let links = [];
                 epNames.forEach((nameInput, index) => {
-                    const epUrl = epUrls[index]?.value.trim();
+                    let epUrl = epUrls[index]?.value.trim();
                     if (epUrl) {
+                        if (epUrl.includes('archive.org/details/')) epUrl = epUrl.replace('archive.org/details/', 'archive.org/download/');
                         links.push({
                             name: nameInput.value.trim() || `${index + 1}-قىسىم`,
                             url: epUrl
@@ -3577,8 +3662,9 @@
                 if (links.length === 0) return alert('ئەڭ ئاز بىر قىسىمنىڭ ئۇلانمىسىنى كىرگۈزۈڭ!');
                 movieData.links = links;
             } else {
-                const singleLink = document.getElementById('contentLink').value.trim();
+                let singleLink = document.getElementById('contentLink').value.trim();
                 if (!singleLink) return alert('سىن قويۇش ئۇلانمىسىنى كىرگۈزۈڭ!');
+                if (singleLink.includes('archive.org/details/')) singleLink = singleLink.replace('archive.org/details/', 'archive.org/download/');
                 movieData.link = singleLink;
             }
 
@@ -3595,46 +3681,6 @@
             }
         };
 
-        // تېلېگرامما بوتى ئارقىلىق (file_id) كىرگۈزۈپ ساقلاش فۇنكسىيەسى
-        window.handleTelegramUploadSubmit = async function(event) {
-            event.preventDefault();
-            if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
-
-            const type = document.getElementById('tgContentType').value;
-            const title = document.getElementById('tgContentTitle').value.trim();
-            const poster = document.getElementById('tgContentPoster').value.trim();
-            const videoLink = document.getElementById('tgContentVideoLink').value.trim();
-            const tag = document.getElementById('tgContentTag').value;
-
-            if (!title || !poster || !videoLink) return alert('Барلىق بوشلۇقلارنى تولۇق كىرگۈزۈڭ!');
-
-            const movieId = 'tg_mov_' + Date.now();
-            const movieData = {
-                id: movieId,
-                type: type,
-                customType: 'تېلېگرامما فىلىمى',
-                genre: 'تاللانما',
-                year: '2026',
-                country: 'تېلېگرامما',
-                tag: tag,
-                title: title,
-                poster: poster,
-                link: videoLink,
-                downloadLink: videoLink,
-                views: 0,
-                createdAt: Date.now()
-            };
-
-            try {
-                await window.dbSet(window.dbRef(window.db, `movies/${movieId}`), movieData);
-                alert('تېلېگرامما بوتى ئارقىلىق فىلىم مۇۋەپپەقىيەتلىك توربەتكە قوشۇلدى!');
-                document.getElementById('telegramUploadForm').reset();
-                switchTab('homeTab');
-            } catch(e) {
-                alert('قوشۇشتا خاتالىق كۆرۈلدى: ' + e.message);
-            }
-        };
-
         window.deleteMovie = async function(id) {
             if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
             if (confirm('راستلا بۇ فىلىمنى ئۆچۈرەمسىز؟')) {
@@ -3647,6 +3693,7 @@
             }
         };
 
+        // 8-تەلەپ: ئەزالار باشقۇرۇش كۆزنىكىنى تېزلىتىش (DocumentFragment بىلەن يەڭگىللىتىش)
         window.renderAdminUsersList = function() {
             const container = document.getElementById('adminUsersListContainer');
             if (!container) return;
@@ -3660,6 +3707,9 @@
                 return;
             }
 
+            const frag = document.createDocumentFragment();
+            const now = Date.now();
+
             userKeys.forEach(key => {
                 const u = allUsers[key];
                 const displayName = (u.nickname || u.user || '').toLowerCase();
@@ -3671,7 +3721,7 @@
 
                 let remainingDays = 0;
                 if (u.vipExpire) {
-                    remainingDays = Math.ceil((u.vipExpire - Date.now()) / (1000 * 60 * 60 * 24));
+                    remainingDays = Math.ceil((u.vipExpire - now) / (1000 * 60 * 60 * 24));
                     if (remainingDays < 0) remainingDays = 0;
                 }
 
@@ -3705,8 +3755,9 @@
                         <button class="admin-mini-btn btn-del-user" onclick="deleteUserAccount('${key}')">🗑️ ھېساباتنى ئۆچۈرۈش</button>
                     </div>
                 `;
-                container.appendChild(card);
+                frag.appendChild(card);
             });
+            container.appendChild(frag);
         };
 
         window.setVipForUser = async function(userKey, days, isSuper) {
@@ -3810,6 +3861,7 @@
                 return;
             }
 
+            const frag = document.createDocumentFragment();
             keys.forEach(k => {
                 const c = comments[k];
                 const item = document.createElement('div');
@@ -3825,8 +3877,9 @@
                         <div style="color: var(--text-primary); font-size: 12px; margin-top: 2px;">${escapeHTML(c.text)}</div>
                     </div>
                 `;
-                container.appendChild(item);
+                frag.appendChild(item);
             });
+            container.appendChild(frag);
         }
 
         function renderRelatedMovies(currentId) {
@@ -3851,6 +3904,7 @@
             });
         }
 
+        // دەسلەپكى قوزغىتىشنى تېزلىتىش
         window.startApp = async function() {
             await initIndexedDB();
 
@@ -3858,6 +3912,7 @@
             if(cachedMovies) {
                 try {
                     allMovies = JSON.parse(cachedMovies);
+                    renderHeroSlider();
                     renderMovies();
                 } catch(e) {}
             }
@@ -3926,6 +3981,11 @@
                     const inp = document.getElementById('adminSvipPriceInput');
                     if (inp && !inp.value) inp.value = s.svipPrice;
                 }
+                if (s.headerBgImage) {
+                    applyHeaderBg(s.headerBgImage);
+                } else {
+                    applyHeaderBg('');
+                }
             });
         };
 
@@ -3937,8 +3997,8 @@
             if(splash) {
                 setTimeout(() => {
                     splash.style.opacity = '0';
-                    setTimeout(() => splash.remove(), 300);
-                }, 400);
+                    setTimeout(() => splash.remove(), 250);
+                }, 300);
             }
         });
     </script>
