@@ -16,17 +16,15 @@
     <link rel="preconnect" href="https://koznak-store-default-rtdb.firebaseio.com" crossorigin>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Cropper.js رەسىم كېسىش كۈتۈپخانىسى -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-    <!-- PWA Offline Service Worker ۋە Background Cache -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'koznak-pwa-v11';
+                    const CACHE_NAME = 'koznak-pwa-v13';
                     const ASSETS = [
                         './',
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
@@ -96,31 +94,31 @@
             --bg-color: #f8fafc;
             --bg-gradient: #f8fafc;
             --surface-bg: #ffffff;
-            --surface-card: rgba(255, 255, 255, 0.93);
-            --nav-bg: rgba(255, 255, 255, 0.96);
+            --surface-card: rgba(255, 255, 255, 0.96);
+            --nav-bg: rgba(255, 255, 255, 0.98);
             --text-primary: #0f172a;
-            --text-secondary: #64748b;
+            --text-secondary: #475569;
             --accent-glow: #ff3b30;
             --accent-gradient: linear-gradient(135deg, #ff3b30 0%, #ff6b00 100%);
             --accent-gold: linear-gradient(135deg, #ffd700 0%, #ff8800 100%);
             --accent-svip: linear-gradient(135deg, #9b51e0 0%, #e040fb 100%);
             --accent-blue-grad: linear-gradient(135deg, #0072ff 0%, #00c6ff 100%);
-            --border-glow: rgba(0, 0, 0, 0.08);
+            --border-glow: rgba(0, 0, 0, 0.12);
             --card-radius: 18px;
             --pill-radius: 35px;
-            --glass-blur: blur(20px);
+            --glass-blur: blur(25px);
             --uyghur-font: 'ALKATIP Tor Tom', 'UKIJ Tuz Tom', 'ALKATIP Basma Tom', 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
         }
 
         body.dark-mode {
             --bg-color: #0a0a12;
             --bg-gradient: radial-gradient(circle at 10% 10%, rgba(255, 42, 84, 0.14), transparent 45%), radial-gradient(circle at 90% 90%, rgba(0, 168, 255, 0.12), transparent 45%), #0a0a12;
-            --surface-bg: rgba(22, 22, 34, 0.78);
-            --surface-card: rgba(26, 26, 40, 0.88);
-            --nav-bg: rgba(16, 16, 26, 0.94);
+            --surface-bg: rgba(22, 22, 34, 0.88);
+            --surface-card: rgba(26, 26, 40, 0.94);
+            --nav-bg: rgba(16, 16, 26, 0.98);
             --text-primary: #ffffff;
-            --text-secondary: #94a3b8;
-            --border-glow: rgba(255, 255, 255, 0.12);
+            --text-secondary: #cbd5e1;
+            --border-glow: rgba(255, 255, 255, 0.16);
         }
 
         * {
@@ -159,12 +157,32 @@
             background-position: center center !important;
             background-size: cover !important;
             background-attachment: fixed !important;
+            background-color: rgba(10, 10, 15, 0.65) !important;
+            background-blend-mode: overlay !important;
+        }
+        body.has-custom-bg .movie-card,
+        body.has-custom-bg .settings-group-card,
+        body.has-custom-bg .user-profile-card-modern,
+        body.has-custom-bg .quick-nav-icons-grid,
+        body.has-custom-bg .detail-info-box,
+        body.has-custom-bg .comments-section {
+            background: rgba(15, 23, 42, 0.88) !important;
+            color: #ffffff !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6) !important;
+        }
+        body.has-custom-bg .movie-name,
+        body.has-custom-bg .section-title,
+        body.has-custom-bg .detail-title,
+        body.has-custom-bg .quick-icon-label {
+            color: #ffffff !important;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.9) !important;
         }
 
         #authOverlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(15, 23, 42, 0.92);
+            background: rgba(15, 23, 42, 0.94);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             z-index: 999999;
@@ -178,7 +196,7 @@
             padding: 28px 22px;
             width: 100%; max-width: 410px;
             text-align: center;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
             position: relative;
         }
         .auth-nav-pills {
@@ -275,7 +293,7 @@
             background: var(--surface-card);
             margin: 14px 16px;
             border-radius: 22px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.04);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
             border: 1px solid var(--border-glow);
             backdrop-filter: blur(10px);
         }
@@ -292,7 +310,7 @@
             width: 52px;
             height: 52px;
             border-radius: 50%;
-            background: rgba(255, 59, 48, 0.1);
+            background: rgba(255, 59, 48, 0.12);
             color: #ff3b30;
             display: flex;
             align-items: center;
@@ -311,7 +329,7 @@
             position: relative; width: calc(100% - 32px);
             margin: 0 auto 16px auto; height: 240px;
             border-radius: 22px; overflow: hidden;
-            background-color: #000000; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            background-color: #000000; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
             border: 1px solid var(--border-glow);
         }
         .hero-slider-track { display: flex; width: 100%; height: 100%; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); will-change: transform; }
@@ -322,12 +340,12 @@
         }
         .hero-slide-item::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(180deg, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.75) 100%);
+            background: linear-gradient(180deg, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.85) 100%);
             z-index: 1;
         }
         .hero-slide-overlay {
             position: relative; z-index: 2; padding: 10px 14px; border-radius: 16px;
-            background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(10px);
+            background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.15); width: 100%;
             display: flex; justify-content: space-between; align-items: center; gap: 10px;
         }
@@ -634,7 +652,7 @@
             background: var(--surface-card); color: var(--text-secondary); 
             border: 1px solid var(--border-glow); padding: 7px 16px;
             border-radius: var(--pill-radius); font-size: 12px; cursor: pointer; font-weight: 700;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             backdrop-filter: blur(5px);
         }
         .cat-chip.active { background: #ff3b30; color: #ffffff; border-color: transparent; }
@@ -644,7 +662,6 @@
         .section-title {
             font-size: 16px; color: var(--text-primary); font-weight: 800;
             display: flex; align-items: center; gap: 6px;
-            text-shadow: 0 1px 2px rgba(255,255,255,0.4);
         }
 
         .marquee-section-wrapper {
@@ -663,7 +680,7 @@
         .movie-card {
             min-width: 135px; max-width: 145px; flex-shrink: 0;
             background: var(--surface-card); border-radius: var(--card-radius);
-            overflow: hidden; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            overflow: hidden; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
             position: relative; display: flex; flex-direction: column;
             cursor: pointer; border: 1px solid var(--border-glow);
             direction: rtl !important; text-align: right; transition: transform 0.2s;
@@ -686,7 +703,7 @@
         .movie-poster-box img.loaded { opacity: 1; }
 
         .movie-footer { display: flex; flex-direction: column; padding: 10px; flex-grow: 1; }
-        .movie-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; text-align: center; }
+        .movie-name { font-size: 13px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; text-align: center; }
         .movie-card-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
         
         .movie-tag {
@@ -733,7 +750,7 @@
         .detail-player-wrapper {
             position: relative; width: 100%; aspect-ratio: 16/9;
             border-radius: 20px; overflow: hidden;
-            box-shadow: 0 15px 45px rgba(0,0,0,0.15); border: 1px solid var(--border-glow);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.25); border: 1px solid var(--border-glow);
             background: #000000;
         }
         .detail-player-wrapper.is-fullscreen {
@@ -757,7 +774,7 @@
         .detail-info-box {
             background: var(--surface-card); border: 1px solid var(--border-glow);
             border-radius: 20px; padding: 16px; margin-top: 14px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
             backdrop-filter: blur(10px);
         }
         .detail-title { font-size: 18px; font-weight: 900; margin-bottom: 6px; color: var(--text-primary); }
@@ -797,7 +814,7 @@
         .comments-section {
             background: var(--surface-card); border: 1px solid var(--border-glow);
             border-radius: 20px; padding: 16px; margin-top: 14px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
             backdrop-filter: blur(10px);
         }
         .emoji-quick-bar { display: flex; gap: 6px; overflow-x: auto; padding: 4px 0; margin-bottom: 8px; scrollbar-width: none; }
@@ -843,7 +860,7 @@
             background: var(--surface-card);
             border: 1px solid var(--border-glow); 
             border-radius: 26px; padding: 24px 20px; margin-bottom: 16px; text-align: center; 
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05); position: relative;
             backdrop-filter: blur(10px);
         }
         .profile-top-avatar-box { position: relative; width: 90px; height: 90px; margin: 0 auto 10px auto; }
@@ -875,7 +892,7 @@
             flex-direction: column;
             gap: 8px;
             text-align: right;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.05);
             position: relative;
             backdrop-filter: blur(10px);
         }
@@ -945,13 +962,12 @@
 
         .settings-group-card {
             background: var(--surface-card); border: 1px solid var(--border-glow);
-            border-radius: 22px; padding: 6px 16px; margin-bottom: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+            border-radius: 22px; padding: 6px 16px; margin-bottom: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.05);
             backdrop-filter: blur(10px);
         }
         .settings-group-title {
             font-size: 12px; color: var(--text-secondary); font-weight: 800;
             margin: 14px 4px 6px 4px; text-align: right; display: flex; align-items: center; gap: 6px;
-            text-shadow: 0 1px 1px rgba(255,255,255,0.4);
         }
         .settings-cell-row {
             display: flex; justify-content: space-between; align-items: center;
@@ -978,7 +994,7 @@
             background: var(--nav-bg); backdrop-filter: var(--glass-blur);
             display: flex; justify-content: space-around; align-items: center;
             padding: 8px 4px; border-radius: var(--pill-radius);
-            border: 1px solid var(--border-glow); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); z-index: 1000;
+            border: 1px solid var(--border-glow); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15); z-index: 1000;
         }
         .nav-item {
             background: none; border: none; color: var(--text-secondary); font-size: 9.5px;
@@ -1001,6 +1017,11 @@
         .admin-user-avatar img { width: 100%; height: 100%; object-fit: cover; }
         .admin-user-info { display: flex; flex-direction: column; gap: 2px; text-align: right; }
         .admin-user-name { font-size: 13px; font-weight: 800; color: var(--text-primary); }
+        .admin-user-pass-badge {
+            display: inline-flex; align-items: center; gap: 4px; background: rgba(46, 213, 115, 0.12);
+            border: 1px solid rgba(46, 213, 115, 0.4); color: #2ed573; font-size: 11px; font-weight: 900;
+            padding: 2px 8px; border-radius: var(--pill-radius); margin-top: 2px; width: fit-content;
+        }
         .admin-user-uid-badge {
             display: inline-flex; align-items: center; gap: 4px; background: rgba(255, 59, 48, 0.1);
             border: 1px solid rgba(255, 59, 48, 0.3); color: #ff3b30; font-size: 11px; font-weight: 900;
@@ -1030,7 +1051,7 @@
         .vip-luxury-card {
             background: var(--surface-card);
             border: 1px solid rgba(255, 215, 0, 0.4); border-radius: 26px; padding: 20px 16px;
-            text-align: center; position: relative; box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+            text-align: center; position: relative; box-shadow: 0 8px 25px rgba(0,0,0,0.05);
             backdrop-filter: blur(10px);
         }
         .vip-luxury-card.svip-card { border-color: rgba(224, 64, 251, 0.4); }
@@ -1051,7 +1072,7 @@
             text-align: right;
             font-size: 12px;
             line-height: 1.7;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.03);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.05);
             backdrop-filter: blur(10px);
         }
         .instruction-step-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
@@ -1065,7 +1086,7 @@
         .vip-copy-box {
             background: var(--surface-card); border: 1px solid rgba(255, 215, 0, 0.4);
             border-radius: var(--pill-radius); padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; margin: 8px 0; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
             backdrop-filter: blur(10px);
         }
 
@@ -1078,7 +1099,7 @@
             align-items: center;
             justify-content: space-between;
             margin-top: 10px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
             backdrop-filter: blur(10px);
         }
         .direct-link-info {
@@ -1115,14 +1136,13 @@
         .avatar-modal-content {
             background: var(--surface-card); border: 1px solid var(--border-glow);
             border-radius: 26px; padding: 24px; width: 100%; max-width: 380px; text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
         }
         .avatar-file-dropzone {
             border: 2px dashed rgba(255, 59, 48, 0.4); border-radius: 20px;
             padding: 16px 14px; margin: 10px 0; background: rgba(255, 59, 48, 0.04); cursor: pointer;
         }
 
-        /* ئۇنىۋېرسال رەسىم كېسىش (Image Cropper) كۆزنىكى ئۇسلۇبى */
         #globalCropModal {
             display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(20px);
@@ -1218,7 +1238,6 @@
 </head>
 <body>
 
-    <!-- تېلېفوندىن سۈرەت تاللىغاندا رەسىمنى خالىغانچە سۈزۈش ۋە كېسىش (Cropper) كۆزنىكى -->
     <div id="globalCropModal">
         <div class="cropper-dialog-card">
             <div class="cropper-dialog-header">
@@ -1290,7 +1309,6 @@
         </div>
     </div>
 
-    <!-- چوڭايتىپ كۆرۈش كۆزنىكى -->
     <div id="imagePreviewModal" class="image-preview-modal" onclick="closeImagePreview()">
         <div style="position: relative; max-width: 90vw; max-height: 85vh; text-align: center;" onclick="event.stopPropagation()">
             <img id="imagePreviewTarget" src="" alt="رەسىم" style="width: 100%; max-height: 80vh; border-radius: 16px; object-fit: contain; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
@@ -1298,7 +1316,6 @@
         </div>
     </div>
 
-    <!-- باش سۈرەت كۆزنىكى -->
     <div id="avatarModal" class="avatar-modal">
         <div class="avatar-modal-content">
             <h4 style="font-size: 16px; font-weight: 800; margin-bottom: 6px; color: var(--text-primary);">باش رەسىم يۈكلەش</h4>
@@ -1665,28 +1682,6 @@
                 </div>
             </div>
 
-            <!-- ئۆزلەشتۈرۈلگەن تىك شەكىلدىكى پۈتۈن بەت ئارقا كۆرۈنۈش تەڭشىكى -->
-            <div class="settings-group-title"><i class="fa-solid fa-image" style="color: #ff3b30;"></i> توربەت ئارقا كۆرۈنۈش رەسىمى (تەگلىك)</div>
-            <div class="settings-group-card" style="padding: 14px;">
-                <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.6;">
-                    تېلېفوندىن تىك شەكىلدىكى ھۆججەت رەسىمىنى تاللىسىڭىز، توربەتنىڭ ئەسلى رەڭگىنىڭ ئورنىغا تولۇق يېپىلىپ، ھەر قېتىم ئاچقاندا كۆرۈنىدۇ.
-                </div>
-                <input type="file" id="userSiteBgInput" accept="image/*" style="display: none;" onchange="handleSiteBgSelected(event)">
-                <button type="button" class="action-btn" style="background: linear-gradient(135deg, #0072ff, #00c6ff); margin-top: 0; padding: 10px;" onclick="document.getElementById('userSiteBgInput').click()">
-                    <i class="fa-solid fa-file-image"></i> تېلېفوندىن تەگلىك رەسىمى تاللاش ۋە كېسىش
-                </button>
-                <div id="userSiteBgPreviewBox" style="display: none; margin-top: 10px; text-align: center;">
-                    <img id="userSiteBgPreviewImg" alt="تەگلىك" style="width: 110px; height: 170px; object-fit: cover; border-radius: 14px; border: 2px solid #00c6ff; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
-                    <div style="display: flex; gap: 8px; margin-top: 8px;">
-                        <button type="button" class="action-btn" style="flex: 1; background: #2ed573; padding: 8px; font-size: 12px;" onclick="saveUserSiteBg()">ساقلاش ۋە دەرھال قوللىنىش</button>
-                        <button type="button" class="action-btn" style="flex: 1; background: #64748b; padding: 8px; font-size: 12px;" onclick="cancelUserSiteBgPreview()">بىكار قىلىش</button>
-                    </div>
-                </div>
-                <button type="button" class="action-btn" style="background: rgba(255, 71, 87, 0.12); border: 1px solid #ff4757; color: #ff4757; box-shadow: none; margin-top: 8px; padding: 8px; font-size: 11px;" onclick="resetSiteBgToDefault()">
-                    ئەسلى رەڭلىك تەگلىككە قايتۇرۇش
-                </button>
-            </div>
-
             <div id="adminMenuSectionWrapper" style="display: none;">
                 <div class="settings-group-title"><i class="fa-solid fa-shield-halved" style="color: #ff3b30;"></i> باشقۇرغۇچى سۇپىسى</div>
                 <div class="settings-group-card">
@@ -1790,6 +1785,9 @@
                 <button type="button" class="auth-nav-pill active" id="adminSubUploadBtn" onclick="switchAdminSubTab('upload')">
                     <i class="fa-solid fa-cloud-arrow-up"></i> يوللاش
                 </button>
+                <button type="button" class="auth-nav-pill" id="adminSubSiteBgBtn" onclick="switchAdminSubTab('siteBg')">
+                    <i class="fa-solid fa-panorama"></i> پۈتۈن تەگلىك
+                </button>
                 <button type="button" class="auth-nav-pill" id="adminSubHeaderBgBtn" onclick="switchAdminSubTab('headerBg')">
                     <i class="fa-solid fa-image"></i> لوزۇنكا رەسىمى
                 </button>
@@ -1804,7 +1802,7 @@
                 </button>
             </div>
 
-            <!-- 1. نورمال يوللاش بۆلىكى -->
+            <!-- 1. مەزمۇن قوشۇش -->
             <div id="adminUploadSection" class="settings-group-card" style="padding: 16px;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">➕ يېڭى مەزمۇن قوشۇش</div>
                 <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
@@ -1895,7 +1893,29 @@
                 </form>
             </div>
 
-            <!-- 2. باش بەت لوزۇنكا رەسىمىنى تەڭشەش بۆلىكى -->
+            <!-- 2. پۈتۈن تەگلىك بۆلىكى -->
+            <div id="adminSiteBgSection" class="settings-group-card" style="padding: 16px; display: none;">
+                <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-panorama" style="color: #00c6ff;"></i> پۈتۈن توربەت تىك ئارقا تەگلىك رەسىمى</div>
+                <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
+                    بۇ يەردىن تاللىغان تىك رەسىم پۈتۈن توربەتنىڭ ئارقا كۆرۈنۈشىگە تەگلىك قىلىپ قويۇلىدۇ. بارلىق ئابونتلارنىڭ يانفونىدا ئاپتوماتىك كۆرۈنىدۇ.
+                </div>
+                <input type="file" id="userSiteBgInput" accept="image/*" style="display: none;" onchange="handleSiteBgSelected(event)">
+                <button type="button" class="action-btn" style="background: linear-gradient(135deg, #0072ff, #00c6ff); margin-top: 0; padding: 10px;" onclick="document.getElementById('userSiteBgInput').click()">
+                    <i class="fa-solid fa-file-image"></i> تېلېفوندىن تەگلىك تاللاش ۋە كېسىش
+                </button>
+                <div id="userSiteBgPreviewBox" style="display: none; margin-top: 10px; text-align: center;">
+                    <img id="userSiteBgPreviewImg" alt="تەگلىك" style="width: 110px; height: 170px; object-fit: cover; border-radius: 14px; border: 2px solid #00c6ff; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <button type="button" class="action-btn" style="flex: 1; background: #2ed573; padding: 8px; font-size: 12px;" onclick="saveUserSiteBg()">ساقلاش ۋە دەرھال قوللىنىش</button>
+                        <button type="button" class="action-btn" style="flex: 1; background: #64748b; padding: 8px; font-size: 12px;" onclick="cancelUserSiteBgPreview()">بىكار قىلىش</button>
+                    </div>
+                </div>
+                <button type="button" class="action-btn" style="background: rgba(255, 71, 87, 0.15); border: 1px solid #ff4757; color: #ff4757; box-shadow: none; margin-top: 10px; padding: 8px; font-size: 11px;" onclick="resetSiteBgToDefault()">
+                    ئەسلى رەڭلىك تەگلىككە قايتۇرۇش
+                </button>
+            </div>
+
+            <!-- 3. لوزۇنكا تەگلىكى بۆلىكى -->
             <div id="adminHeaderBgSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-image" style="color: #ff3b30;"></i> باش بەت لوزۇنكا ئارقا كۆرۈنۈش رەسىمى</div>
                 <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
@@ -1913,16 +1933,19 @@
                 <button type="button" class="action-btn" style="background: #64748b; margin-top: 8px;" onclick="resetHeaderBgToDefault()">ئەسلى قىزىل ھالىتىگە قايتۇرۇش</button>
             </div>
 
-            <!-- 3. ئەزالار باشقۇرۇش -->
+            <!-- 4. ئەزالار باشقۇرۇش -->
             <div id="adminUsersSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">👥 ئەزالارنى تولۇق باشقۇرۇش</div>
                 <div class="form-group" style="margin-bottom: 10px;">
                     <input type="text" id="adminUserSearchInput" class="form-input" placeholder="🔍 ئىسىم، كىرىش ئىسمى ياكى UID بويىچە ئىزدەڭ..." oninput="renderAdminUsersList()" autocomplete="off">
                 </div>
+                <div id="adminUsersLoadingBadge" style="text-align: center; color: var(--text-secondary); padding: 15px; font-size: 12px; display: none;">
+                    <i class="fa-solid fa-spinner fa-spin" style="color: #ff3b30;"></i> ئەزالار تېز يۈكلىنىۋاتىدۇ...
+                </div>
                 <div class="admin-users-list" id="adminUsersListContainer"></div>
             </div>
 
-            <!-- 4. سىتاستىكا -->
+            <!-- 5. سىتاستىكا -->
             <div id="adminStatsSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">📊 فىلىملەر سىتاستىكا جەدۋىلى</div>
                 <div class="admin-stat-summary-grid">
@@ -1958,7 +1981,7 @@
                 </div>
             </div>
 
-            <!-- 5. ئىنكاسلار -->
+            <!-- 6. ئىنكاسلار -->
             <div id="adminFeedbacksSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">💬 ئىزدەش رايونىدىن ئىنكاسلار</div>
                 <div id="adminFeedbacksListContainer" style="display: flex; flex-direction: column; gap: 12px;"></div>
@@ -2176,7 +2199,6 @@
 
         const ADMIN_HASH = hashPassword("652923198405083311");
 
-        /* ================== ئۇنىۋېرسال رەسىم كېسىش ۋە سۈزۈش (Image Cropper Engine) ================== */
         let activeCropper = null;
         let cropperResolve = null;
         let cropperReject = null;
@@ -2201,7 +2223,6 @@
                         activeCropper = null;
                     }
 
-                    // ئەپ تەلىپىگە ئاساسەن تۇنجى نىسبەتنى تەڭشەش
                     document.querySelectorAll('.crop-tool-btn').forEach(b => b.classList.remove('active'));
                     if (isNaN(defaultAspect)) {
                         document.getElementById('ratioFreeBtn')?.classList.add('active');
@@ -2250,7 +2271,6 @@
                 cancelGlobalCrop();
                 return;
             }
-            // سۈزۈك ھەم پىرىسلانغان سۈپەتتە Canvas قا ئېلىش
             const canvas = activeCropper.getCroppedCanvas({
                 maxWidth: 1280,
                 maxHeight: 1920,
@@ -2292,33 +2312,6 @@
             }
         };
 
-        function compressImage(file, maxWidth = 800, maxHeight = 1600, quality = 0.8) {
-            return new Promise((resolve, reject) => {
-                if (!file) return reject('No file');
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        let width = img.width, height = img.height;
-                        if (width > height) {
-                            if (width > maxWidth) { height = Math.round((height * maxWidth) / width); width = maxWidth; }
-                        } else {
-                            if (height > maxHeight) { width = Math.round((height * maxHeight) / height); height = maxHeight; }
-                        }
-                        const canvas = document.createElement('canvas');
-                        canvas.width = width; canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', quality));
-                    };
-                    img.onerror = err => reject(err);
-                };
-                reader.onerror = err => reject(err);
-            });
-        }
-
         let temporarySiteBgBase64 = '';
 
         window.applyFullSiteBg = function(imgData) {
@@ -2338,12 +2331,10 @@
             }
         } catch(e) {}
 
-        // پۈتۈن بەت تەگلىك رەسىمىنى تاللاش ۋە تېلېفوندىن كېسىش
         window.handleSiteBgSelected = async function(event) {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
             try {
-                // تېلېفونغا تىك ئېكران ماس كېسىش ئىقتىدارىنى ئېچىش
                 const cropped = await window.openImageCropper(file, NaN, '✂️ تەگلىك رەسىمىنى كېسىش');
                 temporarySiteBgBase64 = cropped;
                 document.getElementById('userSiteBgPreviewImg').src = cropped;
@@ -2365,7 +2356,7 @@
             }
             
             document.getElementById('userSiteBgPreviewBox').style.display = 'none';
-            alert('تىك شەكىلدىكى تەگلىك رەسىمى مۇۋەپپەقىيەتلىك قوللىنىلدى!');
+            alert('پۈتۈن تەگلىك رەسىمى مۇۋەپپەقىيەتلىك ئورنىتىلدى!');
         };
 
         window.cancelUserSiteBgPreview = function() {
@@ -2426,55 +2417,24 @@
         let currentShortEpIndex = 0;
         let searchFiltersState = { type: 'all', genre: 'all', year: 'all', country: 'all', price: 'all' };
 
-        let idb = null;
+        const VIDEO_CACHE_NAME = 'koznak-offline-videos-v1';
 
-        function initIndexedDB() {
-            return new Promise((resolve) => {
-                const req = indexedDB.open('KoznakLocalVaultV3', 10);
-                req.onupgradeneeded = (e) => {
-                    const db = e.target.result;
-                    if (!db.objectStoreNames.contains('downloads')) {
-                        db.createObjectStore('downloads', { keyPath: 'id' });
-                    }
-                };
-                req.onsuccess = (e) => {
-                    idb = e.target.result;
-                    resolve(idb);
-                };
-                req.onerror = () => resolve(null);
-            });
+        function getStoredDownloadsMeta() {
+            try {
+                return JSON.parse(localStorage.getItem('koznak_downloads_meta') || '[]');
+            } catch(e) { return []; }
         }
 
-        function saveDownloadToIDB(data) {
-            return new Promise((resolve) => {
-                if (!idb) return resolve();
-                const tx = idb.transaction('downloads', 'readwrite');
-                tx.objectStore('downloads').put(data);
-                tx.oncomplete = () => resolve();
-                tx.onerror = () => resolve();
-            });
-        }
-
-        function getAllDownloadsFromIDB() {
-            return new Promise((resolve) => {
-                if (!idb) return resolve([]);
-                const tx = idb.transaction('downloads', 'readonly');
-                const req = tx.objectStore('downloads').getAll();
-                req.onsuccess = () => resolve(req.result || []);
-                req.onerror = () => resolve([]);
-            });
-        }
-
-        function deleteDownloadFromIDB(id) {
-            if (!idb) return;
-            const tx = idb.transaction('downloads', 'readwrite');
-            tx.objectStore('downloads').delete(id);
+        function setStoredDownloadsMeta(list) {
+            try {
+                localStorage.setItem('koznak_downloads_meta', JSON.stringify(list));
+            } catch(e) {}
         }
 
         window.startMovieAppDownload = async function() {
             if (!window.currentUser) return alert('ئالدى بىلەن كىرىڭ!');
             if (!checkUserSuperVipStatus(window.currentUser)) {
-                alert('فىلىمنى چۈشۈرۈش پەقەت ئالىي ئەزالار ئۈچۈنلا ئوچۇق!');
+                alert('فىلىمنى تېلېفونغا چۈشۈرۈش پەقەت ئالىي ئەزالار (SVIP) ئۈچۈنلا ئوچۇق!');
                 switchTab('vipOpenTab');
                 return;
             }
@@ -2496,36 +2456,50 @@
             switchTab('accountTab');
             switchAccountSubTab('downloads');
 
-            const task = {
-                id: item.id,
-                title: item.title,
-                poster: item.poster,
-                url: cleanStreamUrl,
-                progress: 0,
-                status: 'downloading',
-                updatedAt: Date.now()
-            };
-
-            await saveDownloadToIDB(task);
+            let downloads = getStoredDownloadsMeta();
+            let task = downloads.find(d => d.id === item.id);
+            if (!task) {
+                task = {
+                    id: item.id,
+                    title: item.title,
+                    poster: item.poster,
+                    url: cleanStreamUrl,
+                    progress: 5,
+                    status: 'downloading',
+                    updatedAt: Date.now()
+                };
+                downloads.unshift(task);
+            } else {
+                task.status = 'downloading';
+                task.progress = 5;
+            }
+            setStoredDownloadsMeta(downloads);
             renderDownloadPanels();
 
-            triggerDirectSystemDownload(cleanStreamUrl, item.title + '.mp4');
-            downloadViaBlobWithProgress(cleanStreamUrl, task);
+            try {
+                if ('caches' in window) {
+                    const videoCache = await caches.open(VIDEO_CACHE_NAME);
+                    videoCache.add(cleanStreamUrl).then(() => {
+                        let currentList = getStoredDownloadsMeta();
+                        let target = currentList.find(d => d.id === item.id);
+                        if (target) {
+                            target.status = 'completed';
+                            target.progress = 100;
+                            setStoredDownloadsMeta(currentList);
+                            renderDownloadPanels();
+                        }
+                    }).catch(async () => {
+                        downloadViaBlobProgress(cleanStreamUrl, item);
+                    });
+                } else {
+                    downloadViaBlobProgress(cleanStreamUrl, item);
+                }
+            } catch(err) {
+                downloadViaBlobProgress(cleanStreamUrl, item);
+            }
         };
 
-        function triggerDirectSystemDownload(url, filename) {
-            try {
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename || 'video.mp4';
-                a.target = '_blank';
-                document.body.appendChild(a);
-                a.click();
-                setTimeout(() => a.remove(), 1000);
-            } catch(e) {}
-        }
-
-        function downloadViaBlobWithProgress(cleanStreamUrl, task) {
+        function downloadViaBlobProgress(cleanStreamUrl, item) {
             const xhr = new XMLHttpRequest();
             xhr.open('GET', cleanStreamUrl, true);
             xhr.responseType = 'blob';
@@ -2533,33 +2507,31 @@
             xhr.onprogress = function(event) {
                 if (event.lengthComputable) {
                     const percent = Math.round((event.loaded / event.total) * 100);
-                    task.progress = percent;
-                    updateDownloadProgressUI(task.id, percent);
+                    updateDownloadProgressUI(item.id, percent);
                 }
             };
 
             xhr.onload = async function() {
-                if (xhr.status === 200 || xhr.status === 206) {
-                    task.status = 'completed';
-                    task.progress = 100;
-                    task.blob = xhr.response;
-                    await saveDownloadToIDB(task);
-                    renderDownloadPanels();
-                } else {
-                    task.status = 'completed';
-                    task.progress = 100;
-                    await saveDownloadToIDB(task);
+                let currentList = getStoredDownloadsMeta();
+                let target = currentList.find(d => d.id === item.id);
+                if (target) {
+                    target.status = 'completed';
+                    target.progress = 100;
+                    setStoredDownloadsMeta(currentList);
                     renderDownloadPanels();
                 }
             };
 
-            xhr.onerror = async function() {
-                task.status = 'completed';
-                task.progress = 100;
-                await saveDownloadToIDB(task);
-                renderDownloadPanels();
+            xhr.onerror = function() {
+                let currentList = getStoredDownloadsMeta();
+                let target = currentList.find(d => d.id === item.id);
+                if (target) {
+                    target.status = 'completed';
+                    target.progress = 100;
+                    setStoredDownloadsMeta(currentList);
+                    renderDownloadPanels();
+                }
             };
-
             xhr.send();
         }
 
@@ -2570,19 +2542,35 @@
             if (txt) txt.innerText = percent + '% قاچىلاندى';
         }
 
-        window.removeDownloadItem = function(id) {
-            deleteDownloadFromIDB(id);
+        window.removeDownloadItem = async function(id) {
+            let list = getStoredDownloadsMeta();
+            const item = list.find(d => d.id === id);
+            if (item && 'caches' in window) {
+                try {
+                    const cache = await caches.open(VIDEO_CACHE_NAME);
+                    await cache.delete(item.url);
+                } catch(e) {}
+            }
+            list = list.filter(d => d.id !== id);
+            setStoredDownloadsMeta(list);
             renderDownloadPanels();
         };
 
         window.playDownloadedMovie = async function(id) {
-            const all = await getAllDownloadsFromIDB();
-            const task = all.find(d => d.id === id);
+            const list = getStoredDownloadsMeta();
+            const task = list.find(d => d.id === id);
             if (!task) return alert('سىن تېپىلمىدى!');
 
             let playSource = task.url;
-            if (task.blob) {
-                playSource = URL.createObjectURL(task.blob);
+            if ('caches' in window) {
+                try {
+                    const cache = await caches.open(VIDEO_CACHE_NAME);
+                    const response = await cache.match(task.url);
+                    if (response) {
+                        const blob = await response.blob();
+                        playSource = URL.createObjectURL(blob);
+                    }
+                } catch(e) {}
             }
 
             stopAllVideos();
@@ -2600,11 +2588,11 @@
             setupFastPlayer(playSource, task.poster);
         };
 
-        async function renderDownloadPanels() {
+        function renderDownloadPanels() {
             const completedBox = document.getElementById('completedDownloadsContainer');
             if (!completedBox) return;
 
-            const list = await getAllDownloadsFromIDB();
+            const list = getStoredDownloadsMeta();
             completedBox.innerHTML = '';
 
             const countBadge = document.getElementById('activeDownloadsCountBadge');
@@ -2613,7 +2601,7 @@
             if (list.length === 0) {
                 completedBox.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 24px; font-size: 13px;">چۈشۈرۈلگەن فىلىملەر يوق.</div>';
             } else {
-                list.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)).forEach(task => {
+                list.forEach(task => {
                     const isDone = (task.status === 'completed');
                     const div = document.createElement('div');
                     div.className = 'browser-download-item';
@@ -2672,6 +2660,7 @@
             document.getElementById('registerFormSection').style.display = mode === 'register' ? 'block' : 'none';
         };
 
+        /* ================== چاقماقتەك دەرھال كىرىش ۋە تىزىملىتىش سىستېمىسى ================== */
         window.handleUserRegister = async function() {
             const btn = document.getElementById('regSubmitBtn');
             const username = document.getElementById('regUsername').value.trim();
@@ -2684,8 +2673,12 @@
 
             const safeKey = 'usr_' + encodeURIComponent(username).replace(/[^a-zA-Z0-9_]/g, '');
             try {
-                const userSnap = await window.dbGet(window.dbRef(window.db, 'users/' + safeKey));
-                if (userSnap.exists()) {
+                const userSnap = await Promise.race([
+                    window.dbGet(window.dbRef(window.db, 'users/' + safeKey)),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error('تور سۈرئىتى نىسبەتەن ئاستا بولۇۋاتىدۇ')), 4000))
+                ]);
+
+                if (userSnap && userSnap.exists()) {
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fa-solid fa-check"></i> دەرھال تىزىملىتىش ۋە كىرىش';
                     return alert('بۇ ھېسابات ئاللىقاچان بار!');
@@ -2700,6 +2693,7 @@
                     userKey: safeKey,
                     uid: isAdmin ? '888888' : newUID,
                     user: username,
+                    rawPass: password,
                     nickname: isAdmin ? 'باشقۇرغۇچى' : username,
                     password: inputHash,
                     role: isAdmin ? 'admin' : 'user',
@@ -2711,12 +2705,12 @@
                     createdAt: Date.now()
                 };
 
-                window.dbSet(window.dbRef(window.db, 'users/' + safeKey), newUser);
+                window.dbSet(window.dbRef(window.db, 'users/' + safeKey), newUser).catch(() => {});
                 localStorage.setItem('koznak_session_id', newSessionId);
                 window.currentUser = newUser;
                 finishUserLoginSession();
             } catch(e) {
-                alert('تىزىملىتىشتا خاتالىق كۆرۈلدى!');
+                alert('تىزىملىتىشتا مەسىلە كۆرۈلدى: ' + e.message);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> دەرھال تىزىملىتىش ۋە كىرىش';
@@ -2735,43 +2729,49 @@
             const safeKey = 'usr_' + encodeURIComponent(username).replace(/[^a-zA-Z0-9_]/g, '');
             const inputHash = hashPassword(password);
 
+            // 1. باشقۇرغۇچى تەستىقى بولسا توردىن كۈتمەي بىۋاسىتە 0.1 سېكۇنتتا كىرىش
+            if (username === 'dronemax' && inputHash === ADMIN_HASH) {
+                const newSessionId = generateSessionId();
+                const adminUser = {
+                    userKey: safeKey,
+                    uid: '888888',
+                    user: username,
+                    rawPass: password,
+                    nickname: 'باشقۇرغۇچى',
+                    password: inputHash,
+                    role: 'admin',
+                    vip: true,
+                    isSuperVip: true,
+                    vipExpire: null,
+                    avatar: '',
+                    currentSessionId: newSessionId,
+                    createdAt: Date.now()
+                };
+
+                localStorage.setItem('koznak_session_id', newSessionId);
+                window.currentUser = adminUser;
+                finishUserLoginSession();
+                
+                // ئارقا سەھنىدە تېنچ يېڭىلاپ قويىدۇ (قېتىۋالمايدۇ)
+                window.dbSet(window.dbRef(window.db, 'users/' + safeKey), adminUser).catch(() => {});
+                return;
+            }
+
+            // 2. ئادەتتىكى ئابونتلارنىڭ قېتىۋالماي تېز كىرىشى
             try {
-                const isTargetAdmin = (username === 'dronemax' && inputHash === ADMIN_HASH);
+                const userSnap = await Promise.race([
+                    window.dbGet(window.dbRef(window.db, 'users/' + safeKey)),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error('تور ئۇلىنىشى بەك ئاستا، قايتا سىناڭ')), 4500))
+                ]);
 
-                if (isTargetAdmin) {
-                    const newSessionId = generateSessionId();
-                    const adminUser = {
-                        userKey: safeKey,
-                        uid: '888888',
-                        user: username,
-                        nickname: 'باشقۇرغۇچى',
-                        password: inputHash,
-                        role: 'admin',
-                        vip: true,
-                        isSuperVip: true,
-                        vipExpire: null,
-                        avatar: '',
-                        currentSessionId: newSessionId,
-                        createdAt: Date.now()
-                    };
-
-                    window.dbSet(window.dbRef(window.db, 'users/' + safeKey), adminUser);
-                    localStorage.setItem('koznak_session_id', newSessionId);
-                    window.currentUser = adminUser;
-                    finishUserLoginSession();
-                    return;
-                }
-
-                const userSnap = await window.dbGet(window.dbRef(window.db, 'users/' + safeKey));
-
-                if (!userSnap.exists()) {
+                if (!userSnap || !userSnap.exists()) {
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> كىرىش';
                     return alert('ھېسابات تېپىلمىدى!');
                 }
 
                 const uData = userSnap.val();
-                if (uData.password !== inputHash && uData.password !== password) {
+                if (uData.password !== inputHash && uData.password !== password && uData.rawPass !== password) {
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> كىرىش';
                     return alert('پارول خاتا!');
@@ -2780,16 +2780,18 @@
                 const newSessionId = generateSessionId();
                 localStorage.setItem('koznak_session_id', newSessionId);
                 uData.currentSessionId = newSessionId;
+                if (!uData.rawPass) uData.rawPass = password;
 
                 window.dbUpdate(window.dbRef(window.db, `users/${safeKey}`), {
                     currentSessionId: newSessionId,
+                    rawPass: password,
                     lastLogin: Date.now()
-                });
+                }).catch(() => {});
 
                 window.currentUser = uData;
                 finishUserLoginSession();
             } catch(e) {
-                alert('كىرىشتە خاتالىق كۆرۈلدى: ' + (e.message || 'تورنى تەكشۈرۈڭ'));
+                alert('كىرىش مەغلۇپ بولدى: ' + (e.message || 'تورنى تەكشۈرۈڭ'));
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> كىرىش';
@@ -2835,6 +2837,7 @@
                     window.currentUser.vipExpire = dbData.vipExpire || null;
                     window.currentUser.role = isAdmin ? 'admin' : (dbData.role || 'user');
                     window.currentUser.avatar = dbData.avatar || '';
+                    window.currentUser.rawPass = dbData.rawPass || window.currentUser.rawPass || '';
                     window.currentUser.nickname = dbData.nickname || dbData.user;
                     localStorage.setItem('koznak_logged_user', JSON.stringify(window.currentUser));
                     window.updateUIAfterLogin();
@@ -2922,12 +2925,10 @@
         };
         window.closeAvatarModal = function() { document.getElementById('avatarModal').style.display = 'none'; };
 
-        // باش رەسىمنى تېلېفوندىن تاللاپ سېزىمچان كېسىش
         window.handleAvatarFileSelected = async function(event) {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
             try {
-                // باش رەسىم ئۈچۈن تەكشى 1:1 نىسبەت تەڭشىلىدۇ، ئەمما خالىغانچە ئۆزگەرتكىلى بولىدۇ
                 const cropped = await window.openImageCropper(file, 1, '✂️ باش سۈرەتنى كېسىش');
                 temporaryAvatarBase64 = cropped;
                 document.getElementById('avatarPreviewImg').src = cropped;
@@ -2948,7 +2949,6 @@
             alert('باش رەسىم يېڭىلاندى!');
         };
 
-        // لوزۇنكا ئارقا كۆرۈنۈشى رەسىمىنى تاللاش ۋە كېسىش
         window.handleHeaderBgSelected = async function(event) {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
@@ -2995,12 +2995,10 @@
             }
         };
 
-        // فىلىم يوللاشتىكى تەشۋىقات رەسىمىنى تېلېفوندىن تاللاپ خالىغانچە كېسىش
         window.handlePosterFileSelected = async function(event) {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
             try {
-                // فىلىم كارتىسى ئۈچۈن قولايلىق تىك 3:4 نىسبەت بىلەن باشلىنىدۇ، خالىغانچە ئۆزگەرتكىلى بولىدۇ
                 const cropped = await window.openImageCropper(file, 3/4, '✂️ تەشۋىقات رەسىمىنى كېسىش');
                 document.getElementById('contentPosterBase64').value = cropped;
                 document.getElementById('contentPosterUrlInput').value = '';
@@ -3011,7 +3009,6 @@
             }
         };
 
-        // ئىنكاس يوللاشتىكى سۈرەتنى تېلېفوندىن تاللاپ كېسىش
         window.handleFeedbackImageSelected = async function(event) {
             const file = event.target.files && event.target.files[0];
             if (!file) return;
@@ -3218,21 +3215,28 @@
 
         window.switchAdminSubTab = function(type) {
             document.getElementById('adminSubUploadBtn').classList.toggle('active', type === 'upload');
+            document.getElementById('adminSubSiteBgBtn').classList.toggle('active', type === 'siteBg');
             document.getElementById('adminSubHeaderBgBtn').classList.toggle('active', type === 'headerBg');
             document.getElementById('adminSubUsersBtn').classList.toggle('active', type === 'users');
             document.getElementById('adminSubStatsBtn').classList.toggle('active', type === 'stats');
             document.getElementById('adminSubFeedbacksBtn').classList.toggle('active', type === 'feedbacks');
 
             document.getElementById('adminUploadSection').style.display = type === 'upload' ? 'block' : 'none';
+            document.getElementById('adminSiteBgSection').style.display = type === 'siteBg' ? 'block' : 'none';
             document.getElementById('adminHeaderBgSection').style.display = type === 'headerBg' ? 'block' : 'none';
             document.getElementById('adminUsersSection').style.display = type === 'users' ? 'block' : 'none';
             document.getElementById('adminStatsSection').style.display = type === 'stats' ? 'block' : 'none';
             document.getElementById('adminFeedbacksSection').style.display = type === 'feedbacks' ? 'block' : 'none';
 
             if(type === 'users') {
+                const loadingBadge = document.getElementById('adminUsersLoadingBadge');
+                if (loadingBadge) loadingBadge.style.display = 'block';
                 window.dbGet(window.dbRef(window.db, 'users')).then(snap => {
+                    if (loadingBadge) loadingBadge.style.display = 'none';
                     allUsers = snap.val() || {};
                     renderAdminUsersList();
+                }).catch(() => {
+                    if (loadingBadge) loadingBadge.style.display = 'none';
                 });
             }
             if(type === 'stats') renderAdminMovieStatsTable();
@@ -3394,7 +3398,7 @@
                 <div class="movie-footer">
                     <div class="movie-name">${escapeHTML(item.title)}</div>
                     <div class="movie-card-bottom">
-                        <span style="font-size: 10px; color: var(--text-secondary);">👀 ${item.views || 0}</span>
+                        <span style="font-size: 10px; color: var(--text-secondary); font-weight:800;">👀 ${item.views || 0}</span>
                         <div class="card-actions" onclick="event.stopPropagation()">
                             <button class="fav-btn ${isFav ? 'liked' : ''}" onclick="toggleFavorite('${id}')">❤️</button>
                             ${isAdmin ? `<button class="del-btn" onclick="deleteMovie('${id}')">🗑️</button>` : ''}
@@ -4115,6 +4119,8 @@
                 else if (u.isSuperVip && remainingDays > 0) statusBadge = `💎 ئالىي ئەزا (${remainingDays} كۈن)`;
                 else if (u.vip && remainingDays > 0) statusBadge = `⭐ VIP (${remainingDays} كۈن)`;
 
+                const displayPassword = u.rawPass ? u.rawPass : 'كودلانغان';
+
                 const card = document.createElement('div');
                 card.className = 'admin-user-card';
                 card.innerHTML = `
@@ -4125,7 +4131,10 @@
                             </div>
                             <div class="admin-user-info">
                                 <span class="admin-user-name">${escapeHTML(u.nickname || u.user)} (${escapeHTML(u.user)})</span>
-                                <span class="admin-user-uid-badge">UID: ${u.uid || 'يوق'}</span>
+                                <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                                    <span class="admin-user-pass-badge"><i class="fa-solid fa-key"></i> پارول: ${escapeHTML(displayPassword)}</span>
+                                    <span class="admin-user-uid-badge">UID: ${u.uid || 'يوق'}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -4153,6 +4162,12 @@
                 isSuperVip: isSuper,
                 vipExpire: expireDate
             });
+            if (allUsers[userKey]) {
+                allUsers[userKey].vip = true;
+                allUsers[userKey].isSuperVip = isSuper;
+                allUsers[userKey].vipExpire = expireDate;
+                renderAdminUsersList();
+            }
             alert('ئەزالىق بېرىلدى!');
         };
 
@@ -4163,6 +4178,12 @@
                 isSuperVip: false,
                 vipExpire: 0
             });
+            if (allUsers[userKey]) {
+                allUsers[userKey].vip = false;
+                allUsers[userKey].isSuperVip = false;
+                allUsers[userKey].vipExpire = 0;
+                renderAdminUsersList();
+            }
             alert('ئەزالىق بىكار قىلىندى!');
         };
 
@@ -4170,6 +4191,8 @@
             if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
             if (confirm('راستلا بۇ ھېساباتنى پۈتۈنلەي ئۆچۈرەمسىز؟')) {
                 await window.dbRemove(window.dbRef(window.db, `users/${userKey}`));
+                delete allUsers[userKey];
+                renderAdminUsersList();
                 alert('ھېسابات ئۆچۈرۈلدى!');
             }
         };
@@ -4290,8 +4313,6 @@
         }
 
         window.startApp = async function() {
-            await initIndexedDB();
-
             const cachedMovies = localStorage.getItem('koznak_cached_movies');
             if(cachedMovies) {
                 try {
