@@ -24,7 +24,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'koznak-pwa-v13';
+                    const CACHE_NAME = 'koznak-pwa-v14';
                     const ASSETS = [
                         './',
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
@@ -1592,7 +1592,7 @@
         </div>
     </div>
 
-    <!-- 5. ھېسابات ۋە چۈشۈرۈلگەنلەر بۆلىكى -->
+    <!-- 5. ھېسابات بۆلىكى -->
     <div id="accountTab" class="tab-content">
         <div class="settings-page-wrapper">
             <div class="user-profile-card-modern">
@@ -1633,7 +1633,6 @@
                 </button>
             </div>
 
-            <!-- ھېسابات ئىچكى كۆزنەكلىرى -->
             <div class="auth-nav-pills" style="margin-bottom: 14px;">
                 <button type="button" class="auth-nav-pill active" id="accountSubFavBtn" onclick="switchAccountSubTab('fav')">
                     <i class="fa-solid fa-heart"></i> ياقتۇرغان ۋە كۆرگەنلىرىم
@@ -1643,7 +1642,6 @@
                 </button>
             </div>
 
-            <!-- 1-رايون: ياقتۇرغان ۋە كۆرگەنلىرىم -->
             <div id="accountFavSection" style="display: block;">
                 <div class="section-title" style="font-size: 13px; margin: 10px 0;"><i class="fa-solid fa-heart" style="color:#ff3b30;"></i> ياقتۇرغان فىلىملىرىم</div>
                 <div class="movie-grid" id="favList" style="margin-bottom: 20px;"></div>
@@ -1655,7 +1653,6 @@
                 <div class="movie-grid" id="historyList" style="margin-bottom: 20px;"></div>
             </div>
 
-            <!-- 2-رايون: چۈشۈرۈلگەن سىنلار تىزىملىكى -->
             <div id="accountDownSection" style="display: none;">
                 <div class="section-title" style="font-size: 13px; margin: 10px 0;">
                     <i class="fa-solid fa-folder-arrow-down" style="color:#ff3b30;"></i> تېلېفون سىغىمىغا چۈشكەن فىلىملەر
@@ -1802,7 +1799,6 @@
                 </button>
             </div>
 
-            <!-- 1. مەزمۇن قوشۇش -->
             <div id="adminUploadSection" class="settings-group-card" style="padding: 16px;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">➕ يېڭى مەزمۇن قوشۇش</div>
                 <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
@@ -1893,7 +1889,6 @@
                 </form>
             </div>
 
-            <!-- 2. پۈتۈن تەگلىك بۆلىكى -->
             <div id="adminSiteBgSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-panorama" style="color: #00c6ff;"></i> پۈتۈن توربەت تىك ئارقا تەگلىك رەسىمى</div>
                 <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
@@ -1915,7 +1910,6 @@
                 </button>
             </div>
 
-            <!-- 3. لوزۇنكا تەگلىكى بۆلىكى -->
             <div id="adminHeaderBgSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-image" style="color: #ff3b30;"></i> باش بەت لوزۇنكا ئارقا كۆرۈنۈش رەسىمى</div>
                 <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
@@ -1933,7 +1927,6 @@
                 <button type="button" class="action-btn" style="background: #64748b; margin-top: 8px;" onclick="resetHeaderBgToDefault()">ئەسلى قىزىل ھالىتىگە قايتۇرۇش</button>
             </div>
 
-            <!-- 4. ئەزالار باشقۇرۇش -->
             <div id="adminUsersSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">👥 ئەزالارنى تولۇق باشقۇرۇش</div>
                 <div class="form-group" style="margin-bottom: 10px;">
@@ -1945,7 +1938,6 @@
                 <div class="admin-users-list" id="adminUsersListContainer"></div>
             </div>
 
-            <!-- 5. سىتاستىكا -->
             <div id="adminStatsSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">📊 فىلىملەر سىتاستىكا جەدۋىلى</div>
                 <div class="admin-stat-summary-grid">
@@ -1981,7 +1973,6 @@
                 </div>
             </div>
 
-            <!-- 6. ئىنكاسلار -->
             <div id="adminFeedbacksSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">💬 ئىزدەش رايونىدىن ئىنكاسلار</div>
                 <div id="adminFeedbacksListContainer" style="display: flex; flex-direction: column; gap: 12px;"></div>
@@ -2660,7 +2651,35 @@
             document.getElementById('registerFormSection').style.display = mode === 'register' ? 'block' : 'none';
         };
 
-        /* ================== چاقماقتەك دەرھال كىرىش ۋە تىزىملىتىش سىستېمىسى ================== */
+        /* ================== پۇختا كىرىش ۋە تىزىملىتىش لوگىكىسى (قېتىۋېلىش پۈتۈنلەي تۈزىتىلدى) ================== */
+        function fetchUserFromDB(safeKey) {
+            return new Promise((resolve) => {
+                const userRef = window.dbRef(window.db, 'users/' + safeKey);
+                let resolved = false;
+                
+                // onValue ئارقىلىق دەرھال بىر قېتىم ئېلىش
+                window.dbOnValue(userRef, (snapshot) => {
+                    if (!resolved) {
+                        resolved = true;
+                        resolve(snapshot);
+                    }
+                }, (error) => {
+                    if (!resolved) {
+                        resolved = true;
+                        resolve(null);
+                    }
+                }, { onlyOnce: true });
+
+                // ئەڭ كۆپ بولغاندا 10 سېكۇنت كۈتۈش
+                setTimeout(() => {
+                    if (!resolved) {
+                        resolved = true;
+                        resolve(null);
+                    }
+                }, 10000);
+            });
+        }
+
         window.handleUserRegister = async function() {
             const btn = document.getElementById('regSubmitBtn');
             const username = document.getElementById('regUsername').value.trim();
@@ -2673,10 +2692,7 @@
 
             const safeKey = 'usr_' + encodeURIComponent(username).replace(/[^a-zA-Z0-9_]/g, '');
             try {
-                const userSnap = await Promise.race([
-                    window.dbGet(window.dbRef(window.db, 'users/' + safeKey)),
-                    new Promise((_, reject) => setTimeout(() => reject(new Error('تور سۈرئىتى نىسبەتەن ئاستا بولۇۋاتىدۇ')), 4000))
-                ]);
+                const userSnap = await fetchUserFromDB(safeKey);
 
                 if (userSnap && userSnap.exists()) {
                     btn.disabled = false;
@@ -2705,7 +2721,7 @@
                     createdAt: Date.now()
                 };
 
-                window.dbSet(window.dbRef(window.db, 'users/' + safeKey), newUser).catch(() => {});
+                await window.dbSet(window.dbRef(window.db, 'users/' + safeKey), newUser).catch(() => {});
                 localStorage.setItem('koznak_session_id', newSessionId);
                 window.currentUser = newUser;
                 finishUserLoginSession();
@@ -2729,7 +2745,7 @@
             const safeKey = 'usr_' + encodeURIComponent(username).replace(/[^a-zA-Z0-9_]/g, '');
             const inputHash = hashPassword(password);
 
-            // 1. باشقۇرغۇچى تەستىقى بولسا توردىن كۈتمەي بىۋاسىتە 0.1 سېكۇنتتا كىرىش
+            // 1. باشقۇرغۇچى (dronemax) ئۈچۈن قىلچە كېچىكمەي بىۋاسىتە كىرىش
             if (username === 'dronemax' && inputHash === ADMIN_HASH) {
                 const newSessionId = generateSessionId();
                 const adminUser = {
@@ -2752,22 +2768,32 @@
                 window.currentUser = adminUser;
                 finishUserLoginSession();
                 
-                // ئارقا سەھنىدە تېنچ يېڭىلاپ قويىدۇ (قېتىۋالمايدۇ)
                 window.dbSet(window.dbRef(window.db, 'users/' + safeKey), adminUser).catch(() => {});
                 return;
             }
 
-            // 2. ئادەتتىكى ئابونتلارنىڭ قېتىۋالماي تېز كىرىشى
+            // 2. ئادەتتىكى ئابونتلارنىڭ كىرىشى
             try {
-                const userSnap = await Promise.race([
-                    window.dbGet(window.dbRef(window.db, 'users/' + safeKey)),
-                    new Promise((_, reject) => setTimeout(() => reject(new Error('تور ئۇلىنىشى بەك ئاستا، قايتا سىناڭ')), 4500))
-                ]);
+                // ئاۋۋال ئەگەر تېلېفوندا بار بۇرۇنقى ئارخىپ ماس كەلسە دەرھال كىرگۈزۈش
+                const localUserStr = localStorage.getItem('koznak_logged_user');
+                if (localUserStr) {
+                    try {
+                        const localU = JSON.parse(localUserStr);
+                        if (localU.user === username && (localU.rawPass === password || localU.password === inputHash)) {
+                            window.currentUser = localU;
+                            finishUserLoginSession();
+                            return;
+                        }
+                    } catch(err) {}
+                }
+
+                // تور ئامبىرىدىن تەكشۈرۈش
+                const userSnap = await fetchUserFromDB(safeKey);
 
                 if (!userSnap || !userSnap.exists()) {
                     btn.disabled = false;
                     btn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> كىرىش';
-                    return alert('ھېسابات تېپىلمىدى!');
+                    return alert('ھېسابات نامى ياكى پارول خاتا!');
                 }
 
                 const uData = userSnap.val();
@@ -2791,7 +2817,7 @@
                 window.currentUser = uData;
                 finishUserLoginSession();
             } catch(e) {
-                alert('كىرىش مەغلۇپ بولدى: ' + (e.message || 'تورنى تەكشۈرۈڭ'));
+                alert('كىرىشتە خاتالىق كۆرۈلدى: ' + (e.message || 'تورنى قايتا سىناڭ'));
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> كىرىش';
