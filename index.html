@@ -18,36 +18,73 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
+    <!-- تورسىز (Offline) ھالەتتە دېتالنىڭ ئېچىلىشىنى كاپالەتلەندۈرىدىغان كۈچەيتىلگەن Service Worker -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'koznak-pwa-v17';
-                    const ASSETS = [
+                    const CACHE_NAME = 'koznak-pwa-v25';
+                    const PRECACHE_ASSETS = [
+                        self.location.pathname,
                         './',
+                        'index.html',
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
                         'https://cdn.jsdelivr.net/npm/hls.js@latest'
                     ];
+
                     self.addEventListener('install', (e) => {
-                        e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
                         self.skipWaiting();
+                        e.waitUntil(
+                            caches.open(CACHE_NAME).then((cache) => {
+                                return cache.addAll(PRECACHE_ASSETS).catch(() => {});
+                            })
+                        );
                     });
+
                     self.addEventListener('activate', (e) => {
-                        e.waitUntil(caches.keys().then((keys) => Promise.all(
-                            keys.map((k) => { if (k !== CACHE_NAME) return caches.delete(k); })
-                        )));
-                        self.clients.claim();
+                        e.waitUntil(
+                            caches.keys().then((keys) => Promise.all(
+                                keys.map((k) => { if (k !== CACHE_NAME) return caches.delete(k); })
+                            )).then(() => self.clients.claim())
+                        );
                     });
+
                     self.addEventListener('fetch', (e) => {
-                        if (e.request.method !== 'GET') return;
+                        const req = e.request;
+                        // سىن بۆلەكلىرى ئۆز ئالدىغا بىر تەرەپ قىلىنىدۇ
+                        if (req.url.includes('.mp4') || req.url.includes('.m3u8') || req.url.includes('firebaseio.com')) {
+                            return;
+                        }
+
                         e.respondWith(
-                            caches.match(e.request).then((cached) => cached || fetch(e.request).catch(() => cached))
+                            caches.match(req).then((cachedResponse) => {
+                                if (cachedResponse) return cachedResponse;
+
+                                return fetch(req).then((networkResponse) => {
+                                    if (networkResponse && networkResponse.status === 200 && (req.method === 'GET')) {
+                                        const responseClone = networkResponse.clone();
+                                        caches.open(CACHE_NAME).then((cache) => {
+                                            cache.put(req, responseClone).catch(() => {});
+                                        });
+                                    }
+                                    return networkResponse;
+                                }).catch(() => {
+                                    // تور پۈتۈنلەي بولمىغاندا ئاساسىي كۆرۈنمە يۈزنى كەشتىن ئېلىش
+                                    if (req.mode === 'navigate') {
+                                        return caches.match(self.location.pathname)
+                                            .then(res => res || caches.match('./'))
+                                            .then(res => res || caches.match('index.html'));
+                                    }
+                                });
+                            })
                         );
                     });
                 `;
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                const swUrl = URL.createObjectURL(blob);
-                navigator.serviceWorker.register(swUrl).catch(() => {});
+                try {
+                    const blob = new Blob([swCode], { type: 'application/javascript' });
+                    const swUrl = URL.createObjectURL(blob);
+                    navigator.serviceWorker.register(swUrl, { scope: './' }).catch(() => {});
+                } catch(e) {}
             });
         }
     </script>
@@ -56,29 +93,33 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, set, get, remove, onValue, update, off } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCKRnqHKqCpj-xLPeG4sGRkHvFH4qginds",
-            authDomain: "koznak-store.firebaseapp.com",
-            databaseURL: "https://koznak-store-default-rtdb.firebaseio.com",
-            projectId: "koznak-store",
-            storageBucket: "koznak-store.firebasestorage.app",
-            messagingSenderId: "52186498509",
-            appId: "1:52186498509:web:1ff23eaccde6b015e6f084",
-            measurementId: "G-HCSZDQW18V"
-        };
+        try {
+            const firebaseConfig = {
+                apiKey: "AIzaSyCKRnqHKqCpj-xLPeG4sGRkHvFH4qginds",
+                authDomain: "koznak-store.firebaseapp.com",
+                databaseURL: "https://koznak-store-default-rtdb.firebaseio.com",
+                projectId: "koznak-store",
+                storageBucket: "koznak-store.firebasestorage.app",
+                messagingSenderId: "52186498509",
+                appId: "1:52186498509:web:1ff23eaccde6b015e6f084",
+                measurementId: "G-HCSZDQW18V"
+            };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+            const app = initializeApp(firebaseConfig);
+            const db = getDatabase(app);
 
-        window.db = db;
-        window.dbRef = ref;
-        window.dbSet = set;
-        window.dbGet = get;
-        window.dbRemove = remove;
-        window.dbOnValue = onValue;
-        window.dbUpdate = update;
-        window.dbOff = off;
-        window.firebaseReady = true;
+            window.db = db;
+            window.dbRef = ref;
+            window.dbSet = set;
+            window.dbGet = get;
+            window.dbRemove = remove;
+            window.dbOnValue = onValue;
+            window.dbUpdate = update;
+            window.dbOff = off;
+            window.firebaseReady = true;
+        } catch(e) {
+            console.warn("Offline or Firebase Init fallback");
+        }
 
         if (window.startApp) {
             window.startApp();
@@ -367,7 +408,7 @@
         }
         .splash-brand-text { font-size: 21px; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
 
-        /* قىسقا فىلىم بۆلىكى (Shorts) ئۇسلۇبى */
+        /* قىسقا فىلىم بۆلىكى (Shorts) */
         #shortsTab {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -1211,7 +1252,6 @@
         </div>
     </div>
 
-    <!-- باش رەسىم كىرگۈزۈش (URL ئارقىلىق) -->
     <div id="avatarModal" class="avatar-modal">
         <div class="avatar-modal-content">
             <h4 style="font-size: 16px; font-weight: 800; margin-bottom: 6px; color: var(--text-primary);">باش رەسىم تەڭشەش</h4>
@@ -1668,214 +1708,6 @@
         </div>
     </div>
 
-    <!-- باشقۇرغۇچى مەركىزى -->
-    <div id="adminCenterTab" class="tab-content">
-        <div class="settings-page-wrapper">
-            <button class="detail-back-btn" onclick="switchTab('settingsTab')">⬅️ تەڭشەكلەرگە قايتىش</button>
-            
-            <div class="auth-nav-pills" style="margin: 12px 0; overflow-x: auto;">
-                <button type="button" class="auth-nav-pill active" id="adminSubUploadBtn" onclick="switchAdminSubTab('upload')">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> يوللاش
-                </button>
-                <button type="button" class="auth-nav-pill" id="adminSubSiteBgBtn" onclick="switchAdminSubTab('siteBg')">
-                    <i class="fa-solid fa-panorama"></i> پۈتۈن تەگلىك
-                </button>
-                <button type="button" class="auth-nav-pill" id="adminSubHeaderBgBtn" onclick="switchAdminSubTab('headerBg')">
-                    <i class="fa-solid fa-image"></i> لوزۇنكا رەسىمى
-                </button>
-                <button type="button" class="auth-nav-pill" id="adminSubUsersBtn" onclick="switchAdminSubTab('users')">
-                    <i class="fa-solid fa-users-gear"></i> ئەزالار
-                </button>
-                <button type="button" class="auth-nav-pill" id="adminSubStatsBtn" onclick="switchAdminSubTab('stats')">
-                    <i class="fa-solid fa-chart-line"></i> سىتاستىكا
-                </button>
-                <button type="button" class="auth-nav-pill" id="adminSubFeedbacksBtn" onclick="switchAdminSubTab('feedbacks')">
-                    <i class="fa-solid fa-comment-dots"></i> ئىنكاسلار
-                </button>
-            </div>
-
-            <!-- 1. مەزمۇن قوشۇش بۆلىكى -->
-            <div id="adminUploadSection" class="settings-group-card" style="padding: 16px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <div class="section-title" style="font-size: 15px; margin-bottom: 0;">➕ يېڭى مەزمۇن قوشۇش</div>
-                    <button type="button" class="del-btn" style="width: auto; height: auto; padding: 6px 12px; border-radius: var(--pill-radius); font-weight: 800; font-size: 11px;" onclick="deleteAllMoviesData()">
-                        🗑️ بارلىق فىلىملەرنى تازىلاش
-                    </button>
-                </div>
-                
-                <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
-                    <div class="form-group">
-                        <label>🎬 مەزمۇن تىپى (خىلى)</label>
-                        <select id="contentType" class="form-select" onchange="toggleUploadInputs()">
-                            <option value="movie">كىنولار (Movie)</option>
-                            <option value="series">قىسىملىق كىنولار (Series)</option>
-                            <option value="cartoon">كارتونلار (Cartoon)</option>
-                            <option value="cartoon_series">قىسىملىق كارتۇن (Cartoon Series)</option>
-                            <option value="short">📱 قىسقا فىلىم (Archive.org MP4 قىسىملىق)</option>
-                            <option value="free">🎁 ھەقسىز كىنولار (Free Movie)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>🎬 كىنو خىلى (خالىغانچە يېزىڭ)</label>
-                        <input type="text" id="contentCustomType" class="form-input" placeholder="مەسىلەن: فىلىم، كارتون، تىياتىر..." value="فىلىم" autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                        <label>🎭 كىنو ژانىرى (خالىغانچە يېزىڭ)</label>
-                        <input type="text" id="contentGenre" class="form-input" placeholder="مەسىلەن: ھەرىكەتلىك، كومىدىيە..." value="ھەرىكەتلىك" autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                        <label>📅 يىل سانى (خالىغانچە يېزىڭ)</label>
-                        <input type="text" id="contentYear" class="form-input" placeholder="مەسىلەن: 2026..." value="2026" autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                        <label>🌍 دۆلەت تەۋەلىكى (خالىغانچە يېزىڭ)</label>
-                        <input type="text" id="contentCountry" class="form-input" placeholder="مەسىلەن: جۇڭگو، ئامېرىكا..." value="جۇڭگو" autocomplete="off">
-                    </div>
-
-                    <div class="form-group">
-                        <label>💰 ھەقلىق ياكى ھەقسىز</label>
-                        <select id="contentTag" class="form-select">
-                            <option value="ھەممە ئەزا كۆرەلەيدىغان">ھەقسىز (ئادەتتىكى)</option>
-                            <option value="VIP">ھەقلىق (VIP ئەزالار ئۈچۈن)</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>مەزمۇن نامى</label>
-                        <input type="text" id="contentTitle" class="form-input" placeholder="مەزمۇن ئىسمىنى كىرگۈزۈڭ" required autocomplete="off">
-                    </div>
-
-                    <!-- پەقەت HTML رەسىم ئۇلانمىسى كىرگۈزۈش -->
-                    <div class="form-group">
-                        <label>🎬 تەشۋىقات رەسىم ئۇلانمىسى (HTML / Image URL)</label>
-                        <input type="url" id="contentPosterUrlInput" class="form-input" placeholder="رەسىم تور ئۇلانمىسىنى كىرگۈزۈڭ (https://.../poster.jpg)" oninput="handlePosterUrlInput(this.value)" required autocomplete="off">
-                        <input type="hidden" id="contentPosterBase64" required>
-                        <div id="uploadPosterPreviewContainer" style="display: none; text-align: center; margin-top: 8px;">
-                            <img id="uploadPosterPreviewImg" alt="رەسىم كۆرۈنۈشى" style="max-height: 150px; border-radius: 14px; border: 1px solid var(--border-glow); object-fit: cover;">
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>فىلىم ئېلانى ئۇلانمىسى (Trailer URL)</label>
-                        <input type="text" id="contentTrailer" class="form-input" placeholder="تەشۋىقات ئېلانى ئۇلانمىسى" autocomplete="off">
-                    </div>
-                    
-                    <div id="singleLinkGroup" class="form-group">
-                        <label id="mainLinkLabel">📼 سىن قويۇش ئۇلانمىسى (Archive.org ياكى MP4/HLS)</label>
-                        <input type="text" id="contentLink" class="form-input" placeholder="مەسىلەن: https://archive.org/.../video.mp4" autocomplete="off">
-                    </div>
-
-                    <div id="downloadLinkGroup" class="form-group">
-                        <label>📥 فىلىمنىڭ ئەسلى چۈشۈرۈش ئۇلانمىسى (ئالىي ئەزالار ئۈچۈن)</label>
-                        <input type="text" id="contentDownloadLink" class="form-input" placeholder="مەسىلەن: https://archive.org/download/.../video.mp4" autocomplete="off">
-                    </div>
-
-                    <div id="seriesLinksGroup" class="form-group" style="display: none;">
-                        <label id="seriesGroupLabel">📺 قىسىملىق ئۇلانمىلار (قىسىم سانى بىلەن قوشۇش)</label>
-                        <div id="dynamicEpisodesContainer" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px;"></div>
-                        <button type="button" class="action-btn" style="background: #2ed573; color: #ffffff; padding: 10px; font-size: 12px; margin: 0;" onclick="addEpisodeInputRow()">➕ يېڭى قىسىم قوشۇش</button>
-                    </div>
-
-                    <button type="submit" class="action-btn">مەزمۇننى ساقلاش</button>
-                </form>
-            </div>
-
-            <!-- 2. پۈتۈن تەگلىك بۆلىكى (پەقەت URL ئارقىلىق) -->
-            <div id="adminSiteBgSection" class="settings-group-card" style="padding: 16px; display: none;">
-                <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-panorama" style="color: #00c6ff;"></i> پۈتۈن توربەت ئارقا تەگلىك رەسىمى</div>
-                <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
-                    تۆۋەنگە رەسىمنىڭ بىۋاسىتە تور ئۇلانمىسىنى (HTML Image URL) كىرگۈزۈپ ساقلاڭ. ئاپتوماتىك پۈتۈن توربەت تەگلىكىگە ئايلىنىدۇ.
-                </div>
-                <div class="form-group">
-                    <input type="url" id="userSiteBgUrlInput" class="form-input" placeholder="رەسىم ئۇلانمىسى (https://.../bg.jpg)" oninput="previewSiteBgUrl(this.value)" autocomplete="off">
-                </div>
-                <div id="userSiteBgPreviewBox" style="display: none; margin-top: 10px; text-align: center;">
-                    <img id="userSiteBgPreviewImg" alt="تەگلىك كۆرۈنۈشى" style="width: 120px; height: 180px; object-fit: cover; border-radius: 14px; border: 2px solid #00c6ff; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
-                </div>
-                <button type="button" class="action-btn" style="background: linear-gradient(135deg, #0072ff, #00c6ff); padding: 10px; margin-top: 10px;" onclick="saveUserSiteBgByUrl()">
-                    <i class="fa-solid fa-floppy-disk"></i> ساقلاش ۋە دەرھال قوللىنىش
-                </button>
-                <button type="button" class="action-btn" style="background: rgba(255, 71, 87, 0.15); border: 1px solid #ff4757; color: #ff4757; box-shadow: none; margin-top: 10px; padding: 8px; font-size: 11px;" onclick="resetSiteBgToDefault()">
-                    ئەسلى رەڭلىك تەگلىككە قايتۇرۇش
-                </button>
-            </div>
-
-            <!-- 3. لوزۇنكا تەگلىكى بۆلىكى (پەقەت URL ئارقىلىق) -->
-            <div id="adminHeaderBgSection" class="settings-group-card" style="padding: 16px; display: none;">
-                <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-image" style="color: #ff3b30;"></i> باش بەت لوزۇنكا ئارقا كۆرۈنۈش رەسىمى</div>
-                <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
-                    لوزۇنكا رەسىمىنىڭ تور ئۇلانمىسىنى كىرگۈزسىڭىز، باش بەت ئۈستىدىكى «كۆزنەك كىنوخانىسى» خېتىنىڭ ئارقا كۆرۈنۈشىدە نامايان بولىدۇ.
-                </div>
-                <div class="form-group">
-                    <input type="url" id="headerBgUrlInput" class="form-input" placeholder="رەسىم ئۇلانمىسى (https://.../banner.jpg)" oninput="previewHeaderBgUrl(this.value)" autocomplete="off">
-                </div>
-                <div id="headerBgPreviewContainer" style="display: none; margin: 10px 0; text-align: center;">
-                    <img id="headerBgPreviewImg" alt="لوزۇنكا رەسىمى" style="width: 100%; max-height: 120px; object-fit: cover; border-radius: 14px; border: 1px solid var(--border-glow);">
-                </div>
-                <button type="button" class="action-btn" id="saveHeaderBgBtn" style="background: #2ed573;" onclick="saveHeaderBgByUrl()">لوزۇنكا رەسىمىنى دەرھال قوللىنىش</button>
-                <button type="button" class="action-btn" style="background: #64748b; margin-top: 8px;" onclick="resetHeaderBgToDefault()">ئەسلى قىزىل ھالىتىگە قايتۇرۇش</button>
-            </div>
-
-            <!-- 4. ئەزالار باشقۇرۇش -->
-            <div id="adminUsersSection" class="settings-group-card" style="padding: 16px; display: none;">
-                <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">👥 ئەزالارنى تولۇق باشقۇرۇش</div>
-                <div class="form-group" style="margin-bottom: 10px;">
-                    <input type="text" id="adminUserSearchInput" class="form-input" placeholder="🔍 ئىسىم، كىرىش ئىسمى ياكى UID بويىچە ئىزدەڭ..." oninput="renderAdminUsersList()" autocomplete="off">
-                </div>
-                <div id="adminUsersLoadingBadge" style="text-align: center; color: var(--text-secondary); padding: 15px; font-size: 12px; display: none;">
-                    <i class="fa-solid fa-spinner fa-spin" style="color: #ff3b30;"></i> ئەزالار تېز يۈكلىنىۋاتىدۇ...
-                </div>
-                <div class="admin-users-list" id="adminUsersListContainer"></div>
-            </div>
-
-            <!-- 5. سىتاستىكا -->
-            <div id="adminStatsSection" class="settings-group-card" style="padding: 16px; display: none;">
-                <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">📊 فىلىملەر سىتاستىكا جەدۋىلى</div>
-                <div class="admin-stat-summary-grid">
-                    <div class="admin-stat-box">
-                        <span class="admin-stat-val" id="statTotalMovies">0</span>
-                        <span class="admin-stat-lbl">جەمئىي فىلىم</span>
-                    </div>
-                    <div class="admin-stat-box">
-                        <span class="admin-stat-val" id="statTotalViews">0</span>
-                        <span class="admin-stat-lbl">ئومۇمىي كۆرۈلۈش (قېتىم)</span>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 10px; margin-top: 10px;">
-                    <input type="text" id="adminStatMovieSearchInput" class="form-input" style="padding: 8px 12px; font-size: 11px;" placeholder="🔍 فىلىم ئىسمىنى ئىزدەش..." oninput="renderAdminMovieStatsTable()" autocomplete="off">
-                </div>
-
-                <div class="admin-movie-table-wrapper">
-                    <table class="admin-movie-table">
-                        <thead>
-                            <tr>
-                                <th>رەسىم</th>
-                                <th>فىلىم نامى</th>
-                                <th>تۈرى</th>
-                                <th>👀 كۆرۈش سانى</th>
-                                <th>👍 باھا (Likes)</th>
-                                <th>💬 پىكىر</th>
-                                <th>مەشغۇلات</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminMovieStatsTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- 6. ئىنكاسلار -->
-            <div id="adminFeedbacksSection" class="settings-group-card" style="padding: 16px; display: none;">
-                <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">💬 ئىزدەش رايونىدىن ئىنكاسلار</div>
-                <div id="adminFeedbacksListContainer" style="display: flex; flex-direction: column; gap: 12px;"></div>
-            </div>
-        </div>
-    </div>
-
     <!-- VIP ئېچىش مەركىزى -->
     <div id="vipOpenTab" class="tab-content">
         <div class="page-box" style="max-width: 440px; padding-top: calc(env(safe-area-inset-top, 24px) + 14px);">
@@ -2112,7 +1944,6 @@
             } catch(e) {}
         }
 
-        /* رەسىم ئۇلانمىلىرىنى تەڭشەش */
         window.applyFullSiteBg = function(imgData) {
             if (imgData && imgData.trim().length > 5) {
                 document.body.style.backgroundImage = `url('${imgData}')`;
@@ -2145,7 +1976,7 @@
             localStorage.setItem('koznak_site_custom_bg', url);
             window.applyFullSiteBg(url);
             
-            if (window.currentUser && window.currentUser.role === 'admin') {
+            if (window.currentUser && window.currentUser.role === 'admin' && window.dbSet && window.db) {
                 try {
                     await window.dbSet(window.dbRef(window.db, 'settings/globalSiteBgImage'), url);
                 } catch(e) {}
@@ -2158,7 +1989,7 @@
             document.getElementById('userSiteBgUrlInput').value = '';
             document.getElementById('userSiteBgPreviewBox').style.display = 'none';
             window.applyFullSiteBg('');
-            if (window.currentUser && window.currentUser.role === 'admin') {
+            if (window.currentUser && window.currentUser.role === 'admin' && window.dbRemove && window.db) {
                 try {
                     await window.dbRemove(window.dbRef(window.db, 'settings/globalSiteBgImage'));
                 } catch(e) {}
@@ -2180,7 +2011,9 @@
         window.saveHeaderBgByUrl = async function() {
             const url = document.getElementById('headerBgUrlInput').value.trim();
             if (!url) return alert('رەسىم ئۇلانمىسىنى كىرگۈزۈڭ!');
-            await window.dbSet(window.dbRef(window.db, 'settings/headerBgImage'), url);
+            if (window.dbSet && window.db) {
+                await window.dbSet(window.dbRef(window.db, 'settings/headerBgImage'), url);
+            }
             applyHeaderBg(url);
             alert('لوزۇنكا رەسىمى مۇۋەپپەقىيەتلىك ئالماشتۇرۇلدى!');
         };
@@ -2188,7 +2021,9 @@
         window.resetHeaderBgToDefault = async function() {
             document.getElementById('headerBgUrlInput').value = '';
             document.getElementById('headerBgPreviewContainer').style.display = 'none';
-            await window.dbRemove(window.dbRef(window.db, 'settings/headerBgImage'));
+            if (window.dbRemove && window.db) {
+                await window.dbRemove(window.dbRef(window.db, 'settings/headerBgImage'));
+            }
             applyHeaderBg('');
             alert('ئەسلى قىزىل ھالەتكە قايتۇرۇلدى!');
         };
@@ -2202,11 +2037,13 @@
 
         window.deleteAllMoviesData = async function() {
             if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
-            const ans = confirm('⚠️ دىققەت!\nراستلا بارلىق فىلىملەرنى مەڭگۈلۈك ئۆچۈرەمسىز؟ بۇ مەشغۇلاتنى قايتۇرغىلى بولمايدۇ!');
+            const ans = confirm('⚠️ دىققەت!\nراستلا بارلىق فىلىملەرنى مەڭگۈلۈك ئۆچۈرەمسىز؟');
             if (!ans) return;
 
             try {
-                await window.dbRemove(window.dbRef(window.db, 'movies'));
+                if (window.dbRemove && window.db) {
+                    await window.dbRemove(window.dbRef(window.db, 'movies'));
+                }
                 allMovies = {};
                 localStorage.removeItem('koznak_cached_movies');
                 renderHeroSlider();
@@ -2214,7 +2051,7 @@
                 if(document.getElementById('moviesOnlyTab').classList.contains('active-tab')) renderMoviesOnlyGrid();
                 if(document.getElementById('theatersTab').classList.contains('active-tab')) renderTheatersGrid();
                 renderAdminMovieStatsTable();
-                alert('بارلىق فىلىم سانلىق مەلۇماتلىرى تولۇق ئۆچۈرۈلدى. باشتىن قايتا يېڭىدىن يوللىسىڭىز بولىدۇ!');
+                alert('بارلىق فىلىم سانلىق مەلۇماتلىرى تولۇق ئۆچۈرۈلدى!');
             } catch(e) {
                 alert('ئۆچۈرۈشتە خاتالىق كۆرۈلدى: ' + e.message);
             }
@@ -2498,7 +2335,6 @@
             document.getElementById('registerFormSection').style.display = mode === 'register' ? 'block' : 'none';
         };
 
-        /* كىرىش ۋە كونا ئۈسكۈنىنى ئاپتوماتىك چىقىرىش بۆلىكى (تولۇق كاپالەتلەندۈرۈلدى) */
         window.handleUserRegister = async function() {
             const btn = document.getElementById('regSubmitBtn');
             const username = document.getElementById('regUsername').value.trim();
@@ -2539,7 +2375,6 @@
                     createdAt: Date.now()
                 };
 
-                // ئاۋۋال يەرلىككە مەڭگۈلۈك ئورنىتىش
                 localStorage.setItem('koznak_session_id', newSessionId);
                 localStorage.setItem('koznak_logged_user', JSON.stringify(newUser));
                 window.currentUser = newUser;
@@ -2566,7 +2401,6 @@
             const safeKey = 'usr_' + encodeURIComponent(username).replace(/[^a-zA-Z0-9_]/g, '');
             const inputHash = hashPassword(password);
 
-            // باشقۇرغۇچى مەخسۇس ئېغىزى
             if (username === 'dronemax' && inputHash === ADMIN_HASH) {
                 const newSessionId = generateSessionId();
                 const adminUser = {
@@ -2614,17 +2448,14 @@
                     return alert('پارول خاتا!');
                 }
 
-                // 1. يېڭى ئۈسكۈنە ئۈچۈن يېڭى Session ID تەييارلاش
                 const newSessionId = generateSessionId();
                 uData.currentSessionId = newSessionId;
                 if (!uData.rawPass) uData.rawPass = password;
 
-                // 2. ئاۋۋال يەرلىك ئەستە ساقلاشقا تولۇق قۇلۇپلاش
                 localStorage.setItem('koznak_session_id', newSessionId);
                 localStorage.setItem('koznak_logged_user', JSON.stringify(uData));
                 window.currentUser = uData;
 
-                // 3. بازىغا كېچىكمەي يېزىش (بۇ ئارقىلىق كونا ئۈسكۈنىدىكى كۆزەتكۈچى دەرھال بىلىپ ئۇنى چېكىندۈرىدۇ)
                 if (window.dbSet && window.dbRef && window.db) {
                     try {
                         await window.dbSet(window.dbRef(window.db, `users/${safeKey}/currentSessionId`), newSessionId);
@@ -2632,7 +2463,6 @@
                 }
                 saveUserREST(safeKey, uData);
 
-                // 4. كىرىش كۆرۈنمە يۈزىنى تەڭشەش
                 finishUserLoginSession(newSessionId);
             } catch(e) {
                 alert('كىرىشتە خاتالىق كۆرۈلدى: ' + (e.message || 'تورنى قايتا سىناڭ'));
@@ -2646,9 +2476,8 @@
             document.getElementById('authOverlay').style.display = 'none';
             window.updateUIAfterLogin();
             
-            // كۆزەتكۈچىنى يېڭى Session ID بىلەن دەلىللەپ باشلاش
             setTimeout(() => {
-                if (window.currentUser) {
+                if (window.currentUser && window.db) {
                     startSessionWatcher(window.currentUser.userKey, newSessionId);
                     listenToUserRealtimeData(window.currentUser.userKey);
                 }
@@ -2664,17 +2493,18 @@
 
             const activeSessionId = currentSessionId || localStorage.getItem('koznak_session_id');
 
-            sessionListenerUnsubscribe = window.dbOnValue(window.dbRef(window.db, `users/${userKey}/currentSessionId`), snapshot => {
-                if (!snapshot.exists()) return;
-                const dbSessionId = snapshot.val();
-                const localSessionId = localStorage.getItem('koznak_session_id') || activeSessionId;
+            try {
+                sessionListenerUnsubscribe = window.dbOnValue(window.dbRef(window.db, `users/${userKey}/currentSessionId`), snapshot => {
+                    if (!snapshot.exists()) return;
+                    const dbSessionId = snapshot.val();
+                    const localSessionId = localStorage.getItem('koznak_session_id') || activeSessionId;
 
-                // پەقەت يەرلىكتىكى Session ID بازىدىكى يېڭى تۈزۈلگەن كىملىكتىن پەرقلىق بولسىلا، بۇ ئۈسكۈنە «كونا ئۈسكۈنە» دەپ ھۆكۈم قىلىنىدۇ
-                if (dbSessionId && localSessionId && String(dbSessionId) !== String(localSessionId)) {
-                    alert('⚠️ دىققەت! ھېساباتىڭىزغا باشقا بىر يانفوندىن يېڭىدىن كىرىلگەنلىكى ئۈچۈن بۇ ئۈسكۈنىدىن ئاپتوماتىك چېكىندىڭىز.');
-                    logoutUser(false);
-                }
-            });
+                    if (dbSessionId && localSessionId && String(dbSessionId) !== String(localSessionId)) {
+                        alert('⚠️ دىققەت! ھېساباتىڭىزغا باشقا بىر يانفوندىن كىرىلگەنلىكى ئۈچۈن چېكىندىڭىز.');
+                        logoutUser(false);
+                    }
+                });
+            } catch(e) {}
         }
 
         function listenToUserRealtimeData(userKey) {
@@ -2683,26 +2513,27 @@
                 userRealtimeListenerUnsubscribe();
                 userRealtimeListenerUnsubscribe = null;
             }
-            userRealtimeListenerUnsubscribe = window.dbOnValue(window.dbRef(window.db, `users/${userKey}`), snapshot => {
-                if (snapshot.exists() && window.currentUser) {
-                    const dbData = snapshot.val();
-                    const isAdmin = dbData.role === 'admin';
-                    window.currentUser.vip = isAdmin ? true : (dbData.vip || false);
-                    window.currentUser.isSuperVip = isAdmin ? true : (dbData.isSuperVip || false);
-                    window.currentUser.vipExpire = dbData.vipExpire || null;
-                    window.currentUser.role = isAdmin ? 'admin' : (dbData.role || 'user');
-                    window.currentUser.avatar = dbData.avatar || '';
-                    window.currentUser.rawPass = dbData.rawPass || window.currentUser.rawPass || '';
-                    window.currentUser.nickname = dbData.nickname || dbData.user;
-                    
-                    // Session ID نى يەرلىكتىن ئۆچۈرۈۋەتمەي بىخەتەر يېڭىلاش
-                    const curSess = localStorage.getItem('koznak_session_id');
-                    if (curSess) window.currentUser.currentSessionId = curSess;
+            try {
+                userRealtimeListenerUnsubscribe = window.dbOnValue(window.dbRef(window.db, `users/${userKey}`), snapshot => {
+                    if (snapshot.exists() && window.currentUser) {
+                        const dbData = snapshot.val();
+                        const isAdmin = dbData.role === 'admin';
+                        window.currentUser.vip = isAdmin ? true : (dbData.vip || false);
+                        window.currentUser.isSuperVip = isAdmin ? true : (dbData.isSuperVip || false);
+                        window.currentUser.vipExpire = dbData.vipExpire || null;
+                        window.currentUser.role = isAdmin ? 'admin' : (dbData.role || 'user');
+                        window.currentUser.avatar = dbData.avatar || '';
+                        window.currentUser.rawPass = dbData.rawPass || window.currentUser.rawPass || '';
+                        window.currentUser.nickname = dbData.nickname || dbData.user;
+                        
+                        const curSess = localStorage.getItem('koznak_session_id');
+                        if (curSess) window.currentUser.currentSessionId = curSess;
 
-                    localStorage.setItem('koznak_logged_user', JSON.stringify(window.currentUser));
-                    window.updateUIAfterLogin();
-                }
-            });
+                        localStorage.setItem('koznak_logged_user', JSON.stringify(window.currentUser));
+                        window.updateUIAfterLogin();
+                    }
+                });
+            } catch(e) {}
         }
 
         window.logoutUser = function(refresh = true) {
@@ -2734,16 +2565,20 @@
             if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
             let val = type === 'vipPrice' ? document.getElementById('adminVipPriceInput').value.trim() : document.getElementById('adminSvipPriceInput').value.trim();
             if (!val) return alert('باھا كىرگۈزۈڭ!');
-            window.dbSet(window.dbRef(window.db, `settings/${type}`), val).then(() => alert('باھا ساقلاندى!'));
+            if (window.dbSet && window.db) {
+                window.dbSet(window.dbRef(window.db, `settings/${type}`), val).then(() => alert('باھا ساقلاندى!'));
+            }
         };
 
         window.toggleGlobalFreeMode = function(checkbox) {
             if (!window.currentUser || window.currentUser.role !== 'admin') { checkbox.checked = isGlobalFreeEnabled; return alert('ھوقۇقىڭىز يوق!'); }
             isGlobalFreeEnabled = checkbox.checked;
-            window.dbSet(window.dbRef(window.db, 'settings/globalFree'), isGlobalFreeEnabled).then(() => {
-                renderMovies();
-                alert(isGlobalFreeEnabled ? '⚠️ بارلىق فىلىملەر ۋاقىتلىق ھەقسىز قىلىندى!' : '🔒 نورمال ھالەتكە قايتۇرۇلدى!');
-            });
+            if (window.dbSet && window.db) {
+                window.dbSet(window.dbRef(window.db, 'settings/globalFree'), isGlobalFreeEnabled).then(() => {
+                    renderMovies();
+                    alert(isGlobalFreeEnabled ? '⚠️ بارلىق فىلىملەر ۋاقىتلىق ھەقسىز قىلىندى!' : '🔒 نورمال ھالەتكە قايتۇرۇلدى!');
+                });
+            }
         };
 
         window.copyUserUID = function() {
@@ -2797,7 +2632,9 @@
         window.saveUploadedAvatar = async function() {
             const url = document.getElementById('avatarUrlInput').value.trim();
             if (!window.currentUser || !url) return alert('رەسىم ئۇلانمىسىنى كىرگۈزۈڭ!');
-            await window.dbUpdate(window.dbRef(window.db, `users/${window.currentUser.userKey}`), { avatar: url });
+            if (window.dbUpdate && window.db) {
+                await window.dbUpdate(window.dbRef(window.db, `users/${window.currentUser.userKey}`), { avatar: url });
+            }
             window.currentUser.avatar = url;
             localStorage.setItem('koznak_logged_user', JSON.stringify(window.currentUser));
             window.updateUIAfterLogin();
@@ -2839,8 +2676,10 @@
             };
 
             try {
-                await window.dbSet(window.dbRef(window.db, `feedbacks/${fbId}`), feedbackData);
-                alert('تەلىپىڭىز باشقۇرغۇچىغا يوللاندى!');
+                if (window.dbSet && window.db) {
+                    await window.dbSet(window.dbRef(window.db, `feedbacks/${fbId}`), feedbackData);
+                }
+                alert('تەلىپىڭىز يوللاندى!');
                 document.getElementById('fbMovieTitle').value = '';
                 document.getElementById('fbMovieLink').value = '';
                 document.getElementById('fbMovieImageUrl').value = '';
@@ -2853,7 +2692,9 @@
 
         window.deleteFeedback = function(fbId) {
             if (confirm('بۇ ئىنكاس ئۆچۈرۈلسۇنمۇ?')) {
-                window.dbRemove(window.dbRef(window.db, `feedbacks/${fbId}`));
+                if (window.dbRemove && window.db) {
+                    window.dbRemove(window.dbRef(window.db, `feedbacks/${fbId}`));
+                }
             }
         };
 
@@ -2861,7 +2702,9 @@
             if (!window.currentUser) return;
             const newName = document.getElementById('settingsNicknameInput').value.trim();
             if (!newName) return alert('ئىسىم كىرگۈزۈڭ!');
-            await window.dbUpdate(window.dbRef(window.db, `users/${window.currentUser.userKey}`), { nickname: newName });
+            if (window.dbUpdate && window.db) {
+                await window.dbUpdate(window.dbRef(window.db, `users/${window.currentUser.userKey}`), { nickname: newName });
+            }
             window.currentUser.nickname = newName;
             localStorage.setItem('koznak_logged_user', JSON.stringify(window.currentUser));
             window.updateUIAfterLogin();
@@ -2926,7 +2769,7 @@
             if(cleanUrl.includes('.m3u8')) {
                 playerBox.innerHTML = `<video id="nativeVideoPlayer" class="native-cinema-video" playsinline webkit-playsinline preload="auto" poster="${poster}"></video>`;
                 const video = document.getElementById('nativeVideoPlayer');
-                if (Hls.isSupported()) {
+                if (window.Hls && Hls.isSupported()) {
                     currentHlsInstance = new Hls({ 
                         enableWorker: true, 
                         lowLatencyMode: true,
@@ -3092,7 +2935,7 @@
                 div.className = 'admin-user-card';
                 div.innerHTML = `
                     <div style="display: flex; gap: 10px; align-items: center;">
-                        ${fb.poster ? `<img src="${fb.poster}" onclick="openImagePreview('${fb.poster}')" title="چوڭايتىپ كۆرۈش ئۈچۈن بېسىڭ" style="width:55px; height:75px; border-radius:8px; object-fit:cover; cursor:zoom-in; border: 1px solid var(--border-glow);">` : '<div style="width:55px; height:75px; background:#333; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:10px;">رەسىم يوق</div>'}
+                        ${fb.poster ? `<img src="${fb.poster}" onclick="openImagePreview('${fb.poster}')" style="width:55px; height:75px; border-radius:8px; object-fit:cover; cursor:zoom-in;">` : '<div style="width:55px; height:75px; background:#333; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:10px;">رەسىم يوق</div>'}
                         <div style="flex: 1; text-align: right;">
                             <div style="font-weight: 900; font-size: 13px; color: var(--text-primary);">🎬 ${escapeHTML(fb.title)}</div>
                             <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px; word-break: break-all;">🔗 ئۇلانما: ${escapeHTML(fb.link)}</div>
@@ -3123,12 +2966,12 @@
 
             if (type === 'short') {
                 linkLbl.innerHTML = '📱 قىسقا فىلىم ئۇلانمىسى (Internet Archive MP4 ئۇلانمىسى)';
-                seriesGroupLbl.innerHTML = '📺 قىسقا فىلىم قىسىملىرى (Internet Archive MP4 ئۇلانمىلىرى بىلەن)';
+                seriesGroupLbl.innerHTML = '📺 قىسقا فىلىم قىسىملىرى';
                 document.getElementById('singleLinkGroup').style.display = 'none';
                 document.getElementById('seriesLinksGroup').style.display = 'block';
             } else {
                 linkLbl.innerHTML = '📼 سىن قويۇش ئۇلانمىسى (Archive.org ياكى MP4/HLS)';
-                seriesGroupLbl.innerHTML = '📺 قىسىملىق ئۇلانمىلار (قىسىم سانى بىلەن قوشۇش)';
+                seriesGroupLbl.innerHTML = '📺 قىسىملىق ئۇلانمىلار';
                 document.getElementById('singleLinkGroup').style.display = type.includes('series') ? 'none' : 'block';
                 document.getElementById('seriesLinksGroup').style.display = type.includes('series') ? 'block' : 'none';
             }
@@ -3437,7 +3280,7 @@
             const keys = Object.keys(comments).sort((a, b) => (comments[b].time || 0) - (comments[a].time || 0));
 
             if (keys.length === 0) {
-                list.innerHTML = '<div style="text-align:center; color:#888; padding: 15px; font-size: 12px;">ئىنكاس يوق، بىرىنچى بولۇپ يېزىڭ!</div>';
+                list.innerHTML = '<div style="text-align:center; color:#888; padding: 15px; font-size: 12px;">ئىنكاس يوق!</div>';
                 return;
             }
 
@@ -3471,7 +3314,9 @@
             };
 
             try {
-                await window.dbSet(window.dbRef(window.db, `movies/${currentShortMovie.id}/comments/${commentId}`), commentData);
+                if (window.dbSet && window.db) {
+                    await window.dbSet(window.dbRef(window.db, `movies/${currentShortMovie.id}/comments/${commentId}`), commentData);
+                }
                 input.value = '';
                 if (!currentShortMovie.comments) currentShortMovie.comments = {};
                 currentShortMovie.comments[commentId] = commentData;
@@ -3496,7 +3341,9 @@
 
             addToHistory(id);
             currentActiveMovieId = id;
-            window.dbSet(window.dbRef(window.db, `movies/${id}/views`), (item.views || 0) + 1);
+            if (window.dbSet && window.db) {
+                window.dbSet(window.dbRef(window.db, `movies/${id}/views`), (item.views || 0) + 1);
+            }
             openMovieDetail(id);
         }
 
@@ -3560,7 +3407,8 @@
             container.innerHTML = '';
             const keys = Object.keys(allMovies).sort((a, b) => (allMovies[b].createdAt || 0) - (allMovies[a].createdAt || 0));
 
-            document.getElementById('loadingIndicatorBox').style.display = keys.length === 0 ? 'block' : 'none';
+            const loadingBox = document.getElementById('loadingIndicatorBox');
+            if (loadingBox) loadingBox.style.display = keys.length === 0 ? 'block' : 'none';
             if (keys.length === 0) return;
 
             const docFrag = document.createDocumentFragment();
@@ -3867,8 +3715,10 @@
             }
 
             try {
-                await window.dbSet(window.dbRef(window.db, `movies/${movieId}`), movieData);
-                alert('فىلىم مۇۋەپپەقىيەتلىك ساقلاندى!');
+                if (window.dbSet && window.db) {
+                    await window.dbSet(window.dbRef(window.db, `movies/${movieId}`), movieData);
+                }
+                alert('فىلىم ساقلاندى!');
                 document.getElementById('uploadForm').reset();
                 document.getElementById('contentPosterBase64').value = '';
                 document.getElementById('uploadPosterPreviewContainer').style.display = 'none';
@@ -3883,7 +3733,9 @@
             if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
             if (confirm('راستلا بۇ فىلىمنى ئۆچۈرەمسىز؟')) {
                 try {
-                    await window.dbRemove(window.dbRef(window.db, `movies/${id}`));
+                    if (window.dbRemove && window.db) {
+                        await window.dbRemove(window.dbRef(window.db, `movies/${id}`));
+                    }
                     alert('فىلىم ئۆچۈرۈلدى!');
                 } catch(e) {
                     alert('ئۆچۈرۈش مەغلۇپ بولدى!');
@@ -4007,8 +3859,10 @@
             const oppType = type === 'like' ? 'dislike' : 'like';
 
             try {
-                await window.dbSet(window.dbRef(window.db, `movies/${currentActiveMovieId}/reactions/${type}s/${userKey}`), true);
-                await window.dbRemove(window.dbRef(window.db, `movies/${currentActiveMovieId}/reactions/${oppType}s/${userKey}`));
+                if (window.dbSet && window.db) {
+                    await window.dbSet(window.dbRef(window.db, `movies/${currentActiveMovieId}/reactions/${type}s/${userKey}`), true);
+                    await window.dbRemove(window.dbRef(window.db, `movies/${currentActiveMovieId}/reactions/${oppType}s/${userKey}`));
+                }
             } catch(e) {}
         };
 
@@ -4051,7 +3905,9 @@
             };
 
             try {
-                await window.dbSet(window.dbRef(window.db, `movies/${currentActiveMovieId}/comments/${commentId}`), commentData);
+                if (window.dbSet && window.db) {
+                    await window.dbSet(window.dbRef(window.db, `movies/${currentActiveMovieId}/comments/${commentId}`), commentData);
+                }
                 input.value = '';
             } catch(e) {
                 alert('ئىنكاس ئەۋەتىش مەغلۇپ بولدى!');
@@ -4067,7 +3923,7 @@
             document.getElementById('commentsCountBadge').innerText = `${keys.length} پىكىر`;
 
             if (keys.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); font-size: 11px; padding: 10px;">بۇ فىلىمگە تېخى ھېچكىم باھا بەرمىدى، بىرىنچى بولۇپ پىكىر قالدۇرۇڭ!</div>';
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); font-size: 11px; padding: 10px;">بۇ فىلىمگە تېخى ھېچكىم باھا بەرمىدى!</div>';
                 return;
             }
 
@@ -4105,7 +3961,7 @@
                 .slice(0, 6);
 
             if (relatedKeys.length === 0) {
-                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); font-size: 11px; padding: 14px;">باشقا تەۋسىيە كىنولار تېپىلمىدى</div>';
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); font-size: 11px; padding: 14px;">باشقا فىلىم تېپىلمىدى</div>';
                 return;
             }
 
@@ -4114,6 +3970,7 @@
             });
         }
 
+        // دېتالنى تور بار ياكى تور يوق ھالەتتىمۇ پۇختا ئىجرا قىلىش
         window.startApp = async function() {
             const cachedMovies = localStorage.getItem('koznak_cached_movies');
             if(cachedMovies) {
@@ -4127,18 +3984,26 @@
             const savedUser = localStorage.getItem('koznak_logged_user');
             const savedSession = localStorage.getItem('koznak_session_id');
 
-            if(savedUser && savedSession) {
+            if(savedUser) {
                 try {
                     window.currentUser = JSON.parse(savedUser);
                     document.getElementById('authOverlay').style.display = 'none';
                     window.updateUIAfterLogin();
-                    startSessionWatcher(window.currentUser.userKey, savedSession);
-                    listenToUserRealtimeData(window.currentUser.userKey);
+                    if(savedSession && window.db) {
+                        startSessionWatcher(window.currentUser.userKey, savedSession);
+                        listenToUserRealtimeData(window.currentUser.userKey);
+                    }
                 } catch(e) {
                     document.getElementById('authOverlay').style.display = 'flex';
                 }
             } else {
                 document.getElementById('authOverlay').style.display = 'flex';
+            }
+
+            if (!window.db || !window.dbGet) {
+                const loadingBox = document.getElementById('loadingIndicatorBox');
+                if (loadingBox) loadingBox.style.display = 'none';
+                return;
             }
 
             window.dbGet(window.dbRef(window.db, 'movies')).then(snap => {
@@ -4212,6 +4077,13 @@
                     setTimeout(() => splash.remove(), 250);
                 }, 300);
             }
+
+            // ئەگەر Firebase بولمىسا ياكى يۈكلەنمەي تورسىز قېلىپ كەتسە، بىۋاسىتە ئىجرا قىلىش
+            setTimeout(() => {
+                if (!window.firebaseReady) {
+                    window.startApp();
+                }
+            }, 500);
         });
     </script>
 </body>
