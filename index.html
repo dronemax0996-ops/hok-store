@@ -18,12 +18,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-    <!-- تورسىز (Offline) ھالەتتە دېتالنىڭ ئېچىلىشىنى كاپالەتلەندۈرىدىغان كۈچەيتىلگەن Service Worker -->
+    <!-- تورسىز (Offline) پۈتۈن كۆرۈنمە يۈزنى ساقلاپ بېرىدىغان Service Worker -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'koznak-pwa-v25';
+                    const CACHE_NAME = 'koznak-pwa-v30';
                     const PRECACHE_ASSETS = [
                         self.location.pathname,
                         './',
@@ -35,9 +35,7 @@
                     self.addEventListener('install', (e) => {
                         self.skipWaiting();
                         e.waitUntil(
-                            caches.open(CACHE_NAME).then((cache) => {
-                                return cache.addAll(PRECACHE_ASSETS).catch(() => {});
-                            })
+                            caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS).catch(() => {}))
                         );
                     });
 
@@ -51,29 +49,24 @@
 
                     self.addEventListener('fetch', (e) => {
                         const req = e.request;
-                        // سىن بۆلەكلىرى ئۆز ئالدىغا بىر تەرەپ قىلىنىدۇ
                         if (req.url.includes('.mp4') || req.url.includes('.m3u8') || req.url.includes('firebaseio.com')) {
                             return;
                         }
 
                         e.respondWith(
-                            caches.match(req).then((cachedResponse) => {
-                                if (cachedResponse) return cachedResponse;
-
-                                return fetch(req).then((networkResponse) => {
-                                    if (networkResponse && networkResponse.status === 200 && (req.method === 'GET')) {
-                                        const responseClone = networkResponse.clone();
-                                        caches.open(CACHE_NAME).then((cache) => {
-                                            cache.put(req, responseClone).catch(() => {});
-                                        });
+                            caches.match(req).then((cached) => {
+                                if (cached) return cached;
+                                return fetch(req).then((res) => {
+                                    if (res && res.status === 200 && req.method === 'GET') {
+                                        const clone = res.clone();
+                                        caches.open(CACHE_NAME).then((cache) => cache.put(req, clone).catch(() => {}));
                                     }
-                                    return networkResponse;
+                                    return res;
                                 }).catch(() => {
-                                    // تور پۈتۈنلەي بولمىغاندا ئاساسىي كۆرۈنمە يۈزنى كەشتىن ئېلىش
                                     if (req.mode === 'navigate') {
                                         return caches.match(self.location.pathname)
-                                            .then(res => res || caches.match('./'))
-                                            .then(res => res || caches.match('index.html'));
+                                            .then(r => r || caches.match('./'))
+                                            .then(r => r || caches.match('index.html'));
                                     }
                                 });
                             })
@@ -224,7 +217,7 @@
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             z-index: 999999;
-            display: flex; align-items: center; justify-content: center;
+            display: none; align-items: center; justify-content: center;
             padding: 20px; overflow-y: auto;
         }
         .auth-card {
@@ -290,9 +283,45 @@
             margin-top: 4px;
             text-shadow: 0 2px 8px rgba(0,0,0,0.6);
         }
-        .home-search-bar-wrapper {
+
+        /* قايتىلاش كۇنۇپكىسى بىلەن ئىزدەش قۇتىسى بىرىكمىسى */
+        .home-search-container-row {
             position: relative;
             z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .home-refresh-header-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: none;
+            color: #ff3b30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            flex-shrink: 0;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .home-refresh-header-btn:active {
+            transform: scale(0.92);
+        }
+        .home-refresh-header-btn.spinning i {
+            animation: spinRefresh 0.8s linear infinite;
+        }
+        @keyframes spinRefresh {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .home-search-bar-wrapper {
+            flex: 1;
             display: flex;
             align-items: center;
             background: #ffffff;
@@ -408,7 +437,7 @@
         }
         .splash-brand-text { font-size: 21px; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
 
-        /* قىسقا فىلىم بۆلىكى (Shorts) */
+        /* قىسقا فىلىم بۆلىكى */
         #shortsTab {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -1281,9 +1310,15 @@
     <div id="homeTab" class="tab-content active-tab">
         <div class="home-top-header" id="homeTopHeaderElement">
             <div class="home-top-title-row">كۆزنەك كىنوخانىسى</div>
-            <div class="home-search-bar-wrapper" onclick="openSearch()">
-                <input type="text" class="home-search-input" placeholder="سىز ئىزدەڭ مەن تاپاي" readonly>
-                <button type="button" class="home-search-action-btn"><i class="fa-solid fa-magnifying-glass"></i> ئىزدەش</button>
+            <div class="home-search-container-row">
+                <div class="home-search-bar-wrapper" onclick="openSearch()">
+                    <input type="text" class="home-search-input" placeholder="سىز ئىزدەڭ مەن تاپاي" readonly>
+                    <button type="button" class="home-search-action-btn"><i class="fa-solid fa-magnifying-glass"></i> ئىزدەش</button>
+                </div>
+                <!-- ئىزدەش يېنىدىكى قايتىلاش / يېڭىلاش كۇنۇپكىسى -->
+                <button type="button" class="home-refresh-header-btn" id="headerRefreshBtn" onclick="triggerManualDataRefresh()" title="فىلىملەرنى يېڭىلاش">
+                    <i class="fa-solid fa-rotate-right"></i>
+                </button>
             </div>
         </div>
 
@@ -3970,7 +4005,56 @@
             });
         }
 
-        // دېتالنى تور بار ياكى تور يوق ھالەتتىمۇ پۇختا ئىجرا قىلىش
+        // سانلىق مەلۇماتلارنى قولدا ياكى تورغا باغلانغاندا قايتا يېڭىلاش
+        window.triggerManualDataRefresh = function() {
+            const refreshBtn = document.getElementById('headerRefreshBtn');
+            if (refreshBtn) refreshBtn.classList.add('spinning');
+
+            if (!navigator.onLine) {
+                setTimeout(() => {
+                    if (refreshBtn) refreshBtn.classList.remove('spinning');
+                    alert('⚠️ تور ئۇلانمىسى يوق! يانفونىڭىزدا ساقلانغان مەزمۇنلار كۆرسىتىلىۋاتىدۇ.');
+                }, 400);
+                return;
+            }
+
+            if (window.db && window.dbGet && window.dbRef) {
+                window.dbGet(window.dbRef(window.db, 'movies')).then(snap => {
+                    if (snap.exists()) {
+                        allMovies = snap.val() || {};
+                        localStorage.setItem('koznak_cached_movies', JSON.stringify(allMovies));
+                        renderHeroSlider();
+                        renderMovies();
+                        if(document.getElementById('moviesOnlyTab').classList.contains('active-tab')) renderMoviesOnlyGrid();
+                        if(document.getElementById('theatersTab').classList.contains('active-tab')) renderTheatersGrid();
+                    }
+                }).catch(() => {}).finally(() => {
+                    setTimeout(() => {
+                        if (refreshBtn) refreshBtn.classList.remove('spinning');
+                    }, 500);
+                });
+            } else {
+                fetch(`${DB_BASE_URL}/movies.json`).then(res => res.json()).then(data => {
+                    if (data) {
+                        allMovies = data;
+                        localStorage.setItem('koznak_cached_movies', JSON.stringify(allMovies));
+                        renderHeroSlider();
+                        renderMovies();
+                    }
+                }).catch(() => {}).finally(() => {
+                    setTimeout(() => {
+                        if (refreshBtn) refreshBtn.classList.remove('spinning');
+                    }, 500);
+                });
+            }
+        };
+
+        // تور كەلسە ئاپتوماتىك قايتا يۈكلەش كۆزىتىشى
+        window.addEventListener('online', () => {
+            triggerManualDataRefresh();
+        });
+
+        // ئەپنى تور يوق ياكى بار ئەھۋالدا پۈتۈنلەي توسالغۇسىز قوزغىتىش
         window.startApp = async function() {
             const cachedMovies = localStorage.getItem('koznak_cached_movies');
             if(cachedMovies) {
@@ -3984,6 +4068,7 @@
             const savedUser = localStorage.getItem('koznak_logged_user');
             const savedSession = localStorage.getItem('koznak_session_id');
 
+            // توردىن ئۈزۈلگەندە ياكى ئىلگىرى كىرگەن بولسا كىرىش كۆزنىكى قەتئىي ئالدىنى توسۇۋالمايدۇ
             if(savedUser) {
                 try {
                     window.currentUser = JSON.parse(savedUser);
@@ -3994,14 +4079,23 @@
                         listenToUserRealtimeData(window.currentUser.userKey);
                     }
                 } catch(e) {
-                    document.getElementById('authOverlay').style.display = 'flex';
+                    if (navigator.onLine) document.getElementById('authOverlay').style.display = 'flex';
                 }
             } else {
-                document.getElementById('authOverlay').style.display = 'flex';
+                if (navigator.onLine) {
+                    document.getElementById('authOverlay').style.display = 'flex';
+                } else {
+                    document.getElementById('authOverlay').style.display = 'none';
+                }
+            }
+
+            const loadingBox = document.getElementById('loadingIndicatorBox');
+            if (!navigator.onLine) {
+                if (loadingBox) loadingBox.style.display = 'none';
+                return;
             }
 
             if (!window.db || !window.dbGet) {
-                const loadingBox = document.getElementById('loadingIndicatorBox');
                 if (loadingBox) loadingBox.style.display = 'none';
                 return;
             }
@@ -4078,7 +4172,6 @@
                 }, 300);
             }
 
-            // ئەگەر Firebase بولمىسا ياكى يۈكلەنمەي تورسىز قېلىپ كەتسە، بىۋاسىتە ئىجرا قىلىش
             setTimeout(() => {
                 if (!window.firebaseReady) {
                     window.startApp();
