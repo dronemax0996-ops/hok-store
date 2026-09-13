@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-    <!-- رەسمىي مۇستەقىل sw.js نى تىزىملىتىش (تور ئۈزۈلگەندە خاتالىق چىقىشنى 100% يوقىتىدۇ) -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -381,7 +380,6 @@
         }
         .splash-brand-text { font-size: 21px; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
 
-        /* قىسقا فىلىم بۆلىكى (Shorts) */
         #shortsTab {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -1595,7 +1593,7 @@
             <div id="adminMenuSectionWrapper" style="display: none;">
                 <div class="settings-group-title"><i class="fa-solid fa-shield-halved" style="color: #ff3b30;"></i> باشقۇرغۇچى سۇپىسى</div>
                 <div class="settings-group-card">
-                    <div class="settings-cell-row" onclick="switchTab('adminCenterTab')">
+                    <div class="settings-cell-row" onclick="openAdminCenterDirectly()">
                         <div style="display: flex; align-items: center; gap: 12px; text-align: right;">
                             <div class="settings-icon-badge" style="color: #ff3b30;"><i class="fa-solid fa-toolbox"></i></div>
                             <div>
@@ -1682,6 +1680,213 @@
 
             <div style="text-align: center; font-size: 11px; color: var(--text-secondary); margin-top: 14px;">
                 كۆزنەك كىنوخانىسى • Koznak TV Ultra Speed Edition
+            </div>
+        </div>
+    </div>
+
+    <!-- باشقۇرغۇچى مەركىزى (Admin Center) -->
+    <div id="adminCenterTab" class="tab-content">
+        <div class="settings-page-wrapper">
+            <button class="detail-back-btn" onclick="switchTab('settingsTab')">⬅️ تەڭشەكلەرگە قايتىش</button>
+            
+            <div class="auth-nav-pills" style="margin: 12px 0; overflow-x: auto;">
+                <button type="button" class="auth-nav-pill active" id="adminSubUploadBtn" onclick="switchAdminSubTab('upload')">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> يوللاش
+                </button>
+                <button type="button" class="auth-nav-pill" id="adminSubSiteBgBtn" onclick="switchAdminSubTab('siteBg')">
+                    <i class="fa-solid fa-panorama"></i> پۈتۈن تەگلىك
+                </button>
+                <button type="button" class="auth-nav-pill" id="adminSubHeaderBgBtn" onclick="switchAdminSubTab('headerBg')">
+                    <i class="fa-solid fa-image"></i> لوزۇنكا رەسىمى
+                </button>
+                <button type="button" class="auth-nav-pill" id="adminSubUsersBtn" onclick="switchAdminSubTab('users')">
+                    <i class="fa-solid fa-users-gear"></i> ئەزالار
+                </button>
+                <button type="button" class="auth-nav-pill" id="adminSubStatsBtn" onclick="switchAdminSubTab('stats')">
+                    <i class="fa-solid fa-chart-line"></i> سىتاستىكا
+                </button>
+                <button type="button" class="auth-nav-pill" id="adminSubFeedbacksBtn" onclick="switchAdminSubTab('feedbacks')">
+                    <i class="fa-solid fa-comment-dots"></i> ئىنكاسلار
+                </button>
+            </div>
+
+            <!-- 1. مەزمۇن قوشۇش بۆلىكى -->
+            <div id="adminUploadSection" class="settings-group-card" style="padding: 16px; display: block;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div class="section-title" style="font-size: 15px; margin-bottom: 0;">➕ يېڭى مەزمۇن قوشۇش</div>
+                    <button type="button" class="del-btn" style="width: auto; height: auto; padding: 6px 12px; border-radius: var(--pill-radius); font-weight: 800; font-size: 11px;" onclick="deleteAllMoviesData()">
+                        🗑️ بارلىق فىلىملەرنى تازىلاش
+                    </button>
+                </div>
+                
+                <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
+                    <div class="form-group">
+                        <label>🎬 مەزمۇن تىپى (خىلى)</label>
+                        <select id="contentType" class="form-select" onchange="toggleUploadInputs()">
+                            <option value="movie">كىنولار (Movie)</option>
+                            <option value="series">قىسىملىق كىنولار (Series)</option>
+                            <option value="cartoon">كارتونلار (Cartoon)</option>
+                            <option value="cartoon_series">قىسىملىق كارتۇن (Cartoon Series)</option>
+                            <option value="short">📱 قىسقا فىلىم (Archive.org MP4 قىسىملىق)</option>
+                            <option value="free">🎁 ھەقسىز كىنولار (Free Movie)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>🎬 كىنو خىلى (خالىغانچە يېزىڭ)</label>
+                        <input type="text" id="contentCustomType" class="form-input" placeholder="مەسىلەن: فىلىم، كارتون، تىياتىر..." value="فىلىم" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label>🎭 كىنو ژانىرى (خالىغانچە يېزىڭ)</label>
+                        <input type="text" id="contentGenre" class="form-input" placeholder="مەسىلەن: ھەرىكەتلىك، كومىدىيە..." value="ھەرىكەتلىك" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label>📅 يىل سانى (خالىغانچە يېزىڭ)</label>
+                        <input type="text" id="contentYear" class="form-input" placeholder="مەسىلەن: 2026..." value="2026" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label>🌍 دۆلەت تەۋەلىكى (خالىغانچە يېزىڭ)</label>
+                        <input type="text" id="contentCountry" class="form-input" placeholder="مەسىلەن: جۇڭگو، ئامېرىكا..." value="جۇڭگو" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label>💰 ھەقلىق ياكى ھەقسىز</label>
+                        <select id="contentTag" class="form-select">
+                            <option value="ھەممە ئەزا كۆرەلەيدىغان">ھەقسىز (ئادەتتىكى)</option>
+                            <option value="VIP">ھەقلىق (VIP ئەزالار ئۈچۈن)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>مەزمۇن نامى</label>
+                        <input type="text" id="contentTitle" class="form-input" placeholder="مەزمۇن ئىسمىنى كىرگۈزۈڭ" required autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label>🎬 تەشۋىقات رەسىم ئۇلانمىسى (HTML / Image URL)</label>
+                        <input type="url" id="contentPosterUrlInput" class="form-input" placeholder="رەسىم تور ئۇلانمىسىنى كىرگۈزۈڭ (https://.../poster.jpg)" oninput="handlePosterUrlInput(this.value)" required autocomplete="off">
+                        <input type="hidden" id="contentPosterBase64" required>
+                        <div id="uploadPosterPreviewContainer" style="display: none; text-align: center; margin-top: 8px;">
+                            <img id="uploadPosterPreviewImg" alt="رەسىم كۆرۈنۈشى" style="max-height: 150px; border-radius: 14px; border: 1px solid var(--border-glow); object-fit: cover;">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>فىلىم ئېلانى ئۇلانمىسى (Trailer URL)</label>
+                        <input type="text" id="contentTrailer" class="form-input" placeholder="تەشۋىقات ئېلانى ئۇلانمىسى" autocomplete="off">
+                    </div>
+                    
+                    <div id="singleLinkGroup" class="form-group">
+                        <label id="mainLinkLabel">📼 سىن قويۇش ئۇلانمىسى (Archive.org ياكى MP4/HLS)</label>
+                        <input type="text" id="contentLink" class="form-input" placeholder="مەسىلەن: https://archive.org/.../video.mp4" autocomplete="off">
+                    </div>
+
+                    <div id="downloadLinkGroup" class="form-group">
+                        <label>📥 فىلىمنىڭ ئەسلى چۈشۈرۈش ئۇلانمىسى (ئالىي ئەزالار ئۈچۈن)</label>
+                        <input type="text" id="contentDownloadLink" class="form-input" placeholder="مەسىلەن: https://archive.org/download/.../video.mp4" autocomplete="off">
+                    </div>
+
+                    <div id="seriesLinksGroup" class="form-group" style="display: none;">
+                        <label id="seriesGroupLabel">📺 قىسىملىق ئۇلانمىلار (قىسىم سانى بىلەن قوشۇش)</label>
+                        <div id="dynamicEpisodesContainer" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 8px;"></div>
+                        <button type="button" class="action-btn" style="background: #2ed573; color: #ffffff; padding: 10px; font-size: 12px; margin: 0;" onclick="addEpisodeInputRow()">➕ يېڭى قىسىم قوشۇش</button>
+                    </div>
+
+                    <button type="submit" class="action-btn">مەزمۇننى ساقلاش</button>
+                </form>
+            </div>
+
+            <!-- 2. پۈتۈن تەگلىك بۆلىكى -->
+            <div id="adminSiteBgSection" class="settings-group-card" style="padding: 16px; display: none;">
+                <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-panorama" style="color: #00c6ff;"></i> پۈتۈن توربەت ئارقا تەگلىك رەسىمى</div>
+                <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
+                    تۆۋەنگە رەسىمنىڭ بىۋاسىتە تور ئۇلانمىسىنى (HTML Image URL) كىرگۈزۈپ ساقلاڭ. ئاپتوماتىك پۈتۈن توربەت تەگلىكىگە ئايلىنىدۇ.
+                </div>
+                <div class="form-group">
+                    <input type="url" id="userSiteBgUrlInput" class="form-input" placeholder="رەسىم ئۇلانمىسى (https://.../bg.jpg)" oninput="previewSiteBgUrl(this.value)" autocomplete="off">
+                </div>
+                <div id="userSiteBgPreviewBox" style="display: none; margin-top: 10px; text-align: center;">
+                    <img id="userSiteBgPreviewImg" alt="تەگلىك كۆرۈنۈشى" style="width: 120px; height: 180px; object-fit: cover; border-radius: 14px; border: 2px solid #00c6ff; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
+                </div>
+                <button type="button" class="action-btn" style="background: linear-gradient(135deg, #0072ff, #00c6ff); padding: 10px; margin-top: 10px;" onclick="saveUserSiteBgByUrl()">
+                    <i class="fa-solid fa-floppy-disk"></i> ساقلاش ۋە دەرھال قوللىنىش
+                </button>
+                <button type="button" class="action-btn" style="background: rgba(255, 71, 87, 0.15); border: 1px solid #ff4757; color: #ff4757; box-shadow: none; margin-top: 10px; padding: 8px; font-size: 11px;" onclick="resetSiteBgToDefault()">
+                    ئەسلى رەڭلىك تەگلىككە قايتۇرۇش
+                </button>
+            </div>
+
+            <!-- 3. لوزۇنكا تەگلىكى بۆلىكى -->
+            <div id="adminHeaderBgSection" class="settings-group-card" style="padding: 16px; display: none;">
+                <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-image" style="color: #ff3b30;"></i> باش بەت لوزۇنكا ئارقا كۆرۈنۈش رەسىمى</div>
+                <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
+                    لوزۇنكا رەسىمىنىڭ تور ئۇلانمىسىنى كىرگۈزسىڭىز، باش بەت ئۈستىدىكى «كۆزنەك كىنوخانىسى» خېتىنىڭ ئارقا كۆرۈنۈشىدە نامايان بولىدۇ.
+                </div>
+                <div class="form-group">
+                    <input type="url" id="headerBgUrlInput" class="form-input" placeholder="رەسىم ئۇلانمىسى (https://.../banner.jpg)" oninput="previewHeaderBgUrl(this.value)" autocomplete="off">
+                </div>
+                <div id="headerBgPreviewContainer" style="display: none; margin: 10px 0; text-align: center;">
+                    <img id="headerBgPreviewImg" alt="لوزۇنكا رەسىمى" style="width: 100%; max-height: 120px; object-fit: cover; border-radius: 14px; border: 1px solid var(--border-glow);">
+                </div>
+                <button type="button" class="action-btn" id="saveHeaderBgBtn" style="background: #2ed573;" onclick="saveHeaderBgByUrl()">لوزۇنكا رەسىمىنى دەرھال قوللىنىش</button>
+                <button type="button" class="action-btn" style="background: #64748b; margin-top: 8px;" onclick="resetHeaderBgToDefault()">ئەسلى قىزىل ھالىتىگە قايتۇرۇش</button>
+            </div>
+
+            <!-- 4. ئەزالار باشقۇرۇش -->
+            <div id="adminUsersSection" class="settings-group-card" style="padding: 16px; display: none;">
+                <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">👥 ئەزالارنى تولۇق باشقۇرۇش</div>
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <input type="text" id="adminUserSearchInput" class="form-input" placeholder="🔍 ئىسىم، كىرىش ئىسمى ياكى UID بويىچە ئىزدەڭ..." oninput="renderAdminUsersList()" autocomplete="off">
+                </div>
+                <div id="adminUsersLoadingBadge" style="text-align: center; color: var(--text-secondary); padding: 15px; font-size: 12px; display: none;">
+                    <i class="fa-solid fa-spinner fa-spin" style="color: #ff3b30;"></i> ئەزالار تېز يۈكلىنىۋاتىدۇ...
+                </div>
+                <div class="admin-users-list" id="adminUsersListContainer"></div>
+            </div>
+
+            <!-- 5. سىتاستىكا -->
+            <div id="adminStatsSection" class="settings-group-card" style="padding: 16px; display: none;">
+                <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">📊 فىلىملەر سىتاستىكا جەدۋىلى</div>
+                <div class="admin-stat-summary-grid">
+                    <div class="admin-stat-box">
+                        <span class="admin-stat-val" id="statTotalMovies">0</span>
+                        <span class="admin-stat-lbl">جەمئىي فىلىم</span>
+                    </div>
+                    <div class="admin-stat-box">
+                        <span class="admin-stat-val" id="statTotalViews">0</span>
+                        <span class="admin-stat-lbl">ئومۇمىي كۆرۈلۈش (قېتىم)</span>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 10px; margin-top: 10px;">
+                    <input type="text" id="adminStatMovieSearchInput" class="form-input" style="padding: 8px 12px; font-size: 11px;" placeholder="🔍 فىلىم ئىسمىنى ئىزدەش..." oninput="renderAdminMovieStatsTable()" autocomplete="off">
+                </div>
+
+                <div class="admin-movie-table-wrapper">
+                    <table class="admin-movie-table">
+                        <thead>
+                            <tr>
+                                <th>رەسىم</th>
+                                <th>فىلىم نامى</th>
+                                <th>تۈرى</th>
+                                <th>👀 كۆرۈش سانى</th>
+                                <th>👍 باھا (Likes)</th>
+                                <th>💬 پىكىر</th>
+                                <th>مەشغۇلات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminMovieStatsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 6. ئىنكاسلار -->
+            <div id="adminFeedbacksSection" class="settings-group-card" style="padding: 16px; display: none;">
+                <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">💬 ئىزدەش رايونىدىن ئىنكاسلار</div>
+                <div id="adminFeedbacksListContainer" style="display: flex; flex-direction: column; gap: 12px;"></div>
             </div>
         </div>
     </div>
@@ -2798,6 +3003,12 @@
             document.querySelectorAll('iframe').forEach(i => i.src = '');
         }
 
+        // باشقۇرغۇچى مەركىزىنى بىۋاسىتە ئىشەنچلىك ئېچىش
+        window.openAdminCenterDirectly = function() {
+            switchTab('adminCenterTab');
+            switchAdminSubTab('upload');
+        };
+
         window.switchTab = function(tabId, el) {
             stopAllVideos();
             closeShortsDrawers();
@@ -2814,7 +3025,7 @@
             if(tabId === 'moviesOnlyTab') renderMoviesOnlyGrid();
             if(tabId === 'theatersTab') renderTheatersGrid();
             if(tabId === 'shortsTab') startShortsViewer();
-            if(tabId === 'adminCenterTab' && window.currentUser && window.currentUser.role === 'admin') {
+            if(tabId === 'adminCenterTab') {
                 switchAdminSubTab('upload');
             }
         };
