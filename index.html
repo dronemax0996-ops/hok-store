@@ -21,9 +21,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => console.log('Koznak SW Ready:', reg.scope))
-                    .catch(err => console.log('Koznak SW Error:', err));
+                navigator.serviceWorker.register('./sw.js').catch(() => {});
             });
         }
     </script>
@@ -371,7 +369,7 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #ff3b30; z-index: 99999; display: flex; flex-direction: column;
             align-items: center; justify-content: center; padding: 20px;
-            transition: opacity 0.3s ease; pointer-events: none; color: #fff;
+            transition: opacity 0.2s ease; pointer-events: none; color: #fff;
         }
         .splash-cinema-icon {
             width: 75px; height: 75px; background: #ffffff;
@@ -1593,7 +1591,7 @@
             <div id="adminMenuSectionWrapper" style="display: none;">
                 <div class="settings-group-title"><i class="fa-solid fa-shield-halved" style="color: #ff3b30;"></i> باشقۇرغۇچى سۇپىسى</div>
                 <div class="settings-group-card">
-                    <div class="settings-cell-row" onclick="openAdminCenterDirectly()">
+                    <div class="settings-cell-row" onclick="switchTab('adminCenterTab')">
                         <div style="display: flex; align-items: center; gap: 12px; text-align: right;">
                             <div class="settings-icon-badge" style="color: #ff3b30;"><i class="fa-solid fa-toolbox"></i></div>
                             <div>
@@ -1684,7 +1682,102 @@
         </div>
     </div>
 
-    <!-- باشقۇرغۇچى مەركىزى (Admin Center) -->
+    <!-- VIP ئېچىش مەركىزى -->
+    <div id="vipOpenTab" class="tab-content">
+        <div class="page-box" style="max-width: 440px; padding-top: calc(env(safe-area-inset-top, 24px) + 14px);">
+            <button class="detail-back-btn" onclick="switchTab('settingsTab')">⬅️ تەڭشەكلەرگە قايتىش</button>
+            <div class="vip-card-flex-container" style="margin-top: 10px;">
+                <div class="vip-instruction-card">
+                    <div style="font-size: 14px; font-weight: 900; color: #ffd700; margin-bottom: 8px;">
+                        📌 ئەزالىق ئېچىش تەرتىپى ۋە چۈشەندۈرۈشى:
+                    </div>
+                    <div class="instruction-step-item">
+                        <span class="step-circle">1</span>
+                        <div>تۆۋەندىكى شەخسىي <b>UID</b> نومۇرىڭىزنى نۇسخىلاپ ئېلىڭ.</div>
+                    </div>
+                    <div class="instruction-step-item">
+                        <span class="step-circle">2</span>
+                        <div>تۆۋەندىكى بوت ياكى باشقۇرغۇچى ئادرېسىنى بېسىپ Telegram دا ئەزالىقنى ئاچقۇزۇڭ.</div>
+                    </div>
+                </div>
+
+                <div class="vip-copy-box" onclick="copyUserUID()" title="كۆچۈرۈش ئۈچۈن چېكىڭ">
+                    <div style="text-align: right;">
+                        <div style="font-size: 11px; color: var(--text-secondary);">سىزنىڭ شەخسىي كىملىك (UID) نومۇرىڭىز:</div>
+                        <div id="displayVipTabUID" style="font-size: 17px; font-weight: 900; color: #ff3b30; letter-spacing: 1px;">------</div>
+                    </div>
+                    <button type="button" style="background: rgba(255, 59, 48, 0.15); border: 1px solid #ff3b30; color: #ff3b30; border-radius: var(--pill-radius); padding: 5px 12px; font-size: 11px; font-weight: 800; cursor: pointer;">
+                        UID كۆچۈرۈش <i class="fa-regular fa-copy"></i>
+                    </button>
+                </div>
+
+                <div class="vip-luxury-card">
+                    <div class="vip-crown-icon"><i class="fa-solid fa-crown"></i></div>
+                    <h3 style="font-size: 17px; font-weight: 900; color: var(--text-primary); margin-bottom: 2px;">ئۆلچەملىك VIP ئەزالىق</h3>
+                    <p style="font-size: 11px; color: var(--text-secondary);">بارلىق كىنولارنى چەكلىمىسىز 1 ئاي (30 كۈن) كۆرۈش</p>
+                    <div style="margin: 6px 0;">
+                        <span class="vip-price-tag" id="displayVipPrice">4＄</span>
+                    </div>
+                    <div class="vip-features-list">
+                        <div class="vip-feature-item"><i class="fa-solid fa-circle-check"></i><span>پۈتۈن VIP فىلىملەر تولۇق ئوچۇق</span></div>
+                        <div class="vip-feature-item"><i class="fa-solid fa-circle-check"></i><span>يۇقىرى سۈرئەتلىك HD سىن ئۆتكىلى</span></div>
+                    </div>
+                </div>
+
+                <div class="vip-luxury-card svip-card">
+                    <div class="vip-crown-icon"><i class="fa-solid fa-gem"></i></div>
+                    <h3 style="font-size: 17px; font-weight: 900; color: var(--text-primary); margin-bottom: 2px;">ئالىي ئەزالىق (Super VIP)</h3>
+                    <p style="font-size: 11px; color: #e040fb;">ھەم 1 ئاي چەكلىمىسىز كۆرۈش + ھەم تېلېفونغا چۈشۈرۈۋېلىش</p>
+                    <div style="margin: 6px 0;">
+                        <span class="vip-price-tag" id="displaySvipPrice">7＄</span>
+                    </div>
+                    <div class="vip-features-list">
+                        <div class="vip-feature-item"><i class="fa-solid fa-circle-check"></i><span>بارلىق VIP فىلىملەرنى كۆرۈش</span></div>
+                        <div class="vip-feature-item"><i class="fa-solid fa-circle-check"></i><span><b>فىلىملەرنى تېلېفون سىغىمىغا بىۋاسىتە چۈشۈرۈش</b></span></div>
+                    </div>
+                </div>
+
+                <div class="direct-link-card">
+                    <div class="direct-link-info" onclick="openExternalUrl('https://t.me/KOZNAK_USD')">
+                        <div class="settings-icon-badge" style="color: #ff3b30;"><i class="fa-solid fa-user-shield"></i></div>
+                        <div>
+                            <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">باشقۇرغۇچى شەخسىي ئادرېسى</div>
+                            <div style="font-size: 11px; color: #ff3b30; font-weight: 800;">@KOZNAK_USD</div>
+                        </div>
+                    </div>
+                    <div class="direct-link-actions">
+                        <button type="button" class="btn-link-action" style="background: #ff3b30; color: #fff;" onclick="openExternalUrl('https://t.me/KOZNAK_USD')">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> كىرىش
+                        </button>
+                        <button type="button" class="btn-link-action" style="background: rgba(255, 59, 48, 0.12); color: #ff3b30;" onclick="copyAdminUsername()">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="direct-link-card">
+                    <div class="direct-link-info" onclick="openExternalUrl('https://t.me/koznaktv_bot')">
+                        <div class="settings-icon-badge" style="color: #0088cc;"><i class="fa-solid fa-robot"></i></div>
+                        <div>
+                            <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">رەسمىي Telegram بوت</div>
+                            <div style="font-size: 11px; color: #0088cc; font-weight: 800;">@koznaktv_bot</div>
+                        </div>
+                    </div>
+                    <div class="direct-link-actions">
+                        <button type="button" class="btn-link-action" style="background: #0088cc; color: #fff;" onclick="openExternalUrl('https://t.me/koznaktv_bot')">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> كىرىش
+                        </button>
+                        <button type="button" class="btn-link-action" style="background: rgba(0, 136, 204, 0.12); color: #0088cc;" onclick="copyBotUsername()">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- باشقۇرغۇچى مەركىزى -->
     <div id="adminCenterTab" class="tab-content">
         <div class="settings-page-wrapper">
             <button class="detail-back-btn" onclick="switchTab('settingsTab')">⬅️ تەڭشەكلەرگە قايتىش</button>
@@ -1711,7 +1804,7 @@
             </div>
 
             <!-- 1. مەزمۇن قوشۇش بۆلىكى -->
-            <div id="adminUploadSection" class="settings-group-card" style="padding: 16px; display: block;">
+            <div id="adminUploadSection" class="settings-group-card" style="padding: 16px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                     <div class="section-title" style="font-size: 15px; margin-bottom: 0;">➕ يېڭى مەزمۇن قوشۇش</div>
                     <button type="button" class="del-btn" style="width: auto; height: auto; padding: 6px 12px; border-radius: var(--pill-radius); font-weight: 800; font-size: 11px;" onclick="deleteAllMoviesData()">
@@ -1887,101 +1980,6 @@
             <div id="adminFeedbacksSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">💬 ئىزدەش رايونىدىن ئىنكاسلار</div>
                 <div id="adminFeedbacksListContainer" style="display: flex; flex-direction: column; gap: 12px;"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- VIP ئېچىش مەركىزى -->
-    <div id="vipOpenTab" class="tab-content">
-        <div class="page-box" style="max-width: 440px; padding-top: calc(env(safe-area-inset-top, 24px) + 14px);">
-            <button class="detail-back-btn" onclick="switchTab('settingsTab')">⬅️ تەڭشەكلەرگە قايتىش</button>
-            <div class="vip-card-flex-container" style="margin-top: 10px;">
-                <div class="vip-instruction-card">
-                    <div style="font-size: 14px; font-weight: 900; color: #ffd700; margin-bottom: 8px;">
-                        📌 ئەزالىق ئېچىش تەرتىپى ۋە چۈشەندۈرۈشى:
-                    </div>
-                    <div class="instruction-step-item">
-                        <span class="step-circle">1</span>
-                        <div>تۆۋەندىكى شەخسىي <b>UID</b> نومۇرىڭىزنى نۇسخىلاپ ئېلىڭ.</div>
-                    </div>
-                    <div class="instruction-step-item">
-                        <span class="step-circle">2</span>
-                        <div>تۆۋەندىكى بوت ياكى باشقۇرغۇچى ئادرېسىنى بېسىپ Telegram دا ئەزالىقنى ئاچقۇزۇڭ.</div>
-                    </div>
-                </div>
-
-                <div class="vip-copy-box" onclick="copyUserUID()" title="كۆچۈرۈش ئۈچۈن چېكىڭ">
-                    <div style="text-align: right;">
-                        <div style="font-size: 11px; color: var(--text-secondary);">سىزنىڭ شەخسىي كىملىك (UID) نومۇرىڭىز:</div>
-                        <div id="displayVipTabUID" style="font-size: 17px; font-weight: 900; color: #ff3b30; letter-spacing: 1px;">------</div>
-                    </div>
-                    <button type="button" style="background: rgba(255, 59, 48, 0.15); border: 1px solid #ff3b30; color: #ff3b30; border-radius: var(--pill-radius); padding: 5px 12px; font-size: 11px; font-weight: 800; cursor: pointer;">
-                        UID كۆچۈرۈش <i class="fa-regular fa-copy"></i>
-                    </button>
-                </div>
-
-                <div class="vip-luxury-card">
-                    <div class="vip-crown-icon"><i class="fa-solid fa-crown"></i></div>
-                    <h3 style="font-size: 17px; font-weight: 900; color: var(--text-primary); margin-bottom: 2px;">ئۆلچەملىك VIP ئەزالىق</h3>
-                    <p style="font-size: 11px; color: var(--text-secondary);">بارلىق كىنولارنى چەكلىمىسىز 1 ئاي (30 كۈن) كۆرۈش</p>
-                    <div style="margin: 6px 0;">
-                        <span class="vip-price-tag" id="displayVipPrice">4＄</span>
-                    </div>
-                    <div class="vip-features-list">
-                        <div class="vip-feature-item"><i class="fa-solid fa-circle-check"></i><span>پۈتۈن VIP فىلىملەر تولۇق ئوچۇق</span></div>
-                        <div class="vip-feature-item"><i class="fa-solid fa-circle-check"></i><span>يۇقىرى سۈرئەتلىك HD سىن ئۆتكىلى</span></div>
-                    </div>
-                </div>
-
-                <div class="vip-luxury-card svip-card">
-                    <div class="vip-crown-icon"><i class="fa-solid fa-gem"></i></div>
-                    <h3 style="font-size: 17px; font-weight: 900; color: var(--text-primary); margin-bottom: 2px;">ئالىي ئەزالىق (Super VIP)</h3>
-                    <p style="font-size: 11px; color: #e040fb;">ھەم 1 ئاي چەكلىمىسىز كۆرۈش + ھەم تېلېفونغا چۈشۈرۈۋېلىش</p>
-                    <div style="margin: 6px 0;">
-                        <span class="vip-price-tag" id="displaySvipPrice">7＄</span>
-                    </div>
-                    <div class="vip-features-list">
-                        <div class="vip-feature-item"><i class="fa-solid fa-circle-check"></i><span>بارلىق VIP فىلىملەرنى كۆرۈش</span></div>
-                        <div class="vip-feature-item"><i class="fa-solid fa-circle-check"></i><span><b>فىلىملەرنى تېلېفون سىغىمىغا بىۋاسىتە چۈشۈرۈش</b></span></div>
-                    </div>
-                </div>
-
-                <div class="direct-link-card">
-                    <div class="direct-link-info" onclick="openExternalUrl('https://t.me/KOZNAK_USD')">
-                        <div class="settings-icon-badge" style="color: #ff3b30;"><i class="fa-solid fa-user-shield"></i></div>
-                        <div>
-                            <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">باشقۇرغۇچى شەخسىي ئادرېسى</div>
-                            <div style="font-size: 11px; color: #ff3b30; font-weight: 800;">@KOZNAK_USD</div>
-                        </div>
-                    </div>
-                    <div class="direct-link-actions">
-                        <button type="button" class="btn-link-action" style="background: #ff3b30; color: #fff;" onclick="openExternalUrl('https://t.me/KOZNAK_USD')">
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i> كىرىش
-                        </button>
-                        <button type="button" class="btn-link-action" style="background: rgba(255, 59, 48, 0.12); color: #ff3b30;" onclick="copyAdminUsername()">
-                            <i class="fa-regular fa-copy"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="direct-link-card">
-                    <div class="direct-link-info" onclick="openExternalUrl('https://t.me/koznaktv_bot')">
-                        <div class="settings-icon-badge" style="color: #0088cc;"><i class="fa-solid fa-robot"></i></div>
-                        <div>
-                            <div style="font-size: 13px; font-weight: 800; color: var(--text-primary);">رەسمىي Telegram بوت</div>
-                            <div style="font-size: 11px; color: #0088cc; font-weight: 800;">@koznaktv_bot</div>
-                        </div>
-                    </div>
-                    <div class="direct-link-actions">
-                        <button type="button" class="btn-link-action" style="background: #0088cc; color: #fff;" onclick="openExternalUrl('https://t.me/koznaktv_bot')">
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i> كىرىش
-                        </button>
-                        <button type="button" class="btn-link-action" style="background: rgba(0, 136, 204, 0.12); color: #0088cc;" onclick="copyBotUsername()">
-                            <i class="fa-regular fa-copy"></i>
-                        </button>
-                    </div>
-                </div>
-
             </div>
         </div>
     </div>
@@ -3003,12 +3001,6 @@
             document.querySelectorAll('iframe').forEach(i => i.src = '');
         }
 
-        // باشقۇرغۇچى مەركىزىنى بىۋاسىتە ئىشەنچلىك ئېچىش
-        window.openAdminCenterDirectly = function() {
-            switchTab('adminCenterTab');
-            switchAdminSubTab('upload');
-        };
-
         window.switchTab = function(tabId, el) {
             stopAllVideos();
             closeShortsDrawers();
@@ -3045,7 +3037,8 @@
             }
         };
 
-        window.switchAdminSubTab = async function(type) {
+        // باشقۇرغۇچى مەركىزىدىكى ھەممە بەتلەرنى دەرھال ئاچىدىغان ئەلالاشتۇرۇلغان ئۇسۇل
+        window.switchAdminSubTab = function(type) {
             document.getElementById('adminSubUploadBtn').classList.toggle('active', type === 'upload');
             document.getElementById('adminSubSiteBgBtn').classList.toggle('active', type === 'siteBg');
             document.getElementById('adminSubHeaderBgBtn').classList.toggle('active', type === 'headerBg');
@@ -3063,10 +3056,13 @@
             if(type === 'users') {
                 const loadingBadge = document.getElementById('adminUsersLoadingBadge');
                 if (loadingBadge) loadingBadge.style.display = 'block';
-                const usersData = await fetchUsersREST();
-                if (loadingBadge) loadingBadge.style.display = 'none';
-                allUsers = usersData || {};
-                renderAdminUsersList();
+                fetchUsersREST().then(usersData => {
+                    if (loadingBadge) loadingBadge.style.display = 'none';
+                    allUsers = usersData || {};
+                    renderAdminUsersList();
+                }).catch(() => {
+                    if (loadingBadge) loadingBadge.style.display = 'none';
+                });
             }
             if(type === 'stats') renderAdminMovieStatsTable();
             if(type === 'feedbacks') renderAdminFeedbacksList();
@@ -4171,42 +4167,28 @@
                 return;
             }
 
-            if (window.db && window.dbGet && window.dbRef) {
-                window.dbGet(window.dbRef(window.db, 'movies')).then(snap => {
-                    if (snap.exists()) {
-                        allMovies = snap.val() || {};
-                        localStorage.setItem('koznak_cached_movies', JSON.stringify(allMovies));
-                        renderHeroSlider();
-                        renderMovies();
-                        if(document.getElementById('moviesOnlyTab').classList.contains('active-tab')) renderMoviesOnlyGrid();
-                        if(document.getElementById('theatersTab').classList.contains('active-tab')) renderTheatersGrid();
-                    }
-                }).catch(() => {}).finally(() => {
-                    setTimeout(() => {
-                        if (refreshBtn) refreshBtn.classList.remove('spinning');
-                    }, 500);
-                });
-            } else {
-                fetch(`${DB_BASE_URL}/movies.json`).then(res => res.json()).then(data => {
-                    if (data) {
-                        allMovies = data;
-                        localStorage.setItem('koznak_cached_movies', JSON.stringify(allMovies));
-                        renderHeroSlider();
-                        renderMovies();
-                    }
-                }).catch(() => {}).finally(() => {
-                    setTimeout(() => {
-                        if (refreshBtn) refreshBtn.classList.remove('spinning');
-                    }, 500);
-                });
-            }
+            fetch(`${DB_BASE_URL}/movies.json`).then(res => res.json()).then(data => {
+                if (data) {
+                    allMovies = data;
+                    localStorage.setItem('koznak_cached_movies', JSON.stringify(allMovies));
+                    renderHeroSlider();
+                    renderMovies();
+                    if(document.getElementById('moviesOnlyTab').classList.contains('active-tab')) renderMoviesOnlyGrid();
+                    if(document.getElementById('theatersTab').classList.contains('active-tab')) renderTheatersGrid();
+                }
+            }).catch(() => {}).finally(() => {
+                setTimeout(() => {
+                    if (refreshBtn) refreshBtn.classList.remove('spinning');
+                }, 400);
+            });
         };
 
         window.addEventListener('online', () => {
             triggerManualDataRefresh();
         });
 
-        window.startApp = async function() {
+        window.startApp = function() {
+            // ئەڭ تېز بولغان يەرلىك سىغىمدىن 0 سېكۇنتتا يۈكلەش
             const cachedMovies = localStorage.getItem('koznak_cached_movies');
             if(cachedMovies) {
                 try {
@@ -4240,16 +4222,13 @@
             }
 
             const loadingBox = document.getElementById('loadingIndicatorBox');
-            if (!navigator.onLine) {
-                if (loadingBox) loadingBox.style.display = 'none';
-                return;
+            if (Object.keys(allMovies).length > 0 && loadingBox) {
+                loadingBox.style.display = 'none';
             }
 
-            if (!window.db || !window.dbGet) {
-                if (loadingBox) loadingBox.style.display = 'none';
-                return;
-            }
+            if (!navigator.onLine || !window.db) return;
 
+            // ئارقا تەرەپتىن ئاستا-ئاستا يېڭىلاپ قويۇش (ئەپنى كېچىكتۈرمەيدۇ)
             window.dbGet(window.dbRef(window.db, 'movies')).then(snap => {
                 if (snap.exists()) {
                     allMovies = snap.val() || {};
@@ -4318,15 +4297,13 @@
             if(splash) {
                 setTimeout(() => {
                     splash.style.opacity = '0';
-                    setTimeout(() => splash.remove(), 250);
-                }, 300);
+                    setTimeout(() => splash.remove(), 150);
+                }, 200);
             }
 
-            setTimeout(() => {
-                if (!window.firebaseReady) {
-                    window.startApp();
-                }
-            }, 500);
+            if (!window.firebaseReady) {
+                window.startApp();
+            }
         });
     </script>
 </body>
