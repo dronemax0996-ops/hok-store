@@ -11,10 +11,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Koznak TV">
 
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="preconnect" href="https://koznak-store-default-rtdb.firebaseio.com" crossorigin>
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
@@ -59,8 +55,6 @@
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Gulzar&family=Noto+Naskh+Arabic:wght@500;700&family=Noto+Sans+Arabic:wght@400;600;700;800;900&display=swap');
-
         :root {
             --bg-color: #f8fafc;
             --bg-gradient: #f8fafc;
@@ -242,7 +236,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             flex-shrink: 0;
@@ -251,7 +244,7 @@
         .home-refresh-header-btn:active {
             transform: scale(0.92);
         }
-        .home-refresh-header-btn.spinning i {
+        .home-refresh-header-btn.spinning svg {
             animation: spinRefresh 0.8s linear infinite;
         }
         @keyframes spinRefresh {
@@ -363,11 +356,12 @@
         .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.4); cursor: pointer; }
         .hero-dot.active { background: #ff3b30; width: 18px; border-radius: 6px; }
 
+        /* تېز ئېچىلىدىغان قىزىل ئېكران ئۇسلۇبى */
         #splashScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #ff3b30; z-index: 99999; display: flex; flex-direction: column;
             align-items: center; justify-content: center; padding: 20px;
-            transition: opacity 0.25s ease, visibility 0.25s; pointer-events: none; color: #fff;
+            transition: opacity 0.2s ease, visibility 0.2s; pointer-events: none; color: #fff;
         }
         .splash-cinema-icon {
             width: 75px; height: 75px; background: #ffffff;
@@ -1168,7 +1162,7 @@
 </head>
 <body>
 
-    <!-- تورسىز ھالەت ئەسكەرتىش كۆزنىكى (تامام ياكى چېكىنىش) -->
+    <!-- تورسىز ھالەت ئەسكەرتىش كۆزنىكى -->
     <div id="offlineAlertModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); z-index: 9999999; align-items: center; justify-content: center; padding: 20px;">
         <div style="background: var(--surface-card, #1a1a28); border: 1px solid var(--border-glow, rgba(255,255,255,0.15)); border-radius: 26px; padding: 26px 20px; width: 100%; max-width: 360px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); direction: rtl;">
             <div style="width: 60px; height: 60px; border-radius: 50%; background: rgba(255, 59, 48, 0.15); color: #ff3b30; display: flex; align-items: center; justify-content: center; font-size: 26px; margin: 0 auto 14px auto;">
@@ -1257,7 +1251,6 @@
         </div>
     </div>
 
-    <!-- تېز يوقىلىدىغان ئېكران ئېچىلىش كۆرۈنۈشى -->
     <div id="splashScreen">
         <div class="splash-content" style="text-align: center;">
             <div class="splash-cinema-icon"><i class="fa-solid fa-clapperboard"></i></div>
@@ -1275,8 +1268,11 @@
                     <input type="text" class="home-search-input" placeholder="سىز ئىزدەڭ مەن تاپاي" readonly>
                     <button type="button" class="home-search-action-btn"><i class="fa-solid fa-magnifying-glass"></i> ئىزدەش</button>
                 </div>
+                <!-- تور بولسۇن-بولمىسۇن كۆرۈنىدىغان يەرلىك SVG كۇنۇپكىسى -->
                 <button type="button" class="home-refresh-header-btn" id="headerRefreshBtn" onclick="triggerManualDataRefresh()" title="فىلىملەرنى يېڭىلاش">
-                    <i class="fa-solid fa-rotate-right"></i>
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.19"/>
+                    </svg>
                 </button>
             </div>
         </div>
@@ -4182,7 +4178,7 @@
                 setTimeout(() => {
                     if (refreshBtn) refreshBtn.classList.remove('spinning');
                     alert('⚠️ تور ئۇلانمىسى يوق! يانفونىڭىزدا ساقلانغان مەزمۇنلار كۆرسىتىلىۋاتىدۇ.');
-                }, 400);
+                }, 300);
                 return;
             }
 
@@ -4198,11 +4194,10 @@
             }).catch(() => {}).finally(() => {
                 setTimeout(() => {
                     if (refreshBtn) refreshBtn.classList.remove('spinning');
-                }, 400);
+                }, 300);
             });
         };
 
-        // تور ئەھۋالىنى تەكشۈرۈش
         function checkNetworkStatus() {
             const modal = document.getElementById('offlineAlertModal');
             if (!modal) return;
@@ -4213,13 +4208,11 @@
             }
         }
 
-        // تامامنى باسسا تورسىز داۋاملىق كۆرۈش
         window.confirmOfflineMode = function() {
             const modal = document.getElementById('offlineAlertModal');
             if (modal) modal.style.display = 'none';
         };
 
-        // چېكىنىشنى باسسا ئەپتىن چىقىپ كېتىش
         window.exitApplication = function() {
             if (navigator.app && navigator.app.exitApp) {
                 navigator.app.exitApp();
@@ -4345,15 +4338,18 @@
                 setTimeout(() => {
                     splash.style.display = 'none';
                     splash.remove();
-                }, 200);
+                }, 100);
             }
         }
+
+        // بەت يۈكلىنىپلا قىزىل ئېكران 0.1 سېكۇنتتا يوقىلىدۇ
+        setTimeout(hideSplashScreenFast, 100);
 
         document.addEventListener('DOMContentLoaded', () => {
             const savedTheme = localStorage.getItem('koznak_theme') || 'light';
             setTheme(savedTheme);
-            setTimeout(hideSplashScreenFast, 250);
-            setTimeout(checkNetworkStatus, 400);
+            hideSplashScreenFast();
+            setTimeout(checkNetworkStatus, 300);
             window.startApp();
         });
 
