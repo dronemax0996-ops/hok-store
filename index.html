@@ -363,7 +363,6 @@
         .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.4); cursor: pointer; }
         .hero-dot.active { background: #ff3b30; width: 18px; border-radius: 6px; }
 
-        /* قىزىل ئېكراننىڭ چاقماقتەك لەرزان يوقىلىشى */
         #splashScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #ff3b30; z-index: 99999; display: flex; flex-direction: column;
@@ -4186,7 +4185,6 @@
             triggerManualDataRefresh();
         });
 
-        // تېز ئېچىلىش ۋە ئىشقا كىرىشىش لوگىكىسى
         window.startApp = function() {
             const cachedMovies = localStorage.getItem('koznak_cached_movies');
             if(cachedMovies) {
@@ -4287,7 +4285,6 @@
             });
         };
 
-        // قىزىل ئېكراننىڭ دەرھال تېز سۈرئەتتە ئېچىلىپ غايىب بولۇشى
         function hideSplashScreenFast() {
             const splash = document.getElementById('splashScreen');
             if (splash) {
@@ -4299,7 +4296,6 @@
             }
         }
 
-        // بەت تەييار بولۇش بىلەنلا قىزىل بەت يوقىلىدۇ (كۈتۈپ تۇرمايدۇ)
         document.addEventListener('DOMContentLoaded', () => {
             const savedTheme = localStorage.getItem('koznak_theme') || 'light';
             setTheme(savedTheme);
