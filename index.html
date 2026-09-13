@@ -18,66 +18,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-    <!-- تورسىز (Offline) پۈتۈن كۆرۈنمە يۈزنى ساقلاپ بېرىدىغان Service Worker -->
+    <!-- رەسمىي مۇستەقىل sw.js نى تىزىملىتىش (تور ئۈزۈلگەندە خاتالىق چىقىشنى 100% يوقىتىدۇ) -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                const swCode = `
-                    const CACHE_NAME = 'koznak-pwa-v30';
-                    const PRECACHE_ASSETS = [
-                        self.location.pathname,
-                        './',
-                        'index.html',
-                        'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-                        'https://cdn.jsdelivr.net/npm/hls.js@latest'
-                    ];
-
-                    self.addEventListener('install', (e) => {
-                        self.skipWaiting();
-                        e.waitUntil(
-                            caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_ASSETS).catch(() => {}))
-                        );
-                    });
-
-                    self.addEventListener('activate', (e) => {
-                        e.waitUntil(
-                            caches.keys().then((keys) => Promise.all(
-                                keys.map((k) => { if (k !== CACHE_NAME) return caches.delete(k); })
-                            )).then(() => self.clients.claim())
-                        );
-                    });
-
-                    self.addEventListener('fetch', (e) => {
-                        const req = e.request;
-                        if (req.url.includes('.mp4') || req.url.includes('.m3u8') || req.url.includes('firebaseio.com')) {
-                            return;
-                        }
-
-                        e.respondWith(
-                            caches.match(req).then((cached) => {
-                                if (cached) return cached;
-                                return fetch(req).then((res) => {
-                                    if (res && res.status === 200 && req.method === 'GET') {
-                                        const clone = res.clone();
-                                        caches.open(CACHE_NAME).then((cache) => cache.put(req, clone).catch(() => {}));
-                                    }
-                                    return res;
-                                }).catch(() => {
-                                    if (req.mode === 'navigate') {
-                                        return caches.match(self.location.pathname)
-                                            .then(r => r || caches.match('./'))
-                                            .then(r => r || caches.match('index.html'));
-                                    }
-                                });
-                            })
-                        );
-                    });
-                `;
-                try {
-                    const blob = new Blob([swCode], { type: 'application/javascript' });
-                    const swUrl = URL.createObjectURL(blob);
-                    navigator.serviceWorker.register(swUrl, { scope: './' }).catch(() => {});
-                } catch(e) {}
+                navigator.serviceWorker.register('./sw.js')
+                    .then(reg => console.log('Koznak SW Ready:', reg.scope))
+                    .catch(err => console.log('Koznak SW Error:', err));
             });
         }
     </script>
@@ -110,9 +57,7 @@
             window.dbUpdate = update;
             window.dbOff = off;
             window.firebaseReady = true;
-        } catch(e) {
-            console.warn("Offline or Firebase Init fallback");
-        }
+        } catch(e) {}
 
         if (window.startApp) {
             window.startApp();
@@ -284,7 +229,6 @@
             text-shadow: 0 2px 8px rgba(0,0,0,0.6);
         }
 
-        /* قايتىلاش كۇنۇپكىسى بىلەن ئىزدەش قۇتىسى بىرىكمىسى */
         .home-search-container-row {
             position: relative;
             z-index: 2;
@@ -437,7 +381,7 @@
         }
         .splash-brand-text { font-size: 21px; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
 
-        /* قىسقا فىلىم بۆلىكى */
+        /* قىسقا فىلىم بۆلىكى (Shorts) */
         #shortsTab {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -1315,7 +1259,6 @@
                     <input type="text" class="home-search-input" placeholder="سىز ئىزدەڭ مەن تاپاي" readonly>
                     <button type="button" class="home-search-action-btn"><i class="fa-solid fa-magnifying-glass"></i> ئىزدەش</button>
                 </div>
-                <!-- ئىزدەش يېنىدىكى قايتىلاش / يېڭىلاش كۇنۇپكىسى -->
                 <button type="button" class="home-refresh-header-btn" id="headerRefreshBtn" onclick="triggerManualDataRefresh()" title="فىلىملەرنى يېڭىلاش">
                     <i class="fa-solid fa-rotate-right"></i>
                 </button>
@@ -4005,7 +3948,6 @@
             });
         }
 
-        // سانلىق مەلۇماتلارنى قولدا ياكى تورغا باغلانغاندا قايتا يېڭىلاش
         window.triggerManualDataRefresh = function() {
             const refreshBtn = document.getElementById('headerRefreshBtn');
             if (refreshBtn) refreshBtn.classList.add('spinning');
@@ -4049,12 +3991,10 @@
             }
         };
 
-        // تور كەلسە ئاپتوماتىك قايتا يۈكلەش كۆزىتىشى
         window.addEventListener('online', () => {
             triggerManualDataRefresh();
         });
 
-        // ئەپنى تور يوق ياكى بار ئەھۋالدا پۈتۈنلەي توسالغۇسىز قوزغىتىش
         window.startApp = async function() {
             const cachedMovies = localStorage.getItem('koznak_cached_movies');
             if(cachedMovies) {
@@ -4068,7 +4008,6 @@
             const savedUser = localStorage.getItem('koznak_logged_user');
             const savedSession = localStorage.getItem('koznak_session_id');
 
-            // توردىن ئۈزۈلگەندە ياكى ئىلگىرى كىرگەن بولسا كىرىش كۆزنىكى قەتئىي ئالدىنى توسۇۋالمايدۇ
             if(savedUser) {
                 try {
                     window.currentUser = JSON.parse(savedUser);
