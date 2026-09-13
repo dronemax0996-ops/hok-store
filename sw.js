@@ -1,57 +1,38 @@
-const CACHE_NAME = 'koznak-tv-v100';
-
-// توردىن ئۈزۈلگەندىمۇ تېلېفوندا چاقماقتەك ئېچىلىدىغان ھۆججەتلەر
-const ASSETS = [
+const CACHE_NAME = 'koznak-v35';
+const PRECACHE = [
     './',
     'index.html',
-    'manifest.json',
-    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-    'https://cdn.jsdelivr.net/npm/hls.js@latest'
+    'manifest.json'
 ];
 
-self.addEventListener('install', (event) => {
+self.addEventListener('install', (e) => {
     self.skipWaiting();
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(ASSETS).catch(() => {});
-        })
+    e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(PRECACHE)).catch(() => {}));
+});
+
+self.addEventListener('activate', (e) => {
+    e.waitUntil(
+        caches.keys().then(keys => Promise.all(
+            keys.map(k => { if (k !== CACHE_NAME) return caches.delete(k); })
+        )).then(() => self.clients.claim())
     );
 });
 
-self.addEventListener('activate', (event) => {
-    event.waitUntil(
-        caches.keys().then((keys) => {
-            return Promise.all(
-                keys.map((k) => {
-                    if (k !== CACHE_NAME) return caches.delete(k);
-                })
-            );
-        }).then(() => self.clients.claim())
-    );
-});
+self.addEventListener('fetch', (e) => {
+    const url = e.request.url;
+    if (url.includes('firebaseio.com') || url.includes('.mp4') || url.includes('.m3u8')) return;
 
-self.addEventListener('fetch', (event) => {
-    const req = event.request;
-
-    // تاشقى چوڭ فىلىملەر ۋە Firebase ئۆز ئالدىغا ئېلىنىدۇ
-    if (req.url.includes('firebaseio.com') || req.url.includes('.mp4')) {
-        return;
-    }
-
-    event.respondWith(
-        caches.match(req).then((cached) => {
-            // تور يوق بولسىلا يانفوننىڭ سىغىمىدىكى كودتىن دەرھال ئاچىدۇ
+    e.respondWith(
+        caches.match(e.request).then(cached => {
             if (cached) return cached;
-
-            return fetch(req).then((res) => {
-                if (res && res.status === 200 && req.method === 'GET') {
+            return fetch(e.request).then(res => {
+                if (res && res.status === 200 && e.request.method === 'GET') {
                     const clone = res.clone();
-                    caches.open(CACHE_NAME).then((c) => c.put(req, clone));
+                    caches.open(CACHE_NAME).then(c => c.put(e.request, clone).catch(() => {}));
                 }
                 return res;
             }).catch(() => {
-                // ئەگەر پۈتۈنلەي تور بولمىسا ئەپ باشبېتىنى يەرلىك سىغىمدىن ئېچىپ بېرىدۇ
-                if (req.mode === 'navigate') {
+                if (e.request.mode === 'navigate') {
                     return caches.match('./').then(r => r || caches.match('index.html'));
                 }
             });
