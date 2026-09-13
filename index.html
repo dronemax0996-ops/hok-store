@@ -16,20 +16,16 @@
     <link rel="preconnect" href="https://koznak-store-default-rtdb.firebaseio.com" crossorigin>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'koznak-pwa-v15';
+                    const CACHE_NAME = 'koznak-pwa-v17';
                     const ASSETS = [
                         './',
                         'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-                        'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css',
-                        'https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js',
                         'https://cdn.jsdelivr.net/npm/hls.js@latest'
                     ];
                     self.addEventListener('install', (e) => {
@@ -371,6 +367,7 @@
         }
         .splash-brand-text { font-size: 21px; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
 
+        /* قىسقا فىلىم بۆلىكى (Shorts) ئۇسلۇبى */
         #shortsTab {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -387,11 +384,13 @@
             width: 100%; height: 100%;
             background: #000;
             display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
         }
         .shorts-main-video {
             width: 100%; height: 100%;
             object-fit: cover;
             background: #000;
+            display: block;
         }
         .shorts-top-bar {
             position: absolute;
@@ -402,7 +401,8 @@
             align-items: center;
             justify-content: space-between;
             color: #fff;
-            z-index: 10;
+            z-index: 20;
+            pointer-events: auto;
         }
         .shorts-top-title {
             font-size: 16px;
@@ -431,7 +431,7 @@
             flex-direction: column;
             gap: 16px;
             align-items: center;
-            z-index: 10;
+            z-index: 20;
         }
         .shorts-action-btn {
             background: rgba(15, 23, 42, 0.6);
@@ -460,12 +460,14 @@
             left: 0; right: 0;
             padding: 14px 18px;
             color: #fff;
-            z-index: 10;
+            z-index: 20;
             display: flex;
             justify-content: space-between;
             align-items: flex-end;
             background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.85) 100%);
+            pointer-events: none;
         }
+        .shorts-bottom-bar > * { pointer-events: auto; }
         .shorts-bottom-info { text-align: right; }
         .shorts-bottom-title { font-size: 15px; font-weight: 900; margin-bottom: 4px; }
         .shorts-bottom-ep { font-size: 12px; opacity: 0.85; }
@@ -491,7 +493,7 @@
             border-top-left-radius: 24px;
             border-top-right-radius: 24px;
             padding: 18px;
-            z-index: 1005;
+            z-index: 1050;
             transition: bottom 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             max-height: 70vh;
             overflow-y: auto;
@@ -551,7 +553,7 @@
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.2s;
-            z-index: 5;
+            z-index: 15;
         }
         .shorts-play-indicator.show { opacity: 1; }
 
@@ -1139,87 +1141,6 @@
             border-radius: 26px; padding: 24px; width: 100%; max-width: 380px; text-align: center;
             box-shadow: 0 20px 40px rgba(0,0,0,0.25);
         }
-        .avatar-file-dropzone {
-            border: 2px dashed rgba(255, 59, 48, 0.4); border-radius: 20px;
-            padding: 16px 14px; margin: 10px 0; background: rgba(255, 59, 48, 0.04); cursor: pointer;
-        }
-
-        #globalCropModal {
-            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0, 0, 0, 0.88); backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            z-index: 1000005; align-items: center; justify-content: center;
-            padding: 16px;
-        }
-        .cropper-dialog-card {
-            background: var(--surface-card);
-            border: 1px solid var(--border-glow);
-            border-radius: 24px;
-            width: 100%;
-            max-width: 440px;
-            max-height: 90vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
-        }
-        .cropper-dialog-header {
-            padding: 14px 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-glow);
-        }
-        .cropper-body-container {
-            position: relative;
-            width: 100%;
-            height: 52vh;
-            background: #000000;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .cropper-body-container img {
-            max-width: 100%;
-            max-height: 100%;
-            display: block;
-        }
-        .cropper-dialog-toolbar {
-            padding: 8px 14px;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            justify-content: center;
-            background: var(--bg-color);
-            border-top: 1px solid var(--border-glow);
-            flex-wrap: wrap;
-        }
-        .crop-tool-btn {
-            background: var(--surface-card);
-            border: 1px solid var(--border-glow);
-            color: var(--text-primary);
-            padding: 6px 12px;
-            border-radius: var(--pill-radius);
-            font-size: 11px;
-            font-weight: 800;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .crop-tool-btn.active {
-            background: #ff3b30;
-            color: #fff;
-            border-color: transparent;
-        }
-        .cropper-dialog-footer {
-            padding: 12px 16px;
-            display: flex;
-            gap: 10px;
-            background: var(--surface-card);
-            border-top: 1px solid var(--border-glow);
-        }
 
         .admin-stat-summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
         .admin-stat-box {
@@ -1238,33 +1159,6 @@
     </style>
 </head>
 <body>
-
-    <div id="globalCropModal">
-        <div class="cropper-dialog-card">
-            <div class="cropper-dialog-header">
-                <span id="cropperDialogTitle" style="font-size: 14px; font-weight: 900; color: var(--text-primary);">✂️ رەسىمنى كېسىپ تەڭشەش</span>
-                <span style="font-size: 18px; cursor: pointer; color: var(--text-secondary);" onclick="cancelGlobalCrop()">✕</span>
-            </div>
-            <div class="cropper-body-container">
-                <img id="cropperTargetImg" src="" alt="كېسىلىدىغان رەسىم">
-            </div>
-            <div class="cropper-dialog-toolbar">
-                <button type="button" class="crop-tool-btn active" id="ratioFreeBtn" onclick="setCropAspect(NaN, this)"><i class="fa-solid fa-expand"></i> خالىغانچە</button>
-                <button type="button" class="crop-tool-btn" id="ratio1to1Btn" onclick="setCropAspect(1, this)"><i class="fa-regular fa-square"></i> 1:1 تەكشى</button>
-                <button type="button" class="crop-tool-btn" id="ratio3to4Btn" onclick="setCropAspect(3/4, this)"><i class="fa-solid fa-mobile-screen"></i> تىك 3:4</button>
-                <button type="button" class="crop-tool-btn" id="ratio16to9Btn" onclick="setCropAspect(16/9, this)"><i class="fa-solid fa-film"></i> ياتۇق 16:9</button>
-                <button type="button" class="crop-tool-btn" onclick="rotateCropper()"><i class="fa-solid fa-rotate-right"></i> ئايلاندۇرۇش</button>
-            </div>
-            <div class="cropper-dialog-footer">
-                <button type="button" class="action-btn" style="flex: 1; margin: 0; padding: 10px; background: #2ed573;" onclick="confirmGlobalCrop()">
-                    <i class="fa-solid fa-check"></i> كېسىپ تاماملاش
-                </button>
-                <button type="button" class="action-btn" style="flex: 1; margin: 0; padding: 10px; background: #64748b;" onclick="cancelGlobalCrop()">
-                    بىكار قىلىش
-                </button>
-            </div>
-        </div>
-    </div>
 
     <div id="authOverlay">
         <div class="auth-card">
@@ -1317,19 +1211,19 @@
         </div>
     </div>
 
+    <!-- باش رەسىم كىرگۈزۈش (URL ئارقىلىق) -->
     <div id="avatarModal" class="avatar-modal">
         <div class="avatar-modal-content">
-            <h4 style="font-size: 16px; font-weight: 800; margin-bottom: 6px; color: var(--text-primary);">باش رەسىم يۈكلەش</h4>
-            <input type="file" id="avatarFileInput" accept="image/*" style="display: none;" onchange="handleAvatarFileSelected(event)">
-            <div class="avatar-file-dropzone" onclick="document.getElementById('avatarFileInput').click()">
-                <div style="font-size: 30px; margin-bottom: 6px; color: #ff3b30;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-                <span style="font-size: 13px; font-weight: 700; color: var(--text-primary);">تېلېفوندىن سۈرەت تاللاش ۋە كېسىش</span>
+            <h4 style="font-size: 16px; font-weight: 800; margin-bottom: 6px; color: var(--text-primary);">باش رەسىم تەڭشەش</h4>
+            <div class="form-group" style="margin: 12px 0; text-align: right;">
+                <label style="font-size: 11px;">باش رەسىم تور ئۇلانمىسى (HTML / Image URL):</label>
+                <input type="text" id="avatarUrlInput" class="form-input" placeholder="https://.../avatar.jpg" oninput="previewAvatarUrl(this.value)">
             </div>
             <div id="avatarPreviewContainer" style="display: none; margin-bottom: 14px;">
                 <img id="avatarPreviewImg" alt="رەسىم" style="width: 85px; height: 85px; border-radius: 50%; object-fit: cover; border: 3px solid #ff3b30;">
             </div>
             <div style="display: flex; gap: 8px;">
-                <button type="button" id="saveAvatarBtn" class="action-btn" style="flex: 1; margin: 0; padding: 10px; display: none;" onclick="saveUploadedAvatar()">ساقلاش</button>
+                <button type="button" id="saveAvatarBtn" class="action-btn" style="flex: 1; margin: 0; padding: 10px;" onclick="saveUploadedAvatar()">ساقلاش</button>
                 <button type="button" class="action-btn" style="flex: 1; margin: 0; padding: 10px; background: #64748b;" onclick="closeAvatarModal()">تاقاش</button>
             </div>
         </div>
@@ -1415,7 +1309,7 @@
         </div>
     </div>
 
-    <!-- 4. قىسقا فىلىم بۆلىكى -->
+    <!-- 4. قىسقا فىلىم بۆلىكى (Shorts) -->
     <div id="shortsTab" class="tab-content">
         <div class="shorts-viewer-container" id="shortsSwipeArea">
             <div class="shorts-top-bar">
@@ -1426,8 +1320,8 @@
 
             <div id="shortsPlayIcon" class="shorts-play-indicator"><i class="fa-solid fa-play"></i></div>
 
-            <video id="shortsPlayerVideo" class="shorts-main-video" playsinline webkit-playsinline preload="auto"></video>
-            <video id="shortsPreloadBuffer" style="display:none;" preload="auto"></video>
+            <video id="shortsPlayerVideo" class="shorts-main-video" playsinline webkit-playsinline x5-video-player-type="h5" preload="auto"></video>
+            <video id="shortsPreloadBuffer" style="display:none;" preload="auto" muted></video>
 
             <div class="shorts-right-actions">
                 <button class="shorts-action-btn" id="shortsActionFavBtn" onclick="toggleShortsFavorite()">
@@ -1599,7 +1493,7 @@
             <div class="user-profile-card-modern">
                 <div class="profile-top-avatar-box">
                     <div class="profile-avatar-glow" id="mainAccountAvatarBox" onclick="openAvatarModal()" title="باش رەسىمنى ئۆزگەرتىش">👤</div>
-                    <div class="avatar-edit-tag" onclick="openAvatarModal()"><i class="fa-solid fa-camera"></i></div>
+                    <div class="avatar-edit-tag" onclick="openAvatarModal()"><i class="fa-solid fa-link"></i></div>
                 </div>
 
                 <h3 id="accountTitle" style="font-size: 19px; font-weight: 900; margin-bottom: 4px;">ئابونت</h3>
@@ -1800,9 +1694,15 @@
                 </button>
             </div>
 
-            <!-- 1. مەزمۇن قوشۇش -->
+            <!-- 1. مەزمۇن قوشۇش بۆلىكى -->
             <div id="adminUploadSection" class="settings-group-card" style="padding: 16px;">
-                <div class="section-title" style="font-size: 15px; margin-bottom: 12px;">➕ يېڭى مەزمۇن قوشۇش</div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <div class="section-title" style="font-size: 15px; margin-bottom: 0;">➕ يېڭى مەزمۇن قوشۇش</div>
+                    <button type="button" class="del-btn" style="width: auto; height: auto; padding: 6px 12px; border-radius: var(--pill-radius); font-weight: 800; font-size: 11px;" onclick="deleteAllMoviesData()">
+                        🗑️ بارلىق فىلىملەرنى تازىلاش
+                    </button>
+                </div>
+                
                 <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
                     <div class="form-group">
                         <label>🎬 مەزمۇن تىپى (خىلى)</label>
@@ -1849,20 +1749,13 @@
                         <input type="text" id="contentTitle" class="form-input" placeholder="مەزمۇن ئىسمىنى كىرگۈزۈڭ" required autocomplete="off">
                     </div>
 
+                    <!-- پەقەت HTML رەسىم ئۇلانمىسى كىرگۈزۈش -->
                     <div class="form-group">
-                        <label>🎬 تەشۋىقات رەسىمى (تېلېفوندىن ياكى تور ئادرېسىدىن)</label>
-                        <input type="text" id="contentPosterUrlInput" class="form-input" placeholder="رەسىم تور ئۇلانمىسى (https://...)" oninput="handlePosterUrlInput(this.value)" autocomplete="off">
-                        
-                        <div style="text-align: center; margin: 6px 0; font-size: 11px; color: var(--text-secondary);">— ياكى تېلېفوندىن يۈكلەڭ —</div>
-                        
-                        <input type="file" id="contentPosterFile" accept="image/*" style="display: none;" onchange="handlePosterFileSelected(event)">
-                        <div class="avatar-file-dropzone" onclick="document.getElementById('contentPosterFile').click()">
-                            <div style="font-size: 24px; margin-bottom: 4px; color: #ff3b30;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-                            <span style="font-size: 12px; font-weight: 700;">تېلېفوندىن سۈرەت تاللاش ۋە كېسىش</span>
-                        </div>
+                        <label>🎬 تەشۋىقات رەسىم ئۇلانمىسى (HTML / Image URL)</label>
+                        <input type="url" id="contentPosterUrlInput" class="form-input" placeholder="رەسىم تور ئۇلانمىسىنى كىرگۈزۈڭ (https://.../poster.jpg)" oninput="handlePosterUrlInput(this.value)" required autocomplete="off">
                         <input type="hidden" id="contentPosterBase64" required>
                         <div id="uploadPosterPreviewContainer" style="display: none; text-align: center; margin-top: 8px;">
-                            <img id="uploadPosterPreviewImg" alt="رەسىم" style="max-height: 140px; border-radius: 14px; border: 1px solid var(--border-glow); object-fit: cover;">
+                            <img id="uploadPosterPreviewImg" alt="رەسىم كۆرۈنۈشى" style="max-height: 150px; border-radius: 14px; border: 1px solid var(--border-glow); object-fit: cover;">
                         </div>
                     </div>
                     
@@ -1891,43 +1784,39 @@
                 </form>
             </div>
 
-            <!-- 2. پۈتۈن تەگلىك بۆلىكى -->
+            <!-- 2. پۈتۈن تەگلىك بۆلىكى (پەقەت URL ئارقىلىق) -->
             <div id="adminSiteBgSection" class="settings-group-card" style="padding: 16px; display: none;">
-                <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-panorama" style="color: #00c6ff;"></i> پۈتۈن توربەت تىك ئارقا تەگلىك رەسىمى</div>
+                <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-panorama" style="color: #00c6ff;"></i> پۈتۈن توربەت ئارقا تەگلىك رەسىمى</div>
                 <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
-                    بۇ يەردىن تاللىغان تىك رەسىم پۈتۈن توربەتنىڭ ئارقا كۆرۈنۈشىگە تەگلىك قىلىپ قويۇلىدۇ. بارلىق ئابونتلارنىڭ يانفونىدا ئاپتوماتىك كۆرۈنىدۇ.
+                    تۆۋەنگە رەسىمنىڭ بىۋاسىتە تور ئۇلانمىسىنى (HTML Image URL) كىرگۈزۈپ ساقلاڭ. ئاپتوماتىك پۈتۈن توربەت تەگلىكىگە ئايلىنىدۇ.
                 </div>
-                <input type="file" id="userSiteBgInput" accept="image/*" style="display: none;" onchange="handleSiteBgSelected(event)">
-                <button type="button" class="action-btn" style="background: linear-gradient(135deg, #0072ff, #00c6ff); margin-top: 0; padding: 10px;" onclick="document.getElementById('userSiteBgInput').click()">
-                    <i class="fa-solid fa-file-image"></i> تېلېفوندىن تەگلىك تاللاش ۋە كېسىش
-                </button>
+                <div class="form-group">
+                    <input type="url" id="userSiteBgUrlInput" class="form-input" placeholder="رەسىم ئۇلانمىسى (https://.../bg.jpg)" oninput="previewSiteBgUrl(this.value)" autocomplete="off">
+                </div>
                 <div id="userSiteBgPreviewBox" style="display: none; margin-top: 10px; text-align: center;">
-                    <img id="userSiteBgPreviewImg" alt="تەگلىك" style="width: 110px; height: 170px; object-fit: cover; border-radius: 14px; border: 2px solid #00c6ff; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
-                    <div style="display: flex; gap: 8px; margin-top: 8px;">
-                        <button type="button" class="action-btn" style="flex: 1; background: #2ed573; padding: 8px; font-size: 12px;" onclick="saveUserSiteBg()">ساقلاش ۋە دەرھال قوللىنىش</button>
-                        <button type="button" class="action-btn" style="flex: 1; background: #64748b; padding: 8px; font-size: 12px;" onclick="cancelUserSiteBgPreview()">بىكار قىلىش</button>
-                    </div>
+                    <img id="userSiteBgPreviewImg" alt="تەگلىك كۆرۈنۈشى" style="width: 120px; height: 180px; object-fit: cover; border-radius: 14px; border: 2px solid #00c6ff; box-shadow: 0 4px 15px rgba(0,0,0,0.25);">
                 </div>
+                <button type="button" class="action-btn" style="background: linear-gradient(135deg, #0072ff, #00c6ff); padding: 10px; margin-top: 10px;" onclick="saveUserSiteBgByUrl()">
+                    <i class="fa-solid fa-floppy-disk"></i> ساقلاش ۋە دەرھال قوللىنىش
+                </button>
                 <button type="button" class="action-btn" style="background: rgba(255, 71, 87, 0.15); border: 1px solid #ff4757; color: #ff4757; box-shadow: none; margin-top: 10px; padding: 8px; font-size: 11px;" onclick="resetSiteBgToDefault()">
                     ئەسلى رەڭلىك تەگلىككە قايتۇرۇش
                 </button>
             </div>
 
-            <!-- 3. لوزۇنكا تەگلىكى بۆلىكى -->
+            <!-- 3. لوزۇنكا تەگلىكى بۆلىكى (پەقەت URL ئارقىلىق) -->
             <div id="adminHeaderBgSection" class="settings-group-card" style="padding: 16px; display: none;">
                 <div class="section-title" style="font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-image" style="color: #ff3b30;"></i> باش بەت لوزۇنكا ئارقا كۆرۈنۈش رەسىمى</div>
                 <div style="font-size: 11.5px; color: var(--text-secondary); margin-bottom: 12px; line-height: 1.6;">
-                    تېلېفوندىن سۈرەت تاللاپ خالىغان دائىرىدە كېسىپ يوللىسىڭىز، باش بەت ئۈستىدىكى «كۆزنەك كىنوخانىسى» خېتىنىڭ ئارقا كۆرۈنۈشىدە نامايان بولىدۇ.
+                    لوزۇنكا رەسىمىنىڭ تور ئۇلانمىسىنى كىرگۈزسىڭىز، باش بەت ئۈستىدىكى «كۆزنەك كىنوخانىسى» خېتىنىڭ ئارقا كۆرۈنۈشىدە نامايان بولىدۇ.
                 </div>
-                <input type="file" id="headerBgFileInput" accept="image/*" style="display: none;" onchange="handleHeaderBgSelected(event)">
-                <div class="avatar-file-dropzone" onclick="document.getElementById('headerBgFileInput').click()">
-                    <div style="font-size: 30px; margin-bottom: 6px; color: #ff3b30;"><i class="fa-solid fa-cloud-arrow-up"></i></div>
-                    <span style="font-size: 12px; font-weight: 700;">تېلېفوندىن رەسىم تاللاش ۋە كېسىش</span>
+                <div class="form-group">
+                    <input type="url" id="headerBgUrlInput" class="form-input" placeholder="رەسىم ئۇلانمىسى (https://.../banner.jpg)" oninput="previewHeaderBgUrl(this.value)" autocomplete="off">
                 </div>
                 <div id="headerBgPreviewContainer" style="display: none; margin: 10px 0; text-align: center;">
-                    <img id="headerBgPreviewImg" alt="رەسىم" style="width: 100%; max-height: 120px; object-fit: cover; border-radius: 14px; border: 1px solid var(--border-glow);">
+                    <img id="headerBgPreviewImg" alt="لوزۇنكا رەسىمى" style="width: 100%; max-height: 120px; object-fit: cover; border-radius: 14px; border: 1px solid var(--border-glow);">
                 </div>
-                <button type="button" class="action-btn" id="saveHeaderBgBtn" style="background: #2ed573; display: none;" onclick="saveHeaderBg()">لوزۇنكا رەسىمىنى دەرھال قوللىنىش</button>
+                <button type="button" class="action-btn" id="saveHeaderBgBtn" style="background: #2ed573;" onclick="saveHeaderBgByUrl()">لوزۇنكا رەسىمىنى دەرھال قوللىنىش</button>
                 <button type="button" class="action-btn" style="background: #64748b; margin-top: 8px;" onclick="resetHeaderBgToDefault()">ئەسلى قىزىل ھالىتىگە قايتۇرۇش</button>
             </div>
 
@@ -2169,9 +2058,8 @@
                 <input type="text" id="fbMovieLink" class="form-input" placeholder="فىلىم ئۇلانمىسى..." autocomplete="off">
             </div>
             <div class="form-group" style="margin-bottom: 8px;">
-                <label style="font-size: 11px;">مۇناسىۋەتلىك رەسىمى (تاللاپ كېسىڭ):</label>
-                <input type="file" id="fbMovieImageFile" accept="image/*" class="form-input" style="padding: 6px;" onchange="handleFeedbackImageSelected(event)">
-                <input type="hidden" id="fbMovieImageBase64">
+                <label style="font-size: 11px;">مۇناسىۋەتلىك رەسىم ئۇلانمىسى (HTML Image URL):</label>
+                <input type="url" id="fbMovieImageUrl" class="form-input" placeholder="https://.../pic.jpg">
             </div>
             <button type="button" class="action-btn" style="padding: 10px; font-size: 12px; margin: 0; background: #2ed573;" onclick="submitSearchFeedback()">📤 ئىنكاسنى يوللاش</button>
         </div>
@@ -2198,13 +2086,10 @@
         const ADMIN_HASH = hashPassword("652923198405083311");
         const DB_BASE_URL = "https://koznak-store-default-rtdb.firebaseio.com";
 
-        // بىۋاسىتە ۋە قىلچە كېچىكمەيدىغان HTTP REST ئېغىزى
         async function fetchUsersREST() {
             try {
                 const res = await fetch(`${DB_BASE_URL}/users.json`);
-                if (res.ok) {
-                    return await res.json();
-                }
+                if (res.ok) return await res.json();
             } catch(e) {}
             return null;
         }
@@ -2212,9 +2097,7 @@
         async function fetchSingleUserREST(safeKey) {
             try {
                 const res = await fetch(`${DB_BASE_URL}/users/${safeKey}.json`);
-                if (res.ok) {
-                    return await res.json();
-                }
+                if (res.ok) return await res.json();
             } catch(e) {}
             return null;
         }
@@ -2229,123 +2112,9 @@
             } catch(e) {}
         }
 
-        let activeCropper = null;
-        let cropperResolve = null;
-        let cropperReject = null;
-
-        window.openImageCropper = function(file, defaultAspect = NaN, title = '✂️ رەسىمنى كېسىپ تەڭشەش') {
-            return new Promise((resolve, reject) => {
-                if (!file) return reject('ھۆججەت يوق');
-                cropperResolve = resolve;
-                cropperReject = reject;
-
-                document.getElementById('cropperDialogTitle').innerText = title;
-                const modal = document.getElementById('globalCropModal');
-                const imageEl = document.getElementById('cropperTargetImg');
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    imageEl.src = e.target.result;
-                    modal.style.display = 'flex';
-
-                    if (activeCropper) {
-                        activeCropper.destroy();
-                        activeCropper = null;
-                    }
-
-                    document.querySelectorAll('.crop-tool-btn').forEach(b => b.classList.remove('active'));
-                    if (isNaN(defaultAspect)) {
-                        document.getElementById('ratioFreeBtn')?.classList.add('active');
-                    } else if (Math.abs(defaultAspect - 1) < 0.05) {
-                        document.getElementById('ratio1to1Btn')?.classList.add('active');
-                    } else if (Math.abs(defaultAspect - 3/4) < 0.05) {
-                        document.getElementById('ratio3to4Btn')?.classList.add('active');
-                    } else {
-                        document.getElementById('ratioFreeBtn')?.classList.add('active');
-                    }
-
-                    activeCropper = new Cropper(imageEl, {
-                        aspectRatio: defaultAspect,
-                        viewMode: 1,
-                        dragMode: 'move',
-                        autoCropArea: 0.95,
-                        restore: false,
-                        guides: true,
-                        center: true,
-                        highlight: false,
-                        cropBoxMovable: true,
-                        cropBoxResizable: true,
-                        toggleDragModeOnDblclick: false,
-                        rotatable: true
-                    });
-                };
-                reader.onerror = err => reject(err);
-                reader.readAsDataURL(file);
-            });
-        };
-
-        window.setCropAspect = function(aspect, btn) {
-            if (!activeCropper) return;
-            activeCropper.setAspectRatio(aspect);
-            document.querySelectorAll('.crop-tool-btn').forEach(b => b.classList.remove('active'));
-            if (btn) btn.classList.add('active');
-        };
-
-        window.rotateCropper = function() {
-            if (!activeCropper) return;
-            activeCropper.rotate(90);
-        };
-
-        window.confirmGlobalCrop = function() {
-            if (!activeCropper) {
-                cancelGlobalCrop();
-                return;
-            }
-            const canvas = activeCropper.getCroppedCanvas({
-                maxWidth: 1280,
-                maxHeight: 1920,
-                imageSmoothingEnabled: true,
-                imageSmoothingQuality: 'high'
-            });
-
-            if (!canvas) {
-                alert('رەسىمنى كېسىش مەغلۇپ بولدى!');
-                cancelGlobalCrop();
-                return;
-            }
-
-            const croppedBase64 = canvas.toDataURL('image/jpeg', 0.85);
-
-            if (activeCropper) {
-                activeCropper.destroy();
-                activeCropper = null;
-            }
-            document.getElementById('globalCropModal').style.display = 'none';
-
-            if (cropperResolve) {
-                cropperResolve(croppedBase64);
-                cropperResolve = null;
-                cropperReject = null;
-            }
-        };
-
-        window.cancelGlobalCrop = function() {
-            if (activeCropper) {
-                activeCropper.destroy();
-                activeCropper = null;
-            }
-            document.getElementById('globalCropModal').style.display = 'none';
-            if (cropperReject) {
-                cropperReject('بىكار قىلىندى');
-                cropperResolve = null;
-                cropperReject = null;
-            }
-        };
-
-        let temporarySiteBgBase64 = '';
-
+        /* رەسىم ئۇلانمىلىرىنى تەڭشەش */
         window.applyFullSiteBg = function(imgData) {
-            if (imgData && imgData.trim().length > 10) {
+            if (imgData && imgData.trim().length > 5) {
                 document.body.style.backgroundImage = `url('${imgData}')`;
                 document.body.classList.add('has-custom-bg');
             } else {
@@ -2356,47 +2125,38 @@
 
         try {
             const initialBg = localStorage.getItem('koznak_site_custom_bg');
-            if (initialBg) {
-                window.applyFullSiteBg(initialBg);
-            }
+            if (initialBg) window.applyFullSiteBg(initialBg);
         } catch(e) {}
 
-        window.handleSiteBgSelected = async function(event) {
-            const file = event.target.files && event.target.files[0];
-            if (!file) return;
-            try {
-                const cropped = await window.openImageCropper(file, NaN, '✂️ تەگلىك رەسىمىنى كېسىش');
-                temporarySiteBgBase64 = cropped;
-                document.getElementById('userSiteBgPreviewImg').src = cropped;
-                document.getElementById('userSiteBgPreviewBox').style.display = 'block';
-            } catch(e) {
-                event.target.value = '';
+        window.previewSiteBgUrl = function(url) {
+            const box = document.getElementById('userSiteBgPreviewBox');
+            const img = document.getElementById('userSiteBgPreviewImg');
+            if(url && url.trim().startsWith('http')) {
+                img.src = url.trim();
+                box.style.display = 'block';
+            } else {
+                box.style.display = 'none';
             }
         };
 
-        window.saveUserSiteBg = async function() {
-            if (!temporarySiteBgBase64) return;
-            localStorage.setItem('koznak_site_custom_bg', temporarySiteBgBase64);
-            window.applyFullSiteBg(temporarySiteBgBase64);
+        window.saveUserSiteBgByUrl = async function() {
+            const url = document.getElementById('userSiteBgUrlInput').value.trim();
+            if (!url) return alert('رەسىم ئۇلانمىسىنى كىرگۈزۈڭ!');
+            localStorage.setItem('koznak_site_custom_bg', url);
+            window.applyFullSiteBg(url);
             
             if (window.currentUser && window.currentUser.role === 'admin') {
                 try {
-                    await window.dbSet(window.dbRef(window.db, 'settings/globalSiteBgImage'), temporarySiteBgBase64);
+                    await window.dbSet(window.dbRef(window.db, 'settings/globalSiteBgImage'), url);
                 } catch(e) {}
             }
-            
-            document.getElementById('userSiteBgPreviewBox').style.display = 'none';
             alert('پۈتۈن تەگلىك رەسىمى مۇۋەپپەقىيەتلىك ئورنىتىلدى!');
-        };
-
-        window.cancelUserSiteBgPreview = function() {
-            temporarySiteBgBase64 = '';
-            document.getElementById('userSiteBgPreviewBox').style.display = 'none';
-            document.getElementById('userSiteBgInput').value = '';
         };
 
         window.resetSiteBgToDefault = async function() {
             localStorage.removeItem('koznak_site_custom_bg');
+            document.getElementById('userSiteBgUrlInput').value = '';
+            document.getElementById('userSiteBgPreviewBox').style.display = 'none';
             window.applyFullSiteBg('');
             if (window.currentUser && window.currentUser.role === 'admin') {
                 try {
@@ -2404,6 +2164,60 @@
                 } catch(e) {}
             }
             alert('تەگلىك ئەسلى ھالىتىگە قايتۇرۇلدى!');
+        };
+
+        window.previewHeaderBgUrl = function(url) {
+            const box = document.getElementById('headerBgPreviewContainer');
+            const img = document.getElementById('headerBgPreviewImg');
+            if(url && url.trim().startsWith('http')) {
+                img.src = url.trim();
+                box.style.display = 'block';
+            } else {
+                box.style.display = 'none';
+            }
+        };
+
+        window.saveHeaderBgByUrl = async function() {
+            const url = document.getElementById('headerBgUrlInput').value.trim();
+            if (!url) return alert('رەسىم ئۇلانمىسىنى كىرگۈزۈڭ!');
+            await window.dbSet(window.dbRef(window.db, 'settings/headerBgImage'), url);
+            applyHeaderBg(url);
+            alert('لوزۇنكا رەسىمى مۇۋەپپەقىيەتلىك ئالماشتۇرۇلدى!');
+        };
+
+        window.resetHeaderBgToDefault = async function() {
+            document.getElementById('headerBgUrlInput').value = '';
+            document.getElementById('headerBgPreviewContainer').style.display = 'none';
+            await window.dbRemove(window.dbRef(window.db, 'settings/headerBgImage'));
+            applyHeaderBg('');
+            alert('ئەسلى قىزىل ھالەتكە قايتۇرۇلدى!');
+        };
+
+        function applyHeaderBg(imgUrl) {
+            const header = document.getElementById('homeTopHeaderElement');
+            if (!header) return;
+            if (imgUrl) header.style.backgroundImage = `url('${imgUrl}')`;
+            else header.style.backgroundImage = 'none';
+        }
+
+        window.deleteAllMoviesData = async function() {
+            if (!window.currentUser || window.currentUser.role !== 'admin') return alert('ھوقۇقىڭىز يوق!');
+            const ans = confirm('⚠️ دىققەت!\nراستلا بارلىق فىلىملەرنى مەڭگۈلۈك ئۆچۈرەمسىز؟ بۇ مەشغۇلاتنى قايتۇرغىلى بولمايدۇ!');
+            if (!ans) return;
+
+            try {
+                await window.dbRemove(window.dbRef(window.db, 'movies'));
+                allMovies = {};
+                localStorage.removeItem('koznak_cached_movies');
+                renderHeroSlider();
+                renderMovies();
+                if(document.getElementById('moviesOnlyTab').classList.contains('active-tab')) renderMoviesOnlyGrid();
+                if(document.getElementById('theatersTab').classList.contains('active-tab')) renderTheatersGrid();
+                renderAdminMovieStatsTable();
+                alert('بارلىق فىلىم سانلىق مەلۇماتلىرى تولۇق ئۆچۈرۈلدى. باشتىن قايتا يېڭىدىن يوللىسىڭىز بولىدۇ!');
+            } catch(e) {
+                alert('ئۆچۈرۈشتە خاتالىق كۆرۈلدى: ' + e.message);
+            }
         };
 
         const imageObserver = new IntersectionObserver((entries, observer) => {
@@ -2432,8 +2246,6 @@
         let isCinemaFullscreen = false;
         let sessionListenerUnsubscribe = null;
         let userRealtimeListenerUnsubscribe = null;
-        let temporaryAvatarBase64 = '';
-        let temporaryHeaderBgBase64 = '';
 
         try {
             favorites = JSON.parse(localStorage.getItem('koznak_favs') || '[]');
@@ -2450,15 +2262,11 @@
         const VIDEO_CACHE_NAME = 'koznak-offline-videos-v1';
 
         function getStoredDownloadsMeta() {
-            try {
-                return JSON.parse(localStorage.getItem('koznak_downloads_meta') || '[]');
-            } catch(e) { return []; }
+            try { return JSON.parse(localStorage.getItem('koznak_downloads_meta') || '[]'); } catch(e) { return []; }
         }
 
         function setStoredDownloadsMeta(list) {
-            try {
-                localStorage.setItem('koznak_downloads_meta', JSON.stringify(list));
-            } catch(e) {}
+            try { localStorage.setItem('koznak_downloads_meta', JSON.stringify(list)); } catch(e) {}
         }
 
         window.startMovieAppDownload = async function() {
@@ -2690,7 +2498,7 @@
             document.getElementById('registerFormSection').style.display = mode === 'register' ? 'block' : 'none';
         };
 
-        /* ================== چاقماقتەك ئىشەنچلىك كىرىش ۋە تىزىملىتىش سىستېمىسى ================== */
+        /* كىرىش ۋە كونا ئۈسكۈنىنى ئاپتوماتىك چىقىرىش بۆلىكى (تولۇق كاپالەتلەندۈرۈلدى) */
         window.handleUserRegister = async function() {
             const btn = document.getElementById('regSubmitBtn');
             const username = document.getElementById('regUsername').value.trim();
@@ -2703,7 +2511,6 @@
 
             const safeKey = 'usr_' + encodeURIComponent(username).replace(/[^a-zA-Z0-9_]/g, '');
             try {
-                // تېز REST ئارقىلىق دەلىللەش
                 const existingUser = await fetchSingleUserREST(safeKey);
                 if (existingUser) {
                     btn.disabled = false;
@@ -2732,10 +2539,13 @@
                     createdAt: Date.now()
                 };
 
-                await saveUserREST(safeKey, newUser);
+                // ئاۋۋال يەرلىككە مەڭگۈلۈك ئورنىتىش
                 localStorage.setItem('koznak_session_id', newSessionId);
+                localStorage.setItem('koznak_logged_user', JSON.stringify(newUser));
                 window.currentUser = newUser;
-                finishUserLoginSession();
+
+                await saveUserREST(safeKey, newUser);
+                finishUserLoginSession(newSessionId);
             } catch(e) {
                 alert('تىزىملىتىشتا مەسىلە كۆرۈلدى: ' + e.message);
             } finally {
@@ -2756,7 +2566,7 @@
             const safeKey = 'usr_' + encodeURIComponent(username).replace(/[^a-zA-Z0-9_]/g, '');
             const inputHash = hashPassword(password);
 
-            // 1. باشقۇرغۇچى (dronemax) ئۈچۈن قىلچە كۈتمەي بىۋاسىتە كىرىش
+            // باشقۇرغۇچى مەخسۇس ئېغىزى
             if (username === 'dronemax' && inputHash === ADMIN_HASH) {
                 const newSessionId = generateSessionId();
                 const adminUser = {
@@ -2776,13 +2586,19 @@
                 };
 
                 localStorage.setItem('koznak_session_id', newSessionId);
+                localStorage.setItem('koznak_logged_user', JSON.stringify(adminUser));
                 window.currentUser = adminUser;
-                finishUserLoginSession();
+
+                if (window.dbSet && window.dbRef && window.db) {
+                    try {
+                        await window.dbSet(window.dbRef(window.db, `users/${safeKey}/currentSessionId`), newSessionId);
+                    } catch(e) {}
+                }
                 saveUserREST(safeKey, adminUser);
+                finishUserLoginSession(newSessionId);
                 return;
             }
 
-            // 2. ئابونتلارنىڭ كىرىشى (REST ئارقىلىق پۈتۈنلەي قېتىۋالمايدۇ)
             try {
                 const uData = await fetchSingleUserREST(safeKey);
 
@@ -2798,16 +2614,26 @@
                     return alert('پارول خاتا!');
                 }
 
+                // 1. يېڭى ئۈسكۈنە ئۈچۈن يېڭى Session ID تەييارلاش
                 const newSessionId = generateSessionId();
-                localStorage.setItem('koznak_session_id', newSessionId);
                 uData.currentSessionId = newSessionId;
                 if (!uData.rawPass) uData.rawPass = password;
 
+                // 2. ئاۋۋال يەرلىك ئەستە ساقلاشقا تولۇق قۇلۇپلاش
+                localStorage.setItem('koznak_session_id', newSessionId);
+                localStorage.setItem('koznak_logged_user', JSON.stringify(uData));
                 window.currentUser = uData;
-                finishUserLoginSession();
 
-                // ئارقا سەھنىدە تېنچ يېڭىلاش
+                // 3. بازىغا كېچىكمەي يېزىش (بۇ ئارقىلىق كونا ئۈسكۈنىدىكى كۆزەتكۈچى دەرھال بىلىپ ئۇنى چېكىندۈرىدۇ)
+                if (window.dbSet && window.dbRef && window.db) {
+                    try {
+                        await window.dbSet(window.dbRef(window.db, `users/${safeKey}/currentSessionId`), newSessionId);
+                    } catch(e) {}
+                }
                 saveUserREST(safeKey, uData);
+
+                // 4. كىرىش كۆرۈنمە يۈزىنى تەڭشەش
+                finishUserLoginSession(newSessionId);
             } catch(e) {
                 alert('كىرىشتە خاتالىق كۆرۈلدى: ' + (e.message || 'تورنى قايتا سىناڭ'));
             } finally {
@@ -2816,25 +2642,36 @@
             }
         };
 
-        function finishUserLoginSession() {
-            localStorage.setItem('koznak_logged_user', JSON.stringify(window.currentUser));
+        function finishUserLoginSession(newSessionId) {
             document.getElementById('authOverlay').style.display = 'none';
             window.updateUIAfterLogin();
-            startSessionWatcher(window.currentUser.userKey);
-            listenToUserRealtimeData(window.currentUser.userKey);
+            
+            // كۆزەتكۈچىنى يېڭى Session ID بىلەن دەلىللەپ باشلاش
+            setTimeout(() => {
+                if (window.currentUser) {
+                    startSessionWatcher(window.currentUser.userKey, newSessionId);
+                    listenToUserRealtimeData(window.currentUser.userKey);
+                }
+            }, 300);
         }
 
-        function startSessionWatcher(userKey) {
+        function startSessionWatcher(userKey, currentSessionId) {
             if (!window.db || !userKey) return;
             if (sessionListenerUnsubscribe) {
                 sessionListenerUnsubscribe();
                 sessionListenerUnsubscribe = null;
             }
+
+            const activeSessionId = currentSessionId || localStorage.getItem('koznak_session_id');
+
             sessionListenerUnsubscribe = window.dbOnValue(window.dbRef(window.db, `users/${userKey}/currentSessionId`), snapshot => {
+                if (!snapshot.exists()) return;
                 const dbSessionId = snapshot.val();
-                const localSessionId = localStorage.getItem('koznak_session_id');
-                if (dbSessionId && localSessionId && dbSessionId !== localSessionId) {
-                    alert('⚠️ ھېساباتىڭىزغا باشقا بىر ئۈسكۈنىدىن كىرىلدى!');
+                const localSessionId = localStorage.getItem('koznak_session_id') || activeSessionId;
+
+                // پەقەت يەرلىكتىكى Session ID بازىدىكى يېڭى تۈزۈلگەن كىملىكتىن پەرقلىق بولسىلا، بۇ ئۈسكۈنە «كونا ئۈسكۈنە» دەپ ھۆكۈم قىلىنىدۇ
+                if (dbSessionId && localSessionId && String(dbSessionId) !== String(localSessionId)) {
+                    alert('⚠️ دىققەت! ھېساباتىڭىزغا باشقا بىر يانفوندىن يېڭىدىن كىرىلگەنلىكى ئۈچۈن بۇ ئۈسكۈنىدىن ئاپتوماتىك چېكىندىڭىز.');
                     logoutUser(false);
                 }
             });
@@ -2857,6 +2694,11 @@
                     window.currentUser.avatar = dbData.avatar || '';
                     window.currentUser.rawPass = dbData.rawPass || window.currentUser.rawPass || '';
                     window.currentUser.nickname = dbData.nickname || dbData.user;
+                    
+                    // Session ID نى يەرلىكتىن ئۆچۈرۈۋەتمەي بىخەتەر يېڭىلاش
+                    const curSess = localStorage.getItem('koznak_session_id');
+                    if (curSess) window.currentUser.currentSessionId = curSess;
+
                     localStorage.setItem('koznak_logged_user', JSON.stringify(window.currentUser));
                     window.updateUIAfterLogin();
                 }
@@ -2935,113 +2777,54 @@
         };
 
         window.openAvatarModal = function() {
-            temporaryAvatarBase64 = '';
-            document.getElementById('avatarFileInput').value = '';
+            document.getElementById('avatarUrlInput').value = '';
             document.getElementById('avatarPreviewContainer').style.display = 'none';
-            document.getElementById('saveAvatarBtn').style.display = 'none';
             document.getElementById('avatarModal').style.display = 'flex';
         };
         window.closeAvatarModal = function() { document.getElementById('avatarModal').style.display = 'none'; };
 
-        window.handleAvatarFileSelected = async function(event) {
-            const file = event.target.files && event.target.files[0];
-            if (!file) return;
-            try {
-                const cropped = await window.openImageCropper(file, 1, '✂️ باش سۈرەتنى كېسىش');
-                temporaryAvatarBase64 = cropped;
-                document.getElementById('avatarPreviewImg').src = cropped;
-                document.getElementById('avatarPreviewContainer').style.display = 'block';
-                document.getElementById('saveAvatarBtn').style.display = 'block';
-            } catch(e) {
-                event.target.value = '';
+        window.previewAvatarUrl = function(url) {
+            const container = document.getElementById('avatarPreviewContainer');
+            const img = document.getElementById('avatarPreviewImg');
+            if (url && url.trim().startsWith('http')) {
+                img.src = url.trim();
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
             }
         };
 
         window.saveUploadedAvatar = async function() {
-            if (!window.currentUser || !temporaryAvatarBase64) return;
-            await window.dbUpdate(window.dbRef(window.db, `users/${window.currentUser.userKey}`), { avatar: temporaryAvatarBase64 });
-            window.currentUser.avatar = temporaryAvatarBase64;
+            const url = document.getElementById('avatarUrlInput').value.trim();
+            if (!window.currentUser || !url) return alert('رەسىم ئۇلانمىسىنى كىرگۈزۈڭ!');
+            await window.dbUpdate(window.dbRef(window.db, `users/${window.currentUser.userKey}`), { avatar: url });
+            window.currentUser.avatar = url;
             localStorage.setItem('koznak_logged_user', JSON.stringify(window.currentUser));
             window.updateUIAfterLogin();
             closeAvatarModal();
             alert('باش رەسىم يېڭىلاندى!');
         };
 
-        window.handleHeaderBgSelected = async function(event) {
-            const file = event.target.files && event.target.files[0];
-            if (!file) return;
-            try {
-                const cropped = await window.openImageCropper(file, 16/9, '✂️ لوزۇنكا رەسىمىنى كېسىش');
-                temporaryHeaderBgBase64 = cropped;
-                document.getElementById('headerBgPreviewImg').src = cropped;
-                document.getElementById('headerBgPreviewContainer').style.display = 'block';
-                document.getElementById('saveHeaderBgBtn').style.display = 'block';
-            } catch(e) {
-                event.target.value = '';
-            }
-        };
-
-        window.saveHeaderBg = async function() {
-            if (!temporaryHeaderBgBase64) return;
-            await window.dbSet(window.dbRef(window.db, 'settings/headerBgImage'), temporaryHeaderBgBase64);
-            applyHeaderBg(temporaryHeaderBgBase64);
-            alert('لوزۇنكا رەسىمى مۇۋەپپەقىيەتلىك ئالماشتۇرۇلدى!');
-        };
-
-        window.resetHeaderBgToDefault = async function() {
-            await window.dbRemove(window.dbRef(window.db, 'settings/headerBgImage'));
-            applyHeaderBg('');
-            alert('ئەسلى قىزىل ھالەتكە قايتۇرۇلدى!');
-        };
-
-        function applyHeaderBg(imgUrl) {
-            const header = document.getElementById('homeTopHeaderElement');
-            if (!header) return;
-            if (imgUrl) {
-                header.style.backgroundImage = `url('${imgUrl}')`;
-            } else {
-                header.style.backgroundImage = 'none';
-            }
-        }
-
         window.handlePosterUrlInput = function(url) {
             const cleanUrl = url.trim();
+            const previewBox = document.getElementById('uploadPosterPreviewContainer');
+            const previewImg = document.getElementById('uploadPosterPreviewImg');
+            const baseInput = document.getElementById('contentPosterBase64');
+
             if (cleanUrl) {
-                document.getElementById('contentPosterBase64').value = cleanUrl;
-                document.getElementById('uploadPosterPreviewImg').src = cleanUrl;
-                document.getElementById('uploadPosterPreviewContainer').style.display = 'block';
-            }
-        };
-
-        window.handlePosterFileSelected = async function(event) {
-            const file = event.target.files && event.target.files[0];
-            if (!file) return;
-            try {
-                const cropped = await window.openImageCropper(file, 3/4, '✂️ تەشۋىقات رەسىمىنى كېسىش');
-                document.getElementById('contentPosterBase64').value = cropped;
-                document.getElementById('contentPosterUrlInput').value = '';
-                document.getElementById('uploadPosterPreviewImg').src = cropped;
-                document.getElementById('uploadPosterPreviewContainer').style.display = 'block';
-            } catch(e) {
-                event.target.value = '';
-            }
-        };
-
-        window.handleFeedbackImageSelected = async function(event) {
-            const file = event.target.files && event.target.files[0];
-            if (!file) return;
-            try {
-                const cropped = await window.openImageCropper(file, NaN, '✂️ مۇناسىۋەتلىك رەسىمنى كېسىش');
-                document.getElementById('fbMovieImageBase64').value = cropped;
-            } catch(e) {
-                event.target.value = '';
+                baseInput.value = cleanUrl;
+                previewImg.src = cleanUrl;
+                previewBox.style.display = 'block';
+            } else {
+                baseInput.value = '';
+                previewBox.style.display = 'none';
             }
         };
 
         window.submitSearchFeedback = async function() {
             const title = document.getElementById('fbMovieTitle').value.trim();
             const link = document.getElementById('fbMovieLink').value.trim();
-            const poster = document.getElementById('fbMovieImageBase64').value.trim();
+            const poster = document.getElementById('fbMovieImageUrl').value.trim();
 
             if (!title) return alert('كىنونىڭ ئىسمىنى كىرگۈزۈڭ!');
 
@@ -3060,8 +2843,7 @@
                 alert('تەلىپىڭىز باشقۇرغۇچىغا يوللاندى!');
                 document.getElementById('fbMovieTitle').value = '';
                 document.getElementById('fbMovieLink').value = '';
-                document.getElementById('fbMovieImageFile').value = '';
-                document.getElementById('fbMovieImageBase64').value = '';
+                document.getElementById('fbMovieImageUrl').value = '';
                 document.getElementById('searchFeedbackBox').style.display = 'none';
                 closeSearch();
             } catch(e) {
@@ -3249,8 +3031,6 @@
             if(type === 'users') {
                 const loadingBadge = document.getElementById('adminUsersLoadingBadge');
                 if (loadingBadge) loadingBadge.style.display = 'block';
-                
-                // REST ئارقىلىق دەرھال تارتىپ كۆرسىتىش
                 const usersData = await fetchUsersREST();
                 if (loadingBadge) loadingBadge.style.display = 'none';
                 allUsers = usersData || {};
@@ -3502,17 +3282,31 @@
             document.getElementById('shortsActionFavBtn').classList.toggle('liked', isFav);
 
             const video = document.getElementById('shortsPlayerVideo');
+            const playIcon = document.getElementById('shortsPlayIcon');
+            playIcon.classList.remove('show');
+
             let cleanUrl = (currentEp.url || '').trim();
             if (cleanUrl.includes('archive.org/details/')) {
                 cleanUrl = cleanUrl.replace('archive.org/details/', 'archive.org/download/');
             }
+            
+            video.pause();
             video.src = cleanUrl;
-            video.play().catch(() => {});
+            video.load();
+            
+            const playPromise = video.play();
+            if (playPromise !== undefined) {
+                playPromise.catch(() => {
+                    playIcon.classList.add('show');
+                });
+            }
 
             if (currentShortEpIndex + 1 < episodes.length) {
                 let nextUrl = episodes[currentShortEpIndex + 1].url || '';
                 if (nextUrl.includes('archive.org/details/')) nextUrl = nextUrl.replace('archive.org/details/', 'archive.org/download/');
-                document.getElementById('shortsPreloadBuffer').src = nextUrl;
+                const preVideo = document.getElementById('shortsPreloadBuffer');
+                preVideo.src = nextUrl;
+                preVideo.load();
             }
 
             video.onended = () => {
@@ -3579,11 +3373,8 @@
         function handleShortsSwipe() {
             const diff = touchStartY - touchEndY;
             if (Math.abs(diff) > 50) {
-                if (diff > 0) {
-                    switchNextShortMovie();
-                } else {
-                    switchPrevShortMovie();
-                }
+                if (diff > 0) switchNextShortMovie();
+                else switchPrevShortMovie();
             }
         }
 
@@ -4033,7 +3824,7 @@
             const downloadLink = document.getElementById('contentDownloadLink').value.trim();
 
             if (!title) return alert('فىلىم نامىنى كىرگۈزۈڭ!');
-            if (!poster) return alert('تەشۋىقات رەسىمىنى تاللاڭ ياكى ئۇلانمىسىنى كىرگۈزۈڭ!');
+            if (!poster) return alert('تەشۋىقات رەسىم ئۇلانمىسىنى كىرگۈزۈڭ!');
 
             const movieId = 'mov_' + Date.now();
             let movieData = {
@@ -4334,12 +4125,14 @@
             }
 
             const savedUser = localStorage.getItem('koznak_logged_user');
-            if(savedUser) {
+            const savedSession = localStorage.getItem('koznak_session_id');
+
+            if(savedUser && savedSession) {
                 try {
                     window.currentUser = JSON.parse(savedUser);
                     document.getElementById('authOverlay').style.display = 'none';
                     window.updateUIAfterLogin();
-                    startSessionWatcher(window.currentUser.userKey);
+                    startSessionWatcher(window.currentUser.userKey, savedSession);
                     listenToUserRealtimeData(window.currentUser.userKey);
                 } catch(e) {
                     document.getElementById('authOverlay').style.display = 'flex';
